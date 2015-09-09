@@ -29,5 +29,7 @@ namespace FreeLance.Models
         {
             return new ApplicationDbContext();
         }
-    }
+
+		public System.Data.Entity.DbSet<FreeLance.Models.ProblemModels> ProblemModels { get; set; }
+	}
 }
