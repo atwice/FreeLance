@@ -10,107 +10,107 @@ using FreeLance.Models;
 
 namespace FreeLance.Controllers
 {
-	public class ProblemController : Controller
+	public class ContractController : Controller
 	{
 		private ApplicationDbContext db = new ApplicationDbContext();
 
-		// GET: Problem
+		// GET: Contract
 		public ActionResult Index()
 		{
-			return View(db.ProblemModels.ToList());
+			return View(db.ContractModels.ToList());
 		}
 
-		// GET: Problem/Details/5
+		// GET: Contract/Details/5
 		public ActionResult Details(int? id)
 		{
 			if (id == null)
 			{
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
-			ProblemModels problemModels = db.ProblemModels.Find(id);
-			if (problemModels == null)
+			ContractModels contractModels = db.ContractModels.Find(id);
+			if (contractModels == null)
 			{
 				return HttpNotFound();
 			}
-			return View(problemModels);
+			return View(contractModels);
 		}
 
-		// GET: Problem/Create
+		// GET: Contract/Create
 		public ActionResult Create()
 		{
 			return View();
 		}
 
-		// POST: Problem/Create
+		// POST: Contract/Create
 		// To protect from overposting attacks, please enable the specific properties you want to bind to, for 
 		// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public ActionResult Create([Bind(Include = "ProblemId,Name,Description,Status")] ProblemModels problemModels)
+		public ActionResult Create([Bind(Include = "ContractId,Details,Status")] ContractModels contractModels)
 		{
 			if (ModelState.IsValid)
 			{
-				db.ProblemModels.Add(problemModels);
+				db.ContractModels.Add(contractModels);
 				db.SaveChanges();
 				return RedirectToAction("Index");
 			}
 
-			return View(problemModels);
+			return View(contractModels);
 		}
 
-		// GET: Problem/Edit/5
+		// GET: Contract/Edit/5
 		public ActionResult Edit(int? id)
 		{
 			if (id == null)
 			{
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
-			ProblemModels problemModels = db.ProblemModels.Find(id);
-			if (problemModels == null)
+			ContractModels contractModels = db.ContractModels.Find(id);
+			if (contractModels == null)
 			{
 				return HttpNotFound();
 			}
-			return View(problemModels);
+			return View(contractModels);
 		}
 
-		// POST: Problem/Edit/5
+		// POST: Contract/Edit/5
 		// To protect from overposting attacks, please enable the specific properties you want to bind to, for 
 		// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public ActionResult Edit([Bind(Include = "ProblemId,Name,Description,Status")] ProblemModels problemModels)
+		public ActionResult Edit([Bind(Include = "ContractId,Details,Status")] ContractModels contractModels)
 		{
 			if (ModelState.IsValid)
 			{
-				db.Entry(problemModels).State = EntityState.Modified;
+				db.Entry(contractModels).State = EntityState.Modified;
 				db.SaveChanges();
 				return RedirectToAction("Index");
 			}
-			return View(problemModels);
+			return View(contractModels);
 		}
 
-		// GET: Problem/Delete/5
+		// GET: Contract/Delete/5
 		public ActionResult Delete(int? id)
 		{
 			if (id == null)
 			{
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
-			ProblemModels problemModels = db.ProblemModels.Find(id);
-			if (problemModels == null)
+			ContractModels contractModels = db.ContractModels.Find(id);
+			if (contractModels == null)
 			{
 				return HttpNotFound();
 			}
-			return View(problemModels);
+			return View(contractModels);
 		}
 
-		// POST: Problem/Delete/5
+		// POST: Contract/Delete/5
 		[HttpPost, ActionName("Delete")]
 		[ValidateAntiForgeryToken]
 		public ActionResult DeleteConfirmed(int id)
 		{
-			ProblemModels problemModels = db.ProblemModels.Find(id);
-			db.ProblemModels.Remove(problemModels);
+			ContractModels contractModels = db.ContractModels.Find(id);
+			db.ContractModels.Remove(contractModels);
 			db.SaveChanges();
 			return RedirectToAction("Index");
 		}

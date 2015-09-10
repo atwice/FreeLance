@@ -17,6 +17,7 @@ namespace FreeLance.Models
 		public int ProblemId { get; set; }
 		public string Name { get; set; }
 		public string Description { get; set; }
-		public ProblemStatus Type { get; set; }
+		public ProblemStatus Status { get; set; }
+		public virtual ICollection<ContractModels> Contracts { get; set; }
 	}
 }
