@@ -23,13 +23,13 @@ namespace FreeLance.Migrations
 		{
 			context.ProblemModels.AddOrUpdate(
 				p => p.Name,
-				new ProblemModels { Name = "Суперзадача", Description = "Написать ОС", Type = 0 },
-				new ProblemModels { Name = "Нарисовать картинку", Description = "Нарисовать картинку в Photoshop", Type = 1 },
-				new ProblemModels { Name = "Сделать AbbyyFL", Description = "Implement this thing", Type = 0 },
-				new ProblemModels { Name = "Get some sleep", Description = "Поспать", Type = 0 },
-				new ProblemModels { Name = "HL3", Description = "Написать HL3", Type = 0 },
-				new ProblemModels { Name = "Выполнить домашнюю работу", Description = "Выполнить работу по англ. языку", Type = 0 },
-				new ProblemModels { Name = "Написать очередь на C++", Description = "no description", Type = 0 }
+				new ProblemModels { Name = "Supertask", Description = "Write Operation System.", Type = ProblemStatus.Opened },
+				new ProblemModels { Name = "Android design", Description = "Make material design for android application RemindMe.", Type = ProblemStatus.Opened },
+				new ProblemModels { Name = "FreeLance site", Description = "Improve FL site.", Type = ProblemStatus.Opened },
+				new ProblemModels { Name = "Have a rest", Description = "Enjoy your day.", Type = ProblemStatus.Opened },
+				new ProblemModels { Name = "Write Half-life3", Description = "Some text.", Type = ProblemStatus.Opened },
+				new ProblemModels { Name = "English translations", Description = "Translate some texts from english to russian.", Type = ProblemStatus.InProgress },
+				new ProblemModels { Name = "Implement queue", Description = "Language : ASSEMBLER", Type = ProblemStatus.Closed }
 				);
 		}
 	}
