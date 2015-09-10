@@ -27,9 +27,10 @@ namespace FreeLance.Models
 
         public static ApplicationDbContext Create()
         {
-            return new ApplicationDbContext();
+			return new ApplicationDbContext();
         }
 
 		public System.Data.Entity.DbSet<FreeLance.Models.ProblemModels> ProblemModels { get; set; }
+		public System.Data.Entity.DbSet<FreeLance.Models.ContractModels> ContractModels { get; set; }
 	}
 }
