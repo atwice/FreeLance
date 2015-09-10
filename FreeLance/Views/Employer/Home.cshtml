@@ -16,13 +16,6 @@
 				</a>
 			}
 		</div>
-	</div>
-	<div class="col-md-2">
-		<button type="button" class="btn btn-primary btn-lg">Создать задачу</button>
-	</div>
-</div>
-<div class="row">
-	<div class="col-md-10">
 		<h3>Мои открытые задачи</h3>
 		<div class="list-group">
 			@for (var i = 0; i < 3; i++)
@@ -33,5 +26,13 @@
 				</a>
 			}
 		</div>
+	</div>
+	<div class="col-md-2">
+		<ul class="nav nav-pills nav-stacked">
+			<li role="presentation" class="active">@Html.ActionLink("Личный кабинет", "Home", "Employer")</li>
+			<li role="presentation">@Html.ActionLink("Архив контрактов", "Archive", "Employer")</li>
+			<li role="presentation">@Html.ActionLink("Исполнители", "Freelancers", "Employer")</li>
+		</ul>
+		<button style="margin-top: 20px;" type="button" class="btn btn-success btn-lg">Создать задачу</button>
 	</div>
 </div>
