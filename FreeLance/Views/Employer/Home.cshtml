@@ -1,0 +1,37 @@
+﻿
+@{
+	ViewBag.Title = "Личный кабинет";
+}
+
+<h2>@ViewBag.Title</h2>
+<div class="row">
+	<div class="col-md-10">
+		<h3>Контракты</h3>
+		<div class="list-group">
+			@for (var i = 0; i < 2; i++)
+			{
+				<a href="#" class="list-group-item">
+					<h4 class="list-group-item-heading">Контракт @i</h4>
+					<p class="list-group-item-text">Краткое описание</p>
+				</a>
+			}
+		</div>
+	</div>
+	<div class="col-md-2">
+		<button type="button" class="btn btn-primary btn-lg">Создать задачу</button>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-10">
+		<h3>Мои открытые задачи</h3>
+		<div class="list-group">
+			@for (var i = 0; i < 3; i++)
+			{
+				<a href="#" class="list-group-item">
+					<h4 class="list-group-item-heading">Задача @i</h4>
+					<p class="list-group-item-text">Краткое описание</p>
+				</a>
+			}
+		</div>
+	</div>
+</div>
