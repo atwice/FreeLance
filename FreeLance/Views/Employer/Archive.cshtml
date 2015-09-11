@@ -1,0 +1,27 @@
+﻿
+@{
+	ViewBag.Title = "Архив";
+}
+
+<h2>@ViewBag.Title</h2>
+<div class="row">
+	<div class="col-md-10">
+		<h3>Выполненные контракты</h3>
+		<div class="list-group">
+			@for (var i = 0; i < 2; i++)
+			{
+				<a href="#" class="list-group-item">
+					<h4 class="list-group-item-heading">Контракт @i</h4>
+					<p class="list-group-item-text">Краткое описание</p>
+				</a>
+			}
+		</div>
+	</div>
+	<div class="col-md-2">
+		<ul class="nav nav-pills nav-stacked">
+			<li role="presentation">@Html.ActionLink("Личный кабинет", "Home", "Employer")</li>
+			<li role="presentation" class="active">@Html.ActionLink("Архив контрактов", "Archive", "Employer")</li>
+			<li role="presentation">@Html.ActionLink("Исполнители", "Freelancers", "Employer")</li>
+		</ul>
+	</div>
+</div>
