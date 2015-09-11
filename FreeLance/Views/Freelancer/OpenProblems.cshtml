@@ -1,0 +1,41 @@
+﻿@model FreeLance.Models.ProblemModels[]
+
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Open Problems</title>
+</head>
+<body>
+    <div> 
+        <p>
+            <h1>
+                Open problems:
+            </h1>
+        </p>
+        @if (Model.Length > 0)
+        {
+            foreach (FreeLance.Models.ProblemModels problem in Model)
+            {
+                <p>
+                    <strong>
+                        @Html.ActionLink(@problem.Name, "Problem", new { id = problem.ProblemId })
+                    </strong>
+                    <br>
+
+                    @problem.Description
+                    <br>
+                </p>
+            }
+        } else {
+            <h3> 
+                No open problems 
+            </h3>
+        }
+    </div>
+</body>
+
+    
+</html>

@@ -170,6 +170,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\ContractController.cs" />
     <Compile Include="Controllers\EmployerController.cs" />
+    <Compile Include="Controllers\FreelancerController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\ProblemController.cs" />
@@ -261,6 +262,8 @@
     <Content Include="Views\Employer\Home.cshtml" />
     <Content Include="Views\Employer\Archive.cshtml" />
     <Content Include="Views\Employer\Freelancers.cshtml" />
+    <Content Include="Views\Freelancer\OpenProblems.cshtml" />
+    <Content Include="Views\Freelancer\Problem.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
