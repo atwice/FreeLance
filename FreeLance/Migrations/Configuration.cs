@@ -6,6 +6,8 @@ namespace FreeLance.Migrations
 	using FreeLance.Models;
 	using System.Linq;
 	using System.Collections.Generic;
+	using Microsoft.AspNet.Identity.EntityFramework;
+	using Microsoft.AspNet.Identity;
 
 	internal sealed class Configuration : DbMigrationsConfiguration<FreeLance.Models.ApplicationDbContext>
 	{
@@ -18,6 +20,8 @@ namespace FreeLance.Migrations
 
 		protected override void Seed(FreeLance.Models.ApplicationDbContext context)
 		{
+			SeedRoles(context);
+			SeedUsers(context);
 			SeedProblems(context);
 			SeedContracts(context);
 		}
@@ -45,6 +49,33 @@ namespace FreeLance.Migrations
 			contracts.Add(new ContractModels { Details = "Third contract", Problem = problem, Status = ContractStatus.InProgress });
 			problem.Contracts = contracts;
 			context.ProblemModels.AddOrUpdate(p => p.Name, problem);
+		}
+
+		private void SeedRoles(ApplicationDbContext context)
+		{
+			context.Roles.AddOrUpdate(r => r.Name, new IdentityRole { Name = "Admin" });
+			context.Roles.AddOrUpdate(r => r.Name, new IdentityRole { Name = "Freelancer" });
+			context.Roles.AddOrUpdate(r => r.Name, new IdentityRole { Name = "Employer" });
+			context.SaveChanges();
+		}
+
+		private void SeedUsers(ApplicationDbContext context)
+		{
+			var userStore = new UserStore<ApplicationUser>(context);
+			var userManager = new UserManager<ApplicationUser>(userStore);
+			addUser(context, userManager, "admin@ya.ru", "111111", "Admin");
+			addUser(context, userManager, "employer@ya.ru", "111111", "Employer");
+			addUser(context, userManager, "freelancer@ya.ru", "111111", "Freelancer");
+		}
+
+		private void addUser(ApplicationDbContext context, UserManager<ApplicationUser> manager, string email, string password, string role)
+		{
+			if (!context.Users.Any(t => String.Compare(t.UserName, email) == 0))
+			{
+				var user = new ApplicationUser { UserName = email, Email = email };
+                manager.Create(user, password);
+				manager.AddToRole(user.Id, role);
+			}
 		}
     }
 }
