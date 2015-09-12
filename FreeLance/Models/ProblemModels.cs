@@ -15,6 +15,7 @@ namespace FreeLance.Models
 	{
 		[Key]
 		public int ProblemId { get; set; }
+		public virtual ApplicationUser Employer { get; set; }
 		public string Name { get; set; }
 		public string Description { get; set; }
 		public ProblemStatus Status { get; set; }
