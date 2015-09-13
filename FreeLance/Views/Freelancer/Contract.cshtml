@@ -1,0 +1,12 @@
+﻿@model FreeLance.Models.ContractModels
+@{
+    ViewBag.Title = "Contract";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<p>@Html.DisplayFor(model => model.Details)</p>
+<p><b>Problem: </b>@Html.ActionLink(Model.Problem.Name, "Problem", new { id = Model.Problem.ProblemId })</p>
+<p><b>ID: </b>@Html.DisplayFor(model => model.ContractId)</p>
+<td><b>Status: </b>@Html.DisplayFor(model => model.Status)</td>
+

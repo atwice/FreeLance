@@ -1,0 +1,40 @@
+﻿@model FreeLance.Models.ProblemModels
+@{
+    ViewBag.Title = "Open problem";
+}
+
+<div>
+    <h4>Problem Info</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Status)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Status)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    <h2> @Html.ActionLink("Subscribe", "Contract", new { id = Model.ProblemId }) </h2>
+    @Html.ActionLink("Back to List", "OpenProblems")
+</p>
+
