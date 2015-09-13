@@ -12,10 +12,31 @@ namespace FreeLance.Controllers
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
-        // GET: Freelancer
-        public ActionResult Index()
+        public class HomeView
         {
-            return View();
+            public List<ContractModels> Contracts { get; set; }
+            public List<ProblemModels> Problems { get; set; }
+        }
+
+        // GET: Freelancer
+        public ActionResult Home()
+        {
+            var viewModel = new HomeView
+            {
+                Contracts = db.ContractModels.ToList(),
+                Problems = db.ProblemModels.ToList()
+            };
+            return View(viewModel);
+        }
+
+        public ActionResult Archive()
+        {
+            return View(db.ContractModels.ToList());
+        }
+
+        public ActionResult Contract(int id)
+        {
+            return View(db.ContractModels.Find(id));
         }
 
         public ActionResult Problem(int? id)
@@ -31,6 +52,14 @@ namespace FreeLance.Controllers
                 return HttpNotFound();
             }
             return View(problemModels);
+        }
+
+        public ActionResult Open()
+        {
+
+            ProblemModels[] openProblems = db.ProblemModels.Where(x => x.Status == 0).ToArray();
+            //return View(openProblems);
+            return View(openProblems.ToList());
         }
 
         public ViewResult OpenProblems()

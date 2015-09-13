@@ -1,0 +1,41 @@
+﻿@model IEnumerable<FreeLance.Models.ContractModels>
+@{
+    ViewBag.Title = "Archive";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<div class="row">
+    <div class="col-md-10">
+        <h3>Выполненные контракты</h3>
+        <table class="table">
+            <table class="table">
+
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.ContractId)</th>
+                    <th>@Html.DisplayNameFor(model => model.Details)</th>
+                    <th>@Html.DisplayNameFor(model => model.Problem)</th>
+                    <th>@Html.DisplayNameFor(model => model.Status)</th>
+                </tr>
+
+
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => item.ContractId)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Details)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Problem.Name)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Status)</td>
+                    </tr>
+                }
+
+            </table>
+    </div>
+    <div class="col-md-2">
+        <ul class="nav nav-pills nav-stacked">
+            <li role="presentation">@Html.ActionLink("Личный кабинет", "Home", "Freelancer")</li>
+            <li role="presentation">@Html.ActionLink("Биржа", "Open", "Freelancer")</li>
+            <li role="presentation" class="active">@Html.ActionLink("Архив", "Archive", "Freelancer")</li>
+        </ul>
+    </div>
+</div>

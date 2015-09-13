@@ -264,6 +264,10 @@
     <Content Include="Views\Employer\Freelancers.cshtml" />
     <Content Include="Views\Freelancer\OpenProblems.cshtml" />
     <Content Include="Views\Freelancer\Problem.cshtml" />
+    <Content Include="Views\Freelancer\Home.cshtml" />
+    <Content Include="Views\Freelancer\Archive.cshtml" />
+    <Content Include="Views\Freelancer\Contract.cshtml" />
+    <Content Include="Views\Freelancer\Open.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

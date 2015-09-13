@@ -1,0 +1,74 @@
+﻿@* @model FreeLance.Models.ContractModels *@
+@* @model IEnumerable<FreeLance.Models.ContractModels> *@
+
+@model FreeLance.Controllers.FreelancerController.HomeView
+
+@{
+    ViewBag.Title = "Личный кабинет";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<div class="row">
+    <div class="col-md-10">
+        <h3>Контракты</h3>
+        <table class="table">
+
+            @if (Model.Contracts.Any())
+            {
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.Contracts[0].ContractId)</th>
+                    <th>@Html.DisplayNameFor(model => model.Contracts[0].Details)</th>
+                    <th>@Html.DisplayNameFor(model => model.Contracts[0].Problem)</th>
+                    <th>@Html.DisplayNameFor(model => model.Contracts[0].Status)</th>
+                </tr>}
+
+            @foreach (var item in Model.Contracts)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.ContractId)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Details)</td>
+                    <td>@Html.ActionLink(item.Problem.Name, "Problem", new { id = item.Problem.ProblemId })</td>
+                    <td>@Html.DisplayFor(modelItem => item.Status)</td>
+                </tr>}
+
+        </table>
+
+        <h3>Мои открытые задачи</h3>
+        <table class="table">
+
+            @if (Model.Problems.Any())
+            {
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.Problems[0].Contracts)</th>
+                    <th>@Html.DisplayNameFor(model => model.Problems[0].Name)</th>
+                    <th>@Html.DisplayNameFor(model => model.Problems[0].Description)</th>
+                    <th>@Html.DisplayNameFor(model => model.Problems[0].ProblemId)</th>
+                    <th>@Html.DisplayNameFor(model => model.Problems[0].Status)</th>
+                </tr>}
+
+            @foreach (var item in Model.Problems)
+            {
+                <tr>
+                    <td>
+                        @foreach (var contract in item.Contracts)
+                        {
+                            <p>@Html.ActionLink(contract.Details, "Contract", new { id = contract.ContractId })</p>
+                        }
+                    </td>
+                    <td>@Html.ActionLink(item.Name, "Problem", new { id = item.ProblemId })</td>
+                    <td>@Html.DisplayFor(modelItem => item.Description)</td>
+                    <td>@Html.DisplayFor(modelItem => item.ProblemId)</td>
+                    <th>@Html.DisplayFor(modelItem => item.Status)</th>
+                </tr>}
+
+        </table>
+    </div>
+    <div class="col-md-2">
+        <ul class="nav nav-pills nav-stacked">
+            <li role="presentation" class="active">@Html.ActionLink("Личный кабинет", "Home", "Freelancer")</li>
+            <li role="presentation">@Html.ActionLink("Биржа", "Open", "Freelancer")</li>
+            <li role="presentation">@Html.ActionLink("Архив", "Archive", "Freelancer")</li>
+        </ul>
+    </div>
+</div>
