@@ -45,21 +45,13 @@ namespace FreeLance.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            // check if status == open?
+
             ProblemModels problemModels = db.ProblemModels.Find(id);
             if (problemModels == null)
             {
                 return HttpNotFound();
             }
             return View(problemModels);
-        }
-
-        public ActionResult Open()
-        {
-
-            ProblemModels[] openProblems = db.ProblemModels.Where(x => x.Status == 0).ToArray();
-            //return View(openProblems);
-            return View(openProblems.ToList());
         }
 
         public ViewResult OpenProblems()
