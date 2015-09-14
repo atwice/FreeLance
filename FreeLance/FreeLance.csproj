@@ -267,7 +267,6 @@
     <Content Include="Views\Freelancer\Home.cshtml" />
     <Content Include="Views\Freelancer\Archive.cshtml" />
     <Content Include="Views\Freelancer\Contract.cshtml" />
-    <Content Include="Views\Freelancer\Open.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
