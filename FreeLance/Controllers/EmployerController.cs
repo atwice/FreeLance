@@ -18,6 +18,11 @@ namespace FreeLance.Controllers
             public List<ProblemModels> Problems { get; set; }
         }
 
+        public ActionResult Index()
+        {
+            return Redirect("Home");
+        }
+
         // GET: Employer
         public ActionResult Home()
 		{
