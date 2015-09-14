@@ -272,6 +272,8 @@
     <Content Include="Views\Freelancer\Home.cshtml" />
     <Content Include="Views\Freelancer\Archive.cshtml" />
     <Content Include="Views\Freelancer\Contract.cshtml" />
+    <Content Include="Views\Employer\NewProblem.cshtml" />
+    <Content Include="Views\Employer\Problem.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
