@@ -32,5 +32,6 @@ namespace FreeLance.Models
 
 		public System.Data.Entity.DbSet<FreeLance.Models.ProblemModels> ProblemModels { get; set; }
 		public System.Data.Entity.DbSet<FreeLance.Models.ContractModels> ContractModels { get; set; }
+		public System.Data.Entity.DbSet<FreeLance.Models.SubscriptionModels> SubscriptionModels { get; set; }
 	}
 }
