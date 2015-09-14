@@ -18,7 +18,9 @@ namespace FreeLance.Models
 		public virtual ApplicationUser Employer { get; set; }
 		public string Name { get; set; }
 		public string Description { get; set; }
+		public decimal Cost { get; set; }
 		public ProblemStatus Status { get; set; }
 		public virtual ICollection<ContractModels> Contracts { get; set; }
+		public virtual ICollection<SubscriptionModels> Subscriptions { get; set; }
 	}
 }
