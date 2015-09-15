@@ -6,6 +6,10 @@
 <div>
     <h4>Problem Info</h4>
     <hr />
+
+    <a href="@Url.Action("Details", "Contract")">
+        <button style="margin-left: 80px;" type="button" class="btn btn-success btn-lg">Подписаться на задачу</button>
+    </a>
     <dl class="dl-horizontal">
         <dt>
             @Html.DisplayNameFor(model => model.Name)
@@ -32,9 +36,7 @@
         </dd>
 
     </dl>
-</div>
 <p>
-    <h2> @Html.ActionLink("Subscribe", "Contract", new { id = Model.ProblemId }) </h2>
     @Html.ActionLink("Back to List", "OpenProblems")
 </p>
 

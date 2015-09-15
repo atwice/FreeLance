@@ -18,6 +18,12 @@ namespace FreeLance.Controllers
             public List<ProblemModels> Problems { get; set; }
         }
 
+        public class ProblemView
+        {
+            public List<SubscriptionModels> Subscriptions { get; set; }
+            public ProblemModels Problem { get; set; }
+        }
+
         public ActionResult Index()
         {
             return Redirect("Home");
@@ -32,8 +38,9 @@ namespace FreeLance.Controllers
 		public ActionResult Archive()
 		{
             return View();
-		}
+        }
 
+        // try /Employer/Problem/5 
         public ActionResult Problem(int? id)
         {
             if (id == null)
@@ -41,12 +48,19 @@ namespace FreeLance.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             ProblemModels problemModels = db.ProblemModels.Find(id);
+            
             // check if employer is this problem's owner?
             if (problemModels == null)
             {
                 return HttpNotFound();
             }
-            return View(problemModels);
+
+            var viewModel = new ProblemView
+            {
+                Subscriptions = db.SubscriptionModels.Where(x => x.Problem.ProblemId == id).ToList(),
+                Problem = problemModels
+            };
+            return View(viewModel);
         }
 
         public ActionResult Freelancers()
