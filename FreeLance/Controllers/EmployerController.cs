@@ -31,6 +31,13 @@ namespace FreeLance.Controllers
 			public String Name { get; set; }
 		}
 
+		public class ArchivedContractViewModel
+		{
+			public String Name { get; set; }
+			public String FreelancerName { get; set; }
+			public String Details { get; set; }
+		}
+
 		public ActionResult Index()
 		{
 			return RedirectToAction("Home");
@@ -44,7 +51,20 @@ namespace FreeLance.Controllers
 
 		public ActionResult Archive()
 		{
-			return View();
+			string userId = User.Identity.GetUserId();
+			var model = db.ContractModels
+				.Where(
+					c => c.Problem.Employer.Id == userId
+						&& c.Status == ContractStatus.Confirmed)
+				.Select(
+					c => new ArchivedContractViewModel
+					{
+						FreelancerName = c.Freelancer.UserName,
+						Name = c.Problem.Name,
+						Details = c.Details
+					})
+				.ToList();
+			return View(model);
 		}
 
 		// try /Employer/Problem/5 
@@ -73,8 +93,8 @@ namespace FreeLance.Controllers
 		public ActionResult Freelancers()
 		{
 			var model = getApplicationUsersInRole("Freelancer").Select(
-				u => new FreelancerViewModel { Name = u.UserName } ).ToList();
-			return View( model );
+				u => new FreelancerViewModel { Name = u.UserName }).ToList();
+			return View(model);
 		}
 
 		private IEnumerable<ApplicationUser> getApplicationUsersInRole(string roleName)

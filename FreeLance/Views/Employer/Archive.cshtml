@@ -1,27 +1,28 @@
-﻿
+﻿@model IEnumerable<FreeLance.Controllers.EmployerController.ArchivedContractViewModel>
 @{
-	ViewBag.Title = "Архив";
+    ViewBag.Title = "Архив";
 }
 
 <h2>@ViewBag.Title</h2>
 <div class="row">
-	<div class="col-md-10">
-		<h3>Выполненные контракты</h3>
-		<div class="list-group">
-			@for (var i = 0; i < 2; i++)
+    <div class="col-md-10">
+        <h3>Выполненные контракты</h3>
+        <div class="list-group">
+            @foreach ( var contract in @Model)
 			{
-				<a href="#" class="list-group-item">
-					<h4 class="list-group-item-heading">Контракт @i</h4>
-					<p class="list-group-item-text">Краткое описание</p>
-				</a>
+            <a href="#" class="list-group-item">
+                <h4 class="list-group-item-heading">Контракт по задаче <b>@contract.Name</b></h4>
+                <p class="list-group-item-text"><b>Исполнитель: </b>@contract.FreelancerName</p>
+                <p class="list-group-item-text">@contract.Details</p>
+            </a>
 			}
-		</div>
-	</div>
-	<div class="col-md-2">
-		<ul class="nav nav-pills nav-stacked">
-			<li role="presentation">@Html.ActionLink("Личный кабинет", "Home", "Employer")</li>
-			<li role="presentation" class="active">@Html.ActionLink("Архив контрактов", "Archive", "Employer")</li>
-			<li role="presentation">@Html.ActionLink("Исполнители", "Freelancers", "Employer")</li>
-		</ul>
-	</div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <ul class="nav nav-pills nav-stacked">
+            <li role="presentation">@Html.ActionLink("Личный кабинет", "Home", "Employer")</li>
+            <li role="presentation" class="active">@Html.ActionLink("Архив контрактов", "Archive", "Employer")</li>
+            <li role="presentation">@Html.ActionLink("Исполнители", "Freelancers", "Employer")</li>
+        </ul>
+    </div>
 </div>
