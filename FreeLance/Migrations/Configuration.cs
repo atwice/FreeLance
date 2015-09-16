@@ -28,6 +28,9 @@ namespace FreeLance.Migrations
 			AddEmployerFreelancerProblemContractAuto(context, "Employer1", "Freelancer1");
 			AddEmployerFreelancerProblemContractAuto(context, "Employer2", "Freelancer2");
 			AddEmployerFreelancerProblemContractAuto(context, "Employer2", "Freelancer3");
+			AddProblemWithSubscriber(context, "Employer4", "Subscriber1");
+			AddProblemWithSubscriber(context, "Employer5", "Subscriber2");
+			AddProblemWithSubscriber(context, "Employer6", "Subscriber3");
 		}
 
 		private void SeedProblems(FreeLance.Models.ApplicationDbContext context)
@@ -87,12 +90,31 @@ namespace FreeLance.Migrations
 
 		private void AddEmployerFreelancerProblemContractAuto(ApplicationDbContext context, string employerName, string freelancerName)
 		{
+			try {
+				var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
+				var employer = addUser(context, userManager, employerName + "@ya.ru", "111111", "Employer");
+				var freelancer = addUser(context, userManager, freelancerName + "@ya.ru", "111111", "Freelancer");
+				var problem = addProblem(context, "[AUTO] " + employerName, "to " + freelancerName, ProblemStatus.Opened, employer);
+				var contract = addContract(context, employerName + " to " + freelancerName, ContractStatus.Opened, problem, freelancer);
+			} catch (Exception e)
+			{
+				System.Diagnostics.Debug.WriteLine("Error! " + e.Message);
+			}
+		}
+
+		private void AddProblemWithSubscriber(ApplicationDbContext context, string employerName, string freelancerName)
+		{
+			try{
 			var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
 			var employer = addUser(context, userManager, employerName + "@ya.ru", "111111", "Employer");
 			var freelancer = addUser(context, userManager, freelancerName + "@ya.ru", "111111", "Freelancer");
 			var problem = addProblem(context, "[AUTO] " + employerName, "to " + freelancerName, ProblemStatus.Opened, employer);
-			var contract = addContract(context, employerName + " to " + freelancerName, ContractStatus.Opened, problem, freelancer);
-		}
+			var subscription = addSubscription(context, problem, freelancer);
+			} catch (Exception e)
+			{
+                System.Diagnostics.Debug.WriteLine("Error! " + e.Message);
+			}
+}
 
 		private ApplicationUser addUser(ApplicationDbContext context, UserManager<ApplicationUser> manager, string email, string password, string role)
 		{
@@ -104,6 +126,13 @@ namespace FreeLance.Migrations
 				return user;
 			}
 			return null;
+		}
+
+		private SubscriptionModels addSubscription(ApplicationDbContext context, ProblemModels problem, ApplicationUser user)
+		{
+			var subscription = new SubscriptionModels { Problem = problem, Freelancer = user };
+			context.SubscriptionModels.Add(subscription);
+			return subscription;
 		}
 
 		private void LinkProblemsToEmployers(ApplicationDbContext context)

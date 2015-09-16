@@ -1,0 +1,46 @@
+﻿@* @model FreeLance.Models.ProblemModels *@
+@* @model IEnumerable<FreeLance.Models.SubscriptionModels> *@
+
+@model FreeLance.Controllers.EmployerController.ProblemView
+@{
+    ViewBag.Title = "Problem";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Read problem's description.</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>@Html.DisplayNameFor(model => model.Problem.Name)</dt>
+        <dd>@Html.DisplayFor(model => model.Problem.Name)</dd>
+
+        <dt>@Html.DisplayNameFor(model => model.Problem.Description)</dt>
+        <dd>@Html.DisplayFor(model => model.Problem.Description)</dd>
+
+        <dt>@Html.DisplayNameFor(model => model.Problem.Status)</dt>
+        <dd>@Html.DisplayFor(model => model.Problem.Status)</dd>
+
+        <dt>@Html.DisplayNameFor(model => model.Subscriptions)</dt>
+        <dl class="dl-horizontal">
+            @if (Model.Subscriptions.Count() == 0)
+            {
+                <dd>No subscriptions</dd>
+            }
+            else
+            {
+                foreach (var subscription in Model.Subscriptions)
+                {
+                    <dd>
+                        <a href="@Url.Action("Profile", "Freelancer", new { id = subscription.Freelancer.Id })">
+                            @Html.DisplayFor(x => subscription.Freelancer.UserName)
+                        </a>
+                    </dd>
+                }
+            }
+        </dl>
+</dl>
+</div>
+<p>
+    @Html.ActionLink("Back to home page", "Home")
+</p>
