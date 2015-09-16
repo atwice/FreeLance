@@ -33,8 +33,8 @@ namespace FreeLance.Controllers
 				db.SubscriptionModels.Add(new SubscriptionModels { Freelancer = freelancer, Problem = problem });
 				db.SaveChanges();
 			}
-			return Redirect("/Freelancer/Problem/" + id.ToString());
-		}
+			return Redirect("/Problem/Details/" + id.ToString());
+        }
 
 		[HttpPost]
 		[Authorize(Roles = "Freelancer")]
@@ -56,7 +56,7 @@ namespace FreeLance.Controllers
 				db.SubscriptionModels.Remove(subscription);
 				db.SaveChanges();
 			}
-			return Redirect("/Freelancer/Problem/" + id.ToString());
+			return Redirect("/Problem/Details/" + id.ToString());
 		}
 	}
 }

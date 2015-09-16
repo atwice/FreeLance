@@ -6,6 +6,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using FreeLance.Models;
+using Microsoft.AspNet.Identity;
 
 namespace FreeLance.Controllers
 {
@@ -13,25 +14,43 @@ namespace FreeLance.Controllers
 	{
 		private ApplicationDbContext db = new ApplicationDbContext();
 
-		// GET: Problem
-		public ActionResult Index()
+		public class DetailsView
 		{
-			return View(db.ProblemModels.ToList());
+			public ProblemModels ProblemModels { get; set; }
+			public bool IsSubscibed { get; set; }
+			public List<SubscriptionModels> Subscriptions { get; set; }
 		}
 
-		// GET: Problem/Details/5
+		[Authorize]
 		public ActionResult Details(int? id)
 		{
 			if (id == null)
 			{
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
+
 			ProblemModels problemModels = db.ProblemModels.Find(id);
 			if (problemModels == null)
 			{
 				return HttpNotFound();
 			}
-			return View(problemModels);
+			string userId = User.Identity.GetUserId();
+			SubscriptionModels[] subscriptions = db.SubscriptionModels.Where(sub => sub.Freelancer.Id == userId
+													&& sub.Problem.ProblemId == id).Distinct().ToArray();
+			SubscriptionModels subscription = subscriptions.Length > 0 ? subscriptions[0] : null;
+			DetailsView view = new DetailsView
+			{
+				ProblemModels = problemModels,
+				IsSubscibed = subscription != null,
+				Subscriptions = db.SubscriptionModels.Where(x => x.Problem.ProblemId == id).ToList()
+			};
+			return View(view);
+		}
+
+		// GET: Problem
+		public ActionResult Index()
+		{
+			return View(db.ProblemModels.ToList());
 		}
 
 		// GET: Problem/Create

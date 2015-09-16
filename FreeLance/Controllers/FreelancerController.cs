@@ -41,41 +41,6 @@ namespace FreeLance.Controllers
 			return View(db.ContractModels.ToList());
 		}
 
-		public ActionResult Contract(int id)
-		{
-			return View(db.ContractModels.Find(id));
-		}
-
-		public class ProblemView
-		{
-			public ProblemModels ProblemModels { get; set; }
-			public bool IsSubscibed { get; set; }
-		}
-
-		public ActionResult Problem(int? id)
-		{
-			if (id == null)
-			{
-				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-			}
-
-			ProblemModels problemModels = db.ProblemModels.Find(id);
-			if (problemModels == null)
-			{
-				return HttpNotFound();
-			}
-			string userId = User.Identity.GetUserId();
-			SubscriptionModels[] subscriptions = db.SubscriptionModels.Where(sub => sub.Freelancer.Id == userId
-													&& sub.Problem.ProblemId == id).Distinct().ToArray();
-			SubscriptionModels subscription = subscriptions.Length > 0 ? subscriptions[0] : null;
-			ProblemView view = new ProblemView
-			{
-				ProblemModels = problemModels,
-				IsSubscibed = subscription != null
-			};
-			return View(view);
-		}
-
 		public ViewResult OpenProblems()
 		{
 			ProblemModels[] openProblems = db.ProblemModels.Where(x => x.Status == 0).ToArray();            

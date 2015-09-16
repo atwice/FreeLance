@@ -5,6 +5,7 @@ using System.Web;
 using System.Net;
 using System.Web.Mvc;
 using FreeLance.Models;
+using Microsoft.AspNet.Identity;
 
 namespace FreeLance.Controllers
 {
@@ -80,6 +81,7 @@ namespace FreeLance.Controllers
 		{
 			if (ModelState.IsValid)
 			{
+				problem.Employer = db.Users.Find(User.Identity.GetUserId());
 				db.ProblemModels.Add(problem);
 				db.SaveChanges();
 				return RedirectToAction("Problem", new { id = problem.ProblemId });
