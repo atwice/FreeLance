@@ -10,7 +10,7 @@
 		<div class="list-group">
 			@foreach (var contract in Model.ActualContracts)
 			{
-			<a href="#" class="list-group-item">
+			<a href="/Contract/Details/@contract.ContractId" class="list-group-item">
 				<h4 class="list-group-item-heading">Контракт по задаче <b>@contract.Problem.Name</b></h4>
 				<p class="list-group-item-text"><i>Исполнитель: @contract.Freelancer.UserName</i></p>
 				<p class="list-group-item-text"> @contract.Details</p>
@@ -21,7 +21,7 @@
 		<div class="list-group">
 			@foreach (var problem in Model.OpenProblems)
 			{
-			<a href="#" class="list-group-item">
+			<a href="/Employer/Problem/@problem.ProblemId" class="list-group-item">
 				<h4 class="list-group-item-heading">Задача <b>@problem.Name</b></h4>
 				<p class="list-group-item-text"><i>Откликнулось исполнителей: @problem.Subscriptions.Count</i></p>
 			</a>
