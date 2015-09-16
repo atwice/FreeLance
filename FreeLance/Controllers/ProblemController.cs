@@ -10,6 +10,7 @@ using Microsoft.AspNet.Identity;
 
 namespace FreeLance.Controllers
 {
+	[Authorize]
 	public class ProblemController : Controller
 	{
 		private ApplicationDbContext db = new ApplicationDbContext();
@@ -20,8 +21,7 @@ namespace FreeLance.Controllers
 			public bool IsSubscibed { get; set; }
 			public List<SubscriptionModels> Subscriptions { get; set; }
 		}
-
-		[Authorize]
+		
 		public ActionResult Details(int? id)
 		{
 			if (id == null)
@@ -53,27 +53,26 @@ namespace FreeLance.Controllers
 			return View(db.ProblemModels.ToList());
 		}
 
-		// GET: Problem/Create
+		[Authorize(Roles = "Employer")]
 		public ActionResult Create()
 		{
 			return View();
 		}
 
-		// POST: Problem/Create
-		// To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-		// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
 		[HttpPost]
+		[Authorize(Roles = "Employer")]
 		[ValidateAntiForgeryToken]
-		public ActionResult Create([Bind(Include = "ProblemId,Name,Description,Status")] ProblemModels problemModels)
+		public ActionResult Create([Bind(Include = "ProblemId,Name,Description,Status")] ProblemModels problem)
 		{
 			if (ModelState.IsValid)
 			{
-				db.ProblemModels.Add(problemModels);
+				problem.Employer = db.Users.Find(User.Identity.GetUserId());
+				db.ProblemModels.Add(problem);
 				db.SaveChanges();
-				return RedirectToAction("Index");
+				return RedirectToAction("Details", new { id = problem.ProblemId });
 			}
 
-			return View(problemModels);
+			return View(problem);
 		}
 
 		// GET: Problem/Edit/5

@@ -61,8 +61,18 @@
 			@Html.DisplayNameFor(model => problem.Employer)
 		</dt>
 		<dd>
-			@Html.DisplayFor(model => problem.Employer.Id)
+			@Html.DisplayFor(model => problem.Employer.Email)
 		</dd>
+		<dt>
+			@Html.DisplayNameFor(model => problem.Contracts)
+		</dt>
+		<td>
+			@foreach (var contract in problem.Contracts)
+			{
+				@Html.ActionLink(contract.Details, "Details", "Contract", new { id = contract.ContractId }, null)
+			}
+		</td>
+
 		<dl class="dl-horizontal">
 			@if (Model.Subscriptions.Count() == 0)
 			{

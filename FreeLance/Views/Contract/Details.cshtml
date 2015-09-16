@@ -1,34 +1,13 @@
 ﻿@model FreeLance.Models.ContractModels
-
 @{
-    ViewBag.Title = "Details";
+	ViewBag.Title = "Contract";
 }
 
-<h2>Details</h2>
+<h2>@ViewBag.Title</h2>
 
-<div>
-    <h4>ContractModels</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Details)
-        </dt>
+<p>@Html.DisplayFor(model => model.Details)</p>
+<p><b>Problem: </b>@Html.ActionLink(Model.Problem.Name, "Details", "Problem", new { id = Model.Problem.ProblemId }, null)</p>
+<p><b>ID: </b>@Html.DisplayFor(model => model.ContractId)</p>
+<td><b>Status: </b>@Html.DisplayFor(model => model.Status)</td>
 
-        <dd>
-            @Html.DisplayFor(model => model.Details)
-        </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Status)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Status)
-        </dd>
-
-    </dl>
-</div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.ContractId }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>
