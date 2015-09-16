@@ -1,0 +1,4 @@
+# Custom for Visual Studio
+*.cs eol=crlf
+*.sln text eol=crlf merge=union 
+*.csproj eol=crlf merge=union
