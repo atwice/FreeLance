@@ -14,10 +14,10 @@ namespace FreeLance.Controllers
 	{
 		private ApplicationDbContext db = new ApplicationDbContext();
 
-		public class HomeView
+		public class HomeViewModel
 		{
-			public List<ContractModels> Contracts { get; set; }
-			public List<ProblemModels> Problems { get; set; }
+			public List<ContractModels> ActualContracts { get; set; }
+			public List<ProblemModels> OpenProblems { get; set; }
 		}
 
 		public class ProblemView
@@ -46,7 +46,17 @@ namespace FreeLance.Controllers
 		// GET: Employer
 		public ActionResult Home()
 		{
-			return View();
+			string userId = User.Identity.GetUserId();
+			var model = new HomeViewModel();
+			model.ActualContracts = db.ContractModels.Where(
+				c => c.Problem.Employer.Id == userId
+					&& c.Status == ContractStatus.InProgress
+				).ToList();
+			model.OpenProblems = db.ProblemModels.Where(
+				p => p.Employer.Id == userId
+					&& p.Status == ProblemStatus.Opened
+				).ToList();
+			return View( model );
 		}
 
 		public ActionResult Archive()
