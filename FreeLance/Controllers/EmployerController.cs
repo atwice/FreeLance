@@ -26,6 +26,11 @@ namespace FreeLance.Controllers
 			public ProblemModels Problem { get; set; }
 		}
 
+		public class FreelancerViewModel
+		{
+			public String Name { get; set; }
+		}
+
 		public ActionResult Index()
 		{
 			return RedirectToAction("Home");
@@ -50,7 +55,7 @@ namespace FreeLance.Controllers
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
 			ProblemModels problemModels = db.ProblemModels.Find(id);
-			
+
 			// check if employer is this problem's owner?
 			if (problemModels == null)
 			{
@@ -67,7 +72,19 @@ namespace FreeLance.Controllers
 
 		public ActionResult Freelancers()
 		{
-			return View();
+			var model = getApplicationUsersInRole("Freelancer").Select(
+				u => new FreelancerViewModel { Name = u.UserName } ).ToList();
+			return View( model );
+		}
+
+		private IEnumerable<ApplicationUser> getApplicationUsersInRole(string roleName)
+		{
+			return from role in db.Roles
+				   where role.Name == roleName
+				   from userRoles in role.Users
+				   join user in db.Users
+				   on userRoles.UserId equals user.Id
+				   select user;
 		}
 
 		public ActionResult NewProblem()
@@ -86,7 +103,7 @@ namespace FreeLance.Controllers
 				db.SaveChanges();
 				return RedirectToAction("Problem", new { id = problem.ProblemId });
 			}
-			
+
 			return View(problem);
 		}
 
