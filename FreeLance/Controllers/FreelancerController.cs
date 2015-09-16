@@ -70,15 +70,6 @@ namespace FreeLance.Controllers
 			ViewBag.contractsSize = contracts.LongCount();
 			ViewBag.subscriptionsSize = subscriptions.LongCount();
 			return View();
-			SubscriptionModels[] subscriptions = db.SubscriptionModels.Where(sub => sub.Freelancer.Id == userId
-													&& sub.Problem.ProblemId == id).Distinct().ToArray();
-			SubscriptionModels subscription = subscriptions.Length > 0 ? subscriptions[0] : null;
-			ProblemView view = new ProblemView
-			{
-				ProblemModels = problemModels,
-				IsSubscibed = subscription != null
-			};
-			return View(view);
 		}
 
 		public ViewResult OpenProblems()
