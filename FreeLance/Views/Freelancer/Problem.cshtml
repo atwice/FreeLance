@@ -1,0 +1,81 @@
+﻿@model FreeLance.Controllers.FreelancerController.ProblemView
+@{ FreeLance.Models.ProblemModels problem = Model.ProblemModels;
+	bool isSubscribed = Model.IsSubscibed;}
+
+@{
+    ViewBag.Title = "Open problem";
+}
+
+<div>
+    <h4>Problem Info</h4>
+    <hr />
+	@if (!isSubscribed)
+	{
+		if (Context.User.IsInRole("Freelancer"))
+		{
+			using (Html.BeginForm("Subscribe", "Subscription", FormMethod.Post))
+			{
+			<input name="id" type="hidden" value="@problem.ProblemId" />
+			<input style="margin-left: 80px;" type="submit" class="btn btn-success btn-lg" value="Подписаться на задачу" />
+			}
+		}
+	}
+	else
+	{
+		if (Context.User.IsInRole("Freelancer"))
+		{
+			using (Html.BeginForm("UnSubscribe", "Subscription", FormMethod.Post))
+			{
+				<input name="id" type="hidden" value="@problem.ProblemId" />
+				<input style="margin-left: 80px;" type="submit" class="btn btn-success btn-lg" value="Отписываюсь!!!111" />
+			}
+		}
+	}
+
+    @*<a href="@Url.Action("Details", "Contract")">
+        <button style="margin-left: 80px;" type="button" class="btn btn-success btn-lg">Подписаться на задачу</button>
+    </a>*@
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => problem.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => problem.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => problem.Description)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => problem.Description)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => problem.Status)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => problem.Status)
+        </dd>
+
+		<dt>
+			@Html.DisplayNameFor(model => problem.Cost)
+		</dt>
+		<dd>
+			@Html.DisplayFor(model => problem.Cost)
+		</dd>
+
+		<dt>
+			@Html.DisplayNameFor(model => problem.Employer)
+		</dt>
+		<dd>
+			@Html.DisplayFor(model => problem.Employer.Id)
+		</dd>
+
+    </dl>
+<p>
+    @Html.ActionLink("Back to List", "OpenProblems")
+</p>
+
