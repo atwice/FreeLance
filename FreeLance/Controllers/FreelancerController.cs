@@ -22,7 +22,7 @@ namespace FreeLance.Controllers
 
         public ActionResult Index()
         {
-            return Redirect("Home");
+            return RedirectToAction("Home");
         }
 
         // GET: Freelancer
