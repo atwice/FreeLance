@@ -65,6 +65,11 @@ namespace FreeLance.Controllers
 				return HttpNotFound();
 			}
 			string userId = User.Identity.GetUserId();
+			var contracts = db.ContractModels.Where(t => t.Freelancer.Id.Equals(userId)).ToList();
+			var subscriptions = db.SubscriptionModels.Where(t => t.Freelancer.Id.Equals(userId)).ToList();
+			ViewBag.contractsSize = contracts.LongCount();
+			ViewBag.subscriptionsSize = subscriptions.LongCount();
+			return View();
 			SubscriptionModels[] subscriptions = db.SubscriptionModels.Where(sub => sub.Freelancer.Id == userId
 													&& sub.Problem.ProblemId == id).Distinct().ToArray();
 			SubscriptionModels subscription = subscriptions.Length > 0 ? subscriptions[0] : null;
@@ -80,6 +85,16 @@ namespace FreeLance.Controllers
 		{
 			ProblemModels[] openProblems = db.ProblemModels.Where(x => x.Status == 0).ToArray();
 			return View(openProblems);
+		}
+
+		public ActionResult Profile()
+		{
+			string userId = User.Identity.GetUserId();
+			var contracts = db.ContractModels.Where(t => t.Freelancer.Id.Equals(userId)).ToList();
+			var subscriptions = db.SubscriptionModels.Where(t => t.Freelancer.Id.Equals(userId)).ToList();
+			ViewBag.contractsSize = contracts.LongCount();
+			ViewBag.subscriptionsSize = subscriptions.LongCount();
+			return View();
 		}
 	}
 }

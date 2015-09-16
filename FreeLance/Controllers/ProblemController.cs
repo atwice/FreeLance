@@ -6,12 +6,46 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using FreeLance.Models;
+using Microsoft.AspNet.Identity;
 
 namespace FreeLance.Controllers
 {
+	[Authorize]
 	public class ProblemController : Controller
 	{
 		private ApplicationDbContext db = new ApplicationDbContext();
+
+		public class DetailsView
+		{
+			public ProblemModels ProblemModels { get; set; }
+			public bool IsSubscibed { get; set; }
+			public List<SubscriptionModels> Subscriptions { get; set; }
+		}
+		
+		public ActionResult Details(int? id)
+		{
+			if (id == null)
+			{
+				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+			}
+
+			ProblemModels problemModels = db.ProblemModels.Find(id);
+			if (problemModels == null)
+			{
+				return HttpNotFound();
+			}
+			string userId = User.Identity.GetUserId();
+			SubscriptionModels[] subscriptions = db.SubscriptionModels.Where(sub => sub.Freelancer.Id == userId
+													&& sub.Problem.ProblemId == id).Distinct().ToArray();
+			SubscriptionModels subscription = subscriptions.Length > 0 ? subscriptions[0] : null;
+			DetailsView view = new DetailsView
+			{
+				ProblemModels = problemModels,
+				IsSubscibed = subscription != null,
+				Subscriptions = db.SubscriptionModels.Where(x => x.Problem.ProblemId == id).ToList()
+			};
+			return View(view);
+		}
 
 		// GET: Problem
 		public ActionResult Index()
@@ -19,42 +53,26 @@ namespace FreeLance.Controllers
 			return View(db.ProblemModels.ToList());
 		}
 
-		// GET: Problem/Details/5
-		public ActionResult Details(int? id)
-		{
-			if (id == null)
-			{
-				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-			}
-			ProblemModels problemModels = db.ProblemModels.Find(id);
-			if (problemModels == null)
-			{
-				return HttpNotFound();
-			}
-			return View(problemModels);
-		}
-
-		// GET: Problem/Create
+		[Authorize(Roles = "Employer")]
 		public ActionResult Create()
 		{
 			return View();
 		}
 
-		// POST: Problem/Create
-		// To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-		// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
 		[HttpPost]
+		[Authorize(Roles = "Employer")]
 		[ValidateAntiForgeryToken]
-		public ActionResult Create([Bind(Include = "ProblemId,Name,Description,Status")] ProblemModels problemModels)
+		public ActionResult Create([Bind(Include = "ProblemId,Name,Description,Status")] ProblemModels problem)
 		{
 			if (ModelState.IsValid)
 			{
-				db.ProblemModels.Add(problemModels);
+				problem.Employer = db.Users.Find(User.Identity.GetUserId());
+				db.ProblemModels.Add(problem);
 				db.SaveChanges();
-				return RedirectToAction("Index");
+				return RedirectToAction("Details", new { id = problem.ProblemId });
 			}
 
-			return View(problemModels);
+			return View(problem);
 		}
 
 		// GET: Problem/Edit/5

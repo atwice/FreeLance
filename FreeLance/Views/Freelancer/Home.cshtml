@@ -28,7 +28,7 @@
                 <tr>
                     <td>@Html.DisplayFor(modelItem => item.ContractId)</td>
                     <td>@Html.DisplayFor(modelItem => item.Details)</td>
-                    <td>@Html.ActionLink(item.Problem.Name, "Problem", new { id = item.Problem.ProblemId })</td>
+                    <td>@Html.ActionLink(item.Problem.Name, "Details", "Problem", new { id = item.Problem.ProblemId }, null)</td>
                     <td>@Html.DisplayFor(modelItem => item.Status)</td>
                 </tr>}
 
@@ -53,10 +53,10 @@
                     <td>
                         @foreach (var contract in item.Contracts)
                         {
-                            <p>@Html.ActionLink(contract.Details, "Contract", new { id = contract.ContractId })</p>
+                            <p>@Html.ActionLink(contract.Details, "Details", "Contract", new { id = contract.ContractId }, null)</p>
                         }
                     </td>
-                    <td>@Html.ActionLink(item.Name, "Problem", new { id = item.ProblemId })</td>
+                    <td>@Html.ActionLink(item.Name, "Details", "Problem", new { id = item.ProblemId }, null)</td>
                     <td>@Html.DisplayFor(modelItem => item.Description)</td>
                     <td>@Html.DisplayFor(modelItem => item.ProblemId)</td>
                     <th>@Html.DisplayFor(modelItem => item.Status)</th>
@@ -66,6 +66,7 @@
     </div>
     <div class="col-md-2">
         <ul class="nav nav-pills nav-stacked">
+            <li role="presentation">@Html.ActionLink("Профиль", "Profile", "Freelancer")</li>
             <li role="presentation" class="active">@Html.ActionLink("Личный кабинет", "Home", "Freelancer")</li>
             <li role="presentation">@Html.ActionLink("Биржа", "OpenProblems", "Freelancer")</li>
             <li role="presentation">@Html.ActionLink("Архив", "Archive", "Freelancer")</li>

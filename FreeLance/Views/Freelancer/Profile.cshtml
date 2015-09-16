@@ -1,0 +1,17 @@
+﻿@{
+    ViewBag.Title = "Profile";
+}
+
+<h2>
+		@{  if (Context.User.Identity.IsAuthenticated)
+            {
+			    @User.Identity.Name
+            }
+            else
+            {
+                @Html.Display("You are not registered!");
+            }
+        }
+</h2>
+<h3>Всего подписок: @ViewBag.subscriptionsSize </h3>
+<h3>Всего контрактов: @ViewBag.contractsSize</h3>

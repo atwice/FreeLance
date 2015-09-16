@@ -1,42 +1,97 @@
-﻿@model FreeLance.Models.ProblemModels
-
+﻿@model FreeLance.Controllers.ProblemController.DetailsView
+@{ FreeLance.Models.ProblemModels problem = Model.ProblemModels;
+	bool isSubscribed = Model.IsSubscibed;}
 @{
-    ViewBag.Title = "Details";
+	ViewBag.Title = "Problem";
 }
-
-<h2>Details</h2>
-
 <div>
-    <h4>ProblemModels</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
+	<h4>Problem Info</h4>
+	<hr />
+	@if (!isSubscribed)
+	{
+		if (Context.User.IsInRole("Freelancer"))
+		{
+			using (Html.BeginForm("Subscribe", "Subscription", FormMethod.Post))
+			{
+				<input name="id" type="hidden" value="@problem.ProblemId" />
+				<input style="margin-left: 80px;" type="submit" class="btn btn-success btn-lg" value="Подписаться на задачу" />
+			}
+		}
+	}
+	else
+	{
+		if (Context.User.IsInRole("Freelancer"))
+		{
+			using (Html.BeginForm("UnSubscribe", "Subscription", FormMethod.Post))
+			{
+				<input name="id" type="hidden" value="@problem.ProblemId" />
+				<input style="margin-left: 80px;" type="submit" class="btn btn-success btn-lg" value="Отписываюсь!!!111" />
+			}
+		}
+	}
+	@*<a href="@Url.Action("Details", "Contract")">
+			<button style="margin-left: 80px;" type="button" class="btn btn-success btn-lg">Подписаться на задачу</button>
+		</a>*@
+	<dl class="dl-horizontal">
+		<dt>
+			@Html.DisplayNameFor(model => problem.Name)
+		</dt>
+		<dd>
+			@Html.DisplayFor(model => problem.Name)
+		</dd>
+		<dt>
+			@Html.DisplayNameFor(model => problem.Description)
+		</dt>
+		<dd>
+			@Html.DisplayFor(model => problem.Description)
+		</dd>
+		<dt>
+			@Html.DisplayNameFor(model => problem.Status)
+		</dt>
+		<dd>
+			@Html.DisplayFor(model => problem.Status)
+		</dd>
+		<dt>
+			@Html.DisplayNameFor(model => problem.Cost)
+		</dt>
+		<dd>
+			@Html.DisplayFor(model => problem.Cost)
+		</dd>
+		<dt>
+			@Html.DisplayNameFor(model => problem.Employer)
+		</dt>
+		<dd>
+			@Html.DisplayFor(model => problem.Employer.Email)
+		</dd>
+		<dt>
+			@Html.DisplayNameFor(model => problem.Contracts)
+		</dt>
+		<td>
+			@foreach (var contract in problem.Contracts)
+			{
+				@Html.ActionLink(contract.Details, "Details", "Contract", new { id = contract.ContractId }, null)
+			}
+		</td>
 
-        <dd>
-            @Html.DisplayFor(model => model.Name)
-        </dd>
+		<dl class="dl-horizontal">
+			@if (Model.Subscriptions.Count() == 0)
+			{
+				<dd>No subscriptions</dd>
+			}
+			else
+			{
+				foreach (var subscription in Model.Subscriptions)
+				{
+					<dd>
+						<a href="@Url.Action("Profile", "Freelancer", new { id = subscription.Freelancer.Id })">
+							@Html.DisplayFor(x => subscription.Freelancer.UserName)
+						</a>
+					</dd>
+				}
+			}
+		</dl>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Status)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Status)
-        </dd>
-
-    </dl>
-</div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.ProblemId }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>
+	</dl>
+	<p>
+		@Html.ActionLink("Back to List", "OpenProblems", "Freelancer")
+	</p>
