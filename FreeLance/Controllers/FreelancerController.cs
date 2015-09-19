@@ -28,10 +28,16 @@ namespace FreeLance.Controllers
 		// GET: Freelancer
 		public ActionResult Home()
 		{
+			string userId = User.Identity.GetUserId();
 			var viewModel = new HomeView
 			{
-				Contracts = db.ContractModels.ToList(),
-				Problems = db.ProblemModels.ToList()
+				Contracts = db.ContractModels.Where(
+					contract => contract.Status != ContractStatus.Done
+						&& contract.Freelancer != null
+						&& contract.Freelancer.Id == userId
+					).ToList(),
+				Problems = db.SubscriptionModels.Where(subscription => subscription.Freelancer.Id == userId)
+												.Select(subscription => subscription.Problem).ToList()
 			};
 			return View(viewModel);
 		}

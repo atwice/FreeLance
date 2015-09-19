@@ -1,4 +1,5 @@
-﻿@model FreeLance.Models.ContractModels
+﻿@using Microsoft.AspNet.Identity
+@model FreeLance.Models.ContractModels
 @{
 	ViewBag.Title = "Contract";
 }
@@ -10,4 +11,27 @@
 <p><b>ID: </b>@Html.DisplayFor(model => model.ContractId)</p>
 <td><b>Status: </b>@Html.DisplayFor(model => model.Status)</td>
 
+@if (Context.User.IsInRole("Freelancer") && Context.User.Identity.GetUserId() == Model.Freelancer.Id)
+{
+	if (Model.Status == FreeLance.Models.ContractStatus.Opened)
+	{
+		using (Html.BeginForm("ChangeStatus", "Contract", FormMethod.Post))
+		{
+			<input name="id" type="hidden" value="@Model.ContractId" />
+			<input name="status" type="hidden" value="@FreeLance.Models.ContractStatus.Done" />
+			<input name="redirect" type="hidden" value="/Contract/Details/@Model.ContractId" />
+			<input style="margin-left: 80px;" type="submit" class="btn btn-success btn-lg" value="Завершить контракт" />
+		}
+	}
+	else
+	{
+		using (Html.BeginForm("ChangeStatus", "Contract", FormMethod.Post))
+		{
+			<input name="id" type="hidden" value="@Model.ContractId" />
+			<input name="status" type="hidden" value="@FreeLance.Models.ContractStatus.Opened" />
+			<input name="redirect" type="hidden" value="/Contract/Details/@Model.ContractId" />
+			<input style="margin-left: 80px;" type="submit" class="btn btn-success btn-lg" value="Открыть заново" />
+		}
+	}
+}
 

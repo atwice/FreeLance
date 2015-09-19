@@ -26,7 +26,7 @@
             @foreach (var item in Model.Contracts)
             {
                 <tr>
-                    <td>@Html.DisplayFor(modelItem => item.ContractId)</td>
+                    <td>@Html.ActionLink(item.ContractId.ToString(), "Details", "Contract", new { id = item.ContractId }, null)</td>
                     <td>@Html.DisplayFor(modelItem => item.Details)</td>
                     <td>@Html.ActionLink(item.Problem.Name, "Details", "Problem", new { id = item.Problem.ProblemId }, null)</td>
                     <td>@Html.DisplayFor(modelItem => item.Status)</td>

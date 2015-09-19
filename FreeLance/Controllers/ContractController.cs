@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using FreeLance.Models;
+using Microsoft.AspNet.Identity;
 
 namespace FreeLance.Controllers
 {
@@ -57,6 +58,22 @@ namespace FreeLance.Controllers
 
 			return View(contractModels);
 		}
+
+		[HttpPost]
+		[Authorize(Roles = "Freelancer")]
+		public ActionResult ChangeStatus(int id, ContractStatus status, string redirect)
+		{
+			string userId = User.Identity.GetUserId();
+			ContractModels contract = db.ContractModels.Find(id);
+			if (contract == null || contract.Freelancer == null || contract.Freelancer.Id != userId)
+			{
+				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+			}
+			contract.Status = status;
+			db.SaveChanges();
+			return Redirect(redirect == null ? "/Contract/Details/" + id.ToString() : redirect);
+		}
+
 
 		// GET: Contract/Edit/5
 		public ActionResult Edit(int? id)
