@@ -49,23 +49,22 @@
         @if (Context.User.IsInRole("Employer"))
         {
 		    <dt>@Html.DisplayNameFor(model => problem.Contracts)</dt>
-            <td>
-                if (Model.Contracts.Count() == 0)
+                if (Model.ProblemModels.Contracts.Count() == 0)
                 {
                     <dd>No contracts</dd>    
                 }
                 else
                 {
-			        @foreach (var contract in problem.Contracts)
+			        foreach (var contract in problem.Contracts)
                     {
 				        @Html.ActionLink(contract.Details, "Details", "Contract", new { id = contract.ContractId }, null)
-                    }
+					}
                 }
-		    </td>
+		    
         }
 
         <dt>@Html.DisplayNameFor(model => problem.Subscriptions)</dt>
-        <td>
+        
 			@if (Model.Subscriptions.Count() == 0)
 			{
 				<dd>No subscriptions</dd>
@@ -77,9 +76,15 @@
 					<dd>
                         @Html.ActionLink(subscription.Freelancer.UserName, "Profile", "Freelancer", new { id = subscription.Freelancer.Id }, null)
 					</dd>
+					<dd>
+						@Html.ActionLink("Подписать контракт", "Create", "Contract", new {
+							problemID = Model.ProblemModels.ProblemId,
+							freelancerId = subscription.Freelancer.Id
+						} , null)
+					</dd>
 				}
 			}
-        </td>
+        
 
 	</dl>
 	<p>

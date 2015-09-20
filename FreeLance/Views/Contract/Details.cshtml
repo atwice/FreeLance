@@ -13,7 +13,7 @@
 
 @if (Context.User.IsInRole("Freelancer") && Context.User.Identity.GetUserId() == Model.Freelancer.Id)
 {
-	if (Model.Status == FreeLance.Models.ContractStatus.InProgress)
+	if (Model.Status != FreeLance.Models.ContractStatus.Done)
 	{
 		using (Html.BeginForm("ChangeStatus", "Contract", FormMethod.Post))
 		{

@@ -32,7 +32,7 @@ namespace FreeLance.Controllers
 			var viewModel = new HomeView
 			{
 				Contracts = db.ContractModels.Where(
-					contract => contract.Status != ContractStatus.Done
+					contract => contract.Status != ContractStatus.Closed
 						&& contract.Freelancer != null
 						&& contract.Freelancer.Id == userId
 					).ToList(),

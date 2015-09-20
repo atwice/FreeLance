@@ -37,9 +37,16 @@ namespace FreeLance.Controllers
 		}
 
 		// GET: Contract/Create
-		public ActionResult Create()
+		[Authorize(Roles = "Employer")]
+		public ActionResult Create(int problemId, string freelancerId)
 		{
-			return View();
+			ProblemModels problem = db.ProblemModels.Find(problemId);
+			ApplicationUser freelancer = db.Users.Find(freelancerId);
+			if (problem == null || freelancer == null || problem.Employer.Id != User.Identity.GetUserId())
+			{
+				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+			}
+			return View(new ContractModels { Problem = problem, Freelancer = freelancer });
 		}
 
 		// POST: Contract/Create
@@ -47,20 +54,32 @@ namespace FreeLance.Controllers
 		// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public ActionResult Create([Bind(Include = "ContractId,Details,Status")] ContractModels contractModels)
+		[Authorize(Roles = "Employer")]
+		public ActionResult Create([Bind(Include = "Details")] ContractModels contract, 
+			int problemId, string freelancerId, string redirect)
 		{
-			if (ModelState.IsValid)
+			string userId = User.Identity.GetUserId();
+			ProblemModels problem = db.ProblemModels.Find(problemId);
+			ApplicationUser freelancer = db.Users.Find(freelancerId);
+			SubscriptionModels[] subscriptions = db.SubscriptionModels.Where(sub => sub.Freelancer.Id == freelancerId
+													&& sub.Problem.ProblemId == problemId).Distinct().ToArray();
+			SubscriptionModels subscription = subscriptions.Length > 0 ? subscriptions[0] : null;
+			if (subscription == null || problem == null || freelancer == null || problem.Employer.Id != userId) // || problem.Status == Opened
 			{
-				db.ContractModels.Add(contractModels);
-				db.SaveChanges();
-				return RedirectToAction("Index");
+				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
+			contract.Problem = problem;
+			contract.Status = ContractStatus.Opened;
+			contract.Freelancer = freelancer;
 
-			return View(contractModels);
+			db.ContractModels.Add(contract);
+			db.SubscriptionModels.Remove(subscription);
+			db.SaveChanges();
+			return Redirect(redirect == null ? "/Contract/Details/" + contract.ContractId.ToString() : redirect);
 		}
 
 		[HttpPost]
-		[Authorize]
+		[Authorize(Roles = "Employer, Freelancer")]
 		public ActionResult ChangeStatus(int id, ContractStatus status, string redirect)
 		{
 			string userId = User.Identity.GetUserId();
