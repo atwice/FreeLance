@@ -4,6 +4,76 @@
 	ViewBag.Title = "Contract";
 }
 
+<div>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+<h2>Описание контракта: @Html.DisplayFor(model => model.Problem.Name)</h2>
+        </div>
+        <div class="panel-body">
+            <p> <strong>Общее описание: </strong> @Html.DisplayFor(model => model.Problem.Description)</p>
+            <p> <strong>Детали: </strong> @Html.DisplayFor(model => model.Details)</p>
+            <table class="table">
+                <tbody>
+                <tr>
+                    <td><span class="glyphicon glyphicon-euro" aria-hidden="true"></span> @Html.DisplayFor(model => model.Problem.Cost)</td>
+                    <td><span class="glyphicon glyphicon-user" aria-hidden="true"></span> @Html.DisplayFor(model => model.Problem.Employer.UserName)</td>
+                    <td>Статус: @Html.DisplayFor(model => model.Status)</td>
+                    <td>Id: @Html.DisplayFor(model => model.ContractId)</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="panel-footer">
+            @if (Context.User.IsInRole("Freelancer") && Context.User.Identity.GetUserId() == Model.Freelancer.Id)
+            {
+                if (Model.Status != FreeLance.Models.ContractStatus.Done)
+                {
+                    using (Html.BeginForm("ChangeStatus", "Contract", FormMethod.Post))
+                    {
+                        <input name="id" type="hidden" value="@Model.ContractId" />
+                        <input name="status" type="hidden" value="@FreeLance.Models.ContractStatus.Done" />
+                        <input name="redirect" type="hidden" value="/Contract/Details/@Model.ContractId" />
+                        <input type="submit" class="btn btn-success btn-lg" value="Завершить контракт" />
+                    }
+                }
+                else
+                {
+                    using (Html.BeginForm("ChangeStatus", "Contract", FormMethod.Post))
+                    {
+                        <input name="id" type="hidden" value="@Model.ContractId" />
+                        <input name="status" type="hidden" value="@FreeLance.Models.ContractStatus.Opened" />
+                        <input name="redirect" type="hidden" value="/Contract/Details/@Model.ContractId" />
+                        <input type="submit" class="btn btn-danger btn-lg" value="Открыть заново" />
+                    }
+                }
+            }
+
+            @if (Context.User.IsInRole("Employer") && Context.User.Identity.GetUserId() == Model.Problem.Employer.Id)
+            {
+                if (Model.Status == FreeLance.Models.ContractStatus.Done)
+                {
+                    using (Html.BeginForm("ChangeStatus", "Contract", FormMethod.Post))
+                    {
+                        <input name="id" type="hidden" value="@Model.ContractId" />
+                        <input name="status" type="hidden" value="@FreeLance.Models.ContractStatus.Closed" />
+                        <input name="redirect" type="hidden" value="/Contract/Details/@Model.ContractId" />
+                        <input type="submit" class="btn btn-success btn-lg" value="Принять работу" />
+                    }
+
+                    using (Html.BeginForm("ChangeStatus", "Contract", FormMethod.Post))
+                    {
+                        <input name="id" type="hidden" value="@Model.ContractId" />
+                        <input name="status" type="hidden" value="@FreeLance.Models.ContractStatus.InProgress" />
+                        <input name="redirect" type="hidden" value="/Contract/Details/@Model.ContractId" />
+                        <input  type="submit" class="btn btn-danger btn-lg" value="Отправить на доработку" />
+                    }
+                }
+            }
+
+        </div>
+    </div>
+</div>
+
 <h2>@ViewBag.Title</h2>
 
 <p>@Html.DisplayFor(model => model.Details)</p>
@@ -11,48 +81,3 @@
 <p><b>ID: </b>@Html.DisplayFor(model => model.ContractId)</p>
 <td><b>Status: </b>@Html.DisplayFor(model => model.Status)</td>
 
-@if (Context.User.IsInRole("Freelancer") && Context.User.Identity.GetUserId() == Model.Freelancer.Id)
-{
-	if (Model.Status != FreeLance.Models.ContractStatus.Done)
-	{
-		using (Html.BeginForm("ChangeStatus", "Contract", FormMethod.Post))
-		{
-			<input name="id" type="hidden" value="@Model.ContractId" />
-			<input name="status" type="hidden" value="@FreeLance.Models.ContractStatus.Done" />
-			<input name="redirect" type="hidden" value="/Contract/Details/@Model.ContractId" />
-			<input style="margin-left: 80px;" type="submit" class="btn btn-success btn-lg" value="Завершить контракт" />
-		}
-	}
-	else
-	{
-		using (Html.BeginForm("ChangeStatus", "Contract", FormMethod.Post))
-		{
-			<input name="id" type="hidden" value="@Model.ContractId" />
-			<input name="status" type="hidden" value="@FreeLance.Models.ContractStatus.Opened" />
-			<input name="redirect" type="hidden" value="/Contract/Details/@Model.ContractId" />
-			<input style="margin-left: 80px;" type="submit" class="btn btn-success btn-lg" value="Открыть заново" />
-		}
-	}
-}
-
-@if (Context.User.IsInRole("Employer") && Context.User.Identity.GetUserId() == Model.Problem.Employer.Id)
-{
-    if (Model.Status == FreeLance.Models.ContractStatus.Done)
-    {
-        using (Html.BeginForm("ChangeStatus", "Contract", FormMethod.Post))
-        {
-            <input name="id" type="hidden" value="@Model.ContractId" />
-            <input name="status" type="hidden" value="@FreeLance.Models.ContractStatus.Closed" />
-            <input name="redirect" type="hidden" value="/Contract/Details/@Model.ContractId" />
-            <input style="margin-left: 80px;" type="submit" class="btn btn-success btn-lg" value="Принять работу" />
-        }
-
-        using (Html.BeginForm("ChangeStatus", "Contract", FormMethod.Post))
-        {
-            <input name="id" type="hidden" value="@Model.ContractId" />
-            <input name="status" type="hidden" value="@FreeLance.Models.ContractStatus.InProgress" />
-            <input name="redirect" type="hidden" value="/Contract/Details/@Model.ContractId" />
-            <input style="margin-left: 80px;" type="submit" class="btn btn-success btn-lg" value="Отправить на доработку" />
-        }
-    }
-}

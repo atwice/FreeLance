@@ -1,18 +1,19 @@
 ﻿@{
     ViewBag.Title = "Profile";
 }
-
-<h2>
-		@{  if (Context.User.Identity.IsAuthenticated)
+<h2>Профиль</h2>
+<p> <strong>Электронная почта: </strong>
+    @{  if (Context.User.Identity.IsAuthenticated)
             {
-			    @User.Identity.Name
-            }
-            else
-            {
-                @Html.Display("You are not registered!");
-            }
+            @User.Identity.Name
         }
-</h2>
-<h3>Всего подписок: @ViewBag.subscriptionsSize </h3>
-<h3>Всего контрактов: @ViewBag.contractsSize</h3>
+        else
+        {
+            @Html.Display("You are not registered!");
+            }
+    }
+</p>
+
+<p> <strong>Всего подписок: </strong> @ViewBag.subscriptionsSize </p>
+<p> <strong>Всего контрактов: </strong> @ViewBag.contractsSize</p>
 
