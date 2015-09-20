@@ -4,8 +4,6 @@
 }
 
 <h2>@ViewBag.Title</h2>
-<div class="row">
-    <div class="col-md-10">
         <h3>Биржа. Открытые задачи.</h3>
         <table class="table">
 
@@ -33,12 +31,3 @@
                 </tr>}
 
         </table>
-    </div>
-    <div class="col-md-2">
-        <ul class="nav nav-pills nav-stacked">
-            <li role="presentation">@Html.ActionLink("Личный кабинет", "Home", "Freelancer")</li>
-            <li role="presentation" class="active">@Html.ActionLink("Биржа", "OpenProblems", "Freelancer")</li>
-            <li role="presentation">@Html.ActionLink("Архив", "Archive", "Freelancer")</li>
-        </ul>
-    </div>
-</div>
