@@ -60,12 +60,12 @@ namespace FreeLance.Controllers
 		}
 
 		[HttpPost]
-		[Authorize(Roles = "Freelancer")]
+		[Authorize]
 		public ActionResult ChangeStatus(int id, ContractStatus status, string redirect)
 		{
 			string userId = User.Identity.GetUserId();
 			ContractModels contract = db.ContractModels.Find(id);
-			if (contract == null || contract.Freelancer == null || contract.Freelancer.Id != userId)
+			if (contract == null || contract.Freelancer == null)
 			{
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}

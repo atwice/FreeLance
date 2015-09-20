@@ -10,12 +10,28 @@
 		<div class="list-group">
 			@foreach (var contract in Model.ActualContracts)
 			{
-			<a href="/Contract/Details/@contract.ContractId" class="list-group-item">
-				<h4 class="list-group-item-heading">Контракт по задаче <b>@contract.Problem.Name</b></h4>
-				<p class="list-group-item-text"><i>Исполнитель: @contract.Freelancer.UserName</i></p>
-				<p class="list-group-item-text"> @contract.Details</p>
-			</a>
-			}
+			    <a href="/Contract/Details/@contract.ContractId" class="list-group-item">
+				    <h4 class="list-group-item-heading">Контракт по задаче <b>@contract.Problem.Name</b></h4>
+				    <p class="list-group-item-text"><i>Исполнитель: @contract.Freelancer.UserName</i></p>
+				    <p class="list-group-item-text"> @contract.Details</p>
+
+                    @using (Html.BeginForm("ChangeStatus", "Contract", FormMethod.Post))
+                    {
+                        <input name="id" type="hidden" value="@contract.ContractId" />
+                        <input name="status" type="hidden" value="@FreeLance.Models.ContractStatus.Closed" />
+                        <input name="redirect" type="hidden" value="/Contract/Details/@contract.ContractId" />
+                        <input style="margin-top: 20px;" type="submit" class="btn btn-success btn-lg" value="Принять работу" />
+                    }
+
+                    @using (Html.BeginForm("ChangeStatus", "Contract", FormMethod.Post))
+                    {
+                        <input name="id" type="hidden" value="@contract.ContractId" />
+                        <input name="status" type="hidden" value="@FreeLance.Models.ContractStatus.InProgress" />
+                        <input name="redirect" type="hidden" value="/Contract/Details/@contract.ContractId" />
+                        <input style="margin-top: 10px;" type="submit" class="btn btn-success btn-lg" value="Отправить на доработку" />
+                    }
+                </a>
+            }
 		</div>
 		<h3>Мои открытые задачи</h3>
 		<div class="list-group">

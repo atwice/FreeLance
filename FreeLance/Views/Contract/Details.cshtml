@@ -13,7 +13,7 @@
 
 @if (Context.User.IsInRole("Freelancer") && Context.User.Identity.GetUserId() == Model.Freelancer.Id)
 {
-	if (Model.Status == FreeLance.Models.ContractStatus.Opened)
+	if (Model.Status == FreeLance.Models.ContractStatus.InProgress)
 	{
 		using (Html.BeginForm("ChangeStatus", "Contract", FormMethod.Post))
 		{
@@ -35,3 +35,24 @@
 	}
 }
 
+@if (Context.User.IsInRole("Employer") && Context.User.Identity.GetUserId() == Model.Problem.Employer.Id)
+{
+    if (Model.Status == FreeLance.Models.ContractStatus.Done)
+    {
+        using (Html.BeginForm("ChangeStatus", "Contract", FormMethod.Post))
+        {
+            <input name="id" type="hidden" value="@Model.ContractId" />
+            <input name="status" type="hidden" value="@FreeLance.Models.ContractStatus.Closed" />
+            <input name="redirect" type="hidden" value="/Contract/Details/@Model.ContractId" />
+            <input style="margin-left: 80px;" type="submit" class="btn btn-success btn-lg" value="Принять работу" />
+        }
+
+        using (Html.BeginForm("ChangeStatus", "Contract", FormMethod.Post))
+        {
+            <input name="id" type="hidden" value="@Model.ContractId" />
+            <input name="status" type="hidden" value="@FreeLance.Models.ContractStatus.InProgress" />
+            <input name="redirect" type="hidden" value="/Contract/Details/@Model.ContractId" />
+            <input style="margin-left: 80px;" type="submit" class="btn btn-success btn-lg" value="Отправить на доработку" />
+        }
+    }
+}
