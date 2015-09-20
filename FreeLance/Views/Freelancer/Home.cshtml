@@ -8,57 +8,60 @@
 }
 
 <h2>@ViewBag.Title</h2>
+@if (Model.Contracts.Any())
+{
+    <h3>Мои открытые контракты</h3>
+    <table class="table table-striped table-bordered">
+        <tr>
+            <th>Задача</th>
+            <th>Описание</th>
+            <th>Заказчик</th>
+            <th>Статус</th>
+        </tr>
 
-        <h3>Контракты</h3>
-        <table class="table">
+        @foreach (var item in Model.Contracts)
+        {
+            <tr>
+                <td>@Html.ActionLink(item.Problem.Name, "Details", "Contract", new {id = item.ContractId}, null)</td>
+                <td>@Html.DisplayFor(modelItem => item.Details)</td>
+                <td>@Html.DisplayFor(modelItem => item.Problem.Employer.UserName)</td>
+                <td>@Html.DisplayFor(modelItem => item.Status)</td>
+            </tr>
+        }
 
-            @if (Model.Contracts.Any())
-            {
-                <tr>
-                    <th>@Html.DisplayNameFor(model => model.Contracts[0].ContractId)</th>
-                    <th>@Html.DisplayNameFor(model => model.Contracts[0].Details)</th>
-                    <th>@Html.DisplayNameFor(model => model.Contracts[0].Problem)</th>
-                    <th>@Html.DisplayNameFor(model => model.Contracts[0].Status)</th>
-                </tr>}
+    </table>
+}
+else
+{
+    <p>Открытых контрактов нет.</p>
+}
 
-            @foreach (var item in Model.Contracts)
-            {
-                <tr>
-                    <td>@Html.ActionLink(item.ContractId.ToString(), "Details", "Contract", new { id = item.ContractId }, null)</td>
-                    <td>@Html.DisplayFor(modelItem => item.Details)</td>
-                    <td>@Html.ActionLink(item.Problem.Name, "Details", "Problem", new { id = item.Problem.ProblemId }, null)</td>
-                    <td>@Html.DisplayFor(modelItem => item.Status)</td>
-                </tr>}
+@if (Model.Problems.Any())
+{
+    <h3>Мои подписки</h3>
+    <table class="table table-striped table-bordered">
 
-        </table>
+        <tr>
+            <th>Задача</th>
+            <th>Описание</th>
+            <th>Заказчик</th>
+            <th>Статус</th>
+        </tr>
 
-        <h3>Мои открытые задачи</h3>
-        <table class="table">
+        @foreach (var item in Model.Problems)
+        {
+            <tr>
+                <td>@Html.ActionLink(item.Name, "Details", "Problem", new {id = item.ProblemId}, null)</td>
+                <td>@Html.DisplayFor(modelItem => item.Description)</td>
+                <td>@Html.DisplayFor(modelItem => item.Employer.UserName)</td>
+                <th>@Html.DisplayFor(modelItem => item.Status)</th>
+            </tr>
+        }
 
-            @if (Model.Problems.Any())
-            {
-                <tr>
-                    <th>@Html.DisplayNameFor(model => model.Problems[0].Contracts)</th>
-                    <th>@Html.DisplayNameFor(model => model.Problems[0].Name)</th>
-                    <th>@Html.DisplayNameFor(model => model.Problems[0].Description)</th>
-                    <th>@Html.DisplayNameFor(model => model.Problems[0].ProblemId)</th>
-                    <th>@Html.DisplayNameFor(model => model.Problems[0].Status)</th>
-                </tr>}
-
-            @foreach (var item in Model.Problems)
-            {
-                <tr>
-                    <td>
-                        @foreach (var contract in item.Contracts)
-                        {
-                            <p>@Html.ActionLink(contract.Details, "Details", "Contract", new { id = contract.ContractId }, null)</p>
-                        }
-                    </td>
-                    <td>@Html.ActionLink(item.Name, "Details", "Problem", new { id = item.ProblemId }, null)</td>
-                    <td>@Html.DisplayFor(modelItem => item.Description)</td>
-                    <td>@Html.DisplayFor(modelItem => item.ProblemId)</td>
-                    <th>@Html.DisplayFor(modelItem => item.Status)</th>
-                </tr>}
-
-        </table>
+    </table>
+}
+else
+{
+    <p>Подписок нет.</p>
+}
 

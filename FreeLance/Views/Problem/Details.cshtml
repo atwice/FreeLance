@@ -4,89 +4,96 @@
 @{
 	ViewBag.Title = "Problem";
 }
-<div>
-	<h4>Problem Info</h4>
-	<hr />
-	@if (!isSubscribed)
-	{
-		if (Context.User.IsInRole("Freelancer"))
-		{
-			using (Html.BeginForm("Subscribe", "Subscription", FormMethod.Post))
-			{
-				<input name="id" type="hidden" value="@problem.ProblemId" />
-				<input style="margin-left: 80px;" type="submit" class="btn btn-success btn-lg" value="Подписаться на задачу" />
-			}
-		}
-	}
-	else
-	{
-		if (Context.User.IsInRole("Freelancer"))
-		{
-			using (Html.BeginForm("UnSubscribe", "Subscription", FormMethod.Post))
-			{
-				<input name="id" type="hidden" value="@problem.ProblemId" />
-				<input style="margin-left: 80px;" type="submit" class="btn btn-success btn-lg" value="Отписаться от задачи" />
-			}
-		}
-	}
-	
-	<dl class="dl-horizontal">
-		<dt>@Html.DisplayNameFor(model => problem.Name)</dt>
-		<dd>@Html.DisplayFor(model => problem.Name)</dd>
 
-		<dt>@Html.DisplayNameFor(model => problem.Description)</dt>
-		<dd>@Html.DisplayFor(model => problem.Description)</dd>
-
-		<dt>@Html.DisplayNameFor(model => problem.Status)</dt>
-		<dd>@Html.DisplayFor(model => problem.Status)</dd>
-		
-        <dt>@Html.DisplayNameFor(model => problem.Cost)</dt>
-		<dd>@Html.DisplayFor(model => problem.Cost)</dd>
-		
-        <dt>@Html.DisplayNameFor(model => problem.Employer)</dt>
-		<dd>@Html.DisplayFor(model => problem.Employer.Email)</dd>
-
-        @if (Context.User.IsInRole("Employer"))
-        {
-		    <dt>@Html.DisplayNameFor(model => problem.Contracts)</dt>
-                if (Model.ProblemModels.Contracts.Count() == 0)
+<div class="container">
+    <div class="panel panel-default">
+        <div class="panel-heading"><h2>@Html.DisplayFor(model => problem.Name)</h2></div>
+        <div class="panel-body">
+            <p>@Html.DisplayFor(model => problem.Description)</p>
+            <table class="table">
+                <tbody>
+                <tr>
+                    <td><span class="glyphicon glyphicon-euro" aria-hidden="true"></span> @Html.DisplayFor(model => problem.Cost)</td>
+                    <td><span class="glyphicon glyphicon-user" aria-hidden="true"></span> @Html.DisplayFor(model => problem.Employer.UserName)</td>
+                    @if (problem.Contracts.Count > 0)
+                    {
+                        <td>Выполняют задачу: @Html.DisplayFor(model => problem.Contracts.Count)</td>
+                    }
+                    @if (problem.Subscriptions.Count > 0)
+                    {
+                        <td>Подписалось на задачу: @Html.DisplayFor(model => problem.Subscriptions.Count)</td>
+                    }
+                    else
+                    {
+                        <td>Нет подписок на эту задачу</td>
+                    }
+                </tr>
+                </tbody>
+            </table>
+            @if (Context.User.IsInRole("Employer"))
+            {
+                if (problem.Contracts.Count > 0)
                 {
-                    <dd>No contracts</dd>    
+                    <div class="list-group">
+                        <div class="list-group-item-heading"><h5>Задачу уже выполняют:</h5>
+                        </div>
+                        @foreach (var contract in problem.Contracts)
+                        {
+                            <div class="list-group-item">
+                              @Html.ActionLink(contract.Freelancer.UserName, "Profile", "Freelancer", new { id = contract.Freelancer.Id }, null)
+                                <div class="pull-right">
+                                    @Html.ActionLink("Посмотреть подробности контракта", "Details", "Contract", new { id = contract.ContractId }, null)
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+
+                if ((problem.Subscriptions.Count > 0))
+                {
+                    <div class="list-group">
+                        <div class="list-group-item-heading"><h5>Подписались на задачу:</h5>
+                        </div>
+                        @foreach (var subscription in Model.Subscriptions)
+                        {
+                            <div class="list-group-item">
+                                @Html.ActionLink(subscription.Freelancer.UserName, "Profile", "Freelancer", new {id = subscription.Freelancer.Id}, null)
+                                <div class="pull-right">
+                                    @Html.ActionLink("Подписать контракт", "Create", "Contract", new
+                                    {
+                                        problemID = Model.ProblemModels.ProblemId,
+                                        freelancerId = subscription.Freelancer.Id
+                                    }, null)
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            }
+        </div>
+
+        <div class="panel-footer">
+            @if (Context.User.IsInRole("Freelancer"))
+            {
+                if (!isSubscribed)
+                {
+                    using (Html.BeginForm("Subscribe", "Subscription", FormMethod.Post))
+                    {
+                        <input name="id" type="hidden" value="@problem.ProblemId"/>
+                        <input  type="submit" class="btn btn-success btn-lg" value="Подписаться на задачу"/>
+                    }
+
                 }
                 else
                 {
-			        foreach (var contract in problem.Contracts)
+                    using (Html.BeginForm("UnSubscribe", "Subscription", FormMethod.Post))
                     {
-				        @Html.ActionLink(contract.Details, "Details", "Contract", new { id = contract.ContractId }, null)
-					}
+                        <input name="id" type="hidden" value="@problem.ProblemId" />
+                        <input type="submit" class="btn btn-danger btn-lg" value="Отписаться от задачи" />}
+
                 }
-		    
-        }
+            }
+        </div>
+    </div>
+</div>
 
-        <dt>@Html.DisplayNameFor(model => problem.Subscriptions)</dt>
-        
-			@if (Model.Subscriptions.Count() == 0)
-			{
-				<dd>No subscriptions</dd>
-			}
-			else
-			{
-				foreach (var subscription in Model.Subscriptions)
-				{
-					<dd>
-                        @Html.ActionLink(subscription.Freelancer.UserName, "Profile", "Freelancer", new { id = subscription.Freelancer.Id }, null)
-					</dd>
-					<dd>
-						@Html.ActionLink("Подписать контракт", "Create", "Contract", new {
-							problemID = Model.ProblemModels.ProblemId,
-							freelancerId = subscription.Freelancer.Id
-						} , null)
-					</dd>
-				}
-			}
-        
-
-	</dl>
-	<p>
-		@Html.ActionLink("Back to List", "OpenProblems", "Freelancer")
-	</p>
