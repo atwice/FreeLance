@@ -50,7 +50,7 @@ namespace FreeLance.Controllers
 			var model = new HomeViewModel();
 			model.ActualContracts = db.ContractModels.Where(
 				c => c.Problem.Employer.Id == userId
-					&& c.Status == ContractStatus.InProgress
+					&& c.Status != ContractStatus.Closed
 				).ToList();
 			model.OpenProblems = db.ProblemModels.Where(
 				p => p.Employer.Id == userId

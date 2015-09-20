@@ -25,55 +25,47 @@
 			using (Html.BeginForm("UnSubscribe", "Subscription", FormMethod.Post))
 			{
 				<input name="id" type="hidden" value="@problem.ProblemId" />
-				<input style="margin-left: 80px;" type="submit" class="btn btn-success btn-lg" value="Отписываюсь!!!111" />
+				<input style="margin-left: 80px;" type="submit" class="btn btn-success btn-lg" value="Отписаться от задачи" />
 			}
 		}
 	}
-	@*<a href="@Url.Action("Details", "Contract")">
-			<button style="margin-left: 80px;" type="button" class="btn btn-success btn-lg">Подписаться на задачу</button>
-		</a>*@
+	
 	<dl class="dl-horizontal">
-		<dt>
-			@Html.DisplayNameFor(model => problem.Name)
-		</dt>
-		<dd>
-			@Html.DisplayFor(model => problem.Name)
-		</dd>
-		<dt>
-			@Html.DisplayNameFor(model => problem.Description)
-		</dt>
-		<dd>
-			@Html.DisplayFor(model => problem.Description)
-		</dd>
-		<dt>
-			@Html.DisplayNameFor(model => problem.Status)
-		</dt>
-		<dd>
-			@Html.DisplayFor(model => problem.Status)
-		</dd>
-		<dt>
-			@Html.DisplayNameFor(model => problem.Cost)
-		</dt>
-		<dd>
-			@Html.DisplayFor(model => problem.Cost)
-		</dd>
-		<dt>
-			@Html.DisplayNameFor(model => problem.Employer)
-		</dt>
-		<dd>
-			@Html.DisplayFor(model => problem.Employer.Email)
-		</dd>
-		<dt>
-			@Html.DisplayNameFor(model => problem.Contracts)
-		</dt>
-		<td>
-			@foreach (var contract in problem.Contracts)
-			{
-				@Html.ActionLink(contract.Details, "Details", "Contract", new { id = contract.ContractId }, null)
-			}
-		</td>
+		<dt>@Html.DisplayNameFor(model => problem.Name)</dt>
+		<dd>@Html.DisplayFor(model => problem.Name)</dd>
 
-		<dl class="dl-horizontal">
+		<dt>@Html.DisplayNameFor(model => problem.Description)</dt>
+		<dd>@Html.DisplayFor(model => problem.Description)</dd>
+
+		<dt>@Html.DisplayNameFor(model => problem.Status)</dt>
+		<dd>@Html.DisplayFor(model => problem.Status)</dd>
+		
+        <dt>@Html.DisplayNameFor(model => problem.Cost)</dt>
+		<dd>@Html.DisplayFor(model => problem.Cost)</dd>
+		
+        <dt>@Html.DisplayNameFor(model => problem.Employer)</dt>
+		<dd>@Html.DisplayFor(model => problem.Employer.Email)</dd>
+
+        @if (Context.User.IsInRole("Employer"))
+        {
+		    <dt>@Html.DisplayNameFor(model => problem.Contracts)</dt>
+            <td>
+                if (Model.Contracts.Count() == 0)
+                {
+                    <dd>No contracts</dd>    
+                }
+                else
+                {
+			        @foreach (var contract in problem.Contracts)
+                    {
+				        @Html.ActionLink(contract.Details, "Details", "Contract", new { id = contract.ContractId }, null)
+                    }
+                }
+		    </td>
+        }
+
+        <dt>@Html.DisplayNameFor(model => problem.Subscriptions)</dt>
+        <td>
 			@if (Model.Subscriptions.Count() == 0)
 			{
 				<dd>No subscriptions</dd>
@@ -83,13 +75,11 @@
 				foreach (var subscription in Model.Subscriptions)
 				{
 					<dd>
-						<a href="@Url.Action("Profile", "Freelancer", new { id = subscription.Freelancer.Id })">
-							@Html.DisplayFor(x => subscription.Freelancer.UserName)
-						</a>
+                        @Html.ActionLink(subscription.Freelancer.UserName, "Profile", "Freelancer", new { id = subscription.Freelancer.Id }, null)
 					</dd>
 				}
 			}
-		</dl>
+        </td>
 
 	</dl>
 	<p>
