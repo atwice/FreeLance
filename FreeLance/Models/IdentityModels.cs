@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using System.Data.Entity.ModelConfiguration.Conventions;
 
 namespace FreeLance.Models
 {
@@ -29,6 +30,12 @@ namespace FreeLance.Models
         {
 			return new ApplicationDbContext();
         }
+
+		protected override void OnModelCreating(DbModelBuilder modelBuilder)
+		{
+			modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>();
+			base.OnModelCreating(modelBuilder);
+		}
 
 		public System.Data.Entity.DbSet<FreeLance.Models.ProblemModels> ProblemModels { get; set; }
 		public System.Data.Entity.DbSet<FreeLance.Models.ContractModels> ContractModels { get; set; }
