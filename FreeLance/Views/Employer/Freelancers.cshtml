@@ -3,11 +3,12 @@
     ViewBag.Title = "Все исполнители";
 }
 
-<h2>@ViewBag.Title</h2>
-
-		<div class="list-group">
-			@foreach( var freelancer in @Model )
-			{
-				<a href="#" class="list-group-item">@freelancer.Name</a>
-			}
-		</div>
+<div class="col-md-10">
+	<h2>@ViewBag.Title</h2>
+	<div class="list-group">
+		@foreach (var freelancer in @Model)
+		{
+			<a href="#" class="list-group-item">@freelancer.Name</a>
+		}
+	</div>
+</div>

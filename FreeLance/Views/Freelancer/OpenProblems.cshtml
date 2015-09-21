@@ -2,25 +2,40 @@
 @{
     ViewBag.Title = "Open";
 }
-
-<h2>Биржа</h2>
-<p>Задачи, которые Вы, как фрилансер, можете выполнить.</p>
-        <table class="table table-striped table-bordered">
-            <tr>
-                <th>Задача</th>
-                <th>Описание</th>
-                <th>Заказчик</th>
-                <th>Статус</th>
-            </tr>
-
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>@Html.ActionLink(@item.Name, "Details", "Problem", new { id = item.ProblemId }, null)</td>
-                    <td>@Html.DisplayFor(modelItem => item.Description)</td>
-                    <td>@Html.DisplayFor(modelItem => item.Employer.UserName)</td>
-                    <th>@Html.DisplayFor(modelItem => item.Status)</th>
-                </tr>
-            }
-
-        </table>
+<div class="col-md-10">
+	<h2>Биржа задач</h2>
+	<div class="list-group">
+		@foreach (var problem in Model)
+		{
+			if (@problem.Status == FreeLance.Models.ProblemStatus.Opened)
+			{
+				<style scoped>
+					.status {
+						color: green;
+					}
+				</style>
+			}
+			else if (@problem.Status == FreeLance.Models.ProblemStatus.InProgress)
+			{
+				<style scoped>
+					.status {
+						color: royalblue;
+					}
+				</style>
+			}
+			else
+			{
+				<style scoped>
+					.status {
+						color: red;
+					}
+				</style>
+			}
+			<a href="/Problem/Details/@problem.ProblemId" class="list-group-item">
+				<h4 class="list-group-item-heading">@problem.Name <small class="status">@problem.Status</small></h4>
+				<p class="list-group-item-text" style="color:lightgray"><i>@problem.Employer.UserName</i></p>
+				<p class="list-group-item-text"> @problem.Description</p>
+			</a>
+		}
+	</div>
+</div>
