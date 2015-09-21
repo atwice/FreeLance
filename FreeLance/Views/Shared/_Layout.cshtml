@@ -30,34 +30,32 @@
 <div class="container-fluid body-content">
     <div class="row">
         <div class="col-md-2">
-            <div class="container-fluid">
-    @if (Context.User.IsInRole("Freelancer"))
-            {
-        <div class="span3 bs-docs-sidebar">
-            <ul class="nav nav-pills nav-stacked main-menu">
-                <li>@Html.ActionLink("Профиль", "Profile", "Freelancer")</li>
-                <li>@Html.ActionLink("Личный кабинет", "Home", "Freelancer")</li>
-                <li>@Html.ActionLink("Биржа", "OpenProblems", "Freelancer")</li>
-                <li>@Html.ActionLink("Архив", "Archive", "Freelancer")</li>
-            </ul>
-        </div>
-
-    }
-    @if (Context.User.IsInRole("Employer"))
-            {
-        <div class="span3 bs-docs-sidebar">
-            <ul class="nav nav-pills nav-stacked main-menu">
-                <li>@Html.ActionLink("Личный кабинет", "Home", "Employer")</li>
-                <li>@Html.ActionLink("Архив контрактов", "Archive", "Employer")</li>
-                <li>@Html.ActionLink("Исполнители", "Freelancers", "Employer")</li>
-            </ul>
-            </div>
+            <div class="container-fluid" style="margin-top:10%">
+				@if (Context.User.IsInRole("Freelancer"))
+				{
+				<div class="span3 bs-docs-sidebar">
+					<ul class="nav nav-pills nav-stacked main-menu">
+						<li>@Html.ActionLink("Профиль", "Profile", "Freelancer")</li>
+						<li>@Html.ActionLink("Личный кабинет", "Home", "Freelancer")</li>
+						<li>@Html.ActionLink("Биржа", "OpenProblems", "Freelancer")</li>
+						<li>@Html.ActionLink("Архив", "Archive", "Freelancer")</li>
+					</ul>
+				</div>
+				}
+				@if (Context.User.IsInRole("Employer"))
+				{
+				<div class="span3 bs-docs-sidebar">
+					<ul class="nav nav-pills nav-stacked main-menu">
+						<li>@Html.ActionLink("Личный кабинет", "Home", "Employer")</li>
+						<li>@Html.ActionLink("Архив контрактов", "Archive", "Employer")</li>
+						<li>@Html.ActionLink("Исполнители", "Freelancers", "Employer")</li>
+					</ul>
+					</div>
               
-                }
+				}
+			</div>
         </div>
-        </div>
-        <div class="col-md-8">@RenderBody()</div>
-        <div class="col-md-2"></div>
+        <div class="col-md-10">@RenderBody()</div>
     </div>
     
     <hr/>
