@@ -16,9 +16,12 @@ namespace FreeLance.Models
 	{
 		[Key]
 		public int ContractId { get; set; }
+		[Required]
 		public virtual ApplicationUser Freelancer { get; set; }
 		public string Details { get; set; }
+		[Required]
 		public virtual ProblemModels Problem { get; set; }
+		[Required]
 		public ContractStatus Status { get; set; }
 	}
 }
