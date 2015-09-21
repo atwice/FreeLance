@@ -33,6 +33,7 @@ namespace FreeLance.Controllers
 
 		public class ArchivedContractViewModel
 		{
+			public int ContractId { get; set; }
 			public String Name { get; set; }
 			public String FreelancerName { get; set; }
 			public String Details { get; set; }
@@ -69,6 +70,7 @@ namespace FreeLance.Controllers
 				.Select(
 					c => new ArchivedContractViewModel
 					{
+						ContractId = c.ContractId,
 						FreelancerName = c.Freelancer.UserName,
 						Name = c.Problem.Name,
 						Details = c.Details
