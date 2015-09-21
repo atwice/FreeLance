@@ -58,7 +58,7 @@ namespace FreeLance.Migrations
 		{
 			ProblemModels problem = new ProblemModels { Name = "Problem with contract", Description = "2-3 workers on this problem", Status = ProblemStatus.InProgress};
 			var contracts = new List<ContractModels>();
-			contracts.Add(new ContractModels { Details = "First contract", Problem = problem, Status = ContractStatus.Confirmed });
+			contracts.Add(new ContractModels { Details = "First contract", Problem = problem, Status = ContractStatus.Closed });
 			contracts.Add(new ContractModels { Details = "Second contract", Problem = problem, Status = ContractStatus.InProgress });
 			contracts.Add(new ContractModels { Details = "Third contract", Problem = problem, Status = ContractStatus.InProgress });
 			problem.Contracts = contracts;
@@ -67,7 +67,7 @@ namespace FreeLance.Migrations
 
 		private ContractModels addContract(ApplicationDbContext context, string details, ContractStatus status, ProblemModels problem, ApplicationUser freelancer)
 		{
-			var contract = new ContractModels { Details = details, Problem = problem, Status = ContractStatus.Confirmed, Freelancer = freelancer };
+			var contract = new ContractModels { Details = details, Problem = problem, Status = ContractStatus.Closed, Freelancer = freelancer };
 			context.ContractModels.AddOrUpdate(p => p.Details, contract);
 			return contract;
 		}

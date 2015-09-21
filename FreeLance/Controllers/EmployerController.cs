@@ -65,7 +65,7 @@ namespace FreeLance.Controllers
 			var model = db.ContractModels
 				.Where(
 					c => c.Problem.Employer.Id == userId
-						&& c.Status == ContractStatus.Confirmed)
+						&& c.Status == ContractStatus.Closed)
 				.Select(
 					c => new ArchivedContractViewModel
 					{
