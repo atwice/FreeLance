@@ -64,15 +64,11 @@ namespace FreeLance.Controllers
 		[ValidateAntiForgeryToken]
 		public ActionResult Create([Bind(Include = "ProblemId,Name,Description,Status")] ProblemModels problem)
 		{
-			if (ModelState.IsValid)
-			{
-				problem.Employer = db.Users.Find(User.Identity.GetUserId());
-				db.ProblemModels.Add(problem);
-				db.SaveChanges();
-				return RedirectToAction("Details", new { id = problem.ProblemId });
-			}
-
-			return View(problem);
+			problem.Employer = db.Users.Find(User.Identity.GetUserId());
+			db.ProblemModels.Add(problem);
+			db.SaveChanges();
+			return RedirectToAction("Details", new { id = problem.ProblemId });
+			//return View(problem);
 		}
 
 		// GET: Problem/Edit/5
