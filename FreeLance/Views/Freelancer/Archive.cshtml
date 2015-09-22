@@ -9,7 +9,7 @@
 	<div class="list-group">
 		@foreach (var contract in Model)
 		{
-			if (@contract.Status == FreeLance.Models.ContractStatus.InProgress)
+			if (@contract.Status == FreeLance.Models.ContractStatus.Closed)
 			{
 				<a href="/Problem/Details/@contract.ContractId" class="list-group-item">
 					<h4 class="list-group-item-heading">@contract.Problem.Name</h4>
