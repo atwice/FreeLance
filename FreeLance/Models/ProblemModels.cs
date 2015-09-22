@@ -19,7 +19,7 @@ namespace FreeLance.Models
 		public virtual ApplicationUser Employer { get; set; }
 		[Required]
 		public string Name { get; set; }
-		[Required]
+		[Required,DataType(DataType.MultilineText)]
 		public string Description { get; set; }
 		public decimal Cost { get; set; }
 		[Required]
