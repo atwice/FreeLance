@@ -33,6 +33,7 @@ namespace FreeLance.Migrations
 			AddProblemWithSubscriber(context, "Employer4", "Subscriber1");
 			AddProblemWithSubscriber(context, "Employer5", "Subscriber2");
 			AddProblemWithSubscriber(context, "Employer6", "Subscriber3");
+			AddClosedContracts(context);
 		}
 
 		private void SeedProblems(FreeLance.Models.ApplicationDbContext context)
@@ -143,6 +144,17 @@ namespace FreeLance.Migrations
 			var subscription = new SubscriptionModels { Problem = problem, Freelancer = user };
 			context.SubscriptionModels.Add(subscription);
 			return subscription;
+		}
+
+		private void AddClosedContracts(ApplicationDbContext context)
+		{
+			var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
+			var employer = addUser(context, userManager, "employer@ya.ru", "111111", "Employer");
+			var freelancer = addUser(context, userManager, "freelancer@ya.ru", "111111", "Freelancer");
+			var problem = addProblem(context, "Problem with closed contracts", "description", ProblemStatus.Opened, employer);
+			addContract(context, "closed contract1", ContractStatus.Closed, problem, freelancer);
+			addContract(context, "closed contract2", ContractStatus.Closed, problem, addUser(context, userManager, "freelancer1@ya.ru", "111111", "Freelancer"));
+			addContract(context, "closed contract3", ContractStatus.Closed, problem, addUser(context, userManager, "freelancer2@ya.ru", "111111", "Freelancer"));
 		}
     }
 }
