@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System.Data.Entity.ModelConfiguration.Conventions;
+using System.ComponentModel.DataAnnotations;
 
 namespace FreeLance.Models
 {
@@ -17,6 +18,9 @@ namespace FreeLance.Models
             // Add custom user claims here
             return userIdentity;
         }
+
+		[Required]
+		public bool IsApprovedByCoordinator { get; set; }
     }
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>

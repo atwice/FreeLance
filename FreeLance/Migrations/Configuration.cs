@@ -102,7 +102,7 @@ namespace FreeLance.Migrations
 		{
 			try {
 				var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
-				var employer = addUser(context, userManager, employerName + "@ya.ru", "111111", "Employer");
+				var employer = addUser(context, userManager, employerName + "@ya.ru", "111111", "Employer", true);
 				var freelancer = addUser(context, userManager, freelancerName + "@ya.ru", "111111", "Freelancer");
 				var problem = addProblem(context, "[AUTO] " + employerName, "to " + freelancerName, ProblemStatus.Opened, employer);
 				var contract = addContract(context, employerName + " to " + freelancerName, ContractStatus.Opened, problem, freelancer);
@@ -126,14 +126,15 @@ namespace FreeLance.Migrations
 			}
 }
 
-		private ApplicationUser addUser(ApplicationDbContext context, UserManager<ApplicationUser> manager, string email, string password, string role)
+		private ApplicationUser addUser(ApplicationDbContext context, UserManager<ApplicationUser> manager, 
+			string email, string password, string role, bool isApprovedByCoordinator = false)
 		{
 			var user = manager.FindByEmail(email);
 			if (user != null)
 			{
 				return user;
 			}
-			user = new ApplicationUser { UserName = email, Email = email };
+			user = new ApplicationUser { UserName = email, Email = email, IsApprovedByCoordinator = isApprovedByCoordinator };
             manager.Create(user, password);
 			manager.AddToRole(user.Id, role);
 			return user;
