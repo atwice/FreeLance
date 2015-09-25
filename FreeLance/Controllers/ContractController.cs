@@ -83,7 +83,7 @@ namespace FreeLance.Controllers
 		public ActionResult ChangeStatus(int id, ContractStatus status, string redirect)
 		{
 			string userId = User.Identity.GetUserId();
-			ContractModels contract = db.ContractModels.Find(id);
+			ContractModels contract = db.ContractModels.Include( c => c.Problem ).Single( c => c.ContractId == id );
 			if (contract == null || contract.Freelancer == null)
 			{
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
