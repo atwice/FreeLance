@@ -23,5 +23,6 @@ namespace FreeLance.Models
 		public virtual ProblemModels Problem { get; set; }
 		[Required]
 		public ContractStatus Status { get; set; }
+		public decimal Cost { get; set; }
 	}
 }
