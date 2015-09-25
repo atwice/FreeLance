@@ -6,7 +6,17 @@
 @{
     ViewBag.Title = "Личный кабинет";
 }
-
+@helper Truncate(string input, int length)
+{
+if (input.Length <= length)
+{
+		@input
+}
+else
+{
+		@input.Substring(0, length)<text>...</text>
+}
+}
 <div class="col-md-10">
 	<h2>@ViewBag.Title</h2>
 	<h3>Мои открытые контракты</h3>
@@ -44,7 +54,7 @@
 				<a href="/Contract/Details/@contract.ContractId" class="list-group-item">
 					<h4 class="list-group-item-heading">@contract.Problem.Name <small class="status">@contract.Status</small></h4>
 					<p class="list-group-item-text" style="color:lightgray"><i>@contract.Problem.Employer.UserName</i></p>
-					<p class="list-group-item-text"> @contract.Details</p>
+					<p class="list-group-item-text"> @Truncate(contract.Details, 200)</p>
 				</a>
 			}
 		</div>
@@ -88,7 +98,7 @@
 				<a href="/Contract/Details/@problem.ProblemId" class="list-group-item">
 					<h4 class="list-group-item-heading">@problem.Name <small class="status">@problem.Status</small></h4>
 					<p class="list-group-item-text" style="color:lightgray"><i>@problem.Employer.UserName</i></p>
-					<p class="list-group-item-text">@problem.Description</p>
+					<p class="list-group-item-text">@Truncate(problem.Description, 200)</p>
 				</a>
 			}
 		</div>
