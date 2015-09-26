@@ -17,24 +17,39 @@ else
 	<h2>@ViewBag.Title</h2>
 	<h3>Выполненные контракты</h3>
 	<div class="list-group">
-		@foreach (var contract in Model.SuccessfulContracts)
-		{
-			<a href="/Problem/Details/@contract.ContractId" class="list-group-item">
-				<h4 class="list-group-item-heading">@contract.Name</h4>
-				<p class="list-group-item-text" style="color:lightgray"><i>@contract.EmployerName</i></p>
-				<p class="list-group-item-text"> @Truncate(contract.Details, 200)</p>
-			</a>
-		}
+        @if (Model.SuccessfulContracts.Count == 0)
+        {
+            <h5>Выполненных контрактов пока нет. Дерзайте!</h5>
+        }
+        else
+        {
+		    foreach (var contract in Model.SuccessfulContracts)
+            {
+			    <a href="/Problem/Details/@contract.ContractId" class="list-group-item">
+				    <h4 class="list-group-item-heading">@contract.Name</h4>
+				    <p class="list-group-item-text" style="color:lightgray"><i>@contract.EmployerName</i></p>
+				    <p class="list-group-item-text"> @Truncate(contract.Details, 200)</p>
+			    </a>
+            }
+        }
 	</div>
 
     <h3>Несостоявшиеся контракты</h3>
     <div class="list-group">
-        @foreach (var contract in Model.FailedContracts)
+        @if (Model.FailedContracts.Count == 0)
         {
-            <a href="/Problem/Details/@contract.ContractId" class="list-group-item">
-                <h4 class="list-group-item-heading">@contract.Name</h4>
-                <p class="list-group-item-text" style="color:lightgray"><i>@contract.EmployerName</i></p>
-                <p class="list-group-item-text"> @Truncate(contract.Details, 200)</p>
-            </a>}
+            <h5>Нет таких. У вас все очень хорошо складывается.</h5>
+        }
+        else
+        { 
+            foreach (var contract in Model.FailedContracts)
+            {
+                <a href="/Problem/Details/@contract.ContractId" class="list-group-item">
+                    <h4 class="list-group-item-heading">@contract.Name</h4>
+                    <p class="list-group-item-text" style="color:lightgray"><i>@contract.EmployerName</i></p>
+                    <p class="list-group-item-text"> @Truncate(contract.Details, 200)</p>
+                </a>
+            }
+        }
     </div>
 </div>

@@ -9,7 +9,7 @@ using Microsoft.AspNet.Identity;
 
 namespace FreeLance.Controllers
 {
-	[Authorize(Roles = "Admin, Freelancer")]
+	[Authorize(Roles = "Admin, Freelancer, Incognito")]
 	public class FreelancerController : Controller
 	{
 		private ApplicationDbContext db = new ApplicationDbContext();

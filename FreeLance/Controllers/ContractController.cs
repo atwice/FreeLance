@@ -21,8 +21,9 @@ namespace FreeLance.Controllers
 			return View(db.ContractModels.ToList());
 		}
 
-		// GET: Contract/Details/5
-		public ActionResult Details(int? id)
+        // GET: Contract/Details/5
+        [Authorize(Roles = "Employer,Freelancer,Admin")]
+        public ActionResult Details(int? id)
 		{
 			if (id == null)
 			{
