@@ -39,7 +39,13 @@ namespace FreeLance.Controllers
 			public String Details { get; set; }
 		}
 
-		public ActionResult Index()
+        public class ArchiveViewModel
+        {
+            public List<ArchivedContractViewModel> SuccessfulContracts { get; set; } // with Closed status
+            public List<ArchivedContractViewModel> FailedContracts { get; set; } // with CancelledByEmpoyer, CancelledByFreelancer & Failed status
+        }
+
+        public ActionResult Index()
 		{
 			return RedirectToAction("Home");
 		}
@@ -51,8 +57,11 @@ namespace FreeLance.Controllers
 			var model = new HomeViewModel();
 			model.ActualContracts = db.ContractModels.Where(
 				c => c.Problem.Employer.Id == userId
-					&& c.Status != ContractStatus.Closed
-				).ToList();
+					&& (
+                    c.Status == ContractStatus.Opened
+                    || c.Status == ContractStatus.InProgress
+                    || c.Status == ContractStatus.Done
+                    )).ToList();
 			model.OpenProblems = db.ProblemModels.Where(
 				p => p.Employer.Id == userId
 					&& p.Status == ProblemStatus.Opened
@@ -63,8 +72,9 @@ namespace FreeLance.Controllers
 		public ActionResult Archive()
 		{
 			string userId = User.Identity.GetUserId();
-			var model = db.ContractModels
-				.Where(
+            var model = new ArchiveViewModel();
+			model.SuccessfulContracts = db.ContractModels
+                .Where(
 					c => c.Problem.Employer.Id == userId
 						&& c.Status == ContractStatus.Closed)
 				.Select(
@@ -76,7 +86,23 @@ namespace FreeLance.Controllers
 						Details = c.Details
 					})
 				.ToList();
-			return View(model);
+            model.FailedContracts = db.ContractModels
+                .Where(
+                    c => c.Problem.Employer.Id == userId
+                        && (
+                        c.Status == ContractStatus.Failed 
+                        || c.Status == ContractStatus.СancelledByEmployer
+                        || c.Status == ContractStatus.СancelledByFreelancer))
+                .Select(
+                    c => new ArchivedContractViewModel
+                    {
+                        ContractId = c.ContractId,
+                        FreelancerName = c.Freelancer.UserName,
+                        Name = c.Problem.Name,
+                        Details = c.Details
+                    })
+                .ToList();
+            return View(model);
 		}
 
 		// try /Employer/Problem/5 

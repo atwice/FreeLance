@@ -1,4 +1,4 @@
-﻿@model IEnumerable<FreeLance.Models.ContractModels>
+﻿@model FreeLance.Controllers.FreelancerController.ArchiveViewModel
 @{
     ViewBag.Title = "Archive";
 }
@@ -17,16 +17,24 @@ else
 	<h2>@ViewBag.Title</h2>
 	<h3>Выполненные контракты</h3>
 	<div class="list-group">
-		@foreach (var contract in Model)
+		@foreach (var contract in Model.SuccessfulContracts)
 		{
-			if (@contract.Status == FreeLance.Models.ContractStatus.Closed)
-			{
-				<a href="/Problem/Details/@contract.ContractId" class="list-group-item">
-					<h4 class="list-group-item-heading">@contract.Problem.Name</h4>
-					<p class="list-group-item-text" style="color:lightgray"><i>@contract.Problem.Employer.UserName</i></p>
-					<p class="list-group-item-text"> @Truncate(contract.Details, 200)</p>
-				</a>
-			}
+			<a href="/Problem/Details/@contract.ContractId" class="list-group-item">
+				<h4 class="list-group-item-heading">@contract.Name</h4>
+				<p class="list-group-item-text" style="color:lightgray"><i>@contract.EmployerName</i></p>
+				<p class="list-group-item-text"> @Truncate(contract.Details, 200)</p>
+			</a>
 		}
 	</div>
+
+    <h3>Несостоявшиеся контракты</h3>
+    <div class="list-group">
+        @foreach (var contract in Model.FailedContracts)
+        {
+            <a href="/Problem/Details/@contract.ContractId" class="list-group-item">
+                <h4 class="list-group-item-heading">@contract.Name</h4>
+                <p class="list-group-item-text" style="color:lightgray"><i>@contract.EmployerName</i></p>
+                <p class="list-group-item-text"> @Truncate(contract.Details, 200)</p>
+            </a>}
+    </div>
 </div>
