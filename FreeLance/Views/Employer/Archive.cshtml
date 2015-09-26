@@ -1,4 +1,4 @@
-﻿@model FreeLance.Controllers.EmployerController.ArchiveViewModel
+﻿@model IEnumerable<FreeLance.Controllers.EmployerController.ArchivedProblemViewModel>
 @{
     ViewBag.Title = "Архив";
 }
@@ -15,28 +15,39 @@ else
 }
 
 <div class="col-md-10">
-	<h2>@ViewBag.Title</h2>
-	<h3>Выполненные контракты</h3>
-	<div class="list-group">
-		@foreach (var contract in Model.SuccessfulContracts)
-		{
-			<a href="/Problem/Details/@contract.ContractId" class="list-group-item">
-				<h4 class="list-group-item-heading">@contract.Name</h4>
-				<p class="list-group-item-text" style="color:lightgray"><i>@contract.FreelancerName</i></p>
-				<p class="list-group-item-text"> @Truncate(contract.Details, 200)</p>
-			</a>
-		}
-	</div>
+	<h2>@ViewBag.Title</h2><br />
 
-    <h3>Несостоявшиеся контракты</h3>
-    <div class="list-group">
-        @foreach (var contract in Model.FailedContracts)
+    <div class="panel-group" id="collapse-group">
+    @if (Model.Count() == 0)
+    {
+        <h4>Вы пока не закрыли ни одной задачи. У вас все впереди!</h4>
+    }
+    else
+    {
+        foreach (var problem in Model)
         {
-            <a href="/Problem/Details/@contract.ContractId" class="list-group-item">
-                <h4 class="list-group-item-heading">@contract.Name</h4>
-                <p class="list-group-item-text" style="color:lightgray"><i>@contract.FreelancerName</i></p>
-                <p class="list-group-item-text"> @Truncate(contract.Details, 200)</p>
-            </a>}
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#collapse-group" href="#@problem.ProblemId">
+                            @problem.Name
+                        </a>
+                    </h4>
+                </div>
+                <div id="@problem.ProblemId" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        @foreach (var contract in problem.Contracts)
+                        {
+                            <a href="/Problem/Details/@contract.ContractId" class="list-group-item">
+                                <p class="list-group-item-text" style="color:lightgray"><i>@contract.FreelancerName</i></p>
+                                <p class="list-group-item-text"> @Truncate(contract.Details, 200)</p>
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    }
     </div>
-
 </div>
+

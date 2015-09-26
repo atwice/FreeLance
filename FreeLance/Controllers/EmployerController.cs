@@ -31,18 +31,24 @@ namespace FreeLance.Controllers
 			public String Name { get; set; }
 		}
 
-		public class ArchivedContractViewModel
+        public class ArchivedProblemViewModel
+        {
+            public int ProblemId { get; set; }
+            public String Name { get; set; }
+            public List<ArchivedContractViewModel> Contracts { get; set; }
+        }
+
+        public class ArchivedContractViewModel
 		{
 			public int ContractId { get; set; }
-			public String Name { get; set; }
+			//public String Name { get; set; }
 			public String FreelancerName { get; set; }
 			public String Details { get; set; }
 		}
 
         public class ArchiveViewModel
         {
-            public List<ArchivedContractViewModel> SuccessfulContracts { get; set; } // with Closed status
-            public List<ArchivedContractViewModel> FailedContracts { get; set; } // with CancelledByEmpoyer, CancelledByFreelancer & Failed status
+            public List<ArchivedProblemViewModel> Problems { get; set; } 
         }
 
         public ActionResult Index()
@@ -72,36 +78,28 @@ namespace FreeLance.Controllers
 		public ActionResult Archive()
 		{
 			string userId = User.Identity.GetUserId();
-            var model = new ArchiveViewModel();
-			model.SuccessfulContracts = db.ContractModels
+            var model = db.ProblemModels
                 .Where(
-					c => c.Problem.Employer.Id == userId
-						&& c.Status == ContractStatus.Closed)
+					p => p.Employer.Id == userId
+						&& p.Status == ProblemStatus.Closed)
 				.Select(
-					c => new ArchivedContractViewModel
+					p => new ArchivedProblemViewModel
 					{
-						ContractId = c.ContractId,
-						FreelancerName = c.Freelancer.UserName,
-						Name = c.Problem.Name,
-						Details = c.Details
+						ProblemId = p.ProblemId,
+						Name = p.Name,
+                        Contracts = p.Contracts
+                        .Where(
+                            c => c.Status != ContractStatus.Opened)
+                        .Select(
+                            c => new ArchivedContractViewModel
+                            {
+                                ContractId = c.ContractId,
+                                FreelancerName = c.Freelancer.UserName,
+                                Details = c.Details
+                            })
+                        .ToList()
 					})
 				.ToList();
-            model.FailedContracts = db.ContractModels
-                .Where(
-                    c => c.Problem.Employer.Id == userId
-                        && (
-                        c.Status == ContractStatus.Failed 
-                        || c.Status == ContractStatus.СancelledByEmployer
-                        || c.Status == ContractStatus.СancelledByFreelancer))
-                .Select(
-                    c => new ArchivedContractViewModel
-                    {
-                        ContractId = c.ContractId,
-                        FreelancerName = c.Freelancer.UserName,
-                        Name = c.Problem.Name,
-                        Details = c.Details
-                    })
-                .ToList();
             return View(model);
 		}
 
