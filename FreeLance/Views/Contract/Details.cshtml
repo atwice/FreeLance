@@ -42,7 +42,7 @@
                         <input name="id" type="hidden" value="@Model.ContractId" />
                         <input name="status" type="hidden" value="@FreeLance.Models.ContractStatus.Failed" />
                         <input name="redirect" type="hidden" value="/Freelancer/Home" />
-                        <input type="submit" class="btn btn-success btn-lg" value="Отклонить контракт" />
+                        <input type="submit" class="btn btn-danger btn-lg" value="Отклонить контракт" />
                     }
                 }
                 else if (Model.Status == FreeLance.Models.ContractStatus.InProgress)
@@ -60,7 +60,7 @@
                         <input name="id" type="hidden" value="@Model.ContractId" />
                         <input name="status" type="hidden" value="@FreeLance.Models.ContractStatus.СancelledByFreelancer" />
                         <input name="redirect" type="hidden" value="/Freelancer/Archive" />
-                        <input type="submit" class="btn btn-success btn-lg" value="Прервать контракт" />
+                        <input type="submit" class="btn btn-danger btn-lg" value="Прервать контракт" />
                     }
                 }
                 else if (Model.Status == FreeLance.Models.ContractStatus.Done)
@@ -103,7 +103,7 @@
                         <input name="id" type="hidden" value="@Model.ContractId" />
                         <input name="status" type="hidden" value="@FreeLance.Models.ContractStatus.СancelledByEmployer" />
                         <input name="redirect" type="hidden" value="/Employer/Archive" />
-                        <input type="submit" class="btn btn-success btn-lg" value="Прервать контракт" />
+                        <input type="submit" class="btn btn-danger btn-lg" value="Прервать контракт" />
                     }
                 }
             }

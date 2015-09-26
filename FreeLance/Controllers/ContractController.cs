@@ -82,7 +82,6 @@ namespace FreeLance.Controllers
 		[Authorize(Roles = "Employer, Freelancer")]
 		public ActionResult ChangeStatus(int id, ContractStatus status, string redirect)
 		{
-			string userId = User.Identity.GetUserId();
 			ContractModels contract = db.ContractModels.Include( c => c.Problem ).Single( c => c.ContractId == id );
 			if (contract == null || contract.Freelancer == null)
 			{

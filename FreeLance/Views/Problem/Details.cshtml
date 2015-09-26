@@ -32,6 +32,17 @@
             </table>
             @if (Context.User.IsInRole("Employer"))
             {
+                if (problem.Status != FreeLance.Models.ProblemStatus.Closed)
+                {
+                    using (Html.BeginForm("ChangeStatus", "Problem", FormMethod.Post))
+                    {
+                        <input name="id" type="hidden" value="@problem.ProblemId" />
+                            <input name="status" type="hidden" value="@FreeLance.Models.ProblemStatus.Closed" />
+                            <input name="redirect" type="hidden" value="/Problem/Details/@problem.ProblemId" />
+                            <input type="submit" class="btn btn-danger btn-lg" value="Закрыть задачу" />
+                    }
+                }
+
                 if (problem.Contracts.Count > 0)
                 {
                     <div class="list-group">
@@ -89,7 +100,8 @@
                     using (Html.BeginForm("UnSubscribe", "Subscription", FormMethod.Post))
                     {
                         <input name="id" type="hidden" value="@problem.ProblemId" />
-                        <input type="submit" class="btn btn-danger btn-lg" value="Отписаться от задачи" />}
+                        <input type="submit" class="btn btn-danger btn-lg" value="Отписаться от задачи" />
+                    }
 
                 }
             }
