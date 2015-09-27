@@ -170,6 +170,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\ContractController.cs" />
     <Compile Include="Controllers\CoordinatorController.cs" />
+    <Compile Include="Controllers\DocumentPackageController.cs" />
     <Compile Include="Controllers\EmployerController.cs" />
     <Compile Include="Controllers\FreelancerController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -195,9 +196,14 @@
     <Compile Include="Migrations\201509241626325_Added-IsApprovedByCoordinator-FlagToApplicationUser.Designer.cs">
       <DependentUpon>201509241626325_Added-IsApprovedByCoordinator-FlagToApplicationUser.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201509271947476_added-document-package.cs" />
+    <Compile Include="Migrations\201509271947476_added-document-package.Designer.cs">
+      <DependentUpon>201509271947476_added-document-package.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\ContractModels.cs" />
+    <Compile Include="Models\DocumentPackageModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\ProblemModels.cs" />
@@ -283,6 +289,7 @@
     <Content Include="Views\Coordinator\Home.cshtml" />
     <Content Include="Views\Coordinator\Freelancers.cshtml" />
     <Content Include="Views\Coordinator\Employers.cshtml" />
+    <Content Include="Views\DocumentPackage\Details.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -308,6 +315,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201509241626325_Added-IsApprovedByCoordinator-FlagToApplicationUser.resx">
       <DependentUpon>201509241626325_Added-IsApprovedByCoordinator-FlagToApplicationUser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201509271947476_added-document-package.resx">
+      <DependentUpon>201509271947476_added-document-package.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
