@@ -41,15 +41,9 @@ namespace FreeLance.Controllers
         public class ArchivedContractViewModel
 		{
 			public int ContractId { get; set; }
-			//public String Name { get; set; }
 			public String FreelancerName { get; set; }
 			public String Details { get; set; }
 		}
-
-        public class ArchiveViewModel
-        {
-            public List<ArchivedProblemViewModel> Problems { get; set; } 
-        }
 
         public ActionResult Index()
 		{
@@ -128,20 +122,12 @@ namespace FreeLance.Controllers
 
 		public ActionResult Freelancers()
 		{
-			var model = getApplicationUsersInRole("Freelancer").Select(
+			var model = AccountController.GetApplicationUsersInRole(db, "Freelancer").Select(
 				u => new FreelancerViewModel { Name = u.UserName }).ToList();
 			return View(model);
 		}
 
-		private IEnumerable<ApplicationUser> getApplicationUsersInRole(string roleName)
-		{
-			return from role in db.Roles
-				   where role.Name == roleName
-				   from userRoles in role.Users
-				   join user in db.Users
-				   on userRoles.UserId equals user.Id
-				   select user;
-		}
+		
 
 		public ActionResult NewProblem()
 		{

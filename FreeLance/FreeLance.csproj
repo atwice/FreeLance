@@ -286,6 +286,8 @@
     <Content Include="Views\Employer\Problem.cshtml" />
     <Content Include="Views\Freelancer\Profile.cshtml" />
     <Content Include="Views\Coordinator\Home.cshtml" />
+    <Content Include="Views\Coordinator\Freelancers.cshtml" />
+    <Content Include="Views\Coordinator\Employers.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 ﻿@model FreeLance.Controllers.CoordinatorController.HomeViewModel
+=======
+﻿@model int
+>>>>>>> checking-employer
 @{
     ViewBag.Title = "Личный кабинет";
 }
@@ -11,6 +15,7 @@
     <title>Coordinator's Home</title>
 </head>
 <body>
+<<<<<<< HEAD
     <div class="col-md-10">
         <h2>@ViewBag.Title</h2>
         <h3>Анкеты на подтверждение</h3>
@@ -37,5 +42,8 @@
             
         </div>
     </div>
+=======
+    @Html.ActionLink(Model.ToString() + " неподтвержденных работодателей", "EmployerApprovationList")
+>>>>>>> checking-employer
 </body>
 </html>

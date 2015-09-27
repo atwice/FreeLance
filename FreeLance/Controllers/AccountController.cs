@@ -9,6 +9,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using FreeLance.Models;
+using System.Collections.Generic;
 
 namespace FreeLance.Controllers
 {
@@ -18,7 +19,16 @@ namespace FreeLance.Controllers
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
 
-        public AccountController()
+		public static IEnumerable<ApplicationUser> GetApplicationUsersInRole(ApplicationDbContext db, string roleName) {
+			return from role in db.Roles
+				   where role.Name == roleName
+				   from userRoles in role.Users
+				   join user in db.Users
+				   on userRoles.UserId equals user.Id
+				   select user;
+		}
+
+		public AccountController()
         {
         }
 

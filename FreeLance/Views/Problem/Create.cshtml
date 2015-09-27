@@ -4,7 +4,7 @@
 }
 
 <h2>Создание новой задачи</h2>
-@using (Html.BeginForm())
+@using (Html.BeginForm("Create", "Problem"))
 {
 	@Html.AntiForgeryToken()
 	<div class="form-horizontal">

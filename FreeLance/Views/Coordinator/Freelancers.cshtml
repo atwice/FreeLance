@@ -1,0 +1,23 @@
+﻿@model FreeLance.Controllers.CoordinatorController.FreelancersViewModel
+@{
+    ViewBag.Title = "Фрилансеры";
+}
+
+<!DOCTYPE html>
+
+
+<div class="col-md-10">
+    <h2>Список фрилансеров</h2><br />
+    <div class="list-group">
+        <div>
+            @foreach (var freelancer in Model.Freelancers)
+            {
+                <a href="/Freelancer/@freelancer.Id" class="list-group-item">
+                    <h4 class="list-group-item-heading">@freelancer.UserName</h4>
+                    <p class="list-group-item-text" style="color:lightgray"><i>@freelancer.Email</i></p>
+                    <p class="list-group-item-text" style="color:lightgray"><i>@freelancer.PhoneNumber</i></p>
+                </a>
+            }
+        </div>
+    </div>
+</div>
