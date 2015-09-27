@@ -41,15 +41,9 @@ namespace FreeLance.Controllers
         public class ArchivedContractViewModel
 		{
 			public int ContractId { get; set; }
-			//public String Name { get; set; }
 			public String FreelancerName { get; set; }
 			public String Details { get; set; }
 		}
-
-        public class ArchiveViewModel
-        {
-            public List<ArchivedProblemViewModel> Problems { get; set; } 
-        }
 
         public ActionResult Index()
 		{

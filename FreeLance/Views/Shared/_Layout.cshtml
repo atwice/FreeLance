@@ -18,7 +18,6 @@
 
 </head>
 
-
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
@@ -44,26 +43,35 @@
             <div class="container-fluid" style="margin-top:10%">
 				@if (Context.User.IsInRole("Freelancer") || Context.User.IsInRole("Incognito"))
 				{
-				<div class="span3 bs-docs-sidebar">
-					<ul class="nav nav-pills nav-stacked main-menu">
-						<li>@Html.ActionLink("Профиль", "Profile", "Freelancer")</li>
-						<li>@Html.ActionLink("Личный кабинет", "Home", "Freelancer")</li>
-						<li>@Html.ActionLink("Биржа", "OpenProblems", "Freelancer")</li>
-						<li>@Html.ActionLink("Архив", "Archive", "Freelancer")</li>
-					</ul>
-				</div>
+				    <div class="span3 bs-docs-sidebar">
+					    <ul class="nav nav-pills nav-stacked main-menu">
+						    <li>@Html.ActionLink("Профиль", "Profile", "Freelancer")</li>
+						    <li>@Html.ActionLink("Личный кабинет", "Home", "Freelancer")</li>
+						    <li>@Html.ActionLink("Биржа", "OpenProblems", "Freelancer")</li>
+						    <li>@Html.ActionLink("Архив", "Archive", "Freelancer")</li>
+					    </ul>
+				    </div>
 				}
 				@if (Context.User.IsInRole("Employer"))
 				{
-				<div class="span3 bs-docs-sidebar">
-					<ul class="nav nav-pills nav-stacked main-menu">
-						<li>@Html.ActionLink("Личный кабинет", "Home", "Employer")</li>
-						<li>@Html.ActionLink("Архив контрактов", "Archive", "Employer")</li>
-						<li>@Html.ActionLink("Исполнители", "Freelancers", "Employer")</li>
-					</ul>
+				    <div class="span3 bs-docs-sidebar">
+					    <ul class="nav nav-pills nav-stacked main-menu">
+						    <li>@Html.ActionLink("Личный кабинет", "Home", "Employer")</li>
+						    <li>@Html.ActionLink("Архив контрактов", "Archive", "Employer")</li>
+						    <li>@Html.ActionLink("Исполнители", "Freelancers", "Employer")</li>
+					    </ul>
 					</div>
-              
 				}
+                @if (Context.User.IsInRole("Coordinator"))
+                {
+                    <div class="span3 bs-docs-sidebar">
+                        <ul class="nav nav-pills nav-stacked main-menu">
+                            <li>@Html.ActionLink("Личный кабинет", "Home", "Coordinator")</li>
+                            <li>@Html.ActionLink("Биржа", "OpenProblems", "Freelancer")</li>
+                            <li>@Html.ActionLink("Исполнители", "Freelancers", "Coordinator")</li>
+                        </ul>
+                    </div>
+                }
 			</div>
         </div>
         <div class="col-md-10">@RenderBody()</div>
