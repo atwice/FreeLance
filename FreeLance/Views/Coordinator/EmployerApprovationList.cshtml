@@ -1,0 +1,18 @@
+﻿@model IEnumerable<FreeLance.Controllers.CoordinatorController.EmployerApprovationVR>
+
+@{
+    ViewBag.Title = "EmployerApprovationList";
+}
+
+<h2>EmployerApprovationList</h2>
+@foreach (var employerData in Model) {
+	<dd>
+		<p>@employerData.Employer.Email</p>
+		@using (Html.BeginForm("ChangeEmployerApprovalStatus", "Coordinator", FormMethod.Post)) {
+		<input name="employerId" type="hidden" value="@employerData.Form.EmployerId" />
+		<input name="isApproved" type="hidden" value="@employerData.Form.IsApproved" />
+		<input name="redirect" type="hidden" value="@employerData.Form.Redirect" />
+		<input type="submit" class="btn btn-success btn-lg" value="@employerData.Form.ButtonText" />
+		}
+	</dd>
+}

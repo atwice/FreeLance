@@ -1,4 +1,4 @@
-﻿
+﻿@model int
 @{
 }
 
@@ -10,10 +10,6 @@
     <title>Coordinator's Home</title>
 </head>
 <body>
-    <div> 
-        <h1>
-            Please, wait...
-        </h1>
-    </div>
+    @Html.ActionLink(Model.ToString() + " неподтвержденных работодателей", "EmployerApprovationList")
 </body>
 </html>
