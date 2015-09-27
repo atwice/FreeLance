@@ -197,8 +197,9 @@
       <DependentUpon>201509241626325_Added-IsApprovedByCoordinator-FlagToApplicationUser.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\201509271910077_civilLaw.cs" />
-    <Compile Include="Migrations\201509271910077_civilLaw.Designer.cs">
-      <DependentUpon>201509271910077_civilLaw.cs</DependentUpon>
+		<Compile Include="Migrations\201509271910077_civilLaw.Designer.cs">
+			<DependentUpon>201509271910077_civilLaw.cs</DependentUpon>
+		</Compile>
     <Compile Include="Migrations\201509271947476_added-document-package.cs" />
     <Compile Include="Migrations\201509271947476_added-document-package.Designer.cs">
       <DependentUpon>201509271947476_added-document-package.cs</DependentUpon>
@@ -320,8 +321,9 @@
     <EmbeddedResource Include="Migrations\201509241626325_Added-IsApprovedByCoordinator-FlagToApplicationUser.resx">
       <DependentUpon>201509241626325_Added-IsApprovedByCoordinator-FlagToApplicationUser.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201509271910077_civilLaw.resx">
-      <DependentUpon>201509271910077_civilLaw.cs</DependentUpon>
+		<EmbeddedResource Include="Migrations\201509271910077_civilLaw.resx">
+			<DependentUpon>201509271910077_civilLaw.cs</DependentUpon>
+		</EmbeddedResource>
     <EmbeddedResource Include="Migrations\201509271947476_added-document-package.resx">
       <DependentUpon>201509271947476_added-document-package.cs</DependentUpon>
     </EmbeddedResource>
