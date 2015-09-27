@@ -19,6 +19,6 @@ namespace FreeLance.Models
         [Key]
         public int Id { get; set; }
         [Required]
-        public EntityModel Entity;
+        public EntityModel Entity { get; set; }
     }
 }
