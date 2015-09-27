@@ -122,20 +122,12 @@ namespace FreeLance.Controllers
 
 		public ActionResult Freelancers()
 		{
-			var model = getApplicationUsersInRole("Freelancer").Select(
+			var model = AccountController.GetApplicationUsersInRole(db, "Freelancer").Select(
 				u => new FreelancerViewModel { Name = u.UserName }).ToList();
 			return View(model);
 		}
 
-		private IEnumerable<ApplicationUser> getApplicationUsersInRole(string roleName)
-		{
-			return from role in db.Roles
-				   where role.Name == roleName
-				   from userRoles in role.Users
-				   join user in db.Users
-				   on userRoles.UserId equals user.Id
-				   select user;
-		}
+		
 
 		public ActionResult NewProblem()
 		{
