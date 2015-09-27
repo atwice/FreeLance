@@ -23,10 +23,14 @@ namespace FreeLance.Controllers
 			if( User.IsInRole( "Employer" ) || User.IsInRole( "Admin" ) )
 			{
 				return "Employer";
-			} else if( User.IsInRole( "Freelancer" ) )
-			{
+			} else if( User.IsInRole( "Freelancer" ) || User.IsInRole("Incognito") )
+            {
 				return "Freelancer";
-			} else
+            }
+            else if( User.IsInRole( "Coordinator" ) )
+            {
+                return "Coordinator";
+            } else
 			{
 				throw new InvalidOperationException("Unknown role for user: " + User.Identity.Name);
 			}

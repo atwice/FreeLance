@@ -21,8 +21,9 @@ namespace FreeLance.Controllers
 			return View(db.ContractModels.ToList());
 		}
 
-		// GET: Contract/Details/5
-		public ActionResult Details(int? id)
+        // GET: Contract/Details/5
+        [Authorize(Roles = "Employer,Freelancer,Admin")]
+        public ActionResult Details(int? id)
 		{
 			if (id == null)
 			{
@@ -82,8 +83,7 @@ namespace FreeLance.Controllers
 		[Authorize(Roles = "Employer, Freelancer")]
 		public ActionResult ChangeStatus(int id, ContractStatus status, string redirect)
 		{
-			string userId = User.Identity.GetUserId();
-			ContractModels contract = db.ContractModels.Find(id);
+			ContractModels contract = db.ContractModels.Include( c => c.Problem ).Single( c => c.ContractId == id );
 			if (contract == null || contract.Freelancer == null)
 			{
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);

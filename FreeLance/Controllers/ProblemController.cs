@@ -8,6 +8,10 @@ using System.Web.Mvc;
 using FreeLance.Models;
 using Microsoft.AspNet.Identity;
 
+
+using System.Data.Entity.Validation;
+using System.Diagnostics;
+
 namespace FreeLance.Controllers
 {
 	[Authorize]
@@ -77,8 +81,22 @@ namespace FreeLance.Controllers
 			//return View(problem);
 		}
 
-		// GET: Problem/Edit/5
-		public ActionResult Edit(int? id)
+        [HttpPost]
+        [Authorize(Roles = "Employer")]
+        public ActionResult ChangeStatus(int id, ProblemStatus status, string redirect)
+        {
+            ProblemModels problem = db.ProblemModels.Include(c => c.Employer).Single(c => c.ProblemId == id);
+            if (problem == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            problem.Status = status;
+            db.SaveChanges();
+            return Redirect(redirect == null ? "/Problem/Details/" + id.ToString() : redirect);
+        }
+
+        // GET: Problem/Edit/5
+        public ActionResult Edit(int? id)
 		{
 			if (id == null)
 			{
