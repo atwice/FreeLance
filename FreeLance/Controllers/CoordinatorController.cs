@@ -53,7 +53,8 @@ namespace FreeLance.Controllers
                    on userRoles.UserId equals user.Id
                    select user;
         }
-        		public class EmployerApprovationVR {
+
+		public class EmployersVR {
 			public ApplicationUser Employer { get; set; }
 			public class ApprovationForm {
 				public string ButtonText { get; set; }
@@ -64,15 +65,15 @@ namespace FreeLance.Controllers
 			public ApprovationForm Form { get; set; }
         }
 
-		public ActionResult EmployerApprovationList() {
+		public ActionResult Employers() {
 			return View(
 				Enumerable.Select(AccountController.GetApplicationUsersInRole(db, "employer"),
-					employer => new EmployerApprovationVR {
+					employer => new EmployersVR {
 						Employer = employer,
-						Form = new EmployerApprovationVR.ApprovationForm {
+						Form = new EmployersVR.ApprovationForm {
 							ButtonText = !employer.IsApprovedByCoordinator ? "Подтвердить" : "Отменить подтверждение",
 							IsApproved = (!employer.IsApprovedByCoordinator).ToString(),
-							Redirect = "/Coordinator/EmployerApprovationList",
+							Redirect = "/Coordinator/Employers",
 							EmployerId = employer.Id
 						}
 					}

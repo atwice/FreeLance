@@ -1,0 +1,49 @@
+<<<<<<< HEAD
+﻿@model FreeLance.Controllers.CoordinatorController.HomeViewModel
+=======
+﻿@model int
+>>>>>>> checking-employer
+@{
+    ViewBag.Title = "Личный кабинет";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Coordinator's Home</title>
+</head>
+<body>
+<<<<<<< HEAD
+    <div class="col-md-10">
+        <h2>@ViewBag.Title</h2>
+        <h3>Анкеты на подтверждение</h3>
+        <div class="list-group">
+            @if (Model.Incognitos.Count == 0)
+            {
+                <h5>Все заявки подтверждены. Отличная работа!</h5>
+            }
+            else
+            {
+                foreach (var incognito in Model.Incognitos)
+                {
+                    <a href="/Freelancer/@incognito.Id" class="list-group-item">
+                        <h4 class="list-group-item-heading">@incognito.UserName</h4>
+                        <p class="list-group-item-text" style="color:lightgray"><i>@incognito.Email</i></p>
+                        <p class="list-group-item-text" style="color:lightgray"><i>@incognito.PhoneNumber</i></p>
+                    </a>
+                }
+            }
+        </div>
+
+        <h3>Документы на подтверждение</h3>
+        <div class="list-group">
+            
+        </div>
+    </div>
+=======
+    @Html.ActionLink(Model.ToString() + " неподтвержденных работодателей", "EmployerApprovationList")
+>>>>>>> checking-employer
+</body>
+</html>
