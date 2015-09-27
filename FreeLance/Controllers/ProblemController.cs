@@ -62,9 +62,15 @@ namespace FreeLance.Controllers
 		[HttpPost]
 		[Authorize(Roles = "Employer")]
 		[ValidateAntiForgeryToken]
-		public ActionResult Create([Bind(Include = "ProblemId,Name,Description,Status")] ProblemModels problem)
+		//public ActionResult Create([Bind(Include = "ProblemId,Name,Description,Status")] ProblemModels problem)
+        public ActionResult Create(ProblemModels problem)
 		{
+			ApplicationUser employer = db.Users.Find(User.Identity.GetUserId());
+			if (!employer.IsApprovedByCoordinator) { 
+				return RedirectToAction("Home", "Employer");
+			}
 			problem.Employer = db.Users.Find(User.Identity.GetUserId());
+			problem.Status = ProblemStatus.Opened;
 			db.ProblemModels.Add(problem);
 			db.SaveChanges();
 			return RedirectToAction("Details", new { id = problem.ProblemId });
