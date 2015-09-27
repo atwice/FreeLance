@@ -21,6 +21,8 @@ namespace FreeLance.Models
 
 		[Required]
 		public bool IsApprovedByCoordinator { get; set; }
+
+		public DocumentPackageModels DocumentPackage { get; set; }
     }
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
@@ -44,5 +46,6 @@ namespace FreeLance.Models
 		public System.Data.Entity.DbSet<FreeLance.Models.ProblemModels> ProblemModels { get; set; }
 		public System.Data.Entity.DbSet<FreeLance.Models.ContractModels> ContractModels { get; set; }
 		public System.Data.Entity.DbSet<FreeLance.Models.SubscriptionModels> SubscriptionModels { get; set; }
+		public System.Data.Entity.DbSet<FreeLance.Models.DocumentPackageModels> DocumentPackageModels { get; set; }
 	}
 }

@@ -1,0 +1,14 @@
+﻿@model FreeLance.Controllers.DocumentPackageController.DetailsVR
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+@if (Model.DocumentPackage == null) {
+	<p>У вас нет пакета документов</p>
+} else if (Model.DocumentPackage.IsApproved) {
+	<p>Пакет документов подтвержден</p>
+} else {
+	<p>Пакет документов не подтвержден</p>
+}
+
