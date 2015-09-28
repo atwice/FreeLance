@@ -21,15 +21,15 @@ namespace FreeLance.Controllers
 		public ActionResult Details(int? id) {
 			ApplicationUser user = db.Users.Find(User.Identity.GetUserId());
 			if (id == null) {
-				if (user.DocumentPackage == null)
+				if (user.DocumentPackageId == null)
 					return View(new DetailsVR { DocumentPackage = null });
-				return RedirectToAction("Details", "DocumentPackage", user.DocumentPackage.Id);
+				return RedirectToAction("Details", "DocumentPackage", user.DocumentPackageId);
 			}
 			DocumentPackageModels documentPackage = db.DocumentPackageModels.Find(id);
 			if (documentPackage == null) {
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
-			if (!User.IsInRole("Coordinator") || user.Id != documentPackage.User.Id) {
+			if (!User.IsInRole("Coordinator")) {
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
 			return View(new DetailsVR { DocumentPackage = documentPackage });

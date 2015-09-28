@@ -9,13 +9,12 @@ namespace FreeLance.Models {
 
 		[Key]
 		public int Id { get; set; }
-
-		[Required]
-		public virtual ApplicationUser User { get; set; }
-
 		[Required]
 		public bool IsApproved { get; set; }
-
-		public string FilePassport { get; set; }
+		public string FilePassportFace { get; set; }
+		public string FilePassportRegistration { get; set; }
+		public string Adress { get; set; }
+		public string Phone { get; set; }
+		public string PaymentDetails { get; set; }
 	}
 }
