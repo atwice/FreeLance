@@ -195,3 +195,7 @@ FakesAssemblies/
 # Visual Studio 6 workspace options file
 *.opt
 FreeLance/Scripts/_references.js
+
+# Ignoring App_Data/passports/ except .md file
+**/App_Data/passports*/
+!**/passports/git.md

@@ -17,3 +17,8 @@
 <p> <strong>Всего подписок: </strong> @ViewBag.subscriptionsSize </p>
 <p> <strong>Всего контрактов: </strong> @ViewBag.contractsSize</p>
 
+@using (Html.BeginForm("UploadPassport", "Freelancer", FormMethod.Post,new { enctype = "multipart/form-data" }))
+{
+    <input type="file" name="file" id="file" />
+    <input type="submit" value="Отправить паспорт" />
+}

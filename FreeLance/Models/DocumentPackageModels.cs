@@ -16,6 +16,6 @@ namespace FreeLance.Models {
 		[Required]
 		public bool IsApproved { get; set; }
 
-		// Добавлять документы по ходу создания их моделей
+		public string FilePassport { get; set; }
 	}
 }

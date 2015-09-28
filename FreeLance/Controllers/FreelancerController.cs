@@ -1,6 +1,8 @@
 ﻿using FreeLance.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Migrations;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -140,6 +142,33 @@ namespace FreeLance.Controllers
 			ViewBag.contractsSize = contracts.LongCount();
 			ViewBag.subscriptionsSize = subscriptions.LongCount();
 			return View();
+		}
+
+		[HttpPost]
+		public ActionResult UploadPassport()
+		{
+			if (Request.Files.Count > 0)
+			{
+				var file = Request.Files[0];
+				if (file != null && file.ContentLength > 0)
+				{
+					var fileName = Path.GetFileName(file.FileName);
+					var ext = Path.GetExtension(file.FileName);
+					var passportName = User.Identity.GetUserId() + "_" + DateTime.Now.Ticks.ToString() + ext;
+					var path = Path.Combine(Server.MapPath("~/App_Data/passports/"), passportName);
+					file.SaveAs(path);
+					ApplicationUser user = db.Users.Find(User.Identity.GetUserId());
+                    DocumentPackageModels documents = user.DocumentPackage;
+					if (documents == null)
+					{
+						documents = new DocumentPackageModels {IsApproved = user.IsApprovedByCoordinator, User = user};
+						db.DocumentPackageModels.Add(documents);
+					}
+					documents.FilePassport = passportName;
+					db.SaveChanges();
+				}
+			}
+			return RedirectToAction("Profile");
 		}
 	}
 }
