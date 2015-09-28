@@ -197,5 +197,5 @@ FakesAssemblies/
 FreeLance/Scripts/_references.js
 
 # Ignoring App_Data/passports/ except .md file
-**/App_Data/passports*/
-!**/passports/git.md
+FreeLance/App_Data/passports/*
+!FreeLance/App_Data/passports/git.md
