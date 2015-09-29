@@ -130,7 +130,8 @@ namespace FreeLance.Controllers
 
 		public ViewResult OpenProblems()
 		{
-			ProblemModels[] openProblems = db.ProblemModels.Where(x => x.Status == 0).ToArray();
+			ProblemModels[] openProblems = db.ProblemModels
+				.Where(x => x.Status == 0 && x.Employer.IsApprovedByCoordinator).ToArray();
 			return View(openProblems);
 		}
 

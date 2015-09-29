@@ -61,8 +61,9 @@ namespace FreeLance.Controllers
 		public ActionResult Create()
 		{
 			ApplicationUser employer = db.Users.Find(User.Identity.GetUserId());
-			if (!employer.IsApprovedByCoordinator)
-                return RedirectToAction("Home", "Employer");
+			if (!employer.IsApprovedByCoordinator) {
+				MessagePanel.SetMessage("Ваши задачи не будет показаны исполнителям, пока ваш аккаунт подтвердит координатор");
+			}
 			return View();
 		}
 
@@ -73,7 +74,7 @@ namespace FreeLance.Controllers
 		{
 			ApplicationUser employer = db.Users.Find(User.Identity.GetUserId());
 			if (!employer.IsApprovedByCoordinator) {
-				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+				MessagePanel.SetMessage("Задача создана, но не будет показана исполнителям, пока ваш аккаунт подтвердит координатор");
 			}
 			problem.Employer = db.Users.Find(User.Identity.GetUserId());
 			problem.Status = ProblemStatus.Opened;

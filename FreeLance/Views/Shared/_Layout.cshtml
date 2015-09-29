@@ -76,7 +76,21 @@
                 }
 			</div>
         </div>
-        <div class="col-md-10">@RenderBody()</div>
+        <div class="col-md-10">
+
+			@{ FreeLance.MessagePanel.Message message = FreeLance.MessagePanel.GetMessage(); }
+			@if (message.isVisible) {
+				<div id="message">
+					<div style="padding: 5px;">
+						<div id="inner-message" class="alert alert-error">
+							<button type="button" class="close" data-dismiss="alert">&times;</button>
+							<h4><p class="text-danger">@message.Text</p></h4>
+						</div>
+					</div>
+				</div>
+			}
+			@RenderBody()
+		</div>
     </div>
     
     <hr/>
