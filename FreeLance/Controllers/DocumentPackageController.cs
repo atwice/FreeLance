@@ -21,9 +21,9 @@ namespace FreeLance.Controllers
 		public ActionResult Details(int? id) {
 			ApplicationUser user = db.Users.Find(User.Identity.GetUserId());
 			if (id == null) {
-				if (user.DocumentPackageId == null)
+				if (user.DocumentPackage == null)
 					return View(new DetailsVR { DocumentPackage = null });
-				return RedirectToAction("Details", "DocumentPackage", user.DocumentPackageId);
+				return RedirectToAction("Details", "DocumentPackage", user.DocumentPackage);
 			}
 			DocumentPackageModels documentPackage = db.DocumentPackageModels.Find(id);
 			if (documentPackage == null) {

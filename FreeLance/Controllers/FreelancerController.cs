@@ -177,6 +177,7 @@ namespace FreeLance.Controllers
 					getDocuments().FilePassportFace = SaveDocumentOnDisc(file, "passports");
 					db.SaveChanges();
 				}
+
 			}
 			return RedirectToAction("Profile");
 		}
@@ -209,13 +210,14 @@ namespace FreeLance.Controllers
 		private DocumentPackageModels getDocuments()
 		{
 			ApplicationUser user = db.Users.Find(User.Identity.GetUserId());
-			DocumentPackageModels documents = db.DocumentPackageModels.Find(user.DocumentPackageId);
+			DocumentPackageModels documents = user.DocumentPackage;
 			if (documents == null)
 			{
 				documents = new DocumentPackageModels { IsApproved = user.IsApprovedByCoordinator };
+				documents.Freelancer = user;
 				db.DocumentPackageModels.Add(documents);
 				db.SaveChanges();
-				user.DocumentPackageId = documents.Id;
+				user.DocumentPackage = documents;
 				db.SaveChanges();
 			}
 			return documents;

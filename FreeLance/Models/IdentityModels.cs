@@ -22,7 +22,7 @@ namespace FreeLance.Models
 
 		[Required]
 		public bool IsApprovedByCoordinator { get; set; }
-		public int? DocumentPackageId { get; set; }
+		public virtual DocumentPackageModels DocumentPackage { get; set; }
     }
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>

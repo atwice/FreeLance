@@ -10,6 +10,8 @@ namespace FreeLance.Models {
 		[Key]
 		public int Id { get; set; }
 		[Required]
+		public virtual ApplicationUser Freelancer { get; set; }
+		[Required]
 		public bool IsApproved { get; set; }
 		public string FilePassportFace { get; set; }
 		public string FilePassportRegistration { get; set; }
