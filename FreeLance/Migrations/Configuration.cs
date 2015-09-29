@@ -1,3 +1,5 @@
+using System.Linq.Expressions;
+
 namespace FreeLance.Migrations
 {
 	using System;
@@ -150,22 +152,38 @@ namespace FreeLance.Migrations
 
 		private void AddClosedContracts(ApplicationDbContext context)
 		{
-			var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
-			var employer = addUser(context, userManager, "employer@ya.ru", "111111", "Employer");
-			var freelancer = addUser(context, userManager, "freelancer@ya.ru", "111111", "Freelancer");
-			var problem = addProblem(context, "Problem with closed contracts", "description", ProblemStatus.Opened, employer);
-			addContract(context, "closed contract1", ContractStatus.Closed, problem, freelancer);
-			addContract(context, "closed contract2", ContractStatus.Closed, problem, addUser(context, userManager, "freelancer1@ya.ru", "111111", "Freelancer"));
-			addContract(context, "closed contract3", ContractStatus.Closed, problem, addUser(context, userManager, "freelancer2@ya.ru", "111111", "Freelancer"));
+			try
+			{
+				var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
+				var employer = addUser(context, userManager, "employer@ya.ru", "111111", "Employer");
+				var freelancer = addUser(context, userManager, "freelancer@ya.ru", "111111", "Freelancer");
+				var problem = addProblem(context, "Problem with closed contracts", "description", ProblemStatus.Opened, employer);
+				addContract(context, "closed contract1", ContractStatus.Closed, problem, freelancer);
+				addContract(context, "closed contract2", ContractStatus.Closed, problem,
+				addUser(context, userManager, "freelancer1@ya.ru", "111111", "Freelancer"));
+				addContract(context, "closed contract3", ContractStatus.Closed, problem,
+				addUser(context, userManager, "freelancer2@ya.ru", "111111", "Freelancer"));
+			}
+			catch (Exception e)
+			{
+				System.Diagnostics.Debug.WriteLine("Error! " + e.Message);
+			}
 		}
 
 		private void AddVeryBadProblem(ApplicationDbContext context)
 		{
-			var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
+			try
+			{
+				var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
 			var employer = addUser(context, userManager, "employer@ya.ru", "111111", "Employer");
 			var freelancer = addUser(context, userManager, "freelancer@ya.ru", "111111", "Freelancer");
 			var problem = addProblem(context, "Problem with closed contracts", "Anyone who reads Old and Middle English literary texts will be familiar with the mid-brown volumes of the EETS, with the symbol of Alfred's jewel embossed on the front cover. Most of the works attributed to King Alfred or to Aelfric, along with some of those by bishop Wulfstan and much anonymous prose and verse from the pre-Conquest period, are to be found within the Society's three series; all of the surviving medieval drama, most of the Middle English romances, much religious and secular prose and verse including the English works of John Gower, Thomas Hoccleve and most of Caxton's prints all find their place in the publications. Without EETS editions, study of medieval English texts would hardly be possible.", ProblemStatus.Opened, employer);
 			addContract(context, "As its name states, EETS was begun as a 'club', and it retains certain features of that even now. It has no physical location, or even office, no paid staff or editors, but books in the Original Series are published in the first place to satisfy subscriptions paid by individuals or institutions. This means that there is need for a regular sequence of new editions, normally one or two per year; achieving that sequence can pose problems for the Editorial Secretary, who may have too few or too many texts ready for publication at any one time. Details on a separate sheet explain how individual (but not institutional) members can choose to take certain back volumes in place of the newly published volumes against their subscriptions. On the same sheet are given details about the very advantageous discount available to individual members on all back numbers. In 1970 a Supplementary Series was begun, a series which only appears occasionally (it currently has 24 volumes within it); some of these are new editions of texts earlier appearing in the main series. Again these volumes are available at publication and later at a substantial discount to members. All these advantages can only be obtained through the Membership Secretary (the books are sent by post); they are not available through bookshops, and such bookstores as carry EETS books have only a very limited selection of the many published.", ContractStatus.Closed, problem, freelancer);
+			}
+			catch (Exception e)
+			{
+				System.Diagnostics.Debug.WriteLine("Error! " + e.Message);
+			}
 		}
 	}
 }

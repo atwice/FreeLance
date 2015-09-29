@@ -1,6 +1,8 @@
 ﻿using FreeLance.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Migrations;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -140,6 +142,85 @@ namespace FreeLance.Controllers
 			ViewBag.contractsSize = contracts.LongCount();
 			ViewBag.subscriptionsSize = subscriptions.LongCount();
 			return View();
+		}
+
+
+		public class DocumentPackageViewModel
+		{
+			public string Adress { get; set; }
+			public string Phone { get; set; }
+			public string PaymentDetails { get; set; }
+		}
+
+		[HttpPost]
+		public ActionResult CreateDocumentTextFields(DocumentPackageViewModel documentFromView)
+		{
+			if (documentFromView != null)
+			{
+				DocumentPackageModels documents = getDocuments();
+				documents.Adress = documentFromView.Adress;
+				documents.Phone = documentFromView.Phone;
+				documents.PaymentDetails = documentFromView.PaymentDetails;
+				db.SaveChanges();
+			}
+			return RedirectToAction("Profile");
+		}
+
+		[HttpPost]
+		public ActionResult UploadPassportFace()
+		{
+			if (Request.Files.Count > 0)
+			{
+				var file = Request.Files[0];
+				if (file != null && file.ContentLength > 0)
+				{
+					getDocuments().FilePassportFace = SaveDocumentOnDisc(file, "passports");
+					db.SaveChanges();
+				}
+
+			}
+			return RedirectToAction("Profile");
+		}
+
+		[HttpPost]
+		public ActionResult UploadPassportRegistration()
+		{
+			if (Request.Files.Count > 0)
+			{
+				var file = Request.Files[0];
+				if (file != null && file.ContentLength > 0)
+				{
+					getDocuments().FilePassportRegistration = SaveDocumentOnDisc(file, "registrations");
+					db.SaveChanges();
+				}
+			}
+			return RedirectToAction("Profile");
+		}
+
+
+		private string SaveDocumentOnDisc(HttpPostedFileBase file, string dir)
+		{
+			var ext = Path.GetExtension(file.FileName);
+			var fileName = User.Identity.GetUserId() + "_" + DateTime.Now.Ticks.ToString() + ext;
+			var path = Path.Combine(Server.MapPath("~/App_Data/" + dir + "/"), fileName);
+			file.SaveAs(path);
+			return fileName;
+		}
+
+		private DocumentPackageModels getDocuments()
+		{
+			ApplicationUser user = db.Users.Find(User.Identity.GetUserId());
+			DocumentPackageModels documents = user.DocumentPackage;
+			if (documents == null)
+			{
+				documents = new DocumentPackageModels { IsApproved = user.IsApprovedByCoordinator };
+				documents.Freelancer = user;
+				db.DocumentPackageModels.Add(documents);
+				db.SaveChanges();
+				user.DocumentPackage = documents;
+				db.SaveChanges();
+			}
+			return documents;
 		}
 	}
 }

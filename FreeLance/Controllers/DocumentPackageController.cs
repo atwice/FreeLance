@@ -23,13 +23,13 @@ namespace FreeLance.Controllers
 			if (id == null) {
 				if (user.DocumentPackage == null)
 					return View(new DetailsVR { DocumentPackage = null });
-				return RedirectToAction("Details", "DocumentPackage", user.DocumentPackage.Id);
+				return RedirectToAction("Details", "DocumentPackage", user.DocumentPackage);
 			}
 			DocumentPackageModels documentPackage = db.DocumentPackageModels.Find(id);
 			if (documentPackage == null) {
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
-			if (!User.IsInRole("Coordinator") || user.Id != documentPackage.User.Id) {
+			if (!User.IsInRole("Coordinator")) {
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
 			return View(new DetailsVR { DocumentPackage = documentPackage });

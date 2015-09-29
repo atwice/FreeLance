@@ -5,6 +5,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System.Data.Entity.ModelConfiguration.Conventions;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FreeLance.Models
 {
@@ -21,8 +22,7 @@ namespace FreeLance.Models
 
 		[Required]
 		public bool IsApprovedByCoordinator { get; set; }
-
-		public DocumentPackageModels DocumentPackage { get; set; }
+		public virtual DocumentPackageModels DocumentPackage { get; set; }
     }
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
