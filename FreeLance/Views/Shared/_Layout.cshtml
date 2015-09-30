@@ -123,10 +123,38 @@
                 {
                     <div class="span3 bs-docs-sidebar">
                         <ul class="nav nav-pills nav-stacked main-menu">
-                            <li>@Html.ActionLink("Личный кабинет", "Home", "Coordinator")</li>
-                            <li>@Html.ActionLink("Биржа", "OpenProblems", "Freelancer")</li>
-                            <li>@Html.ActionLink("Исполнители", "Freelancers", "Coordinator")</li>
+						@if (ViewBag.MenuPick == "Home")
+						{
+							<li class="active">@Html.ActionLink("Личный кабинет", "Home", "Coordinator")</li>
+						}
+						else
+						{
+							<li>@Html.ActionLink("Личный кабинет", "Home", "Coordinator")</li>
+						}
+						@if (ViewBag.MenuPick == "OpenProblems")
+						{
+							<li class="active">@Html.ActionLink("Биржа", "OpenProblems", "Freelancer")</li>
+						}
+						else
+						{
+							<li>@Html.ActionLink("Биржа", "OpenProblems", "Freelancer")</li>
+						}
+						@if (ViewBag.MenuPick == "Freelancers")
+						{
+							<li class="active">@Html.ActionLink("Исполнители", "Freelancers", "Coordinator")</li>
+						}
+						else
+						{
+							<li>@Html.ActionLink("Исполнители", "Freelancers", "Coordinator")</li>
+						}
+						@if (ViewBag.MenuPick == "Employers")
+						{
+							<li class="active">@Html.ActionLink("Работодатели", "Employers", "Coordinator")</li>
+						}
+						else
+						{
 							<li>@Html.ActionLink("Работодатели", "Employers", "Coordinator")</li>
+						}						
                         </ul>
                     </div>
                 }
