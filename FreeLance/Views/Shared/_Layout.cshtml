@@ -55,11 +55,32 @@
 				}
 				@if (Context.User.IsInRole("Employer"))
 				{
-				    <div class="span3 bs-docs-sidebar">
-					    <ul class="nav nav-pills nav-stacked main-menu">
-						    <li>@Html.ActionLink("Личный кабинет", "Home", "Employer")</li>
-						    <li>@Html.ActionLink("Архив контрактов", "Archive", "Employer")</li>
-						    <li>@Html.ActionLink("Исполнители", "Freelancers", "Employer")</li>
+					<div class="span3 bs-docs-sidebar">
+						<ul class="nav nav-pills nav-stacked main-menu">	
+						@if (ViewBag.MenuPick == "Home")
+						{
+							<li class="active">@Html.ActionLink("Личный кабинет", "Home", "Employer")</li>
+						}
+						else
+						{
+							<li>@Html.ActionLink("Личный кабинет", "Home", "Employer")</li>
+						}
+						@if (ViewBag.MenuPick == "Archive")
+						{
+							<li class="active">@Html.ActionLink("Архив контрактов", "Archive", "Employer")</li>
+						}
+						else
+						{
+							<li>@Html.ActionLink("Архив контрактов", "Archive", "Employer")</li>
+						}
+						@if (ViewBag.MenuPick == "Freelancers")
+						{
+							<li class="active">@Html.ActionLink("Исполнители", "Freelancers", "Employer")</li>
+						}
+						else
+						{
+							<li>@Html.ActionLink("Исполнители", "Freelancers", "Employer")</li>
+						}
 					    </ul>
 					</div>
 				}
