@@ -45,21 +45,77 @@
 				{
 				    <div class="span3 bs-docs-sidebar">
 					    <ul class="nav nav-pills nav-stacked main-menu">
-						    <li>@Html.ActionLink("Профиль", "Profile", "Freelancer")</li>
-						    <li>@Html.ActionLink("Личный кабинет", "Home", "Freelancer")</li>
-						    <li>@Html.ActionLink("Биржа", "OpenProblems", "Freelancer")</li>
-						    <li>@Html.ActionLink("Архив", "Archive", "Freelancer")</li>
+						@if (ViewBag.MenuPick == "Profile")
+						{
+							<li class="active">@Html.ActionLink("Профиль", "Profile", "Freelancer")</li>
+						}
+						else
+						{
+							<li>@Html.ActionLink("Профиль", "Profile", "Freelancer")</li>
+						}
+						@if (ViewBag.MenuPick == "Home")
+						{
+							<li class="active">@Html.ActionLink("Личный кабинет", "Home", "Freelancer")</li>
+						}
+						else
+						{
+							<li>@Html.ActionLink("Личный кабинет", "Home", "Freelancer")</li>
+						}
+						@if (ViewBag.MenuPick == "OpenProblems")
+						{
+							<li class="active">@Html.ActionLink("Биржа", "OpenProblems", "Freelancer")</li>
+						}
+						else
+						{
+							<li>@Html.ActionLink("Биржа", "OpenProblems", "Freelancer")</li>
+						}
+						@if (ViewBag.MenuPick == "Archive")
+						{
+							<li class="active">@Html.ActionLink("Архив", "Archive", "Freelancer")</li>
+						}
+						else
+						{
+							<li>@Html.ActionLink("Архив", "Archive", "Freelancer")</li>
+						}
+						@if (ViewBag.MenuPick == "Details")
+						{
+							<li class="active">@Html.ActionLink("Документы", "Details", "DocumentPackage")</li>
+						}
+						else
+						{
 							<li>@Html.ActionLink("Документы", "Details", "DocumentPackage")</li>
+						}
 					    </ul>
 				    </div>
 				}
 				@if (Context.User.IsInRole("Employer"))
 				{
-				    <div class="span3 bs-docs-sidebar">
-					    <ul class="nav nav-pills nav-stacked main-menu">
-						    <li>@Html.ActionLink("Личный кабинет", "Home", "Employer")</li>
-						    <li>@Html.ActionLink("Архив контрактов", "Archive", "Employer")</li>
-						    <li>@Html.ActionLink("Исполнители", "Freelancers", "Employer")</li>
+					<div class="span3 bs-docs-sidebar">
+						<ul class="nav nav-pills nav-stacked main-menu">	
+						@if (ViewBag.MenuPick == "Home")
+						{
+							<li class="active">@Html.ActionLink("Личный кабинет", "Home", "Employer")</li>
+						}
+						else
+						{
+							<li>@Html.ActionLink("Личный кабинет", "Home", "Employer")</li>
+						}
+						@if (ViewBag.MenuPick == "Archive")
+						{
+							<li class="active">@Html.ActionLink("Архив контрактов", "Archive", "Employer")</li>
+						}
+						else
+						{
+							<li>@Html.ActionLink("Архив контрактов", "Archive", "Employer")</li>
+						}
+						@if (ViewBag.MenuPick == "Freelancers")
+						{
+							<li class="active">@Html.ActionLink("Исполнители", "Freelancers", "Employer")</li>
+						}
+						else
+						{
+							<li>@Html.ActionLink("Исполнители", "Freelancers", "Employer")</li>
+						}
 					    </ul>
 					</div>
 				}
@@ -67,10 +123,38 @@
                 {
                     <div class="span3 bs-docs-sidebar">
                         <ul class="nav nav-pills nav-stacked main-menu">
-                            <li>@Html.ActionLink("Личный кабинет", "Home", "Coordinator")</li>
-                            <li>@Html.ActionLink("Биржа", "OpenProblems", "Freelancer")</li>
-                            <li>@Html.ActionLink("Исполнители", "Freelancers", "Coordinator")</li>
+						@if (ViewBag.MenuPick == "Home")
+						{
+							<li class="active">@Html.ActionLink("Личный кабинет", "Home", "Coordinator")</li>
+						}
+						else
+						{
+							<li>@Html.ActionLink("Личный кабинет", "Home", "Coordinator")</li>
+						}
+						@if (ViewBag.MenuPick == "OpenProblems")
+						{
+							<li class="active">@Html.ActionLink("Биржа", "OpenProblems", "Freelancer")</li>
+						}
+						else
+						{
+							<li>@Html.ActionLink("Биржа", "OpenProblems", "Freelancer")</li>
+						}
+						@if (ViewBag.MenuPick == "Freelancers")
+						{
+							<li class="active">@Html.ActionLink("Исполнители", "Freelancers", "Coordinator")</li>
+						}
+						else
+						{
+							<li>@Html.ActionLink("Исполнители", "Freelancers", "Coordinator")</li>
+						}
+						@if (ViewBag.MenuPick == "Employers")
+						{
+							<li class="active">@Html.ActionLink("Работодатели", "Employers", "Coordinator")</li>
+						}
+						else
+						{
 							<li>@Html.ActionLink("Работодатели", "Employers", "Coordinator")</li>
+						}						
                         </ul>
                     </div>
                 }
