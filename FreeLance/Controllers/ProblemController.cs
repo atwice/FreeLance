@@ -14,7 +14,7 @@ using System.Diagnostics;
 
 namespace FreeLance.Controllers
 {
-	[Authorize]
+	[Authorize(Roles = "Admin, Coordinator, Freelancer, Employer")]
 	public class ProblemController : Controller
 	{
 		private ApplicationDbContext db = new ApplicationDbContext();
@@ -62,7 +62,7 @@ namespace FreeLance.Controllers
 		{
 			ApplicationUser employer = db.Users.Find(User.Identity.GetUserId());
 			if (!employer.IsApprovedByCoordinator) {
-				MessagePanel.SetMessage("Ваши задачи не будет показаны исполнителям, пока ваш аккаунт подтвердит координатор");
+				ViewBag.ErrorMessage = "Ваши задачи не будет показаны исполнителям, пока ваш аккаунт подтвердит координатор";
 			}
 			return View();
 		}
@@ -74,7 +74,7 @@ namespace FreeLance.Controllers
 		{
 			ApplicationUser employer = db.Users.Find(User.Identity.GetUserId());
 			if (!employer.IsApprovedByCoordinator) {
-				MessagePanel.SetMessage("Задача создана, но не будет показана исполнителям, пока ваш аккаунт подтвердит координатор");
+				ViewBag.ErrorMessage = "Задача создана, но не будет показана исполнителям, пока ваш аккаунт подтвердит координатор";
 			}
 			problem.Employer = db.Users.Find(User.Identity.GetUserId());
 			problem.Status = ProblemStatus.Opened;

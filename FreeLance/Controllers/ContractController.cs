@@ -11,6 +11,7 @@ using Microsoft.AspNet.Identity;
 
 namespace FreeLance.Controllers
 {
+	[Authorize]
 	public class ContractController : Controller
 	{
 		private ApplicationDbContext db = new ApplicationDbContext();
@@ -21,20 +22,95 @@ namespace FreeLance.Controllers
 			return View(db.ContractModels.ToList());
 		}
 
+		public class DetailsVR {
+			public ContractModels Contract { get; set; }
+			public class ChangeStatusButton {
+				public string Text { get; set; }
+				public string Classes { get; set; }
+				public string Redirect { get; set; }
+				public Models.ContractStatus Status { get; set; }
+			}
+			public List<ChangeStatusButton> ChangeStatusButtons;
+		}
+
         // GET: Contract/Details/5
-        [Authorize(Roles = "Employer,Freelancer,Admin")]
+        [Authorize(Roles = "Employer,Freelancer,Admin,Coordinator")]
         public ActionResult Details(int? id)
 		{
-			if (id == null)
-			{
+			if (id == null) {
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
 			ContractModels contractModels = db.ContractModels.Find(id);
-			if (contractModels == null)
-			{
+			if (contractModels == null) {
 				return HttpNotFound();
 			}
-			return View(contractModels);
+			if (User.IsInRole("Freelancer") && User.Identity.GetUserId() != contractModels.Freelancer.Id) {
+				return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
+			}
+			DetailsVR detailsVR = new DetailsVR {
+				Contract = contractModels,
+				ChangeStatusButtons = new List<DetailsVR.ChangeStatusButton>()
+			};
+			if (User.IsInRole("Freelancer")) {
+				if (contractModels.Status == ContractStatus.Opened) {
+					detailsVR.ChangeStatusButtons.Add(new DetailsVR.ChangeStatusButton {
+						Text = "Подписать контракт",
+						Classes = "btn-success",
+						Status = ContractStatus.InProgress,
+						Redirect = "/Contract/Details/" + contractModels.ContractId
+					});
+					detailsVR.ChangeStatusButtons.Add(new DetailsVR.ChangeStatusButton {
+						Text = "Отклонить контракт",
+						Classes = "btn-danger",
+						Status = ContractStatus.Failed,
+						Redirect = "/Freelancer/Home"
+					});
+				} else if (contractModels.Status == ContractStatus.InProgress) {
+					detailsVR.ChangeStatusButtons.Add(new DetailsVR.ChangeStatusButton {
+						Text = "Завершить контракт",
+						Classes = "btn-success",
+						Status = ContractStatus.Done,
+						Redirect = "/Contract/Details/" + contractModels.ContractId
+					});
+					detailsVR.ChangeStatusButtons.Add(new DetailsVR.ChangeStatusButton {
+						Text = "Прервать контракт",
+						Classes = "btn-danger",
+						Status = ContractStatus.СancelledByFreelancer,
+						Redirect = "/Contract/Details/" + contractModels.ContractId
+					});
+				} else if (contractModels.Status == ContractStatus.Done) {
+					detailsVR.ChangeStatusButtons.Add(new DetailsVR.ChangeStatusButton {
+						Text = "Открыть заново",
+						Classes = "btn-danger",
+						Status = ContractStatus.InProgress,
+						Redirect = "/Contract/Details/" + contractModels.ContractId
+					});
+				}
+			} else if (User.IsInRole("Employer")) {
+				if (contractModels.Status == ContractStatus.Done) {
+					detailsVR.ChangeStatusButtons.Add(new DetailsVR.ChangeStatusButton {
+						Text = "Принять работу",
+						Classes = "btn-success",
+						Status = ContractStatus.Closed,
+						Redirect = "/Contract/Details/" + contractModels.ContractId
+					});
+					detailsVR.ChangeStatusButtons.Add(new DetailsVR.ChangeStatusButton {
+						Text = "Отправить на доработку",
+						Classes = "btn-danger",
+						Status = ContractStatus.InProgress,
+						Redirect = "/Contract/Details/" + contractModels.ContractId
+					});
+				} else if (contractModels.Status == ContractStatus.InProgress
+							|| contractModels.Status == ContractStatus.Opened) {
+					detailsVR.ChangeStatusButtons.Add(new DetailsVR.ChangeStatusButton {
+						Text = "Прервать контракт",
+						Classes = "btn-danger",
+						Status = ContractStatus.СancelledByEmployer,
+						Redirect = "/Employer/Archive"
+					});
+				}
+			}
+			return View(detailsVR);
 		}
 
 		// GET: Contract/Create
@@ -56,7 +132,7 @@ namespace FreeLance.Controllers
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Authorize(Roles = "Employer")]
-		public ActionResult Create([Bind(Include = "Details")] ContractModels contract, 
+		public ActionResult Create([Bind(Include = "Details,Cost")] ContractModels contract, 
 			int problemId, string freelancerId, string redirect)
 		{
 			string userId = User.Identity.GetUserId();
