@@ -14,7 +14,7 @@
                 <tbody>
                 <tr>
                     <td><span class="glyphicon glyphicon-euro" aria-hidden="true"></span> @Html.DisplayFor(model => problem.Cost)</td>
-                    <td><span class="glyphicon glyphicon-user" aria-hidden="true"></span> @Html.DisplayFor(model => problem.Employer.UserName)</td>
+                    <td><span class="glyphicon glyphicon-user" aria-hidden="true"></span> @Html.DisplayFor(model => problem.Employer.FIO)</td>
                     @if (problem.Contracts.Count > 0)
                     {
                         <td>Выполняют задачу: @Html.DisplayFor(model => problem.Contracts.Count)</td>
@@ -68,7 +68,7 @@
                         @foreach (var subscription in Model.Subscriptions)
                         {
                             <div class="list-group-item">
-                                @Html.ActionLink(subscription.Freelancer.UserName, "Profile", "Freelancer", new {id = subscription.Freelancer.Id}, null)
+                                @Html.ActionLink(subscription.Freelancer.FIO, "Profile", "Freelancer", new {id = subscription.Freelancer.Id}, null)
                                 <div class="pull-right">
                                     @Html.ActionLink("Подписать контракт", "Create", "Contract", new
                                     {

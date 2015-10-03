@@ -9,7 +9,7 @@
 @foreach (var employerData in Model) {
 	<dd>
 		@using (Html.BeginForm("ChangeEmployerApprovalStatus", "Coordinator", FormMethod.Post)) {
-			@employerData.Employer.Email
+			@employerData.Employer.FIO
 			<input name="employerId" type="hidden" value="@employerData.Form.EmployerId" />
 			<input name="isApproved" type="hidden" value="@employerData.Form.IsApproved" />
 			<input name="redirect" type="hidden" value="@employerData.Form.Redirect" />
