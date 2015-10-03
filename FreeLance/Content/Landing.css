@@ -58,8 +58,13 @@ body {
 	border: 0px;
 }
 
-	#footer .container {
-		padding-top: 10px;
-		padding-bottom: 10px;
-	}
+#footer .container {
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+.btn-inline
+{
+	display:inline-block;
+}
 
