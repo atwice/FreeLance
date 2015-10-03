@@ -73,7 +73,7 @@ namespace FreeLance.Controllers
                     c => new ArchivedContractViewModel
                     {
                         ContractId = c.ContractId,
-                        EmployerName = c.Problem.Employer.UserName,
+                        EmployerName = c.Problem.Employer.FIO,
                         Name = c.Problem.Name,
                         Details = c.Details
                     })
@@ -89,7 +89,7 @@ namespace FreeLance.Controllers
                     c => new ArchivedContractViewModel
                     {
                         ContractId = c.ContractId,
-                        EmployerName = c.Problem.Employer.UserName,
+                        EmployerName = c.Problem.Employer.FIO,
                         Name = c.Problem.Name,
                         Details = c.Details
                     })
