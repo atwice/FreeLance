@@ -123,7 +123,7 @@ namespace FreeLance.Controllers
 		public ActionResult Freelancers()
 		{
 			var model = AccountController.GetApplicationUsersInRole(db, "Freelancer").Select(
-				u => new FreelancerViewModel { Name = u.UserName }).ToList();
+				u => new FreelancerViewModel { Name = u.FIO }).ToList();
 			return View(model);
 		}
 
