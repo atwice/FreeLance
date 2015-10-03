@@ -88,7 +88,7 @@ namespace FreeLance.Controllers
                             c => new ArchivedContractViewModel
                             {
                                 ContractId = c.ContractId,
-                                FreelancerName = c.Freelancer.UserName,
+                                FreelancerName = c.Freelancer.FIO,
                                 Details = c.Details
                             })
                         .ToList()
