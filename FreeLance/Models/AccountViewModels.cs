@@ -62,9 +62,22 @@ namespace FreeLance.Models
         public bool RememberMe { get; set; }
     }
 
-    public class RegisterViewModel
+	public class MustBeTrueAttribute : ValidationAttribute
+	{
+		public override bool IsValid(object value)
+		{
+			return value is bool && (bool)value;
+		}
+	}
+
+	public class RegisterViewModel
     {
-        [Required]
+		[Required]
+		[StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 3)]
+		[Display(Name = "ФИО")]
+		public string FIO { get; set; }
+
+		[Required]
         [EmailAddress]
         [Display(Name = "Email")]
         public string Email { get; set; }
@@ -79,7 +92,11 @@ namespace FreeLance.Models
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
-    }
+
+		[MustBeTrue(ErrorMessage = "Для регистрации на сайте необходимо согласиться с правилами.")]
+		[Display(Name = "Я согласен(а) с условиями использования сайта")]
+		public bool TermsAndConditions { get; set; }
+	}
 
     public class ResetPasswordViewModel
     {
