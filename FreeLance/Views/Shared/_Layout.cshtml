@@ -44,7 +44,7 @@
 						<p>В это время Вы можете загрузите пакет документов, чтобы иметь возможность подписываться на задачи сразу после одобрения аккаунта.</p>
 					</div>
 				}
-				@if (Context.User.IsInRole("Freelancer"))
+				@if (Context.User.IsInRole("Freelancer") || Context.User.IsInRole("WithoutDocuments"))
 				{
 				    <div class="span3 bs-docs-sidebar">
 					    <ul class="nav nav-pills nav-stacked main-menu">
