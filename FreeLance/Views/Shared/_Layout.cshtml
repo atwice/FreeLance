@@ -158,8 +158,15 @@
 						{
 							<li>@Html.ActionLink("Работодатели", "Employers", "Coordinator")</li>
 						}
-                            <li class="">@Html.ActionLink("Создать Юрлицо", "AddLawFace", "Coordinator")</li>
-                            <li class="">@Html.ActionLink("Скачать ГПХ", "Download", "Coordinator" )</li>
+                        @if (ViewBag.MenuPick == "LawFaces")
+                        {
+                            <li class="active">@Html.ActionLink("Юрлица", "LawFaces", "Coordinator")</li>
+                        }
+                        else
+                        {
+                                <li>@Html.ActionLink("Юрлица", "LawFaces", "Coordinator")</li>
+                         }
+                           
                         </ul>
                     </div>
                 }

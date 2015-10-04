@@ -27,6 +27,11 @@ namespace FreeLance.Controllers
             public List<ApplicationUser> Freelancers { get; set; }
         }
 
+        public class LawFacesViewModel
+        {
+            public List<LawFace> LawFaces { get; set; }
+        }
+
         // GET: Coordinator
         public ActionResult Index()
         {
@@ -72,7 +77,8 @@ namespace FreeLance.Controllers
             ViewBag.LawContractTemplates = db.LawContractTemplates.ToList();
             return View(new LawFace());
         }
-    
+
+
         [HttpPost]
         public ActionResult AddLawContractTemplate(LawContractTemplate model)
         {
@@ -103,6 +109,15 @@ namespace FreeLance.Controllers
             model.Freelancers = getApplicationUsersInRole("Freelancer").ToList();
             return View(model);
         }
+
+      
+        public ActionResult LawFaces()
+        {
+            var model =  new LawFacesViewModel();
+            model.LawFaces = db.LawFaces.ToList();
+            return View(model);
+        }
+
 
         private IEnumerable<ApplicationUser> getApplicationUsersInRole(string roleName)
         {
