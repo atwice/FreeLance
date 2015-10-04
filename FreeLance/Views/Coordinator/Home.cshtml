@@ -24,11 +24,18 @@
             {
                 foreach (var incognito in Model.Incognitos)
                 {
-                    <a href="/Freelancer/@incognito.Id" class="list-group-item">
+                    <div class="list-group-item">
+						@using (Html.BeginForm("EditRole", "Coordinator"))
+						{ 
+							<input type="hidden" name="usernameID" value=@incognito.Id />
+							<input type="hidden" name="choosenRole" value="WithoutDocuments" />
+							<input type="submit" value="Допустить в систему" class="pull-right btn btn-success" />
+						}
+						
                         <h4 class="list-group-item-heading">@incognito.FIO</h4>
                         <p class="list-group-item-text" style="color:lightgray"><i>@incognito.Email</i></p>
                         <p class="list-group-item-text" style="color:lightgray"><i>@incognito.PhoneNumber</i></p>
-                    </a>
+                    </div>
                 }
             }
         </div>

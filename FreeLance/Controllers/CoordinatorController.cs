@@ -6,6 +6,8 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Novacode;
+using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.AspNet.Identity;
 
 namespace FreeLance.Controllers
 {
@@ -150,6 +152,21 @@ namespace FreeLance.Controllers
 			employer.IsApprovedByCoordinator = isApproved;
 			db.SaveChanges();
 			return Redirect(redirect == null ? "/Coordinator/Home" : redirect);
+		}
+
+		[HttpPost]
+		public ActionResult EditRole(string usernameID, string choosenRole)
+		{
+			ApplicationUser freelancer = db.Users.Find(usernameID);
+			var withoutDoc = db.Roles.Where(role => role.Name == choosenRole).ToArray()[0];
+			if (freelancer == null)
+			{
+				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+			}
+			freelancer.Roles.Clear();
+			freelancer.Roles.Add(new IdentityUserRole { RoleId = withoutDoc.Id, UserId = freelancer.Id });
+			db.SaveChanges();
+			return RedirectToAction("Home");
 		}
 
 	}
