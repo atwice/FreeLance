@@ -11,13 +11,21 @@
         <div>
             @foreach (var lawFace in Model.LawFaces)
             {
-                <a class="list-group-item">
-                    <h4 class="list-group-item-heading">@lawFace.Name</h4>
+                <a class="list-group-item" style="padding: 10px;">
+                 
+                        <h4 class="list-group-item-heading">@lawFace.Name</h4>
                     <p class="list-group-item-text" style="color: lightgray">
                         <i>@lawFace.CurrentLawContractTemplate.Path</i>
+                        @Html.ActionLink("Посмотреть", "Download", "Coordinator", new { filename = @lawFace.CurrentLawContractTemplate.Path }, null)
+@*                        <a style="padding: 5px; margin: 5px" class="btn btn-success" href="/Coordinator/Download">*@
+@*                            <span class="glyphicon glyphicon-eye-open"></span>*@
+@*                            Скачать*@
+@*                        </a>*@
                     </p>
+                       
+                   
                 </a>
-            }
+                   }
         </div>
     </div>
     <div class="span3 bs-docs-sidebar">

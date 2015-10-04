@@ -38,9 +38,9 @@ namespace FreeLance.Controllers
             return RedirectToAction("Home");
         }
 
-        public ActionResult Download()
+        public ActionResult Download(string filename)
         {
-            string filename = db.LawContractTemplates.ToArray()[1].Path;
+//            string filename = db.LawContractTemplates.ToArray()[1].Path;
             string filepath = AppDomain.CurrentDomain.BaseDirectory + filename;
             using (DocX doc = DocX.Load(filepath))
             {
@@ -68,7 +68,7 @@ namespace FreeLance.Controllers
         {
             db.LawFaces.Add(model);
             db.SaveChanges();
-            return View(model);
+            return RedirectToAction("LawFaces");
         }
 
         [HttpGet]
