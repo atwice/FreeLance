@@ -44,6 +44,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DocX, Version=1.0.0.18, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\DocX.1.0.0.18\lib\net40\DocX.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
       <Private>True</Private>
@@ -167,6 +171,7 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="Code\DocumentManager.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\ContractController.cs" />
     <Compile Include="Controllers\CoordinatorController.cs" />
@@ -182,7 +187,7 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
-    <Compile Include="Models\CivilLawModels.cs" />
+    <Compile Include="Models\LawModels.cs" />
     <Compile Include="Models\ContractModels.cs" />
     <Compile Include="Models\DocumentPackageModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
@@ -201,6 +206,8 @@
     <Content Include="Content\Site.css" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Files\test.docx" />
+    <Content Include="Files\test1.docx" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -271,6 +278,8 @@
     <Content Include="Views\Coordinator\Freelancers.cshtml" />
     <Content Include="Views\Coordinator\Employers.cshtml" />
     <Content Include="Views\DocumentPackage\Details.cshtml" />
+    <Content Include="Views\Coordinator\AddLawContractTemplate.cshtml" />
+    <Content Include="Views\Coordinator\AddLawFace.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

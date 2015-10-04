@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using Novacode;
 
 namespace FreeLance.Controllers
 {
@@ -27,6 +28,62 @@ namespace FreeLance.Controllers
         public ActionResult Index()
         {
             return RedirectToAction("Home");
+        }
+
+        public ActionResult Download()
+        {
+            string filename = db.LawContractTemplates.ToArray()[1].Path;
+            string filepath = AppDomain.CurrentDomain.BaseDirectory + filename;
+            using (DocX doc = DocX.Load(filepath))
+            {
+                doc.ReplaceText("Name", "%%NAME%%");
+                doc.Save();
+            }
+
+            byte[] filedata = System.IO.File.ReadAllBytes(filepath);
+            string contentType = MimeMapping.GetMimeMapping(filepath);
+
+            var cd = new System.Net.Mime.ContentDisposition
+            {
+                FileName = filename,
+                Inline = true,
+            };
+
+            Response.AppendHeader("Content-Disposition", cd.ToString());
+
+            return File(filedata, contentType);
+
+         }
+
+        [HttpPost]
+        public ActionResult AddLawFace(LawFace model)
+        {
+            db.LawFaces.Add(model);
+            db.SaveChanges();
+            return View(model);
+        }
+
+        [HttpGet]
+        public ActionResult AddLawFace()
+        {
+            ViewBag.LawContractTemplates = db.LawContractTemplates.ToList();
+            return View(new LawFace());
+        }
+    
+        [HttpPost]
+        public ActionResult AddLawContractTemplate(LawContractTemplate model)
+        {
+            db.LawContractTemplates.Add(model);
+            db.SaveChanges();
+            ViewBag.ErrorMessage = "Thank you!";
+            ViewBag.LawContractTemplates = db.LawContractTemplates.ToList();
+            return View();
+        }
+
+
+        public ActionResult AddLawContractTemplate()
+        {
+            return View();
         }
 
         public ActionResult Home()
