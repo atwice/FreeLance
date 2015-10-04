@@ -17,7 +17,8 @@ namespace FreeLance.Controllers
         public class HomeViewModel
         {
             public List<ApplicationUser> Incognitos { get; set; }
-        }
+			public List<ApplicationUser> WithoutDocuments { get; set; }
+		}
 
         public class FreelancersViewModel
         {
@@ -90,7 +91,8 @@ namespace FreeLance.Controllers
         {
             var model = new HomeViewModel();
             model.Incognitos = getApplicationUsersInRole("Incognito").ToList();
-            return View(model);
+			model.WithoutDocuments = getApplicationUsersInRole("WithoutDocuments").ToList();
+			return View(model);
         }
 
         public ActionResult Freelancers()

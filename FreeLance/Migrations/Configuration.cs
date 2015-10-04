@@ -87,6 +87,7 @@ namespace FreeLance.Migrations
 			context.Roles.AddOrUpdate(r => r.Name, new IdentityRole { Name = "Freelancer" });
 			context.Roles.AddOrUpdate(r => r.Name, new IdentityRole { Name = "Employer" });
 			context.Roles.AddOrUpdate(r => r.Name, new IdentityRole { Name = "Incognito" });
+			context.Roles.AddOrUpdate(r => r.Name, new IdentityRole { Name = "WithoutDocuments" });
 			context.Roles.AddOrUpdate(r => r.Name, new IdentityRole { Name = "Coordinator" });
 			context.SaveChanges();
 		}
@@ -98,6 +99,7 @@ namespace FreeLance.Migrations
 			addUser(context, userManager, "employer", "employer@ya.ru", "111111", "Employer");
 			addUser(context, userManager, "freelancer", "freelancer@ya.ru", "111111", "Freelancer");
             addUser(context, userManager, "incognito", "incognito@ya.ru", "111111", "Incognito");
+			addUser(context, userManager, "withoutDocuments", "withoutDocuments@ya.ru", "111111", "WithoutDocuments");
 			addUser(context, userManager, "coordinator", "coordinator@ya.ru", "111111", "Coordinator");
 		}
 
