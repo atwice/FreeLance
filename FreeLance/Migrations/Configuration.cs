@@ -99,6 +99,7 @@ namespace FreeLance.Migrations
 			addUser(context, userManager, "employer", "employer@ya.ru", "111111", "Employer");
 			addUser(context, userManager, "freelancer", "freelancer@ya.ru", "111111", "Freelancer");
             addUser(context, userManager, "incognito", "incognito@ya.ru", "111111", "Incognito");
+			addUser(context, userManager, "incognito2", "incognito2@ya.ru", "111111", "Incognito");
 			addUser(context, userManager, "withoutDocuments", "withoutDocuments@ya.ru", "111111", "WithoutDocuments");
 			addUser(context, userManager, "coordinator", "coordinator@ya.ru", "111111", "Coordinator");
 		}
