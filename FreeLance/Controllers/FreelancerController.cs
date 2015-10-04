@@ -8,6 +8,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
+using Novacode;
 
 
 namespace FreeLance.Controllers
@@ -198,6 +199,42 @@ namespace FreeLance.Controllers
 			return RedirectToAction("Profile");
 		}
 
+	   
+	    public ActionResult FillLawContract()
+	    {
+	        LawContractTemplate lawContractTemplate = db.LawContractTemplates.ToArray()[0];
+	        string filename = lawContractTemplate.Path;
+            string filepath = AppDomain.CurrentDomain.BaseDirectory + filename;
+            using (DocX doc = DocX.Load(filepath))
+            {
+                ApplicationUser curUser = db.Users.Find(User.Identity.GetUserId());
+                if (curUser.FIO != null)
+                    doc.ReplaceText("%%NAME%%", curUser.FIO);
+                else 
+                    doc.ReplaceText("%%NAME%%", "У ВАС НЕТ ИМЕНИ");
+                string contractName = "T" + 0 + "U" + curUser.Id + ".docx";
+                string pathToContract = AppDomain.CurrentDomain.BaseDirectory +  "/Files/LawContracts/" + contractName;
+                doc.SaveAs(pathToContract);
+                LawContract lawContract = new LawContract {Path=pathToContract, User=curUser, LawContractTemplate = lawContractTemplate};
+                db.LawContracts.Add(lawContract);
+                db.SaveChanges();
+                byte[] filedata = System.IO.File.ReadAllBytes(pathToContract);
+                string contentType = MimeMapping.GetMimeMapping(pathToContract);
+
+                var cd = new System.Net.Mime.ContentDisposition
+                {
+                    FileName = filename,
+                    Inline = true,
+                };
+
+                Response.AppendHeader("Content-Disposition", cd.ToString());
+
+                return File(filedata, contentType);
+            }
+
+           
+        }
+
 
 		private string SaveDocumentOnDisc(HttpPostedFileBase file, string dir)
 		{
@@ -223,5 +260,6 @@ namespace FreeLance.Controllers
 			}
 			return documents;
 		}
+
 	}
 }

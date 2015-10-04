@@ -61,11 +61,12 @@
         </div>
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-success" />
+                <input type="submit" value="Save" class="btn btn-success"/>
                 <a href="@Url.Action("CreateDocumentTextFields", "Freelancer")">
-                    <input type="button" value="Cancel" class="btn btn-danger" />
+                    <input type="button" value="Cancel" class="btn btn-danger"/>
                 </a>
             </div>
         </div>
+        @Html.ActionLink("Заполнить ГПХ", "FillLawContract", "Freelancer")
     </div>
 }
