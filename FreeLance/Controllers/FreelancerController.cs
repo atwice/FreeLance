@@ -10,10 +10,9 @@ using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Novacode;
 
-
 namespace FreeLance.Controllers
 {
-	[Authorize(Roles = "Admin, Freelancer, Incognito, Coordinator")]
+	[Authorize(Roles = "Admin, Freelancer, Incognito, Coordinator, WithoutDocuments")]
 	public class FreelancerController : Controller
 	{
 		private ApplicationDbContext db = new ApplicationDbContext();
@@ -46,6 +45,10 @@ namespace FreeLance.Controllers
 		// GET: Freelancer
 		public ActionResult Home()
 		{
+			if (User.IsInRole("Incognito"))
+			{
+				return RedirectToAction("Profile");
+			}
 			string userId = User.Identity.GetUserId();
 			var viewModel = new HomeView
 			{

@@ -1,13 +1,6 @@
 ﻿<!DOCTYPE html>
 
-@if (User.IsInRole("Incognito"))
-{
-    <div class="alert alert-block" >
-        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-            <span class="sr-only">Внимание!</span>
-            Загрузите пакет документов в личном кабинете, чтобы иметь возможность подписываться на задачи.
-    </div>
-}
+
 <html>
 <head>
     <meta charset="utf-8" />
@@ -41,7 +34,17 @@
     <div class="row">
         <div class="col-md-2">
             <div class="container-fluid" style="margin-top:10%">
-				@if (Context.User.IsInRole("Freelancer") || Context.User.IsInRole("Incognito"))
+				@if (User.IsInRole("Incognito"))
+				{
+					<div class="alert alert-block">
+						<p>
+							<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+							Ваш аккаунт находится на рассмотрении координатора.
+						</p>
+						<p>В это время Вы можете загрузите пакет документов, чтобы иметь возможность подписываться на задачи сразу после одобрения аккаунта.</p>
+					</div>
+				}
+				@if (Context.User.IsInRole("Freelancer") || Context.User.IsInRole("WithoutDocuments"))
 				{
 				    <div class="span3 bs-docs-sidebar">
 					    <ul class="nav nav-pills nav-stacked main-menu">
