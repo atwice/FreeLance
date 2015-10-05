@@ -8,6 +8,7 @@ using System.Web.Mvc;
 using Novacode;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity;
+using System.IO;
 
 namespace FreeLance.Controllers
 {
@@ -25,6 +26,12 @@ namespace FreeLance.Controllers
         public class FreelancersViewModel
         {
             public List<ApplicationUser> Freelancers { get; set; }
+        }
+
+        public class UploadViewModel
+        {
+            public List<ApplicationUser> Freelancers { get; set; }
+            public LawContract contract { get; set; }
         }
 
         // GET: Coordinator
@@ -57,6 +64,27 @@ namespace FreeLance.Controllers
             return File(filedata, contentType);
 
          }
+
+        public ActionResult Upload()
+        {
+            var model = new UploadViewModel();
+            model.Freelancers = getApplicationUsersInRole("Freelancer").OrderBy(f => f.FIO).ToList();
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult Upload(HttpPostedFileBase file)
+        {
+            string path = null;
+            if (file.ContentLength > 0)
+            {
+                var fileName = Path.GetFileName(file.FileName);
+                path = AppDomain.CurrentDomain.BaseDirectory + "Files\\LawContracts\\" + fileName;
+                Response.Write(path.ToString());
+                file.SaveAs(path);
+            }
+            return RedirectToAction("Index");
+        }
 
         [HttpPost]
         public ActionResult AddLawFace(LawFace model)
