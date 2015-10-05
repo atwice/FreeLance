@@ -131,7 +131,17 @@ namespace FreeLance.Controllers
 
 		public ViewResult OpenProblems()
 		{
-			ProblemModels[] openProblems = db.ProblemModels
+            if (User.IsInRole("Freelancer"))
+            {
+                string userId = User.Identity.GetUserId();
+                ApplicationUser freelancer = db.Users.Find(userId);
+                bool withLawContract = db.LawContracts.Where(c => c.User.Id == userId).Count() > 0 ? true : false;
+                if (!withLawContract)
+                {
+                    ViewBag.ErrorMessage = "Вам не заплатят за выполненную работу, пока вы не заключите ГПХ.";
+                }
+            }
+            ProblemModels[] openProblems = db.ProblemModels
 				.Where(x => x.Status == 0 && x.Employer.IsApprovedByCoordinator).ToArray();
 			return View(openProblems);
 		}
