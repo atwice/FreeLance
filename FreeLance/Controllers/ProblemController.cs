@@ -32,14 +32,22 @@ namespace FreeLance.Controllers
 			{
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
-
-			ProblemModels problemModels = db.ProblemModels.Find(id);
+            ProblemModels problemModels = db.ProblemModels.Find(id);
 			if (problemModels == null)
 			{
 				return HttpNotFound();
 			}
 			string userId = User.Identity.GetUserId();
-			SubscriptionModels[] subscriptions = db.SubscriptionModels.Where(sub => sub.Freelancer.Id == userId
+            if (User.IsInRole("Freelancer"))
+            {
+                ApplicationUser freelancer = db.Users.Find(userId);
+                bool withLawContract = db.LawContracts.Where(c => c.User.Id == userId).Count() > 0 ? true : false;
+                if (!withLawContract)
+                {
+                    ViewBag.ErrorMessage = "Вам не заплатят за выполненную работу, пока вы не заключите ГПХ.";
+                }
+            }
+            SubscriptionModels[] subscriptions = db.SubscriptionModels.Where(sub => sub.Freelancer.Id == userId
 													&& sub.Problem.ProblemId == id).Distinct().ToArray();
 			SubscriptionModels subscription = subscriptions.Length > 0 ? subscriptions[0] : null;
 			DetailsView view = new DetailsView
@@ -62,7 +70,7 @@ namespace FreeLance.Controllers
 		{
 			ApplicationUser employer = db.Users.Find(User.Identity.GetUserId());
 			if (!employer.IsApprovedByCoordinator) {
-				ViewBag.ErrorMessage = "Ваши задачи не будет показаны исполнителям, пока ваш аккаунт подтвердит координатор";
+				ViewBag.ErrorMessage = "Ваши задачи не будут показаны исполнителям, пока ваш аккаунт не подтвердит координатор";
 			}
 			return View();
 		}

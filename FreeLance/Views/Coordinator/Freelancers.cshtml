@@ -4,21 +4,45 @@
 	ViewBag.MenuPick = "Freelancers";
 }
 
-<!DOCTYPE html>
-
-
 <div class="col-md-10">
     <h2>Список фрилансеров</h2><br />
     <div class="list-group">
+        <h3>Без ГПХ</h3><br />
         <div>
-            @foreach (var freelancer in Model.Freelancers)
+            @if (Model.FreelancersWithoutLawContract.Count() == 0)
             {
-                <a href="/Freelancer/@freelancer.Id" class="list-group-item">
-                    <h4 class="list-group-item-heading">@freelancer.FIO</h4>
-                    <p class="list-group-item-text" style="color:lightgray"><i>@freelancer.Email</i></p>
-                    <p class="list-group-item-text" style="color:lightgray"><i>@freelancer.PhoneNumber</i></p>
-                </a>
+                <h5>ГПХ заключены со всеми исполнителями. Отличная работа!</h5>
+            }
+            else
+            {
+                foreach (var freelancer in Model.FreelancersWithoutLawContract)
+                {
+                    <a href="/Freelancer/@freelancer.Id" class="list-group-item">
+                        <h4 class="list-group-item-heading">@freelancer.FIO</h4>
+                        <p class="list-group-item-text" style="color:lightgray"><i>@freelancer.Email</i></p>
+                        <p class="list-group-item-text" style="color:lightgray"><i>@freelancer.PhoneNumber</i></p>
+                    </a>
+                }
             }
         </div>
+        <h3>С заключенными ГПХ</h3><br />
+        <div>
+            @if (Model.FreelancersWithLawContract.Count() == 0)
+            {
+                <h5>ГПХ пока не заключен ни с одним исполнителем. Пора что-то менять.</h5>
+            }
+            else
+            {
+                foreach (var freelancer in Model.FreelancersWithLawContract)
+                {
+                    <a href="/Freelancer/Profile/@freelancer.Id" class="list-group-item">
+                        <h4 class="list-group-item-heading">@freelancer.FIO</h4>
+                        <p class="list-group-item-text" style="color:lightgray"><i>@freelancer.Email</i></p>
+                        <p class="list-group-item-text" style="color:lightgray"><i>@freelancer.PhoneNumber</i></p>
+                    </a>
+                }
+            }
+        </div>
+
     </div>
 </div>

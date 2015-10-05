@@ -8,6 +8,7 @@ using System.Web.Mvc;
 using Novacode;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity;
+using System.IO;
 
 namespace FreeLance.Controllers
 {
@@ -24,7 +25,14 @@ namespace FreeLance.Controllers
 
         public class FreelancersViewModel
         {
+            public List<ApplicationUser> FreelancersWithLawContract { get; set; }
+            public List<ApplicationUser> FreelancersWithoutLawContract { get; set; }
+        }
+
+        public class UploadViewModel
+        {
             public List<ApplicationUser> Freelancers { get; set; }
+            public LawContract contract { get; set; }
         }
 
         public class LawFacesViewModel
@@ -62,6 +70,27 @@ namespace FreeLance.Controllers
             return File(filedata, contentType);
 
          }
+
+        public ActionResult Upload()
+        {
+            var model = new UploadViewModel();
+            model.Freelancers = getApplicationUsersInRole("Freelancer").OrderBy(f => f.FIO).ToList();
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult Upload(HttpPostedFileBase file)
+        {
+            string path = null;
+            if (file.ContentLength > 0)
+            {
+                var fileName = Path.GetFileName(file.FileName);
+                path = AppDomain.CurrentDomain.BaseDirectory + "Files\\LawContracts\\" + fileName;
+                Response.Write(path.ToString());
+                file.SaveAs(path);
+            }
+            return RedirectToAction("Index");
+        }
 
         [HttpPost]
         public ActionResult AddLawFace(LawFace model)
@@ -105,9 +134,23 @@ namespace FreeLance.Controllers
 
         public ActionResult Freelancers()
         {
+            string userId = User.Identity.GetUserId();
             var model = new FreelancersViewModel();
-            model.Freelancers = getApplicationUsersInRole("Freelancer").ToList();
-            return View(model);
+			List<ApplicationUser> freelancers = getApplicationUsersInRole("Freelancer").OrderBy(f => f.FIO).ToList();
+			model.FreelancersWithLawContract = new List<ApplicationUser>();
+			model.FreelancersWithoutLawContract = new List<ApplicationUser>();
+			foreach (var freelancer in freelancers)
+			{
+				if (db.LawContracts.Where(c => c.User.Id == freelancer.Id).Count() > 0)
+				{
+					model.FreelancersWithLawContract.Add(freelancer);
+				}
+				else
+				{
+					model.FreelancersWithoutLawContract.Add(freelancer);
+				}
+			}			
+			return View(model);
         }
 
       
