@@ -141,10 +141,11 @@ namespace FreeLance.Controllers
 			model.FreelancersWithoutLawContract = new List<ApplicationUser>();
 			foreach (var freelancer in freelancers)
 			{
-				if (db.LawContracts.Where(c => c.User.Id == freelancer.Id).Count() > 0)
+				var contracts = db.LawContracts.Where(c => c.User.Id == freelancer.Id);
+                if (contracts.Count() > 0 && contracts.Last().EndData < DateTime.Now)
 				{
 					model.FreelancersWithLawContract.Add(freelancer);
-				}
+				} 
 				else
 				{
 					model.FreelancersWithoutLawContract.Add(freelancer);
