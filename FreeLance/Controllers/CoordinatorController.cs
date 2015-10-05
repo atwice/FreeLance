@@ -128,7 +128,7 @@ namespace FreeLance.Controllers
         {
             var model = new HomeViewModel();
             model.Incognitos = getApplicationUsersInRole("Incognito").ToList();
-			model.WithoutDocuments = getApplicationUsersInRole("WithoutDocuments").ToList();
+			model.WithoutDocuments = getApplicationUsersApproved(false).ToList();
 			return View(model);
         }
 
@@ -160,6 +160,11 @@ namespace FreeLance.Controllers
             model.LawFaces = db.LawFaces.ToList();
             return View(model);
         }
+
+	    private IEnumerable<ApplicationUser> getApplicationUsersApproved(bool approved)
+	    {
+		    return db.Users.Where(u => u.IsApprovedByCoordinator == approved);
+	    } 
 
 
         private IEnumerable<ApplicationUser> getApplicationUsersInRole(string roleName)
@@ -226,6 +231,36 @@ namespace FreeLance.Controllers
 			db.SaveChanges();
 			return RedirectToAction("Home");
 		}
+
+	    public class FreelancerDocuments
+	    {
+		    public DocumentPackageModels Document;
+			// other info;
+	    }
+
+	    public ActionResult ViewFreelancerDocuments(String userId)
+	    {
+		    ApplicationUser freelancer = db.Users.Find(userId);
+			FreelancerDocuments documents = new FreelancerDocuments();
+		    documents.Document = freelancer.DocumentPackage;
+			return View(documents);
+	    }
+
+		public ActionResult DownloadDoumentImage(string documentPath)
+		{
+			string filepath = AppDomain.CurrentDomain.BaseDirectory + documentPath;
+			byte[] filedata = System.IO.File.ReadAllBytes(filepath);
+			string contentType = MimeMapping.GetMimeMapping(filepath);
+			return File(filedata, contentType);
+		}
+
+	    public ActionResult ApproveFreelancer(string freelancerId)
+	    {
+			ApplicationUser freelancer = db.Users.Find(freelancerId);
+		    freelancer.IsApprovedByCoordinator = !freelancer.IsApprovedByCoordinator;
+		    db.SaveChanges();
+			return RedirectToAction("ViewFreelancerDocuments", new { userId = freelancerId });
+	    }
 
 	}
 }

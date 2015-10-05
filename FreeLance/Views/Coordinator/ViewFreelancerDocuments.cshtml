@@ -1,0 +1,43 @@
+﻿@model FreeLance.Controllers.CoordinatorController.FreelancerDocuments
+@{
+    FreeLance.Models.DocumentPackageModels document = Model.Document;
+    FreeLance.Models.ApplicationUser freelancer = (document != null) ? document.Freelancer : null;
+
+}
+@{
+    ViewBag.Title = "ViewFreelancerDocuments";
+}
+
+@if (document != null)
+{
+    <h2>@freelancer.FIO</h2>
+    <h2>Телефон: @document.Phone</h2>
+    <h2>Адрес: @document.Adress</h2>
+    <h2>Банковские реквизиты: @document.PaymentDetails</h2>
+    if (document.FilePassportFace != null)
+    {
+        <a href="@Url.Action("DownloadDoumentImage", "Coordinator", new {documentPath = document.FilePassportFace})">
+            <h2>Загрузить паспорт</h2>
+        </a>
+    }
+    if (document.FilePassportRegistration != null)
+     {
+         <a href="@Url.Action("DownloadDoumentImage", "Coordinator", new {documentPath = document.FilePassportRegistration})">
+             <h2>Загрузить регистрацию</h2>
+         </a>
+     }
+    <a href="@Url.Action("ApproveFreelancer", "Coordinator", new {freelancerId = freelancer.Id})">
+        @if (freelancer.IsApprovedByCoordinator)
+        {
+            <input type="button" value="Отозвать документы" class="btn btn-success"/>    
+        }
+        else
+        {
+            <input type="button" value="Подтвердить документы" class="btn btn-success" />
+        }
+    </a>
+}
+else
+{
+    <h2>Пользователь еще не загрузил документы.</h2>
+}

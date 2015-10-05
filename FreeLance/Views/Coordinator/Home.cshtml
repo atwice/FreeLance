@@ -43,21 +43,27 @@
         <h3>Документы на подтверждение</h3>
         <div class="list-group">
             @if (Model.WithoutDocuments.Count == 0)
-			{
-				<h5>У всех фрилансеров подтверждены документы. Отличная работа!</h5>
-			}
-			else
-			{
-				foreach (var withoutDoc in Model.WithoutDocuments)
-				{
-					<a class="list-group-item">
-						<h4 class="list-group-item-heading">@withoutDoc.FIO</h4>
-						<p class="list-group-item-text" style="color:lightgray"><i>@withoutDoc.Email</i></p>
-						<p class="list-group-item-text" style="color:lightgray"><i>@withoutDoc.PhoneNumber</i></p>
-					</a>
-				}
-			}
+            {
+                <h5>У всех фрилансеров подтверждены документы. Отличная работа!</h5>}
+            else
+            {
+                foreach (var withoutDoc in Model.WithoutDocuments)
+                {
+                    <div class="list-group-item">
+                        @using (Html.BeginForm("ViewFreelancerDocuments", "Coordinator", new { userId = withoutDoc.Id }))
+                        {
+                            <input type="hidden" name="usernameID" value=@withoutDoc.Id/>
+                            <input type="hidden" name="choosenRole" value="WithoutDocuments"/>
+                            <input type="submit" value="Подтвердить документы" class="pull-right btn btn-success"/>
+                        }
+
+                        <h4 class="list-group-item-heading">@withoutDoc.FIO</h4>
+                        <p class="list-group-item-text" style="color: lightgray"><i>@withoutDoc.Email</i></p>
+                        <p class="list-group-item-text" style="color: lightgray"><i>@withoutDoc.PhoneNumber</i></p>
+                    </div>
+                    }
+            }
+         </div>
         </div>
-    </div>
 </body>
 </html>

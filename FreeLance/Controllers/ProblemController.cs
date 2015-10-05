@@ -24,6 +24,7 @@ namespace FreeLance.Controllers
 			public ProblemModels ProblemModels { get; set; }
 			public bool IsSubscibed { get; set; }
 			public List<SubscriptionModels> Subscriptions { get; set; }
+			public bool IsApproved { get; set; }
 		}
 		
 		public ActionResult Details(int? id)
@@ -54,7 +55,8 @@ namespace FreeLance.Controllers
 			{
 				ProblemModels = problemModels,
 				IsSubscibed = subscription != null,
-				Subscriptions = db.SubscriptionModels.Where(x => x.Problem.ProblemId == id).ToList()
+				Subscriptions = db.SubscriptionModels.Where(x => x.Problem.ProblemId == id).ToList(),
+				IsApproved = db.Users.Find(userId).IsApprovedByCoordinator
 			};
 			return View(view);
 		}

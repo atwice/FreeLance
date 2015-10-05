@@ -257,8 +257,8 @@ namespace FreeLance.Controllers
 			var fileName = User.Identity.GetUserId() + "_" + DateTime.Now.Ticks.ToString() + ext;
 			var path = Path.Combine(Server.MapPath("~/App_Data/" + dir + "/"), fileName);
 			file.SaveAs(path);
-			return fileName;
-		}
+			return "/App_Data/" + dir + "/" + fileName;
+        }
 
 		private DocumentPackageModels getDocuments()
 		{
