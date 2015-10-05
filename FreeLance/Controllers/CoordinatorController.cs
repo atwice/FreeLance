@@ -25,7 +25,8 @@ namespace FreeLance.Controllers
 
         public class FreelancersViewModel
         {
-            public List<ApplicationUser> Freelancers { get; set; }
+            public List<ApplicationUser> FreelancersWithLawContract { get; set; }
+            public List<ApplicationUser> FreelancersWithoutLawContract { get; set; }
         }
 
         public class UploadViewModel
@@ -127,9 +128,23 @@ namespace FreeLance.Controllers
 
         public ActionResult Freelancers()
         {
+            string userId = User.Identity.GetUserId();
             var model = new FreelancersViewModel();
-            model.Freelancers = getApplicationUsersInRole("Freelancer").ToList();
-            return View(model);
+			List<ApplicationUser> freelancers = getApplicationUsersInRole("Freelancer").OrderBy(f => f.FIO).ToList();
+			model.FreelancersWithLawContract = new List<ApplicationUser>();
+			model.FreelancersWithoutLawContract = new List<ApplicationUser>();
+			foreach (var freelancer in freelancers)
+			{
+				if (db.LawContracts.Where(c => c.User.Id == freelancer.Id).Count() > 0)
+				{
+					model.FreelancersWithLawContract.Add(freelancer);
+				}
+				else
+				{
+					model.FreelancersWithoutLawContract.Add(freelancer);
+				}
+			}			
+			return View(model);
         }
 
         private IEnumerable<ApplicationUser> getApplicationUsersInRole(string roleName)
