@@ -25,10 +25,9 @@
                 foreach (var incognito in Model.Incognitos)
                 {
                     <div class="list-group-item">
-						@using (Html.BeginForm("EditRole", "Coordinator"))
+						@using (Html.BeginForm("IncognitoToFreelancer", "Coordinator"))
 						{ 
 							<input type="hidden" name="usernameID" value=@incognito.Id />
-							<input type="hidden" name="choosenRole" value="WithoutDocuments" />
 							<input type="submit" value="Допустить в систему" class="pull-right btn btn-success" />
 						}
 						
