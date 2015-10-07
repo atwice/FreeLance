@@ -219,15 +219,16 @@ namespace FreeLance.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult EditRole(string usernameID, string choosenRole)
+		public ActionResult IncognitoToFreelancer(string usernameID)
 		{
 			ApplicationUser freelancer = db.Users.Find(usernameID);
-			var withoutDoc = db.Roles.Where(role => role.Name == choosenRole).ToArray()[0];
+			var withoutDoc = db.Roles.Where(role => role.Name == "Freelancer").ToArray()[0];
 			if (freelancer == null)
 			{
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
 			freelancer.Roles.Clear();
+			freelancer.IsApprovedByCoordinator = false;
 			freelancer.Roles.Add(new IdentityUserRole { RoleId = withoutDoc.Id, UserId = freelancer.Id });
 			db.SaveChanges();
 			return RedirectToAction("Home");
