@@ -19,8 +19,8 @@ namespace FreeLance.Controllers
 
         public class HomeViewModel
         {
-            public List<ApplicationUser> Incognitos { get; set; }
-			public List<ApplicationUser> WithoutDocuments { get; set; }
+            public List<ApplicationUser> IncognitosSmallList { get; set; }
+			public List<ApplicationUser> WithoutDocumentsSmallList { get; set; }
 		}
 
         public class FreelancersViewModel
@@ -127,8 +127,20 @@ namespace FreeLance.Controllers
         public ActionResult Home()
         {
             var model = new HomeViewModel();
-            model.Incognitos = getApplicationUsersInRole("Incognito").ToList();
-			model.WithoutDocuments = getApplicationUsersApproved(false).ToList();
+			ViewBag.ManyIncognitos = false;
+            model.IncognitosSmallList = getApplicationUsersInRole("Incognito").ToList();
+			if (model.IncognitosSmallList.Count() > 3)
+			{
+				model.IncognitosSmallList = model.IncognitosSmallList.GetRange(0, 3);
+				ViewBag.ManyIncognitos = true;
+            }
+			ViewBag.ManyWithoutDocuments = false;
+			model.WithoutDocumentsSmallList = getApplicationUsersApproved(false).ToList();
+			if (model.WithoutDocumentsSmallList.Count() > 3)
+			{
+				model.WithoutDocumentsSmallList = model.WithoutDocumentsSmallList.GetRange(0, 3);
+				ViewBag.ManyWithoutDocuments = true;
+            }
 			return View(model);
         }
 
