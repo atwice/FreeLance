@@ -16,13 +16,13 @@
         <h2>@ViewBag.Title</h2>
         <h3>Анкеты на подтверждение</h3>
         <div class="list-group">
-            @if (Model.Incognitos.Count == 0)
+            @if (Model.IncognitosSmallList.Count == 0)
             {
                 <h5>Все заявки подтверждены. Отличная работа!</h5>
             }
             else
             {
-                foreach (var incognito in Model.Incognitos)
+                foreach (var incognito in Model.IncognitosSmallList)
                 {
                     <div class="list-group-item">
 						@using (Html.BeginForm("IncognitoToFreelancer", "Coordinator"))
@@ -35,24 +35,29 @@
                         <p class="list-group-item-text" style="color:lightgray"><i>@incognito.Email</i></p>
                         <p class="list-group-item-text" style="color:lightgray"><i>@incognito.PhoneNumber</i></p>
                     </div>
-                }
-            }
+				}
+				if (ViewBag.ManyIncognitos)
+				{
+					<div class="list-group-item">
+						<h4 class="list-group-item-heading" align="center">...</h4>
+					</div>
+				}
+			}
         </div>
 
         <h3>Документы на подтверждение</h3>
         <div class="list-group">
-            @if (Model.WithoutDocuments.Count == 0)
+            @if (Model.WithoutDocumentsSmallList.Count == 0)
             {
-                <h5>У всех фрилансеров подтверждены документы. Отличная работа!</h5>}
-            else
-            {
-                foreach (var withoutDoc in Model.WithoutDocuments)
-                {
+                <h5>У всех фрилансеров подтверждены документы. Отличная работа!</h5>
+			}
+			else
+			{
+				foreach (var withoutDoc in Model.WithoutDocumentsSmallList)
+				{
                     <div class="list-group-item">
                         @using (Html.BeginForm("ViewFreelancerDocuments", "Coordinator", new { userId = withoutDoc.Id }))
                         {
-                            <input type="hidden" name="usernameID" value=@withoutDoc.Id/>
-                            <input type="hidden" name="choosenRole" value="WithoutDocuments"/>
                             <input type="submit" value="Подтвердить документы" class="pull-right btn btn-success"/>
                         }
 
@@ -60,8 +65,14 @@
                         <p class="list-group-item-text" style="color: lightgray"><i>@withoutDoc.Email</i></p>
                         <p class="list-group-item-text" style="color: lightgray"><i>@withoutDoc.PhoneNumber</i></p>
                     </div>
-                    }
-            }
+				}
+				if (ViewBag.ManyWithoutDocuments)
+				{
+					<div class="list-group-item">
+						<h4 class="list-group-item-heading" align="center">...</h4>
+					</div>
+				}
+			}
          </div>
         </div>
 </body>
