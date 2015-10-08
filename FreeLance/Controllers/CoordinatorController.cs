@@ -19,8 +19,8 @@ namespace FreeLance.Controllers
 
         public class HomeViewModel
         {
-            public List<ApplicationUser> Incognitos { get; set; }
-			public List<ApplicationUser> WithoutDocuments { get; set; }
+            public List<ApplicationUser> IncognitosSmallList { get; set; }
+			public List<ApplicationUser> WithoutDocumentsSmallList { get; set; }
 		}
 
         public class FreelancersViewModel
@@ -150,8 +150,20 @@ namespace FreeLance.Controllers
         public ActionResult Home()
         {
             var model = new HomeViewModel();
-            model.Incognitos = getApplicationUsersInRole("Incognito").ToList();
-			model.WithoutDocuments = getApplicationUsersInRole("WithoutDocuments").ToList();
+			ViewBag.ManyIncognitos = false;
+            model.IncognitosSmallList = getApplicationUsersInRole("Incognito").ToList();
+			if (model.IncognitosSmallList.Count() > 3)
+			{
+				model.IncognitosSmallList = model.IncognitosSmallList.GetRange(0, 3);
+				ViewBag.ManyIncognitos = true;
+            }
+			ViewBag.ManyWithoutDocuments = false;
+			model.WithoutDocumentsSmallList = getApplicationUsersApproved(false).ToList();
+			if (model.WithoutDocumentsSmallList.Count() > 3)
+			{
+				model.WithoutDocumentsSmallList = model.WithoutDocumentsSmallList.GetRange(0, 3);
+				ViewBag.ManyWithoutDocuments = true;
+            }
 			return View(model);
         }
 
@@ -185,8 +197,12 @@ namespace FreeLance.Controllers
             return View(model);
         }
 
+		private IEnumerable<ApplicationUser> getApplicationUsersApproved(bool approved)
+		{
+			return db.Users.Where(u => u.IsApprovedByCoordinator == approved);
+		}
 
-        private IEnumerable<ApplicationUser> getApplicationUsersInRole(string roleName)
+		private IEnumerable<ApplicationUser> getApplicationUsersInRole(string roleName)
         {
             return from role in db.Roles
                    where role.Name == roleName
@@ -237,15 +253,16 @@ namespace FreeLance.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult EditRole(string usernameID, string choosenRole)
+		public ActionResult IncognitoToFreelancer(string usernameID)
 		{
 			ApplicationUser freelancer = db.Users.Find(usernameID);
-			var withoutDoc = db.Roles.Where(role => role.Name == choosenRole).ToArray()[0];
+			var withoutDoc = db.Roles.Where(role => role.Name == "Freelancer").ToArray()[0];
 			if (freelancer == null)
 			{
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
 			freelancer.Roles.Clear();
+			freelancer.IsApprovedByCoordinator = false;
 			freelancer.Roles.Add(new IdentityUserRole { RoleId = withoutDoc.Id, UserId = freelancer.Id });
 			db.SaveChanges();
 			return RedirectToAction("Home");
