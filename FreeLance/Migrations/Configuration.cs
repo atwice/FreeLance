@@ -55,9 +55,14 @@ namespace FreeLance.Migrations
 
 		private void SeedLawContractTemplates(FreeLance.Models.ApplicationDbContext context)
 		{
-			var lawContractTemplate = new LawContractTemplate {
+			var lawContractTemplate1 = new LawContractTemplate {
 				Path = AppDomain.CurrentDomain.BaseDirectory + "Files\\LawContractTemplates\\"+ "template1.docx" };
-			context.LawContractTemplates.AddOrUpdate(p => p.Path, lawContractTemplate);
+			var lawContractTemplate2 = new LawContractTemplate
+			{
+				Path = AppDomain.CurrentDomain.BaseDirectory + "Files\\LawContractTemplates\\" + "template2.docx"
+			};
+			context.LawContractTemplates.AddOrUpdate(p => p.Path, lawContractTemplate1);
+			context.LawContractTemplates.AddOrUpdate(p => p.Path, lawContractTemplate2);
 		}
 
 		private ProblemModels addProblem(ApplicationDbContext context, string name, string desc, ProblemStatus status, ApplicationUser employer)
