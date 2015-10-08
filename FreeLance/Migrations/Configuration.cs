@@ -29,6 +29,7 @@ namespace FreeLance.Migrations
 			SeedUsers(context);
 			SeedProblems(context);
 			SeedContracts(context);
+			SeedLawContractTemplates(context);
 			AddEmployerFreelancerProblemContractAuto(context, "Employer1", "Freelancer1");
 			AddEmployerFreelancerProblemContractAuto(context, "Employer2", "Freelancer2");
 			AddEmployerFreelancerProblemContractAuto(context, "Employer2", "Freelancer3");
@@ -50,6 +51,13 @@ namespace FreeLance.Migrations
 			addProblem(context, "Write Half-life3", "Some text.", ProblemStatus.Opened, employer);
 			addProblem(context, "English translations", "Translate some texts from english to russian.", ProblemStatus.Opened, employer);
 			addProblem(context, "Implement queue", "Language : ASSEMBLER", ProblemStatus.Opened, employer);
+		}
+
+		private void SeedLawContractTemplates(FreeLance.Models.ApplicationDbContext context)
+		{
+			var lawContractTemplate = new LawContractTemplate {
+				Path = AppDomain.CurrentDomain.BaseDirectory + "Files\\LawContractTemplates\\"+ "template1.docx" };
+			context.LawContractTemplates.AddOrUpdate(p => p.Path, lawContractTemplate);
 		}
 
 		private ProblemModels addProblem(ApplicationDbContext context, string name, string desc, ProblemStatus status, ApplicationUser employer)

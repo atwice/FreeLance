@@ -32,10 +32,19 @@ namespace FreeLance.Controllers
         public class UploadViewModel
         {
             public List<ApplicationUser> Freelancers { get; set; }
-            public LawContract contract { get; set; }
-        }
+			public List<LawContractTemplate> LawContractTemplates { get; set; }
+			public UploadPostModel PostModel { get; set; }
+		}
 
-        public class LawFacesViewModel
+		public class UploadPostModel
+		{
+			public HttpPostedFileBase File { get; set; }
+			public string UserId { get; set; }
+			public int LawContractTemplateId { get; set; }
+			public DateTime EndDate { get; set; }
+		}
+
+		public class LawFacesViewModel
         {
             public List<LawFace> LawFaces { get; set; }
         }
@@ -74,23 +83,37 @@ namespace FreeLance.Controllers
         public ActionResult Upload()
         {
             var model = new UploadViewModel();
+			//model.contract = new LawContract();
+			model.LawContractTemplates = db.LawContractTemplates.ToList();
             model.Freelancers = getApplicationUsersInRole("Freelancer").OrderBy(f => f.FIO).ToList();
+			model.PostModel = new UploadPostModel();
             return View(model);
         }
 
         [HttpPost]
-        public ActionResult Upload(HttpPostedFileBase file)
+        public ActionResult Upload([Bind(Prefix = "UploadPostModel")]UploadPostModel model)
         {
-            string path = null;
-            if (file.ContentLength > 0)
-            {
-                var fileName = Path.GetFileName(file.FileName);
-                path = AppDomain.CurrentDomain.BaseDirectory + "Files\\LawContracts\\" + fileName;
-                Response.Write(path.ToString());
-                file.SaveAs(path);
-            }
-            return RedirectToAction("Index");
-        }
+			if (ModelState.IsValid)
+			{
+				string path = null;
+				if (model.File.ContentLength > 0)
+				{
+					var fileName = Path.GetFileName(model.File.FileName);
+					path = AppDomain.CurrentDomain.BaseDirectory + "Files\\LawContracts\\" + fileName;
+					Response.Write(path.ToString());
+					model.File.SaveAs(path);
+					LawContract contract = new LawContract();
+					contract.Path = path;
+					contract.EndData = model.EndDate;
+					contract.User = db.Users.Find(model.UserId);
+					//contract.LawContractTemplate = db.LawContractTemplates.Find(model.LawContractTemplateId);
+					contract.LawContractTemplate = db.LawContractTemplates.ToArray()[0];
+                    db.LawContracts.Add(contract);
+					db.SaveChanges();
+				}
+			}	
+			return RedirectToAction("Index");
+		}
 
         [HttpPost]
         public ActionResult AddLawFace(LawFace model)
@@ -128,7 +151,7 @@ namespace FreeLance.Controllers
         {
             var model = new HomeViewModel();
             model.Incognitos = getApplicationUsersInRole("Incognito").ToList();
-			model.WithoutDocuments = getApplicationUsersApproved(false).ToList();
+			model.WithoutDocuments = getApplicationUsersInRole("WithoutDocuments").ToList();
 			return View(model);
         }
 
@@ -161,11 +184,6 @@ namespace FreeLance.Controllers
             model.LawFaces = db.LawFaces.ToList();
             return View(model);
         }
-
-	    private IEnumerable<ApplicationUser> getApplicationUsersApproved(bool approved)
-	    {
-		    return db.Users.Where(u => u.IsApprovedByCoordinator == approved);
-	    } 
 
 
         private IEnumerable<ApplicationUser> getApplicationUsersInRole(string roleName)
@@ -232,36 +250,6 @@ namespace FreeLance.Controllers
 			db.SaveChanges();
 			return RedirectToAction("Home");
 		}
-
-	    public class FreelancerDocuments
-	    {
-		    public DocumentPackageModels Document;
-			// other info;
-	    }
-
-	    public ActionResult ViewFreelancerDocuments(String userId)
-	    {
-		    ApplicationUser freelancer = db.Users.Find(userId);
-			FreelancerDocuments documents = new FreelancerDocuments();
-		    documents.Document = freelancer.DocumentPackage;
-			return View(documents);
-	    }
-
-		public ActionResult DownloadDoumentImage(string documentPath)
-		{
-			string filepath = AppDomain.CurrentDomain.BaseDirectory + documentPath;
-			byte[] filedata = System.IO.File.ReadAllBytes(filepath);
-			string contentType = MimeMapping.GetMimeMapping(filepath);
-			return File(filedata, contentType);
-		}
-
-	    public ActionResult ApproveFreelancer(string freelancerId)
-	    {
-			ApplicationUser freelancer = db.Users.Find(freelancerId);
-		    freelancer.IsApprovedByCoordinator = !freelancer.IsApprovedByCoordinator;
-		    db.SaveChanges();
-			return RedirectToAction("ViewFreelancerDocuments", new { userId = freelancerId });
-	    }
 
 	}
 }
