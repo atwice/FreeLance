@@ -82,8 +82,7 @@ namespace FreeLance.Controllers
 
         public ActionResult Upload()
         {
-            var model = new UploadViewModel();
-			//model.contract = new LawContract();
+			var model = new UploadViewModel();
 			model.LawContractTemplates = db.LawContractTemplates.ToList();
             model.Freelancers = getApplicationUsersInRole("Freelancer").OrderBy(f => f.FIO).ToList();
 			model.PostModel = new UploadPostModel();
@@ -95,24 +94,35 @@ namespace FreeLance.Controllers
         {
 			if (ModelState.IsValid)
 			{
-				string path = null;
 				if (model.File.ContentLength > 0)
 				{
-					var fileName = Path.GetFileName(model.File.FileName);
-					path = AppDomain.CurrentDomain.BaseDirectory + "Files\\LawContracts\\" + fileName;
-					Response.Write(path.ToString());
-					model.File.SaveAs(path);
-					LawContract contract = new LawContract();
-					contract.Path = path;
-					contract.EndData = model.EndDate;
-					contract.User = db.Users.Find(model.UserId);
-					//contract.LawContractTemplate = db.LawContractTemplates.Find(model.LawContractTemplateId);
-					contract.LawContractTemplate = db.LawContractTemplates.ToArray()[0];
-                    db.LawContracts.Add(contract);
-					db.SaveChanges();
+					string path = SaveLawContract(model.File);
+					AddLawContractInDb(path, model.UserId, model.LawContractTemplateId, model.EndDate);
+					
 				}
 			}	
 			return RedirectToAction("Index");
+		}
+
+		private void AddLawContractInDb(string Path, string UserId, int LawContractTemplateId, DateTime EndDate)
+		{
+			LawContract contract = new LawContract();
+			contract.Path = Path;
+			contract.EndData = EndDate;
+			contract.User = db.Users.Find(UserId);
+			contract.LawContractTemplate = db.LawContractTemplates.Find(LawContractTemplateId);
+			db.LawContracts.Add(contract);
+			db.SaveChanges();
+		}
+
+		private string SaveLawContract(HttpPostedFileBase file)
+		{
+			string path = null;
+			var fileName = Path.GetFileName(file.FileName);
+			path = AppDomain.CurrentDomain.BaseDirectory + "Files\\LawContracts\\" + fileName;
+			Response.Write(path.ToString());
+			file.SaveAs(path);
+			return path;
 		}
 
         [HttpPost]
