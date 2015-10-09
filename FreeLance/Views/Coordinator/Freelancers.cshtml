@@ -5,7 +5,6 @@
 }
 
 <div class="col-md-10">
-	<h2>@ViewBag.Title</h2>
 	<h3>Анкеты на подтверждение</h3>
 	<div class="list-group">
 		@if (Model.Incognitos.Count == 0)
@@ -41,11 +40,6 @@
 			foreach (var withoutDoc in Model.WithoutDocuments)
 			{
 			<div class="list-group-item">
-				@using (Html.BeginForm("ViewFreelancerDocuments", "Coordinator", new { userId = withoutDoc.Id }))
-				{
-					<input type="submit" value="Подтвердить документы" class="pull-right btn btn-success" />
-				}
-
 				<h4 class="list-group-item-heading">@withoutDoc.FIO</h4>
 				<p class="list-group-item-text" style="color: lightgray"><i>@withoutDoc.Email</i></p>
 				<p class="list-group-item-text" style="color: lightgray"><i>@withoutDoc.PhoneNumber</i></p>
@@ -54,45 +48,40 @@
 				
 		}
 	</div>
-
-    <h2>Список фрилансеров</h2><br />
+	<h3>Без ГПХ</h3>
     <div class="list-group">
-        <h3>Без ГПХ</h3><br />
-        <div>
-            @if (Model.FreelancersWithoutLawContract.Count() == 0)
-            {
-                <h5>ГПХ заключены со всеми исполнителями. Отличная работа!</h5>
-            }
-            else
-            {
-                foreach (var freelancer in Model.FreelancersWithoutLawContract)
-                {
-                    <a class="list-group-item">
-                        <h4 class="list-group-item-heading">@freelancer.FIO</h4>
-                        <p class="list-group-item-text" style="color:lightgray"><i>@freelancer.Email</i></p>
-                        <p class="list-group-item-text" style="color:lightgray"><i>@freelancer.PhoneNumber</i></p>
-                    </a>
-                }
-            }
-        </div>
-        <h3>С заключенными ГПХ</h3><br />
-        <div>
-            @if (Model.FreelancersWithLawContract.Count() == 0)
-            {
-                <h5>ГПХ пока не заключен ни с одним исполнителем. Пора что-то менять.</h5>
-            }
-            else
-            {
-                foreach (var freelancer in Model.FreelancersWithLawContract)
-                {
-                    <a class="list-group-item">
-                        <h4 class="list-group-item-heading">@freelancer.FIO</h4>
-                        <p class="list-group-item-text" style="color:lightgray"><i>@freelancer.Email</i></p>
-                        <p class="list-group-item-text" style="color:lightgray"><i>@freelancer.PhoneNumber</i></p>
-                    </a>
-                }
-            }
-        </div>
-
-    </div>
+		@if (Model.FreelancersWithoutLawContract.Count() == 0)
+		{
+			<h5>ГПХ заключены со всеми исполнителями, у которых подтверждены документы. Отличная работа!</h5>
+		}
+		else
+		{
+			foreach (var freelancer in Model.FreelancersWithoutLawContract)
+			{
+				<a class="list-group-item">
+					<h4 class="list-group-item-heading">@freelancer.FIO</h4>
+					<p class="list-group-item-text" style="color:lightgray"><i>@freelancer.Email</i></p>
+					<p class="list-group-item-text" style="color:lightgray"><i>@freelancer.PhoneNumber</i></p>
+				</a>
+			}
+		}
+	</div>
+	<h3>С заключенными ГПХ</h3>
+	<div class="list-group">
+		@if (Model.FreelancersWithLawContract.Count() == 0)
+		{
+			<h5>ГПХ пока не заключен ни с одним исполнителем. Пора что-то менять.</h5>
+		}
+		else
+		{
+			foreach (var freelancer in Model.FreelancersWithLawContract)
+			{
+				<a class="list-group-item">
+					<h4 class="list-group-item-heading">@freelancer.FIO</h4>
+					<p class="list-group-item-text" style="color:lightgray"><i>@freelancer.Email</i></p>
+					<p class="list-group-item-text" style="color:lightgray"><i>@freelancer.PhoneNumber</i></p>
+				</a>
+			}
+		}
+	</div>
 </div>
