@@ -197,7 +197,7 @@ namespace FreeLance.Controllers
 			model.FreelancersWithoutLawContract = new List<ApplicationUser>();
 			foreach (var freelancer in freelancers)
 			{
-				var contracts = db.LawContracts.Where(c => c.User.Id == freelancer.Id);
+				var contracts = db.LawContracts.Where(c => c.User.Id == freelancer.Id).ToArray();
 				if (contracts.Count() > 0 && contracts.Last().EndData < DateTime.Now)
 				{
 					model.FreelancersWithLawContract.Add(freelancer);
@@ -233,6 +233,36 @@ namespace FreeLance.Controllers
 				   on userRoles.UserId equals user.Id
 				   select user;
 		}
+
+		public class FreelancerDocuments
+	    {
+		    public DocumentPackageModels Document;
+			// other info;
+	    }
+
+	    public ActionResult ViewFreelancerDocuments(String userId)
+	    {
+		    ApplicationUser freelancer = db.Users.Find(userId);
+			FreelancerDocuments documents = new FreelancerDocuments();
+		    documents.Document = freelancer.DocumentPackage;
+			return View(documents);
+	    }
+
+		public ActionResult DownloadDoumentImage(string documentPath)
+		{
+			string filepath = AppDomain.CurrentDomain.BaseDirectory + documentPath;
+			byte[] filedata = System.IO.File.ReadAllBytes(filepath);
+			string contentType = MimeMapping.GetMimeMapping(filepath);
+			return File(filedata, contentType);
+		}
+
+	    public ActionResult ApproveFreelancer(string freelancerId)
+	    {
+			ApplicationUser freelancer = db.Users.Find(freelancerId);
+		    freelancer.IsApprovedByCoordinator = !freelancer.IsApprovedByCoordinator;
+		    db.SaveChanges();
+			return RedirectToAction("ViewFreelancerDocuments", new { userId = freelancerId });
+	    }
 
 		public ActionResult Employers()
 		{
