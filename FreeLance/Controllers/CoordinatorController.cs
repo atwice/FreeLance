@@ -25,7 +25,9 @@ namespace FreeLance.Controllers
 
         public class FreelancersViewModel
         {
-            public List<ApplicationUser> FreelancersWithLawContract { get; set; }
+			public List<ApplicationUser> Incognitos { get; set; }
+			public List<ApplicationUser> WithoutDocuments { get; set; }
+			public List<ApplicationUser> FreelancersWithLawContract { get; set; }
             public List<ApplicationUser> FreelancersWithoutLawContract { get; set; }
         }
 
@@ -179,8 +181,11 @@ namespace FreeLance.Controllers
 
         public ActionResult Freelancers()
         {
-            string userId = User.Identity.GetUserId();
             var model = new FreelancersViewModel();
+			model.Incognitos = getApplicationUsersInRole("Incognito").ToList();
+			model.WithoutDocuments = getApplicationUsersApproved(false).ToList();
+
+			string userId = User.Identity.GetUserId();
 			List<ApplicationUser> freelancers = getApplicationUsersInRole("Freelancer").OrderBy(f => f.FIO).ToList();
 			model.FreelancersWithLawContract = new List<ApplicationUser>();
 			model.FreelancersWithoutLawContract = new List<ApplicationUser>();
@@ -263,7 +268,7 @@ namespace FreeLance.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult IncognitoToFreelancer(string usernameID)
+		public ActionResult IncognitoToFreelancer(string usernameID, string redirect)
 		{
 			ApplicationUser freelancer = db.Users.Find(usernameID);
 			var withoutDoc = db.Roles.Where(role => role.Name == "Freelancer").ToArray()[0];
@@ -275,7 +280,7 @@ namespace FreeLance.Controllers
 			freelancer.IsApprovedByCoordinator = false;
 			freelancer.Roles.Add(new IdentityUserRole { RoleId = withoutDoc.Id, UserId = freelancer.Id });
 			db.SaveChanges();
-			return RedirectToAction("Home");
+			return RedirectToAction(redirect);
 		}
 
 	}

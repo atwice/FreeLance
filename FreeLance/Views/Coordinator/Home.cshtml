@@ -25,9 +25,8 @@
                 foreach (var incognito in Model.IncognitosSmallList)
                 {
                     <div class="list-group-item">
-						@using (Html.BeginForm("IncognitoToFreelancer", "Coordinator"))
-						{ 
-							<input type="hidden" name="usernameID" value=@incognito.Id />
+						@using (Html.BeginForm("IncognitoToFreelancer", "Coordinator", new { usernameID = incognito.Id, redirect = "Home" }))
+						{
 							<input type="submit" value="Допустить в систему" class="pull-right btn btn-success" />
 						}
 						
@@ -74,6 +73,6 @@
 				}
 			}
          </div>
-        </div>
+	</div>
 </body>
 </html>
