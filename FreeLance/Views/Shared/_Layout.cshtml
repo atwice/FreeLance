@@ -165,11 +165,34 @@
                         else
                         {
                                 <li>@Html.ActionLink("Юрлица", "LawFaces", "Coordinator")</li>
-                         }
+                        }
+						@if (ViewBag.MenuPick == "AddLawFace")
+						{
 
-                        <li class="">@Html.ActionLink("Создать Юрлицо", "AddLawFace", "Coordinator")</li>
-                        <li class="">@Html.ActionLink("Загрузить ГПХ", "Upload", "Coordinator")</li>
-                        <li class="">@Html.ActionLink("Скачать ГПХ", "Download", "Coordinator" )</li>
+							<li class="active">@Html.ActionLink("Создать Юрлицо", "AddLawFace", "Coordinator")</li>
+						}
+						else
+						{
+							<li>@Html.ActionLink("Создать Юрлицо", "AddLawFace", "Coordinator")</li>
+						}
+						@if (ViewBag.MenuPick == "Upload")
+						{
+
+							<li class="active">@Html.ActionLink("Загрузить ГПХ", "Upload", "Coordinator")</li>
+						}
+						else
+						{
+							<li>@Html.ActionLink("Загрузить ГПХ", "Upload", "Coordinator")</li>
+						}
+						@if (ViewBag.MenuPick == "Download")
+						{
+
+							<li class="active">@Html.ActionLink("Скачать ГПХ", "Download", "Coordinator")</li>
+						}
+						else
+						{
+							<li>@Html.ActionLink("Скачать ГПХ", "Download", "Coordinator")</li>
+						}
                         </ul>
                     </div>
                 }
