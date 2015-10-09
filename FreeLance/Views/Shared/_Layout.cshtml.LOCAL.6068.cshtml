@@ -1,0 +1,228 @@
+﻿<!DOCTYPE html>
+
+
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreeLance - @ViewBag.Title</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+</head>
+
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("FreeLance", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                </ul>
+                @Html.Partial("_LoginPartial")
+            </div>
+        </div>
+    </div>
+<div class="container-fluid body-content">
+    <div class="row">
+        <div class="col-md-2">
+            <div class="container-fluid" style="margin-top:10%">
+				@if (User.IsInRole("Incognito"))
+				{
+					<div class="alert alert-block">
+						<p>
+							<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+							Ваш аккаунт находится на рассмотрении координатора.
+						</p>
+						<p>В это время Вы можете загрузите пакет документов, чтобы иметь возможность подписываться на задачи сразу после одобрения аккаунта.</p>
+					</div>
+				}
+				@if (Context.User.IsInRole("Freelancer") || Context.User.IsInRole("WithoutDocuments"))
+				{
+				    <div class="span3 bs-docs-sidebar">
+					    <ul class="nav nav-pills nav-stacked main-menu">
+						@if (ViewBag.MenuPick == "Profile")
+						{
+							<li class="active">@Html.ActionLink("Профиль", "Profile", "Freelancer")</li>
+						}
+						else
+						{
+							<li>@Html.ActionLink("Профиль", "Profile", "Freelancer")</li>
+						}
+						@if (ViewBag.MenuPick == "Home")
+						{
+							<li class="active">@Html.ActionLink("Личный кабинет", "Home", "Freelancer")</li>
+						}
+						else
+						{
+							<li>@Html.ActionLink("Личный кабинет", "Home", "Freelancer")</li>
+						}
+						@if (ViewBag.MenuPick == "OpenProblems")
+						{
+							<li class="active">@Html.ActionLink("Биржа", "OpenProblems", "Freelancer")</li>
+						}
+						else
+						{
+							<li>@Html.ActionLink("Биржа", "OpenProblems", "Freelancer")</li>
+						}
+						@if (ViewBag.MenuPick == "Archive")
+						{
+							<li class="active">@Html.ActionLink("Архив", "Archive", "Freelancer")</li>
+						}
+						else
+						{
+							<li>@Html.ActionLink("Архив", "Archive", "Freelancer")</li>
+						}
+						@if (ViewBag.MenuPick == "Details")
+						{
+							<li class="active">@Html.ActionLink("Документы", "Details", "DocumentPackage")</li>
+						}
+						else
+						{
+							<li>@Html.ActionLink("Документы", "Details", "DocumentPackage")</li>
+						}
+					    </ul>
+				    </div>
+				}
+				@if (Context.User.IsInRole("Employer"))
+				{
+					<div class="span3 bs-docs-sidebar">
+						<ul class="nav nav-pills nav-stacked main-menu">	
+						@if (ViewBag.MenuPick == "Home")
+						{
+							<li class="active">@Html.ActionLink("Личный кабинет", "Home", "Employer")</li>
+						}
+						else
+						{
+							<li>@Html.ActionLink("Личный кабинет", "Home", "Employer")</li>
+						}
+						@if (ViewBag.MenuPick == "Archive")
+						{
+							<li class="active">@Html.ActionLink("Архив контрактов", "Archive", "Employer")</li>
+						}
+						else
+						{
+							<li>@Html.ActionLink("Архив контрактов", "Archive", "Employer")</li>
+						}
+						@if (ViewBag.MenuPick == "Freelancers")
+						{
+							<li class="active">@Html.ActionLink("Исполнители", "Freelancers", "Employer")</li>
+						}
+						else
+						{
+							<li>@Html.ActionLink("Исполнители", "Freelancers", "Employer")</li>
+						}
+					    </ul>
+					</div>
+				}
+                @if (Context.User.IsInRole("Coordinator"))
+                {
+                    <div class="span3 bs-docs-sidebar">
+                        <ul class="nav nav-pills nav-stacked main-menu">
+						@if (ViewBag.MenuPick == "Home")
+						{
+							<li class="active">@Html.ActionLink("Личный кабинет", "Home", "Coordinator")</li>
+						}
+						else
+						{
+							<li>@Html.ActionLink("Личный кабинет", "Home", "Coordinator")</li>
+						}
+						@if (ViewBag.MenuPick == "OpenProblems")
+						{
+							<li class="active">@Html.ActionLink("Биржа", "OpenProblems", "Freelancer")</li>
+						}
+						else
+						{
+							<li>@Html.ActionLink("Биржа", "OpenProblems", "Freelancer")</li>
+						}
+						@if (ViewBag.MenuPick == "Freelancers")
+						{
+							<li class="active">@Html.ActionLink("Исполнители", "Freelancers", "Coordinator")</li>
+						}
+						else
+						{
+							<li>@Html.ActionLink("Исполнители", "Freelancers", "Coordinator")</li>
+						}
+						@if (ViewBag.MenuPick == "Employers")
+						{
+							<li class="active">@Html.ActionLink("Работодатели", "Employers", "Coordinator")</li>
+						}
+						else
+						{
+							<li>@Html.ActionLink("Работодатели", "Employers", "Coordinator")</li>
+						}
+                        @if (ViewBag.MenuPick == "LawFaces")
+                        {
+                            <li class="active">@Html.ActionLink("Юрлица", "LawFaces", "Coordinator")</li>
+                        }
+                        else
+                        {
+                                <li>@Html.ActionLink("Юрлица", "LawFaces", "Coordinator")</li>
+                        }
+						@if (ViewBag.MenuPick == "AddLawFace")
+						{
+
+							<li class="active">@Html.ActionLink("Создать Юрлицо", "AddLawFace", "Coordinator")</li>
+						}
+						else
+						{
+							<li>@Html.ActionLink("Создать Юрлицо", "AddLawFace", "Coordinator")</li>
+						}
+						@if (ViewBag.MenuPick == "Upload")
+						{
+
+							<li class="active">@Html.ActionLink("Загрузить ГПХ", "Upload", "Coordinator")</li>
+						}
+						else
+						{
+							<li>@Html.ActionLink("Загрузить ГПХ", "Upload", "Coordinator")</li>
+						}
+						@if (ViewBag.MenuPick == "Download")
+						{
+
+							<li class="active">@Html.ActionLink("Скачать ГПХ", "Download", "Coordinator")</li>
+						}
+						else
+						{
+							<li>@Html.ActionLink("Скачать ГПХ", "Download", "Coordinator")</li>
+						}
+                        </ul>
+                    </div>
+                }
+			</div>
+        </div>
+        <div class="col-md-10">
+
+			@if (ViewBag.ErrorMessage != null) {
+				<div id="message">
+					<div style="padding: 5px;">
+						<div id="inner-message" class="alert alert-error">
+							<button type="button" class="close" data-dismiss="alert">&times;</button>
+							<h4><font color="red">@ViewBag.ErrorMessage</font></h4>
+						</div>
+					</div>
+				</div>
+			}
+			@RenderBody()
+		</div>
+    </div>
+    
+    <hr/>
+    <footer>
+        <p>FreeLance - Корпоративный аутсорсинг</p>
+    </footer>
+</div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+
+</body>
+</html>
