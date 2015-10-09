@@ -29,7 +29,7 @@ namespace FreeLance.Migrations
 			SeedUsers(context);
 			SeedProblems(context);
 			SeedContracts(context);
-			SeedLawContractTemplates(context);
+			//SeedLawContractTemplates(context);
 			AddEmployerFreelancerProblemContractAuto(context, "Employer1", "Freelancer1");
 			AddEmployerFreelancerProblemContractAuto(context, "Employer2", "Freelancer2");
 			AddEmployerFreelancerProblemContractAuto(context, "Employer2", "Freelancer3");

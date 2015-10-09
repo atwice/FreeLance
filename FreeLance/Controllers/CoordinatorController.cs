@@ -57,6 +57,8 @@ namespace FreeLance.Controllers
 			public List<LawFace> LawFaces { get; set; }
 		}
 
+
+
 		// GET: Coordinator
 		public ActionResult Index()
 		{

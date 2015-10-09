@@ -10,8 +10,15 @@ namespace FreeLance.Models
     {
         [Key]
         public int Id { get; set; }
+
         [Required]
         public string Path { get; set; }
+
+        [Required]
+        public string Name { get; set; }
+
+        [Required]
+        public virtual LawFace LawFace { get; set; }
     }
 
     public class LawFace
@@ -20,7 +27,6 @@ namespace FreeLance.Models
         public int Id { get; set; }
         [Required]
         public string Name { get; set; }
-        [Required]
         public virtual LawContractTemplate CurrentLawContractTemplate { get; set; }
     }
 
