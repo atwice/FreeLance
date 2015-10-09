@@ -31,6 +31,12 @@ namespace FreeLance.Controllers
 			public List<ApplicationUser> FreelancersWithoutLawContract { get; set; }
 		}
 
+		public class EmployersViewModel
+		{
+			public List<ApplicationUser> EmployersApproved { get; set; }
+			public List<ApplicationUser> EmployersNotApproved { get; set; }
+		}
+
 		public class UploadViewModel
 		{
 			public List<ApplicationUser> Freelancers { get; set; }
@@ -170,7 +176,7 @@ namespace FreeLance.Controllers
 				ViewBag.ManyIncognitos = true;
 			}
 			ViewBag.ManyWithoutDocuments = false;
-			model.WithoutDocumentsSmallList = getApplicationUsersApproved(false).ToList();
+			model.WithoutDocumentsSmallList = getApplicationUsersApproved(false, "Freelancer").ToList();
 			if (model.WithoutDocumentsSmallList.Count() > 3)
 			{
 				model.WithoutDocumentsSmallList = model.WithoutDocumentsSmallList.GetRange(0, 3);
@@ -183,7 +189,7 @@ namespace FreeLance.Controllers
 		{
 			var model = new FreelancersViewModel();
 			model.Incognitos = getApplicationUsersInRole("Incognito").ToList();
-			model.WithoutDocuments = getApplicationUsersApproved(false).ToList();
+			model.WithoutDocuments = getApplicationUsersApproved(false, "Freelancer").ToList();
 
 			string userId = User.Identity.GetUserId();
 			List<ApplicationUser> freelancers = getApplicationUsersInRole("Freelancer").OrderBy(f => f.FIO).ToList();
@@ -212,9 +218,10 @@ namespace FreeLance.Controllers
 			return View(model);
 		}
 
-		private IEnumerable<ApplicationUser> getApplicationUsersApproved(bool approved)
+		private IEnumerable<ApplicationUser> getApplicationUsersApproved(bool approved, string roleName)
 		{
-			return db.Users.Where(u => u.IsApprovedByCoordinator == approved);
+			return getApplicationUsersInRole(roleName)
+				.Where(user => user.IsApprovedByCoordinator == approved);  
 		}
 
 		private IEnumerable<ApplicationUser> getApplicationUsersInRole(string roleName)
@@ -227,36 +234,13 @@ namespace FreeLance.Controllers
 				   select user;
 		}
 
-		public class EmployersVR
-		{
-			public ApplicationUser Employer { get; set; }
-			public class ApprovationForm
-			{
-				public string ButtonText { get; set; }
-				public string IsApproved { get; set; }
-				public string Redirect { get; set; }
-				public string EmployerId { get; set; }
-			}
-			public ApprovationForm Form { get; set; }
-		}
-
 		public ActionResult Employers()
 		{
-			return View(
-				Enumerable.Select(AccountController.GetApplicationUsersInRole(db, "employer"),
-					employer => new EmployersVR
-					{
-						Employer = employer,
-						Form = new EmployersVR.ApprovationForm
-						{
-							ButtonText = !employer.IsApprovedByCoordinator ? "Подтвердить" : "Отменить подтверждение",
-							IsApproved = (!employer.IsApprovedByCoordinator).ToString(),
-							Redirect = "/Coordinator/Employers",
-							EmployerId = employer.Id
-						}
-					}
-				).OrderBy(data => data.Employer.IsApprovedByCoordinator)
-			);
+			var model = new EmployersViewModel();
+			model.EmployersApproved = getApplicationUsersApproved(true, "Employer").ToList();
+			model.EmployersNotApproved = getApplicationUsersApproved(false, "Employer").ToList();
+
+			return View(model);
 		}
 
 		[HttpPost]
@@ -269,7 +253,7 @@ namespace FreeLance.Controllers
 			{
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
-			employer.IsApprovedByCoordinator = isApproved;
+			employer.IsApprovedByCoordinator = !isApproved;
 			db.SaveChanges();
 			return Redirect(redirect == null ? "/Coordinator/Home" : redirect);
 		}
