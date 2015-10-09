@@ -1,10 +1,11 @@
 ﻿@model FreeLance.Controllers.CoordinatorController.EmployersViewModel
 @{
-    ViewBag.Title = "EmployerApprovationList";
+    ViewBag.Title = "Работодатели";
 	ViewBag.MenuPick = "Employers";
 }
 
 <div class="col-md-10">
+	<h2>@ViewBag.Title</h2>
 	<h3>Ожидают подтверждения</h3>
 	<div class="list-group">
 		@if (Model.EmployersNotApproved.Count == 0)
