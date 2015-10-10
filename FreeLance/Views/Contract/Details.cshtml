@@ -12,8 +12,8 @@
 			<h2> @Html.DisplayFor(model => contract.Problem.Name)</h2>
 		</div>
 		<div class="panel-body">
-			<p> <strong>Общее описание: </strong> @Html.DisplayFor(model => contract.Problem.Description)</p>
-			<p> <strong>Детали: </strong> @Html.DisplayFor(model => contract.Details)</p>
+			<p> <strong>Общее описание задачи: </strong> @Html.Raw(contract.Problem.Description)</p>
+			<p> <strong>Детали контракта: </strong> @Html.DisplayFor(model => contract.Details)</p>
 			<table class="table">
 				<tbody>
 					<tr>

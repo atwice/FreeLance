@@ -9,7 +9,7 @@
     <div class="panel panel-default">
         <div class="panel-heading"><h2>@Html.DisplayFor(model => problem.Name)</h2></div>
         <div class="panel-body">
-            <p>@Html.DisplayFor(model => problem.Description)</p>
+            <p>@Html.Raw(Model.ProblemModels.Description)</p>
             <table class="table">
                 <tbody>
                 <tr>
