@@ -10,9 +10,9 @@ namespace FreeLance.Code
 {
     public class DocumentManager
     {
-        public static string fillContractTemplate(ApplicationUser user, string pathToTemplate, LawContractTemplate lawContractTemplate)
+        public static string fillContractTemplate(ApplicationUser user, LawContractTemplate lawContractTemplate)
         {
-            using (DocX doc = DocX.Load(pathToTemplate))
+            using (DocX doc = DocX.Load(lawContractTemplate.Path))
             {
                 string fullNameTemplate = "%ФАМИЛИЯ% %ИМЯ% %ОТЧЕСТВО%";
                 string fullNameTemplate2 = "%ФИО ИСПОЛНИТЕЛЯ%";

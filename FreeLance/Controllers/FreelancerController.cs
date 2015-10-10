@@ -213,17 +213,6 @@ namespace FreeLance.Controllers
 			return RedirectToAction("Profile");
 		}
 
-	   
-	    public ActionResult FillLawContract()
-	    {
-	        LawContractTemplate lawContractTemplate = db.LawContractTemplates.ToArray()[0];
-            string templateFilePath = AppDomain.CurrentDomain.BaseDirectory + lawContractTemplate.Path;
-            ApplicationUser curUser = db.Users.Find(User.Identity.GetUserId());
-	        string pathToContract = DocumentManager.fillContractTemplate(curUser, templateFilePath, lawContractTemplate);
-            saveLawContractInDatabase(curUser, pathToContract, lawContractTemplate);
-            return viewFile(pathToContract);
-        }
-
 	    private FileContentResult viewFile(string pathToContract)
 	    {
             byte[] filedata = System.IO.File.ReadAllBytes(pathToContract);
