@@ -10,7 +10,6 @@ using Novacode;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity;
 using System.IO;
-using Microsoft.Ajax.Utilities;
 
 namespace FreeLance.Controllers
 {
@@ -54,8 +53,9 @@ namespace FreeLance.Controllers
 			public DateTime EndDate { get; set; }
 		}
 
-		public class LawFaceView
+		public class LawFacesViewModel
 		{
+<<<<<<< HEAD
 		    public LawFace LawFace { get; set; }
             public List<LawContractTemplate> LawContractTemplates { get; set; }
         }
@@ -74,6 +74,10 @@ namespace FreeLance.Controllers
             [Required]
             public string Name { get; set; }
 	    }
+=======
+			public List<LawFace> LawFaces { get; set; }
+		}
+>>>>>>> origin/develop
 
 		// GET: Coordinator
 		public ActionResult Index()
@@ -81,7 +85,30 @@ namespace FreeLance.Controllers
 			return RedirectToAction("Home");
 		}
 
+		public ActionResult Download(string filename)
+		{
+			//            string filename = db.LawContractTemplates.ToArray()[1].Path;
+			string filepath = AppDomain.CurrentDomain.BaseDirectory + filename;
+			using (DocX doc = DocX.Load(filepath))
+			{
+				doc.ReplaceText("Name", "%%NAME%%");
+				doc.Save();
+			}
 
+			byte[] filedata = System.IO.File.ReadAllBytes(filepath);
+			string contentType = MimeMapping.GetMimeMapping(filepath);
+
+			var cd = new System.Net.Mime.ContentDisposition
+			{
+				FileName = filename,
+				Inline = true,
+			};
+
+			Response.AppendHeader("Content-Disposition", cd.ToString());
+
+			return File(filedata, contentType);
+
+		}
 
 		public ActionResult Upload()
 		{
@@ -128,6 +155,37 @@ namespace FreeLance.Controllers
 			return path;
 		}
 
+		[HttpPost]
+		public ActionResult AddLawFace(LawFace model)
+		{
+			db.LawFaces.Add(model);
+			db.SaveChanges();
+			return RedirectToAction("LawFaces");
+		}
+
+		[HttpGet]
+		public ActionResult AddLawFace()
+		{
+			ViewBag.LawContractTemplates = db.LawContractTemplates.ToList();
+			return View(new LawFace());
+		}
+
+
+		[HttpPost]
+		public ActionResult AddLawContractTemplate(LawContractTemplate model)
+		{
+			db.LawContractTemplates.Add(model);
+			db.SaveChanges();
+			ViewBag.ErrorMessage = "Thank you!";
+			ViewBag.LawContractTemplates = db.LawContractTemplates.ToList();
+			return View();
+		}
+
+
+		public ActionResult AddLawContractTemplate()
+		{
+			return View();
+		}
 
 		public ActionResult Home()
 		{
@@ -178,22 +236,11 @@ namespace FreeLance.Controllers
 		public ActionResult LawFaces()
 		{
 			var model = new LawFacesViewModel();
-			model.LawFaceViews = new List<LawFaceView>();
-		    var lawFaces = db.LawFaces.ToList();
-            foreach (var lawFace in lawFaces)
-		    {
-                LawFaceView lawFaceView = new LawFaceView
-                {
-                    LawFace = lawFace,
-                    LawContractTemplates = db.LawContractTemplates.Where(x => x.LawFace.Id == lawFace.Id).ToList() 
-                    
-                };
-                model.LawFaceViews.Add(lawFaceView);
-		        
-		    }
+			model.LawFaces = db.LawFaces.ToList();
 			return View(model);
 		}
 
+<<<<<<< HEAD
 	    [HttpGet]
 	    public ActionResult AddLawContractTemplate(int lawFaceId)
 	    {
@@ -231,7 +278,11 @@ namespace FreeLance.Controllers
             lawContractTemplateView.File.SaveAs(path);
             return path;
         }
+
+        private IEnumerable<ApplicationUser> getApplicationUsersApproved(bool approved, string roleName)
+=======
 		private IEnumerable<ApplicationUser> getApplicationUsersApproved(bool approved, string roleName)
+>>>>>>> origin/develop
 		{
 			return getApplicationUsersInRole(roleName)
 				.Where(user => user.IsApprovedByCoordinator == approved);  
