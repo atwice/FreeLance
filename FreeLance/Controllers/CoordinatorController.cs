@@ -178,6 +178,7 @@ namespace FreeLance.Controllers
 		public ActionResult LawFaces()
 		{
 			var model = new LawFacesViewModel();
+			model.LawFaces = db.LawFaces.ToList();
 			model.LawFaceViews = new List<LawFaceView>();
 		    var lawFaces = db.LawFaces.ToList();
             foreach (var lawFace in lawFaces)
@@ -231,8 +232,7 @@ namespace FreeLance.Controllers
             lawContractTemplateView.File.SaveAs(path);
             return path;
         }
-
-        private IEnumerable<ApplicationUser> getApplicationUsersApproved(bool approved, string roleName)
+		private IEnumerable<ApplicationUser> getApplicationUsersApproved(bool approved, string roleName)
 		{
 			return getApplicationUsersInRole(roleName)
 				.Where(user => user.IsApprovedByCoordinator == approved);  
@@ -316,6 +316,64 @@ namespace FreeLance.Controllers
 			freelancer.Roles.Add(new IdentityUserRole { RoleId = withoutDoc.Id, UserId = freelancer.Id });
 			db.SaveChanges();
 			return RedirectToAction(redirect);
-		}	
-	}
+		}
+
+		public class FillLawContractTemplateVR {
+			public class LawFaceVR {
+				public string Name { get; set; }
+				public int Id { get; set; }
+				public int DefaultLawContractTemplateId { get; set; }
+				public IEnumerable<LawContractTemplate> Templates { get; set; }
+			}
+			public IEnumerable<LawFaceVR> LawFaces;
+			public class FreelancerVR {
+				public string FIO { get; set; }
+				public string Id { get; set; }
+			}
+			public IEnumerable<FreelancerVR> Freelancers;
+		}
+
+		public ActionResult FillLawContractTemplate() {
+			List<FillLawContractTemplateVR.LawFaceVR> lawFaces = new List<FillLawContractTemplateVR.LawFaceVR>();
+			foreach (var lawFace in db.LawFaces.ToList()) {
+				var templates = db.LawContractTemplates.Where(x => x.LawFace.Id == lawFace.Id);
+				if (templates.Count() > 0) {
+					lawFaces.Add(new FillLawContractTemplateVR.LawFaceVR {
+						Name = lawFace.Name,
+						Id = lawFace.Id,
+						DefaultLawContractTemplateId = lawFace.CurrentLawContractTemplate == null ?
+														lawFace.CurrentLawContractTemplate.Id : 0,
+						Templates = templates.ToList()
+					});
+				}
+			}
+			List<FillLawContractTemplateVR.FreelancerVR> freelancers = getApplicationUsersInRole("Freelancer")
+				.Where(x => x.IsApprovedByCoordinator).Select(x => new FillLawContractTemplateVR.FreelancerVR {
+					FIO = x.FIO,
+					Id = x.Id
+				}).ToList();
+			return View(new FillLawContractTemplateVR { LawFaces = lawFaces, Freelancers = freelancers });
+		}
+
+		[HttpPost]
+		public ActionResult FillLawContractTemplate(string employerId, int lawContractTemplateId) {
+			ApplicationUser employer = db.Users.Find(employerId);
+			LawContractTemplate lawContractTemplate = db.LawContractTemplates.Find(lawContractTemplateId);
+			var employerRole = db.Roles.Where(role => role.Name == "Employer").ToArray()[0];
+			if (employer == null || lawContractTemplate == null || !employer.IsApprovedByCoordinator
+				|| employer.Roles.Where(x => x.RoleId == employerRole.Id).Count() > 0) {
+				return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
+			}
+
+			string pathToContract = Code.DocumentManager.fillContractTemplate(employer, lawContractTemplate);
+			byte[] filedata = System.IO.File.ReadAllBytes(pathToContract);
+			string contentType = MimeMapping.GetMimeMapping(pathToContract);
+			var cd = new System.Net.Mime.ContentDisposition {
+				FileName = pathToContract,
+				Inline = true,
+			};
+			Response.AppendHeader("Content-Disposition", cd.ToString());
+			return File(filedata, contentType);
+		}
+    }
 }

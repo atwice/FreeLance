@@ -11,6 +11,7 @@ namespace FreeLance.Migrations
 	using Microsoft.AspNet.Identity.EntityFramework;
 	using Microsoft.AspNet.Identity;
 	using System.Data.Entity.Validation;
+	using System.IO;
 
 	internal sealed class Configuration : DbMigrationsConfiguration<FreeLance.Models.ApplicationDbContext>
 	{
@@ -69,23 +70,27 @@ namespace FreeLance.Migrations
 	    {
             LawFace lawFace1 = new LawFace {Name = "Abbyy Production"};
 	        LawFace lawFace2 = new LawFace {Name = "Abbyy Lingvo"};
-	        LawContractTemplate template1 = new LawContractTemplate {
+			var rootPath = Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.FullName + "\\";
+            LawContractTemplate template1 = new LawContractTemplate {
 	            LawFace = lawFace1,
 	            Name = "Basic Document",
-	            Path = AppDomain.CurrentDomain.BaseDirectory + "Files\\LawContractTemplates\\" + "template1.docx"
-	        };
+				//Path = AppDomain.CurrentDomain.BaseDirectory + "Files\\LawContractTemplates\\" + "template1.docx"
+				Path = rootPath + "Files\\LawContractTemplates\\" + "template1.docx"
+			};
             LawContractTemplate template2 = new LawContractTemplate
             {
                 LawFace = lawFace1,
                 Name = "Old Document",
-                Path = AppDomain.CurrentDomain.BaseDirectory + "Files\\LawContractTemplates\\" + "template2.docx"
-            };
+				//Path = AppDomain.CurrentDomain.BaseDirectory + "Files\\LawContractTemplates\\" + "template2.docx"
+				Path = rootPath + "Files\\LawContractTemplates\\" + "template2.docx"
+			};
             LawContractTemplate template3 = new LawContractTemplate
             {
                 LawFace = lawFace2,
                 Name = "Actual Document",
-                Path = AppDomain.CurrentDomain.BaseDirectory + "Files\\LawContractTemplates\\" + "template3.docx"
-            };
+				//Path = AppDomain.CurrentDomain.BaseDirectory + "Files\\LawContractTemplates\\" + "template3.docx"
+				Path = rootPath + "Files\\LawContractTemplates\\" + "template3.docx"
+			};
 
             lawFace1.CurrentLawContractTemplate = template1;
 	        lawFace2.CurrentLawContractTemplate = template3;
@@ -98,7 +103,7 @@ namespace FreeLance.Migrations
 
 		private ProblemModels addProblem(ApplicationDbContext context, string name, string desc, ProblemStatus status, ApplicationUser employer)
 		{
-			var problem = new ProblemModels { Name = name, Description = desc, Status = status, Employer = employer };
+			var problem = new ProblemModels { Name = name, SmallDescription = desc, Description = desc, Status = status, Employer = employer };
 			context.ProblemModels.AddOrUpdate(p => p.Name, problem);
 			return problem;
 		}
