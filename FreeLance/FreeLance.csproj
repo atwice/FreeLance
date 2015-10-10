@@ -285,6 +285,7 @@
     <Content Include="Views\Coordinator\LawFaces.cshtml" />
     <Content Include="Views\Coordinator\Upload.cshtml" />
     <Content Include="Views\Coordinator\ViewFreelancerDocuments.cshtml" />
+    <Content Include="Views\Coordinator\AddLawContractTemplate.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

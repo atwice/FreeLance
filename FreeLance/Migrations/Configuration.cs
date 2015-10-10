@@ -29,7 +29,7 @@ namespace FreeLance.Migrations
 			SeedUsers(context);
 			SeedProblems(context);
 			SeedContracts(context);
-			//SeedLawContractTemplates(context);
+			SeedLawContractTemplates(context);
 			AddEmployerFreelancerProblemContractAuto(context, "Employer1", "Freelancer1");
 			AddEmployerFreelancerProblemContractAuto(context, "Employer2", "Freelancer2");
 			AddEmployerFreelancerProblemContractAuto(context, "Employer2", "Freelancer3");
@@ -53,17 +53,48 @@ namespace FreeLance.Migrations
 			addProblem(context, "Implement queue", "Language : ASSEMBLER", ProblemStatus.Opened, employer);
 		}
 
-		private void SeedLawContractTemplates(FreeLance.Models.ApplicationDbContext context)
-		{
-			var lawContractTemplate1 = new LawContractTemplate {
-				Path = AppDomain.CurrentDomain.BaseDirectory + "Files\\LawContractTemplates\\"+ "template1.docx" };
-			var lawContractTemplate2 = new LawContractTemplate
-			{
-				Path = AppDomain.CurrentDomain.BaseDirectory + "Files\\LawContractTemplates\\" + "template2.docx"
-			};
-			context.LawContractTemplates.AddOrUpdate(p => p.Path, lawContractTemplate1);
-			context.LawContractTemplates.AddOrUpdate(p => p.Path, lawContractTemplate2);
-		}
+//		private void SeedLawContractTemplates(FreeLance.Models.ApplicationDbContext context)
+//		{
+//			var lawContractTemplate1 = new LawContractTemplate {
+//				Path = AppDomain.CurrentDomain.BaseDirectory + "Files\\LawContractTemplates\\"+ "template1.docx" };
+//			var lawContractTemplate2 = new LawContractTemplate
+//			{
+//				Path = AppDomain.CurrentDomain.BaseDirectory + "Files\\LawContractTemplates\\" + "template2.docx"
+//			};
+//			context.LawContractTemplates.AddOrUpdate(p => p.Path, lawContractTemplate1);
+//			context.LawContractTemplates.AddOrUpdate(p => p.Path, lawContractTemplate2);
+//		}
+
+	    private void SeedLawContractTemplates(FreeLance.Models.ApplicationDbContext context)
+	    {
+            LawFace lawFace1 = new LawFace {Name = "Abbyy Production"};
+	        LawFace lawFace2 = new LawFace {Name = "Abbyy Lingvo"};
+	        LawContractTemplate template1 = new LawContractTemplate {
+	            LawFace = lawFace1,
+	            Name = "Basic Document",
+	            Path = AppDomain.CurrentDomain.BaseDirectory + "Files\\LawContractTemplates\\" + "template1.docx"
+	        };
+            LawContractTemplate template2 = new LawContractTemplate
+            {
+                LawFace = lawFace1,
+                Name = "Old Document",
+                Path = AppDomain.CurrentDomain.BaseDirectory + "Files\\LawContractTemplates\\" + "template2.docx"
+            };
+            LawContractTemplate template3 = new LawContractTemplate
+            {
+                LawFace = lawFace2,
+                Name = "Actual Document",
+                Path = AppDomain.CurrentDomain.BaseDirectory + "Files\\LawContractTemplates\\" + "template3.docx"
+            };
+
+            lawFace1.CurrentLawContractTemplate = template1;
+	        lawFace2.CurrentLawContractTemplate = template3;
+            context.LawFaces.AddOrUpdate(p => p.Name, lawFace1);
+            context.LawFaces.AddOrUpdate(p => p.Name, lawFace2);
+            context.LawContractTemplates.AddOrUpdate(p => p.Path, template1);
+            context.LawContractTemplates.AddOrUpdate(p => p.Path, template2);
+            context.LawContractTemplates.AddOrUpdate(p => p.Path, template3);
+        }
 
 		private ProblemModels addProblem(ApplicationDbContext context, string name, string desc, ProblemStatus status, ApplicationUser employer)
 		{

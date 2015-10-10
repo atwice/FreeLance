@@ -159,22 +159,10 @@
 							<li>@Html.ActionLink("Работодатели", "Employers", "Coordinator")</li>
 						}
                         @if (ViewBag.MenuPick == "LawFaces")
-                        {
-                            <li class="active">@Html.ActionLink("Юрлица", "LawFaces", "Coordinator")</li>
+                        {
+                            <li class="active">@Html.ActionLink("Юрлица", "LawFaces", "Coordinator")</li>                        }                        else                        {
+                            <li>@Html.ActionLink("Юрлица", "LawFaces", "Coordinator")</li>
                         }
-                        else
-                        {
-                                <li>@Html.ActionLink("Юрлица", "LawFaces", "Coordinator")</li>
-                        }
-						@if (ViewBag.MenuPick == "AddLawFace")
-						{
-
-							<li class="active">@Html.ActionLink("Создать Юрлицо", "AddLawFace", "Coordinator")</li>
-						}
-						else
-						{
-							<li>@Html.ActionLink("Создать Юрлицо", "AddLawFace", "Coordinator")</li>
-						}
 						@if (ViewBag.MenuPick == "Upload")
 						{
 
@@ -184,15 +172,7 @@
 						{
 							<li>@Html.ActionLink("Загрузить ГПХ", "Upload", "Coordinator")</li>
 						}
-						@if (ViewBag.MenuPick == "Download")
-						{
-
-							<li class="active">@Html.ActionLink("Скачать ГПХ", "Download", "Coordinator")</li>
-						}
-						else
-						{
-							<li>@Html.ActionLink("Скачать ГПХ", "Download", "Coordinator")</li>
-						}
+						
                         </ul>
                     </div>
                 }

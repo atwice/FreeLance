@@ -6,7 +6,23 @@
 <!DOCTYPE html>
 
 <div class="col-md-10">
-    <h2>Список юрлиц</h2><br />
-   
+    <h2>Список юрлиц</h2><br/>
+    <ul>
+   @foreach (var lawFaceView in Model.LawFaceViews)
+   {
+       <li>
+           <span>@lawFaceView.LawFace.Name</span>
+           <ul>
+               @foreach (var template in lawFaceView.LawContractTemplates)
+               {
+                   <li>@template.Name</li>
+               }
+
+           </ul>
+           @Html.ActionLink("Coordinator", "AddLawContractTemplate", new {lawFaceId = lawFaceView.LawFace.Id})
+           <button>Добавить шаблон</button>
+       </li>
+   }
+        </ul>
 
     </div>
