@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
+using System.Web.Mvc;
 
 namespace FreeLance.Models
 {
@@ -20,7 +21,10 @@ namespace FreeLance.Models
 		[Required]
 		public string Name { get; set; }
 		[Required,DataType(DataType.MultilineText)]
+		[AllowHtml]
 		public string Description { get; set; }
+		[Required, DataType(DataType.MultilineText)]
+		public string SmallDescription { get; set; }
 		public decimal Cost { get; set; }
 		[Required]
 		public ProblemStatus Status { get; set; }

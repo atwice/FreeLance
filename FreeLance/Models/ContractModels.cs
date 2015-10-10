@@ -18,6 +18,7 @@ namespace FreeLance.Models
 		public int ContractId { get; set; }
 		[Required]
 		public virtual ApplicationUser Freelancer { get; set; }
+        [DataType(DataType.MultilineText)]
 		public string Details { get; set; }
 		[Required]
 		public virtual ProblemModels Problem { get; set; }

@@ -98,7 +98,7 @@ namespace FreeLance.Migrations
 
 		private ProblemModels addProblem(ApplicationDbContext context, string name, string desc, ProblemStatus status, ApplicationUser employer)
 		{
-			var problem = new ProblemModels { Name = name, Description = desc, Status = status, Employer = employer };
+			var problem = new ProblemModels { Name = name, SmallDescription = desc, Description = desc, Status = status, Employer = employer };
 			context.ProblemModels.AddOrUpdate(p => p.Name, problem);
 			return problem;
 		}
