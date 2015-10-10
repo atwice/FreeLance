@@ -1,6 +1,7 @@
 ﻿using FreeLance.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -64,7 +65,15 @@ namespace FreeLance.Controllers
 	        public List<LawFaceView> LawFaceViews { get; set; }
         }
 
-
+	    public class LawContractTemplateView
+	    {
+	        public LawFace LawFace;
+	        public string LawFaceId { get; set; }
+            [Required]
+            public HttpPostedFileBase File { get; set; }
+            [Required]
+            public string Name { get; set; }
+	    }
 
 		// GET: Coordinator
 		public ActionResult Index()
@@ -188,8 +197,40 @@ namespace FreeLance.Controllers
 	    [HttpGet]
 	    public ActionResult AddLawContractTemplate(int lawFaceId)
 	    {
-	        return View();
+            LawContractTemplateView model = new LawContractTemplateView();
+	        model.LawFace = db.LawFaces.Where(x => x.Id == lawFaceId).ToList()[0];
+	        return View(model);
 	    }
+
+	   
+        [HttpPost]
+	    public ActionResult AddLawContractTemplate([Bind(Prefix = "LawContractTemplateView")]LawContractTemplateView lawContractTemplateView)
+	    {
+	        if (lawContractTemplateView.File == null || lawContractTemplateView.Name == null)
+	        {
+	            return RedirectToAction("Index");
+	        }
+
+	        LawContractTemplate lawContractTemplate = new LawContractTemplate
+	        {
+	            LawFace = lawContractTemplateView.LawFace,
+	            Name = lawContractTemplateView.Name,
+	            Path = SaveLawContractTemplate(lawContractTemplateView)
+	        };
+
+	        db.LawContractTemplates.Add(lawContractTemplate);
+	        return RedirectToAction("LawFaces");
+	    }
+
+        private string SaveLawContractTemplate(LawContractTemplateView lawContractTemplateView)
+        {
+            string path = null;
+            var fileName = lawContractTemplateView.LawFace.Name + "_" + lawContractTemplateView.Name + ".docx";
+            path = AppDomain.CurrentDomain.BaseDirectory + "Files\\LawContractTemplates\\" + fileName;
+            Response.Write(path.ToString());
+            lawContractTemplateView.File.SaveAs(path);
+            return path;
+        }
 
         private IEnumerable<ApplicationUser> getApplicationUsersApproved(bool approved, string roleName)
 		{
