@@ -23,6 +23,8 @@ namespace FreeLance.Models
 		[Required,DataType(DataType.MultilineText)]
 		[AllowHtml]
 		public string Description { get; set; }
+		[Required, DataType(DataType.MultilineText)]
+		public string SmallDescription { get; set; }
 		public decimal Cost { get; set; }
 		[Required]
 		public ProblemStatus Status { get; set; }
