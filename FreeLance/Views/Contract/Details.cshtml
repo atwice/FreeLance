@@ -12,8 +12,9 @@
 			<h2> @Html.DisplayFor(model => contract.Problem.Name)</h2>
 		</div>
 		<div class="panel-body">
-			<p> <strong>Общее описание задачи: </strong> @Html.Raw(contract.Problem.Description)</p>
 			<p> <strong>Детали контракта: </strong> @Html.DisplayFor(model => contract.Details)</p>
+			<p> <strong>Краткое описание задачи: </strong> @Html.Raw(contract.Problem.SmallDescription)</p>
+			<p> <strong>Общее описание задачи: </strong> @Html.Raw(contract.Problem.Description)</p>
 			<table class="table">
 				<tbody>
 					<tr>
@@ -25,8 +26,8 @@
 							<span class="glyphicon glyphicon-user" aria-hidden="true"></span> 
 							@Html.DisplayFor(model => contract.Problem.Employer.FIO)
 						</td>
-						<td>Статус: @Html.DisplayFor(model => contract.Status)</td>
-						<td>Id: @Html.DisplayFor(model => contract.ContractId)</td>
+						<td><b>Статус:</b> @Html.DisplayFor(model => contract.Status)</td>
+						<td><b>Id:</b> @Html.DisplayFor(model => contract.ContractId)</td>
 					</tr>
 				</tbody>
 			</table>
