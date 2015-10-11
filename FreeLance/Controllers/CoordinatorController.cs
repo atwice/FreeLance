@@ -355,6 +355,10 @@ namespace FreeLance.Controllers
 					FIO = x.FIO,
 					Id = x.Id
 				}).ToList();
+
+
+			if (Request.IsAjaxRequest())
+				return PartialView(new FillLawContractTemplateVR { LawFaces = lawFaces, Freelancers = freelancers });
 			return View(new FillLawContractTemplateVR { LawFaces = lawFaces, Freelancers = freelancers });
 		}
 
