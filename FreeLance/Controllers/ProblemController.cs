@@ -84,7 +84,7 @@ namespace FreeLance.Controllers
 		{
 			ApplicationUser employer = db.Users.Find(User.Identity.GetUserId());
 			if (!employer.IsApprovedByCoordinator) {
-				ViewBag.ErrorMessage = "Задача создана, но не будет показана исполнителям, пока ваш аккаунт подтвердит координатор";
+				ViewBag.ErrorMessage = "Задача создана, но не будет показана исполнителям, пока ваш аккаунт не подтвердит координатор";
 			}
 			problem.Employer = db.Users.Find(User.Identity.GetUserId());
 			problem.Status = ProblemStatus.Opened;
