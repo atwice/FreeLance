@@ -1,44 +1,44 @@
 ﻿@model FreeLance.Controllers.CoordinatorController.UploadViewModel
 @{
-    ViewBag.Title = "Upload Law Contract";
+	ViewBag.Title = "Загрузить ГПХ";
+	ViewBag.MenuPick = "Upload";
 }
 
 <h2>Загрузка ГПХ</h2>
-<form action="" method="post" enctype="multipart/form-data">
+@using (Html.BeginForm("Upload", "Coordinator", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
     @Html.AntiForgeryToken()
     <div class="form-horizontal">
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         <div class="form-group">
-            @Html.LabelFor(model => model.contract.Path, "Путь к файлу", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(m => m.PostModel.File, "Путь к файлу", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                <input type="file" name="file"/>
+                <input type="file" accept=".doc,.docx" name="UploadPostModel.File"/>
             </div>
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.contract.User.Id, "Фрилансер", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(m => m.PostModel.UserId, "Фрилансер", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                <select>
-                    @foreach (var freelancer in Model.Freelancers)
-                    {
-                        <option value="@freelancer.Id">@freelancer.Email</option>
-                    }
-                </select>
+                @Html.DropDownList("UploadPostModel.UserId", 
+                    new SelectList(Model.Freelancers, "Id", "Email"), 
+                        new { htmlAttributes = new { @class = "form-control" } });
             </div>
         </div>
         <div class="form-group">
-            @Html.LabelFor(model => model.contract.LawContractTemplate, "Шаблон", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(m => m.PostModel.LawContractTemplateId, "Шаблон", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.contract.LawContractTemplate.Id, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.contract.LawContractTemplate.Id, "", new { @class = "text-danger" })
+                @Html.DropDownList("UploadPostModel.LawContractTemplateId", 
+                    new SelectList(Model.LawContractTemplates, "Id", "Id"), 
+                        new { htmlAttributes = new { @class = "form-control" } });
             </div>
         </div>
         <div class="form-group">
-            @Html.LabelFor(model => model.contract.EndData, "Дата истечения договора", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                <input type="date" name="date"/>
-            </div>
+            @Html.LabelFor(m => m.PostModel.EndDate, "Дата истечения договора", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">                
+                <input type="date" name="UploadPostModel.EndDate"/>
+                </div>
         </div>
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
@@ -46,7 +46,7 @@
             </div>
         </div>
     </div>
-</form>
+}
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
 }

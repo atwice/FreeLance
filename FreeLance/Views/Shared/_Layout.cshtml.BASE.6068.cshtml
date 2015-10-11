@@ -6,8 +6,6 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FreeLance - @ViewBag.Title</title>
-	<script src="//tinymce.cachefly.net/4.2/tinymce.min.js"></script>
-	<script>tinymce.init({ selector: "#Description" });</script>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 
@@ -161,25 +159,17 @@
 							<li>@Html.ActionLink("Работодатели", "Employers", "Coordinator")</li>
 						}
                         @if (ViewBag.MenuPick == "LawFaces")
-                        {
-                            <li class="active">@Html.ActionLink("Юрлица", "LawFaces", "Coordinator")</li>                        }                        else                        {
-                            <li>@Html.ActionLink("Юрлица", "LawFaces", "Coordinator")</li>
+                        {
+                            <li class="active">@Html.ActionLink("Юрлица", "LawFaces", "Coordinator")</li>
                         }
-						@if (ViewBag.MenuPick == "Upload")
-						{
+                        else
+                        {
+                                <li>@Html.ActionLink("Юрлица", "LawFaces", "Coordinator")</li>
+                         }
 
-							<li class="active">@Html.ActionLink("Загрузить ГПХ", "Upload", "Coordinator")</li>
-						}
-						else
-						{
-							<li>@Html.ActionLink("Загрузить ГПХ", "Upload", "Coordinator")</li>
-						}
-						@if (ViewBag.MenuPick == "FillLawContractTemplate") {
-							<li class="active">@Html.ActionLink("Заполнить шаблон ГПХ", "FillLawContractTemplate", "Coordinator")</li>
-						} else {
-							<li>@Html.ActionLink("Заполнить шаблон ГПХ", "FillLawContractTemplate", "Coordinator")</li>
-						}
-						
+                        <li class="">@Html.ActionLink("Создать Юрлицо", "AddLawFace", "Coordinator")</li>
+                        <li class="">@Html.ActionLink("Загрузить ГПХ", "Upload", "Coordinator")</li>
+                        <li class="">@Html.ActionLink("Скачать ГПХ", "Download", "Coordinator" )</li>
                         </ul>
                     </div>
                 }

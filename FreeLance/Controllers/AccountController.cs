@@ -161,11 +161,12 @@ namespace FreeLance.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email, FIO = model.FIO };
+                var user = new ApplicationUser { UserName = model.Email, Email = model.Email, FIO = model.FIO, IsApprovedByCoordinator = false };
                 var result = await UserManager.CreateAsync(user, model.Password);
-                if (result.Succeeded)
+				if (result.Succeeded)
                 {
-                    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
+					UserManager.AddToRole(user.Id, "Incognito");
+					await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
                     
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link

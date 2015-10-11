@@ -1,19 +1,65 @@
-﻿@model IEnumerable<FreeLance.Controllers.CoordinatorController.EmployersVR>
-
+﻿@model FreeLance.Controllers.CoordinatorController.EmployersViewModel
 @{
-    ViewBag.Title = "EmployerApprovationList";
+    ViewBag.Title = "Работодатели";
 	ViewBag.MenuPick = "Employers";
 }
 
-<h2>EmployerApprovationList</h2>
-@foreach (var employerData in Model) {
-	<dd>
-		@using (Html.BeginForm("ChangeEmployerApprovalStatus", "Coordinator", FormMethod.Post)) {
-			@employerData.Employer.FIO
-			<input name="employerId" type="hidden" value="@employerData.Form.EmployerId" />
-			<input name="isApproved" type="hidden" value="@employerData.Form.IsApproved" />
-			<input name="redirect" type="hidden" value="@employerData.Form.Redirect" />
-			<input type="submit" class="btn" value="@employerData.Form.ButtonText" />
+<div class="col-md-10">
+	<h2>@ViewBag.Title</h2>
+	<h3>Ожидают подтверждения</h3>
+	<div class="list-group">
+		@if (Model.EmployersNotApproved.Count == 0)
+		{
+			<h5>Все заявки подтверждены. Отличная работа!</h5>
 		}
-	</dd>
-}
+		else
+		{
+			foreach (var employer in Model.EmployersNotApproved)
+			{
+				<div class="list-group-item">
+					@using (Html.BeginForm("ChangeEmployerApprovalStatus", "Coordinator",
+						new { employerId = employer.Id,
+								isApproved = employer.IsApprovedByCoordinator,
+								redirect = "Employers"
+							}))
+					{
+						<input type="submit" value="Допустить в систему" class="pull-right btn btn-success" />
+					}
+
+					<h4 class="list-group-item-heading">@employer.FIO</h4>
+					<p class="list-group-item-text" style="color:lightgray"><i>@employer.Email</i></p>
+					<p class="list-group-item-text" style="color:lightgray"><i>@employer.PhoneNumber</i></p>
+				</div>
+			}
+		}
+	</div>
+	<h3>Подтвержденные работодатели</h3>
+	<div class="list-group">
+		@if (Model.EmployersApproved.Count == 0)
+		{
+			<h5>Все заявки подтверждены. Отличная работа!</h5>
+		}
+		else
+		{
+			foreach (var employer in Model.EmployersApproved)
+			{
+				<div class="list-group-item">
+					@using (Html.BeginForm("ChangeEmployerApprovalStatus", "Coordinator",
+						new
+						{
+							employerId = employer.Id,
+							isApproved = employer.IsApprovedByCoordinator,
+							redirect = "Employers"
+						}))
+					{
+						<input type="submit" value="Отказать в доступе" class="pull-right btn btn-danger" />
+					}
+
+					<h4 class="list-group-item-heading">@employer.FIO</h4>
+					<p class="list-group-item-text" style="color:lightgray"><i>@employer.Email</i></p>
+					<p class="list-group-item-text" style="color:lightgray"><i>@employer.PhoneNumber</i></p>
+				</div>
+			}
+		}
+	</div>
+</div>

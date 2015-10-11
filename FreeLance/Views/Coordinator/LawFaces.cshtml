@@ -6,33 +6,23 @@
 <!DOCTYPE html>
 
 <div class="col-md-10">
-    <h2>Список юрлиц</h2><br />
-    <div class="list-group">
-        <div>
-            @foreach (var lawFace in Model.LawFaces)
-            {
-                <a class="list-group-item" style="padding: 10px;">
-                 
-                        <h4 class="list-group-item-heading">@lawFace.Name</h4>
-                    <p class="list-group-item-text" style="color: lightgray">
-                        <i>@lawFace.CurrentLawContractTemplate.Path</i>
-                        @Html.ActionLink("Посмотреть", "Download", "Coordinator", new { filename = @lawFace.CurrentLawContractTemplate.Path }, null)
-@*                        <a style="padding: 5px; margin: 5px" class="btn btn-success" href="/Coordinator/Download">*@
-@*                            <span class="glyphicon glyphicon-eye-open"></span>*@
-@*                            Скачать*@
-@*                        </a>*@
-                    </p>
-                       
-                   
-                </a>
-                   }
-        </div>
-    </div>
-    <div class="span3 bs-docs-sidebar">
-        <ul class="nav nav-pills nav-stacked main-menu">
-            <li class="">@Html.ActionLink("Создать Юрлицо", "AddLawFace", "Coordinator")</li>
-            <li class="">@Html.ActionLink("Скачать ГПХ", "Download", "Coordinator")</li>
+    <h2>Список юрлиц</h2><br/>
+    <ul>
+   @foreach (var lawFaceView in Model.LawFaceViews)
+   {
+       <li>
+           <span>@lawFaceView.LawFace.Name</span>
+           <ul>
+               @foreach (var template in lawFaceView.LawContractTemplates)
+               {
+                   <li>@template.Name</li>
+               }
+
+           </ul>
+           @Html.ActionLink("Coordinator", "AddLawContractTemplate", new {lawFaceId = lawFaceView.LawFace.Id})
+           <button>Добавить шаблон</button>
+       </li>
+   }
         </ul>
-        </div>
 
     </div>
