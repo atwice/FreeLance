@@ -7,6 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FreeLance - @ViewBag.Title</title>
 	<script src="//tinymce.cachefly.net/4.2/tinymce.min.js"></script>
+	<script src="~/Scripts/jquery-2.1.4.js" type="text/javascript"></script>
+	<script src="~/Scripts/jquery.unobtrusive-ajax.min.js" type="text/javascript"></script>
 	<script>tinymce.init({ selector: "#Description" });</script>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
@@ -175,17 +177,20 @@
 							<li>@Html.ActionLink("Загрузить ГПХ", "Upload", "Coordinator")</li>
 						}
 						@if (ViewBag.MenuPick == "FillLawContractTemplate") {
-							<li class="active">@Html.ActionLink("Заполнить шаблон ГПХ", "FillLawContractTemplate", "Coordinator")</li>
+							@*<li class="active">@Html.ActionLink("Заполнить шаблон ГПХ", "FillLawContractTemplate", "Coordinator")</li>*@
+							<li class="active">@Ajax.ActionLink("Заполнить шаблон ГПХ", "FillLawContractTemplate", "Coordinator", new AjaxOptions { UpdateTargetId = "layout-body" }) </li>
 						} else {
-							<li>@Html.ActionLink("Заполнить шаблон ГПХ", "FillLawContractTemplate", "Coordinator")</li>
+							<li>@Ajax.ActionLink("Заполнить шаблон ГПХ", "FillLawContractTemplate", "Coordinator", new AjaxOptions { UpdateTargetId = "layout-body" } ) </li>
+							@*<li>@Html.ActionLink("Заполнить шаблон ГПХ", "FillLawContractTemplate", "Coordinator")</li>*@
 						}
+						
 						
                         </ul>
                     </div>
                 }
 			</div>
         </div>
-        <div class="col-md-10">
+		<div class="col-md-10">
 
 			@if (ViewBag.ErrorMessage != null) {
 				<div id="message">
@@ -197,7 +202,10 @@
 					</div>
 				</div>
 			}
-			@RenderBody()
+			<div id="test-text"></div>
+			<div id="layout-body">
+				@RenderBody()
+			</div>
 		</div>
     </div>
     
