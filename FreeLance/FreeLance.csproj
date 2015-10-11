@@ -291,7 +291,6 @@
     <Content Include="Views\Coordinator\ViewFreelancerDocuments.cshtml" />
     <Content Include="Views\Coordinator\AddLawContractTemplate.cshtml" />
     <Content Include="Views\Coordinator\FillLawContractTemplate.cshtml" />
-    <Content Include="Views\Shared\_MyShared.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
