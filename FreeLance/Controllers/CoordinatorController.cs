@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -206,19 +207,22 @@ namespace FreeLance.Controllers
         [HttpPost]
 	    public ActionResult AddLawContractTemplate([Bind(Prefix = "LawContractTemplateView")]LawContractTemplateView lawContractTemplateView)
 	    {
-	        if (lawContractTemplateView.File == null || lawContractTemplateView.Name == null)
+	        if (lawContractTemplateView.File == null || lawContractTemplateView.Name == null || lawContractTemplateView.LawFaceId == null)
 	        {
 	            return RedirectToAction("Index");
 	        }
-
+            int lawFaceId = Int32.Parse(lawContractTemplateView.LawFaceId);
+            lawContractTemplateView.LawFace =
+                db.LawFaces.Where(x => x.Id == lawFaceId).ToList()[0];
 	        LawContractTemplate lawContractTemplate = new LawContractTemplate
 	        {
 	            LawFace = lawContractTemplateView.LawFace,
 	            Name = lawContractTemplateView.Name,
 	            Path = SaveLawContractTemplate(lawContractTemplateView)
 	        };
-
+            
 	        db.LawContractTemplates.Add(lawContractTemplate);
+            db.SaveChanges();
 	        return RedirectToAction("LawFaces");
 	    }
 
@@ -321,7 +325,7 @@ namespace FreeLance.Controllers
 			public class LawFaceVR {
 				public string Name { get; set; }
 				public int Id { get; set; }
-				public int DefaultLawContractTemplateId { get; set; }
+				//public int DefaultLawContractTemplateId { get; set; }
 				public IEnumerable<LawContractTemplate> Templates { get; set; }
 			}
 			public IEnumerable<LawFaceVR> LawFaces;
@@ -340,8 +344,8 @@ namespace FreeLance.Controllers
 					lawFaces.Add(new FillLawContractTemplateVR.LawFaceVR {
 						Name = lawFace.Name,
 						Id = lawFace.Id,
-						DefaultLawContractTemplateId = lawFace.CurrentLawContractTemplate == null ?
-														lawFace.CurrentLawContractTemplate.Id : 0,
+//						DefaultLawContractTemplateId = lawFace.CurrentLawContractTemplate == null ?
+//														lawFace.CurrentLawContractTemplate.Id : 0,
 						Templates = templates.ToList()
 					});
 				}

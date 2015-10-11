@@ -185,9 +185,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201510091847147_LawContractDiff.cs" />
-    <Compile Include="Migrations\201510091847147_LawContractDiff.Designer.cs">
-      <DependentUpon>201510091847147_LawContractDiff.cs</DependentUpon>
+    <Compile Include="Migrations\201510111954566_lawModel.cs" />
+    <Compile Include="Migrations\201510111954566_lawModel.Designer.cs">
+      <DependentUpon>201510111954566_lawModel.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -302,8 +302,8 @@
     <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201510091847147_LawContractDiff.resx">
-      <DependentUpon>201510091847147_LawContractDiff.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201510111954566_lawModel.resx">
+      <DependentUpon>201510111954566_lawModel.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

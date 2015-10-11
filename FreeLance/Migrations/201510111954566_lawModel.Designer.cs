@@ -7,13 +7,13 @@ namespace FreeLance.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class LawContractDiff : IMigrationMetadata
+    public sealed partial class lawModel : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(LawContractDiff));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(lawModel));
         
         string IMigrationMetadata.Id
         {
-            get { return "201510091847147_LawContractDiff"; }
+            get { return "201510111954566_lawModel"; }
         }
         
         string IMigrationMetadata.Source
