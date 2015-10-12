@@ -157,7 +157,20 @@ namespace FreeLance.Controllers
 			var subscriptions = db.SubscriptionModels.Where(t => t.Freelancer.Id.Equals(userId)).ToList();
 			ViewBag.contractsSize = contracts.LongCount();
 			ViewBag.subscriptionsSize = subscriptions.LongCount();
-			return View();
+
+			ApplicationUser freelancer = db.Users.Find(userId);
+			DocumentPackageViewModel model = new DocumentPackageViewModel();
+			if (freelancer.DocumentPackage != null)
+			{
+				DocumentPackageModels documents = freelancer.DocumentPackage;
+				model.Phone = documents.Phone;
+				model.PaymentDetails = documents.PaymentDetails;
+				model.Adress = documents.Adress;
+				model.PassportFace = documents.FilePassportFace != null;
+				model.PassportRegistration = documents.FilePassportRegistration != null;
+			} 
+
+			return View(model);
 		}
 
 
@@ -166,6 +179,8 @@ namespace FreeLance.Controllers
 			public string Adress { get; set; }
 			public string Phone { get; set; }
 			public string PaymentDetails { get; set; }
+			public bool PassportFace { get; set; }
+			public bool PassportRegistration { get; set; }
 		}
 
 		[HttpPost]
