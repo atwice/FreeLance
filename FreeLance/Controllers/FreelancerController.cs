@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web;
+using System.Web.DynamicData;
 using System.Web.Mvc;
 using FreeLance.Code;
 using Microsoft.AspNet.Identity;
@@ -133,7 +134,7 @@ namespace FreeLance.Controllers
 			return View();
 		}
 
-		public ViewResult OpenProblems()
+		public ViewResult OpenProblems(String sortOrder, string searchString)
 		{
             if (User.IsInRole("Freelancer"))
             {
@@ -145,9 +146,34 @@ namespace FreeLance.Controllers
                     ViewBag.ErrorMessage = "Вам не заплатят за выполненную работу, пока вы не заключите ГПХ.";
                 }
             }
-            ProblemModels[] openProblems = db.ProblemModels
-				.Where(x => x.Status == 0 && x.Employer.IsApprovedByCoordinator).ToArray();
-			return View(openProblems);
+			ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+			ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
+			var openProblems = from s in db.ProblemModels where s.Status == 0 select s;
+			if (!String.IsNullOrEmpty(searchString))
+			{
+				openProblems = openProblems.Where(s => s.Name.Contains(searchString) || s.Description.Contains(searchString) || s.SmallDescription.Contains(searchString));
+			}
+
+			switch (sortOrder)
+			{
+				case "name_desc":
+					openProblems = openProblems.OrderByDescending(s => s.Name);
+					break;
+				case "Date":
+					openProblems = openProblems.OrderBy(s => s.CreationDate);
+					break;
+				case "date_desc":
+					openProblems = openProblems.OrderByDescending(s => s.CreationDate);
+					break;
+				default:
+					openProblems = openProblems.OrderBy(s => s.Name);
+					break;
+			}
+			return View(openProblems.ToList());
+
+			//ProblemModels[] openProblems = db.ProblemModels
+			//	.Where(x => x.Status == 0 && x.Employer.IsApprovedByCoordinator).ToArray();
+			//return View(openProblems);
 		}
 
 		public ActionResult Profile()
@@ -157,7 +183,20 @@ namespace FreeLance.Controllers
 			var subscriptions = db.SubscriptionModels.Where(t => t.Freelancer.Id.Equals(userId)).ToList();
 			ViewBag.contractsSize = contracts.LongCount();
 			ViewBag.subscriptionsSize = subscriptions.LongCount();
-			return View();
+
+			ApplicationUser freelancer = db.Users.Find(userId);
+			DocumentPackageViewModel model = new DocumentPackageViewModel();
+			if (freelancer.DocumentPackage != null)
+			{
+				DocumentPackageModels documents = freelancer.DocumentPackage;
+				model.Phone = documents.Phone;
+				model.PaymentDetails = documents.PaymentDetails;
+				model.Adress = documents.Adress;
+				model.PassportFace = documents.FilePassportFace != null;
+				model.PassportRegistration = documents.FilePassportRegistration != null;
+			} 
+
+			return View(model);
 		}
 
 
@@ -166,6 +205,8 @@ namespace FreeLance.Controllers
 			public string Adress { get; set; }
 			public string Phone { get; set; }
 			public string PaymentDetails { get; set; }
+			public bool PassportFace { get; set; }
+			public bool PassportRegistration { get; set; }
 		}
 
 		[HttpPost]

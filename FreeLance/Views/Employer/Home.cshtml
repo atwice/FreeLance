@@ -60,7 +60,8 @@ else
 			<a href="/Problem/Details/@problem.ProblemId" class="list-group-item">
 				<h4 class="list-group-item-heading">@problem.Name</h4>
 				<p class="list-group-item-text" style="color:forestgreen"><i>Откликнулось @problem.Subscriptions.Count исполнителей</i></p>
-				<p class="list-group-item-text"> @Truncate(problem.SmallDescription, 200)</p>
+			    <p class="list-group-item-text"> @Truncate(problem.SmallDescription, 200)</p>
+                <p class="list-group-item-text"> @problem.CreationDate </p>
 			</a>
 		}
 	</div>

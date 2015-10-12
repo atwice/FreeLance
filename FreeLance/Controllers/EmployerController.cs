@@ -136,10 +136,11 @@ namespace FreeLance.Controllers
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public ActionResult NewProblem([Bind(Include = "ProblemId,Name,Description,Status")] ProblemModels problem)
+		public ActionResult NewProblem([Bind(Include = "ProblemId,Name,Description,Status,Cost")] ProblemModels problem)
 		{
 			if (ModelState.IsValid)
 			{
+				problem.CreationDate = DateTime.Now;
 				problem.Employer = db.Users.Find(User.Identity.GetUserId());
 				db.ProblemModels.Add(problem);
 				db.SaveChanges();
