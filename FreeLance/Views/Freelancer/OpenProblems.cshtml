@@ -16,38 +16,60 @@ else
 }
 <div class="col-md-10">
 	<h2>Биржа задач</h2>
-	<div class="list-group">
-		@foreach (var problem in Model)
-		{
-			if (@problem.Status == FreeLance.Models.ProblemStatus.Opened)
-			{
-				<style scoped>
-					.status {
-						color: green;
-					}
-				</style>
-			}
-			else if (@problem.Status == FreeLance.Models.ProblemStatus.InProgress)
-			{
-				<style scoped>
-					.status {
-						color: royalblue;
-					}
-				</style>
-			}
-			else
-			{
-				<style scoped>
-					.status {
-						color: red;
-					}
-				</style>
-			}
-			<a href="/Problem/Details/@problem.ProblemId" class="list-group-item">
-				<h4 class="list-group-item-heading">@problem.Name <small class="status">@problem.Status</small></h4>
-				<p class="list-group-item-text" style="color:lightgray"><i>@problem.Employer.FIO</i></p>
-				<p class="list-group-item-text"> @Truncate(problem.SmallDescription, 200)</p>
-			</a>
-		}
-	</div>
+    <div class="list-group">
+        @using (Html.BeginForm())
+        {
+            <p>
+                Найти: @Html.TextBox("SearchString")
+                <input type="submit" value="Поиск" />
+            </p>
+        }
+        <h4>
+            <tr>
+                <th>
+                    @Html.ActionLink("Имя", "OpenProblems", new {sortOrder = ViewBag.NameSortParm})
+                </th>
+                <th>
+                </th>
+                <th>
+                    @Html.ActionLink("Дата создания", "OpenProblems", new {sortOrder = ViewBag.DateSortParm})
+                </th>
+                <th></th>
+            </tr>
+        </h4>
+        @foreach (var problem in Model)
+        {
+            if (@problem.Status == FreeLance.Models.ProblemStatus.Opened)
+            {
+                <style scoped>
+                    .status {
+                        color: green;
+                    }
+                </style>
+            }
+            else if (@problem.Status == FreeLance.Models.ProblemStatus.InProgress)
+            {
+                <style scoped>
+                    .status {
+                        color: royalblue;
+                    }
+                </style>
+            }
+            else
+            {
+                <style scoped>
+                    .status {
+                        color: red;
+                    }
+                </style>
+            }
+            <a href="/Problem/Details/@problem.ProblemId" class="list-group-item">
+                <h4 class="list-group-item-heading">@problem.Name <small class="status">@problem.Status</small></h4>
+                <p class="list-group-item-text" style="color: lightgray">
+                    <i>@problem.Employer.FIO</i>
+                </p>
+                <p class="list-group-item-text"> @Truncate(problem.SmallDescription, 200)</p>
+            </a>
+        }
+    </div>
 </div>
