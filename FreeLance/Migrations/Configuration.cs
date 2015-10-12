@@ -33,7 +33,7 @@ namespace FreeLance.Migrations
 			SeedLawContractTemplates(context);
 			AddEmployerFreelancerProblemContractAuto(context, "Employer1", "Freelancer1");
 			AddEmployerFreelancerProblemContractAuto(context, "Employer2", "Freelancer2");
-			AddEmployerFreelancerProblemContractAuto(context, "Employer2", "Freelancer3");
+			AddEmployerFreelancerProblemContractAuto(context, "Employer", "Freelancer3");
 			AddProblemWithSubscriber(context, "Employer4", "Subscriber1");
 			AddProblemWithSubscriber(context, "Employer5", "Subscriber2");
 			AddProblemWithSubscriber(context, "Employer6", "Subscriber3");
@@ -54,17 +54,6 @@ namespace FreeLance.Migrations
 			addProblem(context, "Implement queue", "Language : ASSEMBLER", ProblemStatus.Opened, employer);
 		}
 
-//		private void SeedLawContractTemplates(FreeLance.Models.ApplicationDbContext context)
-//		{
-//			var lawContractTemplate1 = new LawContractTemplate {
-//				Path = AppDomain.CurrentDomain.BaseDirectory + "Files\\LawContractTemplates\\"+ "template1.docx" };
-//			var lawContractTemplate2 = new LawContractTemplate
-//			{
-//				Path = AppDomain.CurrentDomain.BaseDirectory + "Files\\LawContractTemplates\\" + "template2.docx"
-//			};
-//			context.LawContractTemplates.AddOrUpdate(p => p.Path, lawContractTemplate1);
-//			context.LawContractTemplates.AddOrUpdate(p => p.Path, lawContractTemplate2);
-//		}
 
 	    private void SeedLawContractTemplates(FreeLance.Models.ApplicationDbContext context)
 	    {
@@ -75,25 +64,26 @@ namespace FreeLance.Migrations
 	            LawFace = lawFace1,
 	            Name = "Basic Document",
 				//Path = AppDomain.CurrentDomain.BaseDirectory + "Files\\LawContractTemplates\\" + "template1.docx"
-				Path = rootPath + "Files\\LawContractTemplates\\" + "template1.docx"
+				Path = rootPath + "Files\\LawContractTemplates\\" + "template1.docx",
+                Active = true
 			};
             LawContractTemplate template2 = new LawContractTemplate
             {
                 LawFace = lawFace1,
                 Name = "Old Document",
 				//Path = AppDomain.CurrentDomain.BaseDirectory + "Files\\LawContractTemplates\\" + "template2.docx"
-				Path = rootPath + "Files\\LawContractTemplates\\" + "template2.docx"
+				Path = rootPath + "Files\\LawContractTemplates\\" + "template2.docx",
+                Active = true
 			};
             LawContractTemplate template3 = new LawContractTemplate
             {
                 LawFace = lawFace2,
                 Name = "Actual Document",
 				//Path = AppDomain.CurrentDomain.BaseDirectory + "Files\\LawContractTemplates\\" + "template3.docx"
-				Path = rootPath + "Files\\LawContractTemplates\\" + "template3.docx"
-			};
+				Path = rootPath + "Files\\LawContractTemplates\\" + "template3.docx",
+                Active = true
+            };
 
-            lawFace1.CurrentLawContractTemplate = template1;
-	        lawFace2.CurrentLawContractTemplate = template3;
             context.LawFaces.AddOrUpdate(p => p.Name, lawFace1);
             context.LawFaces.AddOrUpdate(p => p.Name, lawFace2);
             context.LawContractTemplates.AddOrUpdate(p => p.Path, template1);
