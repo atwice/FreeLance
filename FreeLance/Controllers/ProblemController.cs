@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
@@ -88,6 +89,7 @@ namespace FreeLance.Controllers
 			}
 			problem.Employer = db.Users.Find(User.Identity.GetUserId());
 			problem.Status = ProblemStatus.Opened;
+			problem.CreationDate = DateTime.Now;
 			db.ProblemModels.Add(problem);
 			db.SaveChanges();
 			return RedirectToAction("Details", new { id = problem.ProblemId });
