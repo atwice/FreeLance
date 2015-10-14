@@ -123,7 +123,8 @@ namespace FreeLance.Controllers
 			{
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
-			return View(new ContractModels { Problem = problem, Freelancer = freelancer });
+			return View(new ContractModels { Problem = problem, Freelancer = freelancer,
+				CreationDate = DateTime.Now, EndingDate = DateTime.Now.AddDays(15).AddHours(3) });
 		}
 
 		// POST: Contract/Create
@@ -148,6 +149,8 @@ namespace FreeLance.Controllers
 			contract.Problem = problem;
 			contract.Status = ContractStatus.Opened;
 			contract.Freelancer = freelancer;
+			contract.CreationDate = DateTime.Now;
+			contract.EndingDate = DateTime.Now.AddDays(13).AddHours(3);
 
 			db.ContractModels.Add(contract);
 			db.SubscriptionModels.Remove(subscription);
@@ -165,6 +168,10 @@ namespace FreeLance.Controllers
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
 			contract.Status = status;
+			if(status == ContractStatus.Closed)
+			{
+				contract.EndingDate = DateTime.Now;
+			}
 			db.SaveChanges();
 			return Redirect(redirect == null ? "/Contract/Details/" + id.ToString() : redirect);
 		}
