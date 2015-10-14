@@ -12,6 +12,11 @@
 			<h2> @Html.DisplayFor(model => contract.Problem.Name)</h2>
 		</div>
 		<div class="panel-body">
+			<p> <strong>Дата создания: </strong> @Html.DisplayFor(model => contract.CreationDate)</p>
+			@if (contract.Status == FreeLance.Models.ContractStatus.Closed)
+			{
+				<p> <strong>Дата закрытия: </strong> @Html.DisplayFor(model => contract.EndingDate)</p>
+			}
 			<p> <strong>Детали контракта: </strong> @Html.DisplayFor(model => contract.Details)</p>
 			<p> <strong>Краткое описание задачи: </strong> @Html.Raw(contract.Problem.SmallDescription)</p>
 			<p> <strong>Общее описание задачи: </strong> @Html.Raw(contract.Problem.Description)</p>
