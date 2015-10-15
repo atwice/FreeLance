@@ -63,11 +63,14 @@
 		{
 			foreach (var freelancer in Model.FreelancersWithoutLawContract)
 			{
-				<a class="list-group-item">
+				<div class="list-group-item">
+					<a href="@Url.Action("FillLawContractTemplate", "Coordinator", new { freelancerId = freelancer.Id })">
+						<input type="button" value="Заполнить шаблон ГПХ" class="pull-right btn btn-success" />
+					</a>
 					<h4 class="list-group-item-heading">@freelancer.FIO</h4>
 					<p class="list-group-item-text" style="color:lightgray"><i>@freelancer.Email</i></p>
 					<p class="list-group-item-text" style="color:lightgray"><i>@freelancer.PhoneNumber</i></p>
-				</a>
+				</div>
 			}
 		}
 	</div>

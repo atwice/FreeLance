@@ -21,10 +21,12 @@
 			@Html.Label("Шаблон ГПХ", htmlAttributes: new { @class = "control-label col-md-2" })
 			<div class="col-md-10">
 				<div id="law-face-templates">
-					@Html.DropDownList("lawContractTemplateId",
-						new SelectList(Model.LawFaces.First().Templates, "Id", "Name"),
-						new { htmlAttributes = new { @class = "form-control" } }
-					)
+					@if (Model.LawFaces.Any()) {
+						@Html.DropDownList("lawContractTemplateId",
+							 new SelectList(Model.LawFaces.First().Templates, "Id", "Name"),
+							 new { htmlAttributes = new { @class = "form-control" } }
+						)
+					}
 				</div>
 			</div>
 		</div>

@@ -17,6 +17,7 @@ namespace FreeLance.Controllers
 		private ApplicationDbContext db = new ApplicationDbContext();
 
 		// GET: Contract
+		[Authorize(Roles = "Admin")]
 		public ActionResult Index()
 		{
 			return View(db.ContractModels.ToList());
@@ -44,7 +45,9 @@ namespace FreeLance.Controllers
 			if (contractModels == null) {
 				return HttpNotFound();
 			}
-			if (User.IsInRole("Freelancer") && User.Identity.GetUserId() != contractModels.Freelancer.Id) {
+			if ((User.IsInRole("Freelancer") && User.Identity.GetUserId() != contractModels.Freelancer.Id)
+				|| (User.IsInRole("Employer") && User.Identity.GetUserId() != contractModels.Problem.Employer.Id)) 
+			{
 				return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
 			}
 			DetailsVR detailsVR = new DetailsVR {
@@ -157,8 +160,10 @@ namespace FreeLance.Controllers
 		public ActionResult ChangeStatus(int id, ContractStatus status, string redirect)
 		{
 			ContractModels contract = db.ContractModels.Include( c => c.Problem ).Single( c => c.ContractId == id );
-			if (contract == null || contract.Freelancer == null)
-			{
+			if (contract == null || contract.Freelancer == null
+				|| (User.IsInRole("Employer") && contract.Problem.Employer.Id != User.Identity.GetUserId())
+				|| (User.IsInRole("Freelancer") && contract.Freelancer.Id != User.Identity.GetUserId()))
+            {
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
 			contract.Status = status;
@@ -175,7 +180,7 @@ namespace FreeLance.Controllers
 		public ActionResult Close(int id, string comment, int rate)
 		{
 			ContractModels contract = db.ContractModels.Include(c => c.Problem).Single(c => c.ContractId == id);
-			if (contract == null || contract.Freelancer == null)
+			if (contract == null || contract.Freelancer == null || contract.Problem.Employer.Id != User.Identity.GetUserId())
 			{
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
@@ -189,6 +194,7 @@ namespace FreeLance.Controllers
 
 
 		// GET: Contract/Edit/5
+		[Authorize(Roles = "Admin")]
 		public ActionResult Edit(int? id)
 		{
 			if (id == null)
@@ -208,6 +214,7 @@ namespace FreeLance.Controllers
 		// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
 		[HttpPost]
 		[ValidateAntiForgeryToken]
+		[Authorize(Roles = "Admin")]
 		public ActionResult Edit([Bind(Include = "ContractId,Details,Status")] ContractModels contractModels)
 		{
 			if (ModelState.IsValid)
@@ -220,6 +227,7 @@ namespace FreeLance.Controllers
 		}
 
 		// GET: Contract/Delete/5
+		[Authorize(Roles = "Admin")]
 		public ActionResult Delete(int? id)
 		{
 			if (id == null)
@@ -237,6 +245,7 @@ namespace FreeLance.Controllers
 		// POST: Contract/Delete/5
 		[HttpPost, ActionName("Delete")]
 		[ValidateAntiForgeryToken]
+		[Authorize(Roles = "Admin")]
 		public ActionResult DeleteConfirmed(int id)
 		{
 			ContractModels contractModels = db.ContractModels.Find(id);
