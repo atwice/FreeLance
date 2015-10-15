@@ -5,6 +5,22 @@
 	ViewBag.Title = "Contract";
 }
 
+@section css {
+	<link rel="stylesheet" href="~/Content/jquery.raty.css">
+}
+
+@section PageScripts{
+	<!-- Include Raty JS file -->
+	<script type="text/javascript" src="~/Scripts/jquery-2.1.4.min.js"></script>
+	<script type="text/javascript" src="~/Scripts/jquery.raty.js"></script>
+<script>
+							$.validator.setDefaults({
+								ignore: ""
+							})
+</script>
+}
+
+
 <div>
 	<div class="panel panel-default">
 		<div class="panel-heading">
@@ -12,11 +28,21 @@
 			<h2> @Html.DisplayFor(model => contract.Problem.Name)</h2>
 		</div>
 		<div class="panel-body">
-			<p> <strong>Дата создания: </strong> @Html.DisplayFor(model => contract.CreationDate)</p>
 			@if (contract.Status == FreeLance.Models.ContractStatus.Closed)
 			{
-				<p> <strong>Дата закрытия: </strong> @Html.DisplayFor(model => contract.EndingDate)</p>
+				<div id="star" data-score=@contract.Rate></div>
+				<script>
+					$('#star').raty({
+						path: "../../Content/images",
+						score: function() {
+							return $(this).attr('data-score');
+						}
+					});
+				</script>
+				<p><strong>Дата закрытия: </strong> @Html.DisplayFor(model => contract.EndingDate)</p>
+				<p><strong>Комментарий работодателя: </strong> @Html.DisplayFor(model => contract.Comment)</p>
 			}
+			<p> <strong>Дата создания: </strong> @Html.DisplayFor(model => contract.CreationDate)</p>
 			<p> <strong>Детали контракта: </strong> @Html.DisplayFor(model => contract.Details)</p>
 			<p> <strong>Краткое описание задачи: </strong> @Html.Raw(contract.Problem.SmallDescription)</p>
 			<p> <strong>Общее описание задачи: </strong> @Html.Raw(contract.Problem.Description)</p>
@@ -24,11 +50,11 @@
 				<tbody>
 					<tr>
 						<td>
-							<span class="glyphicon glyphicon-euro" aria-hidden="true"></span> 
+							<span class="glyphicon glyphicon-euro" aria-hidden="true"></span>
 							@Html.DisplayFor(model => contract.Cost)
 						</td>
 						<td>
-							<span class="glyphicon glyphicon-user" aria-hidden="true"></span> 
+							<span class="glyphicon glyphicon-user" aria-hidden="true"></span>
 							@Html.DisplayFor(model => contract.Problem.Employer.FIO)
 						</td>
 						<td><b>Статус:</b> @Html.DisplayFor(model => contract.Status)</td>
@@ -37,17 +63,45 @@
 				</tbody>
 			</table>
 		</div>
-		<div class="panel-footer">
-			<div class="row">
-				@foreach (var button in Model.ChangeStatusButtons) {
-					using (Html.BeginForm("ChangeStatus", "Contract", FormMethod.Post)) {
+		
+		<div class="panel-footer">	
+				@if (User.IsInRole("Employer") &&
+				Model.Contract.Status == FreeLance.Models.ContractStatus.Done)
+				{
+
+					using (Html.BeginForm("Close", "Contract", FormMethod.Post))
+					{
+						<div>
+							<b>Оцените работу фрилансера: </b>
+							<div id="star"></div>
+						</div>
+						<script>
+							$('#star').raty({
+								path: "../../Content/images",
+								click: function (score, evt) {
+									document.getElementById("hint").value = score;
+								}
+							});
+						</script>
+						<input type="hidden" id="hint" name="rate" value="0" />
+						<input name="id" type="hidden" value="@contract.ContractId" />
+						<div>
+							<textarea name="comment" placeholder="Почему именно такая оценка?" required></textarea>
+						</div>
+						<input class="btn btn-success btn-lg" type="submit" value="Принять работу" />
+					}
+				}
+				@foreach (var button in Model.ChangeStatusButtons)
+				{
+					<div>
+						@using (Html.BeginForm("ChangeStatus", "Contract", FormMethod.Post)) {
 						<input name="id" type="hidden" value="@contract.ContractId" />
 						<input name="status" type="hidden" value="@button.Status" />
 						<input name="redirect" type="hidden" value="@button.Redirect" />
-						<input type="submit" class="btn @button.Classes btn-lg" value="@button.Text" />	
-					}
+						<input type="submit" class="btn @button.Classes btn-lg" value="@button.Text" />
+						}
+					</div>
 				}
-			</div>
 		</div>
 	</div>
 </div>

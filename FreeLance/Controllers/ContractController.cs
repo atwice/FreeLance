@@ -89,12 +89,6 @@ namespace FreeLance.Controllers
 			} else if (User.IsInRole("Employer")) {
 				if (contractModels.Status == ContractStatus.Done) {
 					detailsVR.ChangeStatusButtons.Add(new DetailsVR.ChangeStatusButton {
-						Text = "Принять работу",
-						Classes = "btn-success",
-						Status = ContractStatus.Closed,
-						Redirect = "/Contract/Details/" + contractModels.ContractId
-					});
-					detailsVR.ChangeStatusButtons.Add(new DetailsVR.ChangeStatusButton {
 						Text = "Отправить на доработку",
 						Classes = "btn-danger",
 						Status = ContractStatus.InProgress,
@@ -174,6 +168,23 @@ namespace FreeLance.Controllers
 			}
 			db.SaveChanges();
 			return Redirect(redirect == null ? "/Contract/Details/" + id.ToString() : redirect);
+		}
+
+		[HttpPost]
+		[Authorize(Roles = "Employer")]
+		public ActionResult Close(int id, string comment, int rate)
+		{
+			ContractModels contract = db.ContractModels.Include(c => c.Problem).Single(c => c.ContractId == id);
+			if (contract == null || contract.Freelancer == null)
+			{
+				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+			}
+			contract.Rate = rate;
+			contract.Comment = comment;
+			contract.Status = ContractStatus.Closed;
+			contract.EndingDate = DateTime.Now;
+			db.SaveChanges();
+			return Redirect("/Contract/Details/" + id.ToString());
 		}
 
 
