@@ -325,7 +325,6 @@ namespace FreeLance.Controllers
 			public class LawFaceVR {
 				public string Name { get; set; }
 				public int Id { get; set; }
-				//public int DefaultLawContractTemplateId { get; set; }
 				public IEnumerable<LawContractTemplate> Templates { get; set; }
 			}
 			public IEnumerable<LawFaceVR> LawFaces;
@@ -336,22 +335,21 @@ namespace FreeLance.Controllers
 			public IEnumerable<FreelancerVR> Freelancers;
 		}
 
-		public ActionResult FillLawContractTemplate() {
+		public ActionResult FillLawContractTemplate(string freelancerId) {
 			List<FillLawContractTemplateVR.LawFaceVR> lawFaces = new List<FillLawContractTemplateVR.LawFaceVR>();
 			foreach (var lawFace in db.LawFaces.ToList()) {
-				var templates = db.LawContractTemplates.Where(x => x.LawFace.Id == lawFace.Id);
-				if (templates.Count() > 0) {
+				var templates = db.LawContractTemplates.Where(x => x.LawFace.Id == lawFace.Id && x.Active.HasValue && x.Active.Value);
+				if (templates.Any()) {
 					lawFaces.Add(new FillLawContractTemplateVR.LawFaceVR {
 						Name = lawFace.Name,
 						Id = lawFace.Id,
-//						DefaultLawContractTemplateId = lawFace.CurrentLawContractTemplate == null ?
-//														lawFace.CurrentLawContractTemplate.Id : 0,
 						Templates = templates.ToList()
 					});
 				}
 			}
 			List<FillLawContractTemplateVR.FreelancerVR> freelancers = getApplicationUsersInRole("Freelancer")
-				.Where(x => x.IsApprovedByCoordinator).Select(x => new FillLawContractTemplateVR.FreelancerVR {
+				.Where(x => x.IsApprovedByCoordinator && (freelancerId == null || freelancerId == x.Id))
+				.Select(x => new FillLawContractTemplateVR.FreelancerVR {
 					FIO = x.FIO,
 					Id = x.Id
 				}).ToList();
@@ -363,12 +361,12 @@ namespace FreeLance.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult FillLawContractTemplate(string employerId, int lawContractTemplateId) {
+		public ActionResult FillLawContractTemplate(string employerId, int? lawContractTemplateId) {
 			ApplicationUser employer = db.Users.Find(employerId);
 			LawContractTemplate lawContractTemplate = db.LawContractTemplates.Find(lawContractTemplateId);
 			var employerRole = db.Roles.Where(role => role.Name == "Employer").ToArray()[0];
 			if (employer == null || lawContractTemplate == null || !employer.IsApprovedByCoordinator
-				|| employer.Roles.Where(x => x.RoleId == employerRole.Id).Count() > 0) {
+				|| employer.Roles.Where(x => x.RoleId == employerRole.Id).Any()) {
 				return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
 			}
 
