@@ -209,7 +209,7 @@ namespace FreeLance.Controllers
 	    {
 	        if (lawContractTemplateView.File == null || lawContractTemplateView.Name == null || lawContractTemplateView.LawFaceId == null)
 	        {
-	            return RedirectToAction("Index");
+	            return RedirectToAction("AddLawContractTemplate", new {lawFaceId = lawContractTemplateView.LawFaceId});
 	        }
             int lawFaceId = Int32.Parse(lawContractTemplateView.LawFaceId);
             lawContractTemplateView.LawFace =
@@ -385,6 +385,22 @@ namespace FreeLance.Controllers
             };
             Response.AppendHeader("Content-Disposition", cd.ToString());
             return File(filedata, contentType);
+        }
+
+
+        [HttpGet]
+	    public ActionResult LawFace()
+	    {
+            LawFace model = new LawFace();
+	        return View(model);
+	    }
+
+        [HttpPost]
+	    public ActionResult LawFace(LawFace lawFace)
+        {
+            db.LawFaces.Add(lawFace);
+            db.SaveChanges();
+            return RedirectToAction("LawFaces");
         }
     }
 }

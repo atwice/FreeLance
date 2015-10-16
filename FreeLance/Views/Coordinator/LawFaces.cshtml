@@ -8,22 +8,24 @@
 <div class="col-md-10">
     <h2>Список юрлиц</h2><br/>
     <ul>
-   @foreach (var lawFaceView in Model.LawFaceViews)
-   {
-       <li>
-           <span>@lawFaceView.LawFace.Name</span>
-           <ul>
-               @foreach (var template in lawFaceView.LawContractTemplates)
-               {
+        @foreach (var lawFaceView in Model.LawFaceViews)
+        {
+            <li>
+                <span>@lawFaceView.LawFace.Name</span>
+                <ul>
+                    @foreach (var template in lawFaceView.LawContractTemplates)
+                    {
 
-                   <li>@Html.ActionLink(template.Name, "ViewFile", new { path = template.Path}) </li>
-               }
+                        <li>@Html.ActionLink(template.Name, "ViewFile", new {path = template.Path}) </li>
+                    }
 
-           </ul>
-           @Html.ActionLink("Добавить Шаблон", "AddLawContractTemplate", new {lawFaceId = lawFaceView.LawFace.Id})
-           
-       </li>
-   }
-        </ul>
+                </ul>
+                @Html.ActionLink("Добавить Шаблон", "AddLawContractTemplate", new {lawFaceId = lawFaceView.LawFace.Id})
 
-    </div>
+            </li>
+        }
+    </ul>
+    @Html.ActionLink("Добавить Юрлицо", "LawFace", "Coordinator")
+</div>
+
+
