@@ -15,7 +15,8 @@
            <ul>
                @foreach (var template in lawFaceView.LawContractTemplates)
                {
-                   <li>@template.Name</li>
+
+                   <li>@Html.ActionLink(template.Name, "ViewFile", new { path = template.Path}) </li>
                }
 
            </ul>
