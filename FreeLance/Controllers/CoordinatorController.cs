@@ -338,7 +338,7 @@ namespace FreeLance.Controllers
 		public ActionResult FillLawContractTemplate(string freelancerId) {
 			List<FillLawContractTemplateVR.LawFaceVR> lawFaces = new List<FillLawContractTemplateVR.LawFaceVR>();
 			foreach (var lawFace in db.LawFaces.ToList()) {
-				var templates = db.LawContractTemplates.Where(x => x.LawFace.Id == lawFace.Id && x.Active.HasValue && x.Active.Value);
+				var templates = db.LawContractTemplates.Where(x => x.LawFace.Id == lawFace.Id  && x.Active);
 				if (templates.Any()) {
 					lawFaces.Add(new FillLawContractTemplateVR.LawFaceVR {
 						Name = lawFace.Name,
@@ -402,5 +402,25 @@ namespace FreeLance.Controllers
             db.SaveChanges();
             return RedirectToAction("LawFaces");
         }
+
+
+	    [HttpPost]
+        [Authorize(Roles="Coordinator")]
+	    public ActionResult ToggleActiveLawContractTemplate(int templateId)
+	    {
+	        LawContractTemplate template = db.LawContractTemplates.Find(templateId);
+            if (template == null)
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+	        template.Active = !template.Active;
+	        try
+	        {
+	            db.SaveChanges();
+	        }
+	        catch (Exception e)
+	        {
+	            throw;
+	        }
+	        return Json(new {templateId = templateId, active = template.Active});
+	    }
     }
 }

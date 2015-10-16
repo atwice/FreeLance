@@ -21,7 +21,7 @@ namespace FreeLance.Models
         [Required]
         public virtual LawFace LawFace { get; set; }
 
-        public bool? Active { get; set; }
+        public bool Active { get; set; }
     }
 
     public class LawFace

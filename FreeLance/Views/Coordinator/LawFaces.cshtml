@@ -16,7 +16,11 @@
                     @foreach (var template in lawFaceView.LawContractTemplates)
                     {
 
-                        <li>@Html.ActionLink(template.Name, "ViewFile", new {path = template.Path}) </li>
+                        <li>@Html.ActionLink(template.Name, "ViewFile", new {path = template.Path})
+                           <input type="checkbox" class="lawContractActive lawContractId-@template.Id" checked="@template.Active.ToString().ToLower()" value="@template.Id"/>
+
+                     </li>
+                   
                     }
 
                 </ul>
@@ -27,5 +31,18 @@
     </ul>
     @Html.ActionLink("Добавить Юрлицо", "LawFace", "Coordinator")
 </div>
-
+<script>
+    $(".lawContractActive").click(function () {
+        var id = $(this).val();
+        $.ajax({
+            url: '@Url.Action("ToggleActiveLawContractTemplate", "Coordinator")',
+            type: 'POST',
+            data: {"templateId" : +id },
+            dataType: "json",
+            success: function (result) {
+                $(".lawContractActive.lawContractId-" + result.templateId).prop("checked", result.active);
+            }
+        });
+    });
+</script>
 

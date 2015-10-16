@@ -3,7 +3,7 @@ namespace FreeLance.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class lawModel : DbMigration
+    public partial class fromscratch : DbMigration
     {
         public override void Up()
         {
@@ -12,9 +12,13 @@ namespace FreeLance.Migrations
                 c => new
                     {
                         ContractId = c.Int(nullable: false, identity: true),
+                        CreationDate = c.DateTime(nullable: false),
+                        EndingDate = c.DateTime(nullable: false),
                         Details = c.String(),
                         Status = c.Int(nullable: false),
                         Cost = c.Decimal(nullable: false, precision: 18, scale: 2),
+                        Rate = c.Decimal(nullable: false, precision: 18, scale: 2),
+                        Comment = c.String(),
                         Freelancer_Id = c.String(nullable: false, maxLength: 128),
                         Problem_ProblemId = c.Int(nullable: false),
                     })
@@ -106,6 +110,7 @@ namespace FreeLance.Migrations
                 c => new
                     {
                         ProblemId = c.Int(nullable: false, identity: true),
+                        CreationDate = c.DateTime(nullable: false),
                         Name = c.String(nullable: false),
                         Description = c.String(nullable: false),
                         SmallDescription = c.String(nullable: false),
@@ -154,7 +159,7 @@ namespace FreeLance.Migrations
                         Id = c.Int(nullable: false, identity: true),
                         Path = c.String(nullable: false),
                         Name = c.String(nullable: false),
-                        Active = c.Boolean(),
+                        Active = c.Boolean(nullable: false),
                         LawFace_Id = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => t.Id)
