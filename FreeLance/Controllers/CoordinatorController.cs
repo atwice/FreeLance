@@ -371,14 +371,20 @@ namespace FreeLance.Controllers
 			}
 
 			string pathToContract = Code.DocumentManager.fillContractTemplate(employer, lawContractTemplate);
-			byte[] filedata = System.IO.File.ReadAllBytes(pathToContract);
-			string contentType = MimeMapping.GetMimeMapping(pathToContract);
-			var cd = new System.Net.Mime.ContentDisposition {
-				FileName = pathToContract,
-				Inline = true,
-			};
-			Response.AppendHeader("Content-Disposition", cd.ToString());
-			return File(filedata, contentType);
+		    return ViewFile(pathToContract);
 		}
+
+	    public ActionResult ViewFile(string path)
+	    {
+            byte[] filedata = System.IO.File.ReadAllBytes(path);
+            string contentType = MimeMapping.GetMimeMapping(path);
+            var cd = new System.Net.Mime.ContentDisposition
+            {
+                FileName = path,
+                Inline = true,
+            };
+            Response.AppendHeader("Content-Disposition", cd.ToString());
+            return File(filedata, contentType);
+        }
     }
 }
