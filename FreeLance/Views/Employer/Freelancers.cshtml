@@ -4,12 +4,44 @@
 	ViewBag.MenuPick = "Freelancers";
 }
 
+@section css {
+	<link rel="stylesheet" href="~/Content/jquery.raty.css">
+}
+
+@section PageScripts{
+	<!-- Include Raty JS file -->
+	<script type="text/javascript" src="~/Scripts/jquery-2.1.4.min.js"></script>
+	<script type="text/javascript" src="~/Scripts/jquery.raty.js"></script>
+	<script>
+		$(function () {
+			$(".stars").each(function () {
+				$(this).raty({
+					path: "../../Content/images",
+					readOnly: true,
+					score: function () {
+						return $(this).attr('data-score');
+					}
+				});
+			});
+		});
+	</script>
+}
+
 <div class="col-md-10">
 	<h2>@ViewBag.Title</h2>
 	<div class="list-group">
 		@foreach (var freelancer in @Model)
 		{
-			<a href="/Freelancer/Details/@freelancer.Id" class="list-group-item">@freelancer.Name</a>
+			<a href="/Freelancer/Details/@freelancer.Id" class="list-group-item">
+				<h4 class="list-group-item-heading">@freelancer.Name</h4>
+				@if (freelancer.ClosedContractsCount != 0)
+				{
+					<div class="stars" data-score=@freelancer.Rate.ToString().Replace(",",".")></div>
+					
+				}
+				<p class="list-group-item-text"><strong>Контрактов в процессе выполнения: </strong>@freelancer.OpenContractsCount</p>
+				<p class="list-group-item-text"><strong>Выполнил(а) контрактов: </strong>@freelancer.ClosedContractsCount</p>
+			</a>
 		}
 	</div>
 </div>

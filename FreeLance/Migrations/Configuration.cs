@@ -112,8 +112,9 @@ namespace FreeLance.Migrations
 
 		private ContractModels addContract(ApplicationDbContext context, string details, ContractStatus status, ProblemModels problem, ApplicationUser freelancer)
 		{
+			Random rnd = new Random();
 			var contract = new ContractModels { Details = details, Problem = problem, Status = status, Freelancer = freelancer,
-				CreationDate = DateTime.Now, EndingDate = DateTime.Now.AddDays(30).AddHours(5), Comment="Comment about freelancer's work", Rate=0 };
+				CreationDate = DateTime.Now, EndingDate = DateTime.Now.AddDays(30).AddHours(5), Comment="Comment about freelancer's work", Rate=rnd.Next(1,6) };
 			context.ContractModels.AddOrUpdate(p => p.Details, contract);
 			return contract;
 		}

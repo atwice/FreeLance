@@ -53,6 +53,9 @@ namespace FreeLance.Controllers
 		public class DetailsView
 		{
 			public ApplicationUser freelancer { get; set; }
+			public decimal Rate { get; set; }
+			public int OpenContractsCount { get; set; }
+			public int ClosedContractsCount { get; set; }
 			public List<FreelancerContractViewModel> Contracts { get; set; }
 		}
 
@@ -113,8 +116,27 @@ namespace FreeLance.Controllers
 						EndingDate = c.EndingDate,
 						Status = c.Status
 					})
-				.ToList()
+				.ToList(),
+				ClosedContractsCount = 0,
+				OpenContractsCount = 0
 			};
+			decimal rate = 0;
+			foreach (var contract in view.Contracts)
+			{
+				if(contract.Status == ContractStatus.Closed)
+				{
+					rate += contract.Rate;
+					view.ClosedContractsCount += 1;
+				} else if(contract.Status == ContractStatus.InProgress ||
+					contract.Status == ContractStatus.Opened)
+				{
+					view.OpenContractsCount += 1;
+				}
+			}
+			if(view.ClosedContractsCount != 0)
+			{
+				view.Rate = rate / view.ClosedContractsCount;
+			}
 			return View(view);
 		}
 
