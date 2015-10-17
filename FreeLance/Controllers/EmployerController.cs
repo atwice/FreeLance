@@ -30,6 +30,9 @@ namespace FreeLance.Controllers
 		{
 			public String Name { get; set; }
 			public string Id { get; set;  }
+			public int ClosedContractsCount { get; set; }
+			public int OpenContractsCount { get; set; }
+			public decimal Rate { get; set; }
 		}
 
         public class ArchivedProblemViewModel
@@ -46,7 +49,13 @@ namespace FreeLance.Controllers
 			public String Details { get; set; }
 		}
 
-        public ActionResult Index()
+		public class SmallContractInfoModel
+		{
+			public ContractStatus Status { get; set; }
+			public decimal Rate { get; set; }
+		}
+
+		public ActionResult Index()
 		{
 			return RedirectToAction("Home");
 		}
@@ -121,10 +130,57 @@ namespace FreeLance.Controllers
 			return View(viewModel);
 		}
 
+		public FreelancerViewModel GetFreelancerInfo(string id)
+		{
+			ApplicationUser freelancer = db.Users.Find(id);
+			List<SmallContractInfoModel> contracts = db.ContractModels
+				.Where(
+					c => c.Freelancer.Id == id)
+				.Select(
+				c => new SmallContractInfoModel
+				{
+					Rate = c.Rate,
+					Status = c.Status
+				})
+				.ToList();
+			var model = new FreelancerViewModel
+			{
+				Rate = 0,
+				Name = freelancer.FIO,
+				ClosedContractsCount = 0,
+				OpenContractsCount = 0,
+				Id = id
+			};
+			decimal rate = 0;
+			foreach (var contract in contracts)
+			{
+				if (contract.Status == ContractStatus.Closed)
+				{
+					rate += contract.Rate;
+					model.ClosedContractsCount += 1;
+				}
+				else if (contract.Status == ContractStatus.InProgress ||
+				  contract.Status == ContractStatus.Opened)
+				{
+					model.OpenContractsCount += 1;
+				}
+			}
+			if(model.ClosedContractsCount != 0)
+			{
+				model.Rate = rate / model.ClosedContractsCount;
+			}
+			return model;
+		}
+
 		public ActionResult Freelancers()
 		{
-			var model = AccountController.GetApplicationUsersInRole(db, "Freelancer").Select(
-				u => new FreelancerViewModel { Name = u.FIO, Id = u.Id }).ToList();
+			List<string> Ids = AccountController.GetApplicationUsersInRole(db, "Freelancer").Select(
+				u => u.Id ).ToList();
+			List<FreelancerViewModel> model = new List<FreelancerViewModel>();
+			foreach(var id in Ids)
+			{
+				model.Add(GetFreelancerInfo(id));
+			}
 			return View(model);
 		}
 
