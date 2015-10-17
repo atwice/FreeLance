@@ -153,7 +153,8 @@
 						</div>
 					</div>
 				</div>
-			}
+				}
+				<div id="notifications"></div>
 				<div id="layout-body">
 					@RenderBody()
 				</div>
@@ -169,12 +170,29 @@
 	@RenderSection("scripts", required: false)
 	<script type="text/javascript">
 
+		function updateNotifications() {
+			$.ajax({
+				url: '@Url.Action("GetPageNotifications", "Notification")',
+				type: 'POST',
+				data: { "action": "@action", "controller": "@controller" },
+				dataType: "html",
+				success: function (result) {
+					$("#notifications").html(result);
+				}
+			});
+		}
+
 		function onMenuButtonClick(action, controller) {
 			var x = document.getElementsByClassName("menu-button");
 			for(var i = 0; i < x.length; i++) {
 				x[i].className = "menu-button-" + action + "-" + controller == x[i].id ? "menu-button active" : "menu-button";
 			}
+			updateNotifications();
 		}
+
+		$(function () {
+			updateNotifications();
+		});
 
 	</script>
 </body>

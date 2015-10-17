@@ -1,0 +1,4 @@
+﻿@model List<FreeLance.Controllers.NotificationController.Notification>
+@foreach(var notification in Model) {
+	<div>@Html.Partial(notification.GetPartialViewName(), notification.GetPartialViewModel())</div>
+}
