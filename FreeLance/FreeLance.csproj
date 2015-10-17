@@ -180,6 +180,7 @@
     <Compile Include="Controllers\FreelancerController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\NotificationController.cs" />
     <Compile Include="Controllers\ProblemController.cs" />
     <Compile Include="Controllers\SubscriptionController.cs" />
     <Compile Include="Global.asax.cs">
@@ -297,6 +298,8 @@
     <Content Include="Views\Coordinator\LawFace.cshtml" />
     <Content Include="Views\Freelancer\Documents.cshtml" />
     <Content Include="Views\Freelancer\Details.cshtml" />
+    <Content Include="Views\Notification\_ErrorNotification.cshtml" />
+    <Content Include="Views\Notification\GetPageNotifications.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
