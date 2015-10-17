@@ -202,6 +202,7 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\freelance.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\jquery.raty.css" />
@@ -294,6 +295,7 @@
     <Content Include="Views\Coordinator\AddLawContractTemplate.cshtml" />
     <Content Include="Views\Coordinator\FillLawContractTemplate.cshtml" />
     <Content Include="Views\Coordinator\LawFace.cshtml" />
+    <Content Include="Views\Freelancer\Documents.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

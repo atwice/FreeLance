@@ -23,7 +23,7 @@ namespace FreeLance.Controllers
 			}
 			string userId = User.Identity.GetUserId();
 			ApplicationUser freelancer = db.Users.Find(userId);
-			if (freelancer.IsApprovedByCoordinator)
+			if (!freelancer.IsApprovedByCoordinator)
 			{
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}

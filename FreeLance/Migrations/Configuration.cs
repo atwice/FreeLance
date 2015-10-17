@@ -59,28 +59,25 @@ namespace FreeLance.Migrations
 	    {
             LawFace lawFace1 = new LawFace {Name = "Abbyy Production"};
 	        LawFace lawFace2 = new LawFace {Name = "Abbyy Lingvo"};
-			var rootPath = Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.FullName + "\\";
+			var rootPath = Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.FullName + "\\App_Data\\LawContractTemplates\\";
             LawContractTemplate template1 = new LawContractTemplate {
 	            LawFace = lawFace1,
 	            Name = "Basic Document",
-				//Path = AppDomain.CurrentDomain.BaseDirectory + "Files\\LawContractTemplates\\" + "template1.docx"
-				Path = rootPath + "Files\\LawContractTemplates\\" + "template1.docx",
+				Path = rootPath  + "template1.docx",
                 Active = true
 			};
             LawContractTemplate template2 = new LawContractTemplate
             {
                 LawFace = lawFace1,
                 Name = "Old Document",
-				//Path = AppDomain.CurrentDomain.BaseDirectory + "Files\\LawContractTemplates\\" + "template2.docx"
-				Path = rootPath + "Files\\LawContractTemplates\\" + "template2.docx",
+				Path = rootPath  + "template2.docx",
                 Active = true
 			};
             LawContractTemplate template3 = new LawContractTemplate
             {
                 LawFace = lawFace2,
                 Name = "Actual Document",
-				//Path = AppDomain.CurrentDomain.BaseDirectory + "Files\\LawContractTemplates\\" + "template3.docx"
-				Path = rootPath + "Files\\LawContractTemplates\\" + "template3.docx",
+				Path = rootPath + "template3.docx",
                 Active = true
             };
 
@@ -127,7 +124,7 @@ namespace FreeLance.Migrations
 			context.Roles.AddOrUpdate(r => r.Name, new IdentityRole { Name = "Freelancer" });
 			context.Roles.AddOrUpdate(r => r.Name, new IdentityRole { Name = "Employer" });
 			context.Roles.AddOrUpdate(r => r.Name, new IdentityRole { Name = "Incognito" });
-			context.Roles.AddOrUpdate(r => r.Name, new IdentityRole { Name = "WithoutDocuments" });
+			context.Roles.AddOrUpdate(r => r.Name, new IdentityRole { Name = "Trash" });
 			context.Roles.AddOrUpdate(r => r.Name, new IdentityRole { Name = "Coordinator" });
 			context.SaveChanges();
 		}
@@ -140,7 +137,7 @@ namespace FreeLance.Migrations
 			addUser(context, userManager, "freelancer", "freelancer@ya.ru", "111111", "Freelancer");
             addUser(context, userManager, "incognito", "incognito@ya.ru", "111111", "Incognito");
 			addUser(context, userManager, "incognito2", "incognito2@ya.ru", "111111", "Incognito");
-			addUser(context, userManager, "withoutDocuments", "withoutDocuments@ya.ru", "111111", "WithoutDocuments");
+			addUser(context, userManager, "withoutDocuments", "withoutDocuments@ya.ru", "111111", "Incognito");
 			addUser(context, userManager, "coordinator", "coordinator@ya.ru", "111111", "Coordinator");
 		}
 

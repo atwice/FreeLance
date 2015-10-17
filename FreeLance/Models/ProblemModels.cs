@@ -27,7 +27,11 @@ namespace FreeLance.Models
 		public string Description { get; set; }
 		[Required, DataType(DataType.MultilineText)]
 		public string SmallDescription { get; set; }
+
+		[Range(0, 1000000)]
+		[DataType(DataType.Currency)]
 		public decimal Cost { get; set; }
+
 		[Required]
 		public ProblemStatus Status { get; set; }
 		public virtual ICollection<ContractModels> Contracts { get; set; }

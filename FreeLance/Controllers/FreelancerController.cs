@@ -187,7 +187,12 @@ namespace FreeLance.Controllers
 			var subscriptions = db.SubscriptionModels.Where(t => t.Freelancer.Id.Equals(userId)).ToList();
 			ViewBag.contractsSize = contracts.LongCount();
 			ViewBag.subscriptionsSize = subscriptions.LongCount();
+			return View();
+		}
 
+		public ActionResult Documents()
+		{
+			string userId = User.Identity.GetUserId();
 			ApplicationUser freelancer = db.Users.Find(userId);
 			DocumentPackageViewModel model = new DocumentPackageViewModel();
 			if (freelancer.DocumentPackage != null)
@@ -199,7 +204,6 @@ namespace FreeLance.Controllers
 				model.PassportFace = documents.FilePassportFace != null;
 				model.PassportRegistration = documents.FilePassportRegistration != null;
 			}
-
 			return View(model);
 		}
 
@@ -224,7 +228,7 @@ namespace FreeLance.Controllers
 				documents.PaymentDetails = documentFromView.PaymentDetails;
 				db.SaveChanges();
 			}
-			return RedirectToAction("Profile");
+			return RedirectToAction("Documents");
 		}
 
 		[HttpPost]
@@ -240,7 +244,7 @@ namespace FreeLance.Controllers
 				}
 
 			}
-			return RedirectToAction("Profile");
+			return RedirectToAction("Documents");
 		}
 
 		[HttpPost]
@@ -255,7 +259,7 @@ namespace FreeLance.Controllers
 					db.SaveChanges();
 				}
 			}
-			return RedirectToAction("Profile");
+			return RedirectToAction("Documents");
 		}
 
 		private FileContentResult viewFile(string pathToContract)

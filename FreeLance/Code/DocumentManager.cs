@@ -24,7 +24,7 @@ namespace FreeLance.Code
                 doc.ReplaceText(freelancerEmailTemplate, email);
                 doc.ReplaceText("%ДАТАСЕГОДНЯ%", DateTime.Today.ToString("dd/MM/yyyy"));
                 string contractName = "T" + 0 + "U" + user.Id + ".docx";
-                string pathToContract = AppDomain.CurrentDomain.BaseDirectory + "/Files/LawContracts/" + contractName;
+                string pathToContract = AppDomain.CurrentDomain.BaseDirectory + "/App_Data/LawContracts/" + contractName;
                 doc.SaveAs(pathToContract);
                 return pathToContract;
             }

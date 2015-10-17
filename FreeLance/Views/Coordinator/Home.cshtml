@@ -57,7 +57,7 @@
                     <div class="list-group-item">
 						@using (Html.BeginForm("ViewFreelancerDocuments", "Coordinator", new { userId = withoutDoc.Id }))
 						{
-							<input type="submit" value="Подтвердить документы" class="pull-right btn btn-success" />
+							<input type="submit" value="Проверить документы" class="pull-right btn btn-success" />
 						}
                         <h4 class="list-group-item-heading">@withoutDoc.FIO</h4>
                         <p class="list-group-item-text" style="color: lightgray"><i>@withoutDoc.Email</i></p>

@@ -30,6 +30,7 @@ namespace FreeLance.Controllers
 		{
 			public List<ApplicationUser> Incognitos { get; set; }
 			public List<ApplicationUser> WithoutDocuments { get; set; }
+			public List<ApplicationUser> WithDocuments { get; set; }
 			public List<ApplicationUser> FreelancersWithLawContract { get; set; }
 			public List<ApplicationUser> FreelancersWithoutLawContract { get; set; }
 		}
@@ -123,7 +124,7 @@ namespace FreeLance.Controllers
 		{
 			string path = null;
 			var fileName = Path.GetFileName(file.FileName);
-			path = AppDomain.CurrentDomain.BaseDirectory + "Files\\LawContracts\\" + fileName;
+			path = AppDomain.CurrentDomain.BaseDirectory + "App_Data\\LawContracts\\" + fileName;
 			Response.Write(path.ToString());
 			file.SaveAs(path);
 			return path;
@@ -155,7 +156,7 @@ namespace FreeLance.Controllers
 			var model = new FreelancersViewModel();
 			model.Incognitos = getApplicationUsersInRole("Incognito").ToList();
 			model.WithoutDocuments = getApplicationUsersApproved(false, "Freelancer").ToList();
-
+			model.WithDocuments = getApplicationUsersApproved(true, "Freelancer").ToList();
 			string userId = User.Identity.GetUserId();
 			List<ApplicationUser> freelancers = getApplicationUsersInRole("Freelancer").OrderBy(f => f.FIO).ToList();
 			model.FreelancersWithLawContract = new List<ApplicationUser>();
@@ -230,7 +231,7 @@ namespace FreeLance.Controllers
         {
             string path = null;
             var fileName = lawContractTemplateView.LawFace.Name + "_" + lawContractTemplateView.Name + ".docx";
-            path = AppDomain.CurrentDomain.BaseDirectory + "Files\\LawContractTemplates\\" + fileName;
+            path = AppDomain.CurrentDomain.BaseDirectory + "App_Data\\LawContractTemplates\\" + fileName;
             Response.Write(path.ToString());
             lawContractTemplateView.File.SaveAs(path);
             return path;
@@ -310,6 +311,22 @@ namespace FreeLance.Controllers
 		{
 			ApplicationUser freelancer = db.Users.Find(usernameID);
 			var withoutDoc = db.Roles.Where(role => role.Name == "Freelancer").ToArray()[0];
+			if (freelancer == null)
+			{
+				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+			}
+			freelancer.Roles.Clear();
+			freelancer.IsApprovedByCoordinator = false;
+			freelancer.Roles.Add(new IdentityUserRole { RoleId = withoutDoc.Id, UserId = freelancer.Id });
+			db.SaveChanges();
+			return RedirectToAction(redirect);
+		}
+
+		[HttpPost]
+		public ActionResult IncognitoToTrash(string usernameID, string redirect)
+		{
+			ApplicationUser freelancer = db.Users.Find(usernameID);
+			var withoutDoc = db.Roles.Where(role => role.Name == "Trash").ToArray()[0];
 			if (freelancer == null)
 			{
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
