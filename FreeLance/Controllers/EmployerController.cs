@@ -29,6 +29,7 @@ namespace FreeLance.Controllers
 		public class FreelancerViewModel
 		{
 			public String Name { get; set; }
+			public string Id { get; set;  }
 		}
 
         public class ArchivedProblemViewModel
@@ -123,7 +124,7 @@ namespace FreeLance.Controllers
 		public ActionResult Freelancers()
 		{
 			var model = AccountController.GetApplicationUsersInRole(db, "Freelancer").Select(
-				u => new FreelancerViewModel { Name = u.FIO }).ToList();
+				u => new FreelancerViewModel { Name = u.FIO, Id = u.Id }).ToList();
 			return View(model);
 		}
 
