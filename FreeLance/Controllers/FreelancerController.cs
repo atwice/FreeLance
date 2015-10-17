@@ -87,7 +87,7 @@ namespace FreeLance.Controllers
 			return View(viewModel);
 		}
 
-		public ActionResult Details(string id)
+		public ActionResult Details(string id, String sortOrder)
 		{
 			if (id == null)
 			{
@@ -136,6 +136,23 @@ namespace FreeLance.Controllers
 			if(view.ClosedContractsCount != 0)
 			{
 				view.Rate = rate / view.ClosedContractsCount;
+			}
+			ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+			ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
+			switch (sortOrder)
+			{
+				case "name_desc":
+					view.Contracts = view.Contracts.OrderByDescending(с => с.Name).ToList();
+					break;
+				case "Date":
+					view.Contracts = view.Contracts.OrderBy(s => s.EndingDate).ToList();
+					break;
+				case "date_desc":
+					view.Contracts = view.Contracts.OrderByDescending(s => s.EndingDate).ToList();
+					break;
+				default:
+					view.Contracts = view.Contracts.OrderBy(s => s.Name).ToList();
+					break;
 			}
 			return View(view);
 		}

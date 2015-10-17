@@ -53,6 +53,18 @@ else
 	}
 	<p><strong>Контрактов в процессе выполнения: </strong>@Model.OpenContractsCount</p>
 	<p><strong>Выполнил(а) контрактов: </strong>@Model.ClosedContractsCount</p>
+	<div class= "btn-group" role="group" aria-label="...">
+		<a href= @Url.Action("Details", "Freelancer", 
+				new {id = Model.freelancer.Id, sortOrder = ViewBag.NameSortParm }) class="btn btn-info">
+			<span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+			Имя
+		</a>
+		<a href=@Url.Action("Details", "Freelancer",
+				new {id = Model.freelancer.Id, sortOrder = ViewBag.DateSortParm }) class="btn btn-info">
+			<span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+			Дата
+		</a>
+	</div>
 	<div class="list-group">
 		@foreach (var contract in Model.Contracts)
 		{
@@ -61,11 +73,11 @@ else
 				<p class="list-group-item-text" style="color:lightgray"><i>@contract.EmployerName</i></p>
 
 				@if (contract.Status == FreeLance.Models.ContractStatus.Closed)
-				{
+			{
 					<div class="stars" data-score=@contract.Rate.ToString().Replace(",",".")></div>
 					<p><strong>Дата закрытия: </strong> @contract.EndingDate</p>
 					<p><strong>Комментарий работодателя: </strong> @contract.Comment</p>
-				}
+			}
 			</a>
 		}
 	</div>
