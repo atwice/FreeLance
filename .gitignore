@@ -207,6 +207,9 @@ FreeLance/App_Data/registrations/*
 # Ignoring App_Data/LawContractTemplates/ except .md file
 FreeLance/App_Data/LawContractTemplates/*
 !FreeLance/App_Data/LawContractTemplates/*.md
+!FreeLance/App_Data/LawContractTemplates/template1.docx
+!FreeLance/App_Data/LawContractTemplates/template2.docx
+!FreeLance/App_Data/LawContractTemplates/template3.docx
 
 # Ignoring App_Data/LawContracts/ except .md file
 FreeLance/App_Data/LawContracts/*
