@@ -198,8 +198,16 @@ FreeLance/Scripts/_references.js
 
 # Ignoring App_Data/passports/ except .md file
 FreeLance/App_Data/passports/*
-!FreeLance/App_Data/passports/git.md
+!FreeLance/App_Data/passports/*.md
 
 # Ignoring App_Data/registrations/ except .md file
 FreeLance/App_Data/registrations/*
-!FreeLance/App_Data/registrations/git.md
+!FreeLance/App_Data/registrations/*.md
+
+# Ignoring App_Data/LawContractTemplates/ except .md file
+FreeLance/App_Data/LawContractTemplates/*
+!FreeLance/App_Data/LawContractTemplates/*.md
+
+# Ignoring App_Data/LawContracts/ except .md file
+FreeLance/App_Data/LawContracts/*
+!FreeLance/App_Data/LawContracts/*.md
