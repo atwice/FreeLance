@@ -17,5 +17,15 @@ namespace FreeLance
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
         }
-    }
+
+		public static void RegisterRoutes(RouteCollection routes)
+		{
+			
+			routes.MapRoute(
+				"Users",
+				"{controller}/{action}/{username}",
+				new { controller = "User", action = "Details"});
+
+		}
+	}
 }

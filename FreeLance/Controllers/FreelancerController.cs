@@ -14,7 +14,7 @@ using Novacode;
 
 namespace FreeLance.Controllers
 {
-	[Authorize(Roles = "Admin, Freelancer, Incognito, Coordinator, WithoutDocuments")]
+	[Authorize(Roles = "Admin, Freelancer, Incognito, Employer, Coordinator, WithoutDocuments")]
 	public class FreelancerController : Controller
 	{
 		private ApplicationDbContext db = new ApplicationDbContext();
@@ -33,10 +33,27 @@ namespace FreeLance.Controllers
 			public String Details { get; set; }
 		}
 
+		public class FreelancerContractViewModel
+		{
+			public int ContractId { get; set; }
+			public String Name { get; set; }
+			public String EmployerName { get; set; }
+			public String Comment { get; set; }
+			public decimal Rate { get; set; }
+			public DateTime EndingDate { get; set; }
+			public ContractStatus Status { get; set; }
+		}
+
 		public class ArchiveViewModel
 		{
 			public List<ArchivedContractViewModel> SuccessfulContracts { get; set; } // with Closed status
 			public List<ArchivedContractViewModel> FailedContracts { get; set; } // with CancelledByEmpoyer, CancelledByFreelancer & Failed status
+		}
+
+		public class DetailsView
+		{
+			public ApplicationUser freelancer { get; set; }
+			public List<FreelancerContractViewModel> Contracts { get; set; }
 		}
 
 		public ActionResult Index()
@@ -65,6 +82,40 @@ namespace FreeLance.Controllers
 												.Select(subscription => subscription.Problem).ToList()
 			};
 			return View(viewModel);
+		}
+
+		public ActionResult Details(string id)
+		{
+			if (id == null)
+			{
+				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+			}
+			ApplicationUser freelancerModel = db.Users.Find(id);
+			if (freelancerModel == null)
+			{
+				return HttpNotFound();
+			}
+			
+			DetailsView view = new DetailsView
+			{
+				freelancer = freelancerModel, 
+				Contracts = db.ContractModels
+				.Where(
+					c => c.Freelancer.Id == id)
+				.Select(
+					c => new FreelancerContractViewModel
+					{
+						ContractId = c.ContractId,
+						EmployerName = c.Problem.Employer.FIO,
+						Name = c.Problem.Name,
+						Comment = c.Comment,
+						Rate = c.Rate,
+						EndingDate = c.EndingDate,
+						Status = c.Status
+					})
+				.ToList()
+			};
+			return View(view);
 		}
 
 		[Authorize(Roles = "Admin, Freelancer, Coordinator, WithoutDocuments")]
