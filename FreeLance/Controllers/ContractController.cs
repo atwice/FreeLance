@@ -17,6 +17,7 @@ namespace FreeLance.Controllers
 		private ApplicationDbContext db = new ApplicationDbContext();
 
 		// GET: Contract
+		[Authorize(Roles = "Admin")]
 		public ActionResult Index()
 		{
 			return View(db.ContractModels.ToList());
@@ -44,7 +45,9 @@ namespace FreeLance.Controllers
 			if (contractModels == null) {
 				return HttpNotFound();
 			}
-			if (User.IsInRole("Freelancer") && User.Identity.GetUserId() != contractModels.Freelancer.Id) {
+			if ((User.IsInRole("Freelancer") && User.Identity.GetUserId() != contractModels.Freelancer.Id)
+				|| (User.IsInRole("Employer") && User.Identity.GetUserId() != contractModels.Problem.Employer.Id)) 
+			{
 				return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
 			}
 			DetailsVR detailsVR = new DetailsVR {
@@ -89,12 +92,6 @@ namespace FreeLance.Controllers
 			} else if (User.IsInRole("Employer")) {
 				if (contractModels.Status == ContractStatus.Done) {
 					detailsVR.ChangeStatusButtons.Add(new DetailsVR.ChangeStatusButton {
-						Text = "Принять работу",
-						Classes = "btn-success",
-						Status = ContractStatus.Closed,
-						Redirect = "/Contract/Details/" + contractModels.ContractId
-					});
-					detailsVR.ChangeStatusButtons.Add(new DetailsVR.ChangeStatusButton {
 						Text = "Отправить на доработку",
 						Classes = "btn-danger",
 						Status = ContractStatus.InProgress,
@@ -123,7 +120,8 @@ namespace FreeLance.Controllers
 			{
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
-			return View(new ContractModels { Problem = problem, Freelancer = freelancer });
+			return View(new ContractModels { Problem = problem, Freelancer = freelancer,
+				CreationDate = DateTime.Now, EndingDate = DateTime.Now.AddDays(15).AddHours(3) });
 		}
 
 		// POST: Contract/Create
@@ -148,6 +146,8 @@ namespace FreeLance.Controllers
 			contract.Problem = problem;
 			contract.Status = ContractStatus.Opened;
 			contract.Freelancer = freelancer;
+			contract.CreationDate = DateTime.Now;
+			contract.EndingDate = DateTime.Now.AddDays(13).AddHours(3);
 
 			db.ContractModels.Add(contract);
 			db.SubscriptionModels.Remove(subscription);
@@ -160,17 +160,41 @@ namespace FreeLance.Controllers
 		public ActionResult ChangeStatus(int id, ContractStatus status, string redirect)
 		{
 			ContractModels contract = db.ContractModels.Include( c => c.Problem ).Single( c => c.ContractId == id );
-			if (contract == null || contract.Freelancer == null)
-			{
+			if (contract == null || contract.Freelancer == null
+				|| (User.IsInRole("Employer") && contract.Problem.Employer.Id != User.Identity.GetUserId())
+				|| (User.IsInRole("Freelancer") && contract.Freelancer.Id != User.Identity.GetUserId()))
+            {
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
 			contract.Status = status;
+			if(status == ContractStatus.Closed)
+			{
+				contract.EndingDate = DateTime.Now;
+			}
 			db.SaveChanges();
 			return Redirect(redirect == null ? "/Contract/Details/" + id.ToString() : redirect);
 		}
 
+		[HttpPost]
+		[Authorize(Roles = "Employer")]
+		public ActionResult Close(int id, string comment, int rate)
+		{
+			ContractModels contract = db.ContractModels.Include(c => c.Problem).Single(c => c.ContractId == id);
+			if (contract == null || contract.Freelancer == null || contract.Problem.Employer.Id != User.Identity.GetUserId())
+			{
+				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+			}
+			contract.Rate = rate;
+			contract.Comment = comment;
+			contract.Status = ContractStatus.Closed;
+			contract.EndingDate = DateTime.Now;
+			db.SaveChanges();
+			return Redirect("/Contract/Details/" + id.ToString());
+		}
+
 
 		// GET: Contract/Edit/5
+		[Authorize(Roles = "Admin")]
 		public ActionResult Edit(int? id)
 		{
 			if (id == null)
@@ -190,6 +214,7 @@ namespace FreeLance.Controllers
 		// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
 		[HttpPost]
 		[ValidateAntiForgeryToken]
+		[Authorize(Roles = "Admin")]
 		public ActionResult Edit([Bind(Include = "ContractId,Details,Status")] ContractModels contractModels)
 		{
 			if (ModelState.IsValid)
@@ -202,6 +227,7 @@ namespace FreeLance.Controllers
 		}
 
 		// GET: Contract/Delete/5
+		[Authorize(Roles = "Admin")]
 		public ActionResult Delete(int? id)
 		{
 			if (id == null)
@@ -219,6 +245,7 @@ namespace FreeLance.Controllers
 		// POST: Contract/Delete/5
 		[HttpPost, ActionName("Delete")]
 		[ValidateAntiForgeryToken]
+		[Authorize(Roles = "Admin")]
 		public ActionResult DeleteConfirmed(int id)
 		{
 			ContractModels contractModels = db.ContractModels.Find(id);

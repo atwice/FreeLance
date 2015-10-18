@@ -23,6 +23,10 @@ namespace FreeLance.Controllers
 			}
 			string userId = User.Identity.GetUserId();
 			ApplicationUser freelancer = db.Users.Find(userId);
+			if (!freelancer.IsApprovedByCoordinator)
+			{
+				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+			}
             ProblemModels problem = db.ProblemModels.Find(id);
 			SubscriptionModels[] subscriptions = db.SubscriptionModels.Where(sub => sub.Freelancer.Id == userId
 													&& sub.Problem.ProblemId == id).Distinct().ToArray();

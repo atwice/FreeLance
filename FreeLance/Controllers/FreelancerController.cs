@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web;
+using System.Web.DynamicData;
 using System.Web.Mvc;
 using FreeLance.Code;
 using Microsoft.AspNet.Identity;
@@ -13,7 +14,7 @@ using Novacode;
 
 namespace FreeLance.Controllers
 {
-	[Authorize(Roles = "Admin, Freelancer, Incognito, Coordinator, WithoutDocuments")]
+	[Authorize(Roles = "Admin, Freelancer, Incognito, Employer, Coordinator, WithoutDocuments")]
 	public class FreelancerController : Controller
 	{
 		private ApplicationDbContext db = new ApplicationDbContext();
@@ -24,21 +25,41 @@ namespace FreeLance.Controllers
 			public List<ProblemModels> Problems { get; set; }
 		}
 
-        public class ArchivedContractViewModel
-        {
-            public int ContractId { get; set; }
-            public String Name { get; set; }
-            public String EmployerName { get; set; }
-            public String Details { get; set; }
-        }
+		public class ArchivedContractViewModel
+		{
+			public int ContractId { get; set; }
+			public String Name { get; set; }
+			public String EmployerName { get; set; }
+			public String Details { get; set; }
+		}
 
-        public class ArchiveViewModel
-        {
-            public List<ArchivedContractViewModel> SuccessfulContracts { get; set; } // with Closed status
-            public List<ArchivedContractViewModel> FailedContracts { get; set; } // with CancelledByEmpoyer, CancelledByFreelancer & Failed status
-        }
+		public class FreelancerContractViewModel
+		{
+			public int ContractId { get; set; }
+			public String Name { get; set; }
+			public String EmployerName { get; set; }
+			public String Comment { get; set; }
+			public decimal Rate { get; set; }
+			public DateTime EndingDate { get; set; }
+			public ContractStatus Status { get; set; }
+		}
 
-        public ActionResult Index()
+		public class ArchiveViewModel
+		{
+			public List<ArchivedContractViewModel> SuccessfulContracts { get; set; } // with Closed status
+			public List<ArchivedContractViewModel> FailedContracts { get; set; } // with CancelledByEmpoyer, CancelledByFreelancer & Failed status
+		}
+
+		public class DetailsView
+		{
+			public ApplicationUser freelancer { get; set; }
+			public decimal Rate { get; set; }
+			public int OpenContractsCount { get; set; }
+			public int ClosedContractsCount { get; set; }
+			public List<FreelancerContractViewModel> Contracts { get; set; }
+		}
+
+		public ActionResult Index()
 		{
 			return RedirectToAction("Home");
 		}
@@ -55,9 +76,9 @@ namespace FreeLance.Controllers
 			{
 				Contracts = db.ContractModels.Where(
 					contract => (
-                        contract.Status == ContractStatus.Opened
-                        || contract.Status == ContractStatus.InProgress)
-                        && contract.Freelancer != null
+						contract.Status == ContractStatus.Opened
+						|| contract.Status == ContractStatus.InProgress)
+						&& contract.Freelancer != null
 						&& contract.Freelancer.Id == userId
 					).ToList(),
 				Problems = db.SubscriptionModels.Where(subscription => subscription.Freelancer.Id == userId)
@@ -66,42 +87,114 @@ namespace FreeLance.Controllers
 			return View(viewModel);
 		}
 
+		public ActionResult Details(string id, String sortOrder)
+		{
+			if (id == null)
+			{
+				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+			}
+			ApplicationUser freelancerModel = db.Users.Find(id);
+			if (freelancerModel == null)
+			{
+				return HttpNotFound();
+			}
+			
+			DetailsView view = new DetailsView
+			{
+				freelancer = freelancerModel, 
+				Contracts = db.ContractModels
+				.Where(
+					c => c.Freelancer.Id == id)
+				.Select(
+					c => new FreelancerContractViewModel
+					{
+						ContractId = c.ContractId,
+						EmployerName = c.Problem.Employer.FIO,
+						Name = c.Problem.Name,
+						Comment = c.Comment,
+						Rate = c.Rate,
+						EndingDate = c.EndingDate,
+						Status = c.Status
+					})
+				.ToList(),
+				ClosedContractsCount = 0,
+				OpenContractsCount = 0
+			};
+			decimal rate = 0;
+			foreach (var contract in view.Contracts)
+			{
+				if(contract.Status == ContractStatus.Closed)
+				{
+					rate += contract.Rate;
+					view.ClosedContractsCount += 1;
+				} else if(contract.Status == ContractStatus.InProgress ||
+					contract.Status == ContractStatus.Opened)
+				{
+					view.OpenContractsCount += 1;
+				}
+			}
+			if(view.ClosedContractsCount != 0)
+			{
+				view.Rate = rate / view.ClosedContractsCount;
+			}
+			ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+			ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
+			switch (sortOrder)
+			{
+				case "name_desc":
+					view.Contracts = view.Contracts.OrderByDescending(с => с.Name).ToList();
+					break;
+				case "Date":
+					view.Contracts = view.Contracts.OrderBy(s => s.EndingDate).ToList();
+					break;
+				case "date_desc":
+					view.Contracts = view.Contracts.OrderByDescending(s => s.EndingDate).ToList();
+					break;
+				default:
+					view.Contracts = view.Contracts.OrderBy(s => s.Name).ToList();
+					break;
+			}
+			return View(view);
+		}
+
+		[Authorize(Roles = "Admin, Freelancer, Coordinator, WithoutDocuments")]
 		public ActionResult Archive()
 		{
-            string userId = User.Identity.GetUserId();
-            var model = new ArchiveViewModel();
-            model.SuccessfulContracts = db.ContractModels
-                .Where(
-                    c => c.Freelancer.Id == userId
-                        && c.Status == ContractStatus.Closed)
-                .Select(
-                    c => new ArchivedContractViewModel
-                    {
-                        ContractId = c.ContractId,
-                        EmployerName = c.Problem.Employer.FIO,
-                        Name = c.Problem.Name,
-                        Details = c.Details
-                    })
-                .ToList();
-            model.FailedContracts = db.ContractModels
-                .Where(
-                    c => c.Freelancer.Id == userId
-                        && (
-                        c.Status == ContractStatus.Failed
-                        || c.Status == ContractStatus.СancelledByEmployer
-                        || c.Status == ContractStatus.СancelledByFreelancer))
-                .Select(
-                    c => new ArchivedContractViewModel
-                    {
-                        ContractId = c.ContractId,
-                        EmployerName = c.Problem.Employer.FIO,
-                        Name = c.Problem.Name,
-                        Details = c.Details
-                    })
-                .ToList();
-            return View(model);
-        }
+			string userId = User.Identity.GetUserId();
+			var model = new ArchiveViewModel();
+			model.SuccessfulContracts = db.ContractModels
+				.Where(
+					c => c.Freelancer.Id == userId
+						&& c.Status == ContractStatus.Closed)
+				.Select(
+					c => new ArchivedContractViewModel
+					{
+						ContractId = c.ContractId,
+						EmployerName = c.Problem.Employer.FIO,
+						Name = c.Problem.Name,
+						Details = c.Details
+					})
+				.ToList();
+			model.FailedContracts = db.ContractModels
+				.Where(
+					c => c.Freelancer.Id == userId
+						&& (
+						c.Status == ContractStatus.Failed
+						|| c.Status == ContractStatus.СancelledByEmployer
+						|| c.Status == ContractStatus.СancelledByFreelancer))
+				.Select(
+					c => new ArchivedContractViewModel
+					{
+						ContractId = c.ContractId,
+						EmployerName = c.Problem.Employer.FIO,
+						Name = c.Problem.Name,
+						Details = c.Details
+					})
+				.ToList();
+			return View(model);
+		}
 
+		[Authorize(Roles = "Admin, Freelancer, Coordinator, WithoutDocuments")]
 		public ActionResult Contract(int id)
 		{
 			return View(db.ContractModels.Find(id));
@@ -113,6 +206,7 @@ namespace FreeLance.Controllers
 			public bool IsSubscibed { get; set; }
 		}
 
+		[Authorize(Roles = "Admin, Freelancer, Coordinator, WithoutDocuments")]
 		public ActionResult Problem(int? id)
 		{
 			if (id == null)
@@ -133,21 +227,47 @@ namespace FreeLance.Controllers
 			return View();
 		}
 
-		public ViewResult OpenProblems()
+		[Authorize(Roles = "Admin, Freelancer, Coordinator, WithoutDocuments")]
+		public ViewResult OpenProblems(String sortOrder, string searchString)
 		{
-            if (User.IsInRole("Freelancer"))
-            {
-                string userId = User.Identity.GetUserId();
-                ApplicationUser freelancer = db.Users.Find(userId);
-                bool withLawContract = db.LawContracts.Where(c => c.User.Id == userId).Count() > 0 ? true : false;
-                if (!withLawContract)
-                {
-                    ViewBag.ErrorMessage = "Вам не заплатят за выполненную работу, пока вы не заключите ГПХ.";
-                }
-            }
-            ProblemModels[] openProblems = db.ProblemModels
-				.Where(x => x.Status == 0 && x.Employer.IsApprovedByCoordinator).ToArray();
-			return View(openProblems);
+			if (User.IsInRole("Freelancer"))
+			{
+				string userId = User.Identity.GetUserId();
+				ApplicationUser freelancer = db.Users.Find(userId);
+				bool withLawContract = db.LawContracts.Where(c => c.User.Id == userId).Count() > 0 ? true : false;
+				if (!withLawContract)
+				{
+					ViewBag.ErrorMessage = "Вам не заплатят за выполненную работу, пока вы не заключите ГПХ.";
+				}
+			}
+			ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+			ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
+			var openProblems = from s in db.ProblemModels where s.Status == 0 select s;
+			if (!String.IsNullOrEmpty(searchString))
+			{
+				openProblems = openProblems.Where(s => s.Name.Contains(searchString) || s.Description.Contains(searchString) || s.SmallDescription.Contains(searchString));
+			}
+
+			switch (sortOrder)
+			{
+				case "name_desc":
+					openProblems = openProblems.OrderByDescending(s => s.Name);
+					break;
+				case "Date":
+					openProblems = openProblems.OrderBy(s => s.CreationDate);
+					break;
+				case "date_desc":
+					openProblems = openProblems.OrderByDescending(s => s.CreationDate);
+					break;
+				default:
+					openProblems = openProblems.OrderBy(s => s.Name);
+					break;
+			}
+			return View(openProblems.ToList());
+
+			//ProblemModels[] openProblems = db.ProblemModels
+			//	.Where(x => x.Status == 0 && x.Employer.IsApprovedByCoordinator).ToArray();
+			//return View(openProblems);
 		}
 
 		public ActionResult Profile()
@@ -160,12 +280,31 @@ namespace FreeLance.Controllers
 			return View();
 		}
 
+		public ActionResult Documents()
+		{
+			string userId = User.Identity.GetUserId();
+			ApplicationUser freelancer = db.Users.Find(userId);
+			DocumentPackageViewModel model = new DocumentPackageViewModel();
+			if (freelancer.DocumentPackage != null)
+			{
+				DocumentPackageModels documents = freelancer.DocumentPackage;
+				model.Phone = documents.Phone;
+				model.PaymentDetails = documents.PaymentDetails;
+				model.Adress = documents.Adress;
+				model.PassportFace = documents.FilePassportFace != null;
+				model.PassportRegistration = documents.FilePassportRegistration != null;
+			}
+			return View(model);
+		}
+
 
 		public class DocumentPackageViewModel
 		{
 			public string Adress { get; set; }
 			public string Phone { get; set; }
 			public string PaymentDetails { get; set; }
+			public bool PassportFace { get; set; }
+			public bool PassportRegistration { get; set; }
 		}
 
 		[HttpPost]
@@ -179,7 +318,7 @@ namespace FreeLance.Controllers
 				documents.PaymentDetails = documentFromView.PaymentDetails;
 				db.SaveChanges();
 			}
-			return RedirectToAction("Profile");
+			return RedirectToAction("Documents");
 		}
 
 		[HttpPost]
@@ -190,12 +329,12 @@ namespace FreeLance.Controllers
 				var file = Request.Files[0];
 				if (file != null && file.ContentLength > 0)
 				{
-					getDocuments().FilePassportFace = SaveDocumentOnDisc(file, "passports");
+					getDocuments().FilePassportFace = saveDocumentOnDisc(file, "passports");
 					db.SaveChanges();
 				}
 
 			}
-			return RedirectToAction("Profile");
+			return RedirectToAction("Documents");
 		}
 
 		[HttpPost]
@@ -206,48 +345,47 @@ namespace FreeLance.Controllers
 				var file = Request.Files[0];
 				if (file != null && file.ContentLength > 0)
 				{
-					getDocuments().FilePassportRegistration = SaveDocumentOnDisc(file, "registrations");
+					getDocuments().FilePassportRegistration = saveDocumentOnDisc(file, "registrations");
 					db.SaveChanges();
 				}
 			}
-			return RedirectToAction("Profile");
+			return RedirectToAction("Documents");
 		}
 
-	    private FileContentResult viewFile(string pathToContract)
-	    {
-            byte[] filedata = System.IO.File.ReadAllBytes(pathToContract);
-            string contentType = MimeMapping.GetMimeMapping(pathToContract);
-            var cd = new System.Net.Mime.ContentDisposition
-            {
-                FileName = pathToContract,
-                Inline = true,
-            };
-            Response.AppendHeader("Content-Disposition", cd.ToString());
-            return File(filedata, contentType);
-        }
+		private FileContentResult viewFile(string pathToContract)
+		{
+			byte[] filedata = System.IO.File.ReadAllBytes(pathToContract);
+			string contentType = MimeMapping.GetMimeMapping(pathToContract);
+			var cd = new System.Net.Mime.ContentDisposition
+			{
+				FileName = pathToContract,
+				Inline = true,
+			};
+			Response.AppendHeader("Content-Disposition", cd.ToString());
+			return File(filedata, contentType);
+		}
 
-	    private void saveLawContractInDatabase(ApplicationUser user, string pathToContract,
-	        LawContractTemplate lawContractTemplate)
-	    {
-            LawContract lawContract = new LawContract
-            {
-                Path = pathToContract,
-                User = user,
-                LawContractTemplate = lawContractTemplate
-            };
-            db.LawContracts.Add(lawContract);
-            db.SaveChanges();
-        }
+		private void saveLawContractInDatabase(ApplicationUser user, string pathToContract,
+			LawContractTemplate lawContractTemplate)
+		{
+			LawContract lawContract = new LawContract
+			{
+				Path = pathToContract,
+				User = user,
+				LawContractTemplate = lawContractTemplate
+			};
+			db.LawContracts.Add(lawContract);
+			db.SaveChanges();
+		}
 
-
-        private string SaveDocumentOnDisc(HttpPostedFileBase file, string dir)
+		private string saveDocumentOnDisc(HttpPostedFileBase file, string dir)
 		{
 			var ext = Path.GetExtension(file.FileName);
 			var fileName = User.Identity.GetUserId() + "_" + DateTime.Now.Ticks.ToString() + ext;
 			var path = Path.Combine(Server.MapPath("~/App_Data/" + dir + "/"), fileName);
 			file.SaveAs(path);
 			return "/App_Data/" + dir + "/" + fileName;
-        }
+		}
 
 		private DocumentPackageModels getDocuments()
 		{

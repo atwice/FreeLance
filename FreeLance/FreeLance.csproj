@@ -180,14 +180,15 @@
     <Compile Include="Controllers\FreelancerController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\NotificationController.cs" />
     <Compile Include="Controllers\ProblemController.cs" />
     <Compile Include="Controllers\SubscriptionController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201510091847147_LawContractDiff.cs" />
-    <Compile Include="Migrations\201510091847147_LawContractDiff.Designer.cs">
-      <DependentUpon>201510091847147_LawContractDiff.cs</DependentUpon>
+    <Compile Include="Migrations\201510161740434_from-scratch.cs" />
+    <Compile Include="Migrations\201510161740434_from-scratch.Designer.cs">
+      <DependentUpon>201510161740434_from-scratch.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -202,8 +203,10 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\freelance.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\jquery.raty.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -213,9 +216,14 @@
     <Content Include="Files\test.docx" />
     <Content Include="Files\test1.docx" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
-    <Content Include="Scripts\jquery-1.10.2.js" />
-    <Content Include="Scripts\jquery-1.10.2.min.js" />
+    <None Include="Scripts\jquery-2.1.4-vsdoc.js" />
+    <Content Include="Scripts\jquery-2.1.4.js" />
+    <Content Include="Scripts\jquery-2.1.4.min.js" />
+    <Content Include="Scripts\jquery-2.1.4.min.map" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.raty.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
@@ -287,6 +295,11 @@
     <Content Include="Views\Coordinator\ViewFreelancerDocuments.cshtml" />
     <Content Include="Views\Coordinator\AddLawContractTemplate.cshtml" />
     <Content Include="Views\Coordinator\FillLawContractTemplate.cshtml" />
+    <Content Include="Views\Coordinator\LawFace.cshtml" />
+    <Content Include="Views\Freelancer\Documents.cshtml" />
+    <Content Include="Views\Freelancer\Details.cshtml" />
+    <Content Include="Views\Notification\_ErrorNotification.cshtml" />
+    <Content Include="Views\Notification\GetPageNotifications.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -299,11 +312,10 @@
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="packages.config" />
     <None Include="Project_Readme.html" />
-    <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201510091847147_LawContractDiff.resx">
-      <DependentUpon>201510091847147_LawContractDiff.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201510161740434_from-scratch.resx">
+      <DependentUpon>201510161740434_from-scratch.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

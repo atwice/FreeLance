@@ -51,5 +51,6 @@ namespace FreeLance.Models
         public System.Data.Entity.DbSet<FreeLance.Models.LawFace> LawFaces { get; set; }
         public System.Data.Entity.DbSet<FreeLance.Models.LawContractTemplate> LawContractTemplates { get; set; }
         public System.Data.Entity.DbSet<FreeLance.Models.LawContract> LawContracts { get; set; }
+        
     }
 }

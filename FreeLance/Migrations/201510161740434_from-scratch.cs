@@ -3,7 +3,7 @@ namespace FreeLance.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class LawContractDiff : DbMigration
+    public partial class fromscratch : DbMigration
     {
         public override void Up()
         {
@@ -12,9 +12,13 @@ namespace FreeLance.Migrations
                 c => new
                     {
                         ContractId = c.Int(nullable: false, identity: true),
+                        CreationDate = c.DateTime(nullable: false),
+                        EndingDate = c.DateTime(nullable: false),
                         Details = c.String(),
                         Status = c.Int(nullable: false),
                         Cost = c.Decimal(nullable: false, precision: 18, scale: 2),
+                        Rate = c.Decimal(nullable: false, precision: 18, scale: 2),
+                        Comment = c.String(),
                         Freelancer_Id = c.String(nullable: false, maxLength: 128),
                         Problem_ProblemId = c.Int(nullable: false),
                     })
@@ -106,8 +110,10 @@ namespace FreeLance.Migrations
                 c => new
                     {
                         ProblemId = c.Int(nullable: false, identity: true),
+                        CreationDate = c.DateTime(nullable: false),
                         Name = c.String(nullable: false),
                         Description = c.String(nullable: false),
+                        SmallDescription = c.String(nullable: false),
                         Cost = c.Decimal(nullable: false, precision: 18, scale: 2),
                         Status = c.Int(nullable: false),
                         Employer_Id = c.String(nullable: false, maxLength: 128),
@@ -150,13 +156,15 @@ namespace FreeLance.Migrations
                 "dbo.LawContractTemplates",
                 c => new
                     {
-                        Id = c.Int(nullable: false),
+                        Id = c.Int(nullable: false, identity: true),
                         Path = c.String(nullable: false),
                         Name = c.String(nullable: false),
+                        Active = c.Boolean(nullable: false),
+                        LawFace_Id = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.LawFaces", t => t.Id)
-                .Index(t => t.Id);
+                .ForeignKey("dbo.LawFaces", t => t.LawFace_Id)
+                .Index(t => t.LawFace_Id);
             
             CreateTable(
                 "dbo.LawFaces",
@@ -184,7 +192,7 @@ namespace FreeLance.Migrations
             DropForeignKey("dbo.AspNetUserRoles", "RoleId", "dbo.AspNetRoles");
             DropForeignKey("dbo.LawContracts", "User_Id", "dbo.AspNetUsers");
             DropForeignKey("dbo.LawContracts", "LawContractTemplate_Id", "dbo.LawContractTemplates");
-            DropForeignKey("dbo.LawContractTemplates", "Id", "dbo.LawFaces");
+            DropForeignKey("dbo.LawContractTemplates", "LawFace_Id", "dbo.LawFaces");
             DropForeignKey("dbo.ContractModels", "Problem_ProblemId", "dbo.ProblemModels");
             DropForeignKey("dbo.SubscriptionModels", "Problem_ProblemId", "dbo.ProblemModels");
             DropForeignKey("dbo.SubscriptionModels", "Freelancer_Id", "dbo.AspNetUsers");
@@ -195,7 +203,7 @@ namespace FreeLance.Migrations
             DropForeignKey("dbo.DocumentPackageModels", "Freelancer_Id", "dbo.AspNetUsers");
             DropForeignKey("dbo.AspNetUserClaims", "UserId", "dbo.AspNetUsers");
             DropIndex("dbo.AspNetRoles", "RoleNameIndex");
-            DropIndex("dbo.LawContractTemplates", new[] { "Id" });
+            DropIndex("dbo.LawContractTemplates", new[] { "LawFace_Id" });
             DropIndex("dbo.LawContracts", new[] { "User_Id" });
             DropIndex("dbo.LawContracts", new[] { "LawContractTemplate_Id" });
             DropIndex("dbo.SubscriptionModels", new[] { "Problem_ProblemId" });

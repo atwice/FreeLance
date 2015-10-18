@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.ComponentModel.DataAnnotations;
+using System.EnterpriseServices;
 
 namespace FreeLance.Models
 {
@@ -19,6 +20,8 @@ namespace FreeLance.Models
 
         [Required]
         public virtual LawFace LawFace { get; set; }
+
+        public bool Active { get; set; }
     }
 
     public class LawFace
@@ -27,7 +30,7 @@ namespace FreeLance.Models
         public int Id { get; set; }
         [Required]
         public string Name { get; set; }
-        public virtual LawContractTemplate CurrentLawContractTemplate { get; set; }
+       
     }
 
     public class LawContract

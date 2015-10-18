@@ -8,21 +8,41 @@
 <div class="col-md-10">
     <h2>Список юрлиц</h2><br/>
     <ul>
-   @foreach (var lawFaceView in Model.LawFaceViews)
-   {
-       <li>
-           <span>@lawFaceView.LawFace.Name</span>
-           <ul>
-               @foreach (var template in lawFaceView.LawContractTemplates)
-               {
-                   <li>@template.Name</li>
-               }
+        @foreach (var lawFaceView in Model.LawFaceViews)
+        {
+            <li>
+                <span>@lawFaceView.LawFace.Name</span>
+                <ul>
+                    @foreach (var template in lawFaceView.LawContractTemplates)
+                    {
 
-           </ul>
-           @Html.ActionLink("Coordinator", "AddLawContractTemplate", new {lawFaceId = lawFaceView.LawFace.Id})
-           <button>Добавить шаблон</button>
-       </li>
-   }
-        </ul>
+                        <li>@Html.ActionLink(template.Name, "ViewFile", new {path = template.Path})
+                           <input type="checkbox" class="lawContractActive lawContractId-@template.Id" checked="@template.Active.ToString().ToLower()" value="@template.Id"/>
 
-    </div>
+                     </li>
+                   
+                    }
+
+                </ul>
+                @Html.ActionLink("Добавить Шаблон", "AddLawContractTemplate", new {lawFaceId = lawFaceView.LawFace.Id})
+
+            </li>
+        }
+    </ul>
+    @Html.ActionLink("Добавить Юрлицо", "LawFace", "Coordinator")
+</div>
+<script>
+    $(".lawContractActive").click(function () {
+        var id = $(this).val();
+        $.ajax({
+            url: '@Url.Action("ToggleActiveLawContractTemplate", "Coordinator")',
+            type: 'POST',
+            data: {"templateId" : +id },
+            dataType: "json",
+            success: function (result) {
+                $(".lawContractActive.lawContractId-" + result.templateId).prop("checked", result.active);
+            }
+        });
+    });
+</script>
+

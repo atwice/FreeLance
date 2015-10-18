@@ -16,6 +16,10 @@ namespace FreeLance.Models
 	{
 		[Key]
 		public int ContractId { get; set; }
+		[DataType(DataType.Date)]
+		public DateTime CreationDate { get; set; }
+		[DataType(DataType.Date)]
+		public DateTime EndingDate { get; set; }
 		[Required]
 		public virtual ApplicationUser Freelancer { get; set; }
         [DataType(DataType.MultilineText)]
@@ -25,5 +29,8 @@ namespace FreeLance.Models
 		[Required]
 		public ContractStatus Status { get; set; }
 		public decimal Cost { get; set; }
+		public decimal Rate { get; set; }
+		public string Comment { get; set; }
+
 	}
 }

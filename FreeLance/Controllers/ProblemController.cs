@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
@@ -83,11 +84,16 @@ namespace FreeLance.Controllers
         public ActionResult Create(ProblemModels problem)
 		{
 			ApplicationUser employer = db.Users.Find(User.Identity.GetUserId());
+			if(problem.Description == null)
+			{
+				return View();
+			}
 			if (!employer.IsApprovedByCoordinator) {
 				ViewBag.ErrorMessage = "Задача создана, но не будет показана исполнителям, пока ваш аккаунт не подтвердит координатор";
 			}
 			problem.Employer = db.Users.Find(User.Identity.GetUserId());
 			problem.Status = ProblemStatus.Opened;
+			problem.CreationDate = DateTime.Now;
 			db.ProblemModels.Add(problem);
 			db.SaveChanges();
 			return RedirectToAction("Details", new { id = problem.ProblemId });

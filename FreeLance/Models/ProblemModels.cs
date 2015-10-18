@@ -16,6 +16,8 @@ namespace FreeLance.Models
 	{
 		[Key]
 		public int ProblemId { get; set; }
+		[DataType(DataType.Date)]
+		public DateTime CreationDate { get; set; }
 		[Required]
 		public virtual ApplicationUser Employer { get; set; }
 		[Required]
@@ -25,7 +27,11 @@ namespace FreeLance.Models
 		public string Description { get; set; }
 		[Required, DataType(DataType.MultilineText)]
 		public string SmallDescription { get; set; }
+
+		[Range(0, 1000000)]
+		[DataType(DataType.Currency)]
 		public decimal Cost { get; set; }
+
 		[Required]
 		public ProblemStatus Status { get; set; }
 		public virtual ICollection<ContractModels> Contracts { get; set; }

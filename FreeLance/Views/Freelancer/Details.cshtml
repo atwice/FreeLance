@@ -1,0 +1,87 @@
+﻿@model FreeLance.Controllers.FreelancerController.DetailsView
+@{
+    ViewBag.Title = "Подробная информация о работнике";
+}
+
+@helper Truncate(string input, int length)
+{
+if (input.Length <= length)
+{
+		@input
+}
+else
+{
+		@input.Substring(0, length)<text>...</text>
+}
+}
+
+@section css {
+	<link rel="stylesheet" href="~/Content/jquery.raty.css">
+}
+
+@section PageScripts{
+	<!-- Include Raty JS file -->
+	<script type="text/javascript" src="~/Scripts/jquery-2.1.4.min.js"></script>
+	<script type="text/javascript" src="~/Scripts/jquery.raty.js"></script>
+}
+
+
+<div class="col-md-10">
+	<h2>@ViewBag.Title</h2>
+	@if (Model.ClosedContractsCount != 0)
+	{
+		<div class="stars" data-score=@Model.Rate.ToString().Replace(",",".")></div>
+	}
+	<p><strong>ФИО: </strong>@Model.freelancer.FIO</p>
+	<p><strong>e-mail: </strong>@Model.freelancer.Email</p>
+	@if(Model.freelancer.PhoneNumber != null)
+	{
+		<p><strong>Номер телефона: </strong>@Model.freelancer.PhoneNumber</p>
+	}
+	<p><strong>Контрактов в процессе выполнения: </strong>@Model.OpenContractsCount</p>
+	<p><strong>Выполнил(а) контрактов: </strong>@Model.ClosedContractsCount</p>
+	<div class= "btn-group" role="group" aria-label="...">
+		<a href= @Url.Action("Details", "Freelancer", 
+				new {id = Model.freelancer.Id, sortOrder = ViewBag.NameSortParm }) class="btn btn-info">
+			<span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+			Имя
+		</a>
+		<a href=@Url.Action("Details", "Freelancer",
+				new {id = Model.freelancer.Id, sortOrder = ViewBag.DateSortParm }) class="btn btn-info">
+			<span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+			Дата
+		</a>
+	</div>
+	<div class="list-group">
+		@foreach (var contract in Model.Contracts)
+		{
+			<a href="#" class="list-group-item">
+				<h4 class="list-group-item-heading">@contract.Name <small class="status">@contract.Status</small></h4>
+				<p class="list-group-item-text" style="color:lightgray"><i>@contract.EmployerName</i></p>
+
+				@if (contract.Status == FreeLance.Models.ContractStatus.Closed)
+			{
+					<div class="stars" data-score=@contract.Rate.ToString().Replace(",",".")></div>
+					<p><strong>Дата закрытия: </strong> @contract.EndingDate</p>
+					<p><strong>Комментарий работодателя: </strong> @contract.Comment</p>
+			}
+			</a>
+		}
+	</div>
+</div>
+
+@{
+	<script>
+			$(function () {
+				$(".stars").each(function () {
+					$(this).raty({
+						path: "../../Content/images",
+						readOnly: true,
+						score: function () {
+							return $(this).attr('data-score');
+						}
+					});
+				});
+			});
+	</script>
+}	

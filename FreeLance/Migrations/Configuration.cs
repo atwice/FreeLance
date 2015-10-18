@@ -33,7 +33,7 @@ namespace FreeLance.Migrations
 			SeedLawContractTemplates(context);
 			AddEmployerFreelancerProblemContractAuto(context, "Employer1", "Freelancer1");
 			AddEmployerFreelancerProblemContractAuto(context, "Employer2", "Freelancer2");
-			AddEmployerFreelancerProblemContractAuto(context, "Employer2", "Freelancer3");
+			AddEmployerFreelancerProblemContractAuto(context, "Employer", "Freelancer3");
 			AddProblemWithSubscriber(context, "Employer4", "Subscriber1");
 			AddProblemWithSubscriber(context, "Employer5", "Subscriber2");
 			AddProblemWithSubscriber(context, "Employer6", "Subscriber3");
@@ -54,46 +54,33 @@ namespace FreeLance.Migrations
 			addProblem(context, "Implement queue", "Language : ASSEMBLER", ProblemStatus.Opened, employer);
 		}
 
-//		private void SeedLawContractTemplates(FreeLance.Models.ApplicationDbContext context)
-//		{
-//			var lawContractTemplate1 = new LawContractTemplate {
-//				Path = AppDomain.CurrentDomain.BaseDirectory + "Files\\LawContractTemplates\\"+ "template1.docx" };
-//			var lawContractTemplate2 = new LawContractTemplate
-//			{
-//				Path = AppDomain.CurrentDomain.BaseDirectory + "Files\\LawContractTemplates\\" + "template2.docx"
-//			};
-//			context.LawContractTemplates.AddOrUpdate(p => p.Path, lawContractTemplate1);
-//			context.LawContractTemplates.AddOrUpdate(p => p.Path, lawContractTemplate2);
-//		}
 
 	    private void SeedLawContractTemplates(FreeLance.Models.ApplicationDbContext context)
 	    {
             LawFace lawFace1 = new LawFace {Name = "Abbyy Production"};
 	        LawFace lawFace2 = new LawFace {Name = "Abbyy Lingvo"};
-			var rootPath = Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.FullName + "\\";
+			var rootPath = Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.FullName + "\\App_Data\\LawContractTemplates\\";
             LawContractTemplate template1 = new LawContractTemplate {
 	            LawFace = lawFace1,
 	            Name = "Basic Document",
-				//Path = AppDomain.CurrentDomain.BaseDirectory + "Files\\LawContractTemplates\\" + "template1.docx"
-				Path = rootPath + "Files\\LawContractTemplates\\" + "template1.docx"
+				Path = rootPath  + "template1.docx",
+                Active = true
 			};
             LawContractTemplate template2 = new LawContractTemplate
             {
                 LawFace = lawFace1,
                 Name = "Old Document",
-				//Path = AppDomain.CurrentDomain.BaseDirectory + "Files\\LawContractTemplates\\" + "template2.docx"
-				Path = rootPath + "Files\\LawContractTemplates\\" + "template2.docx"
+				Path = rootPath  + "template2.docx",
+                Active = true
 			};
             LawContractTemplate template3 = new LawContractTemplate
             {
                 LawFace = lawFace2,
                 Name = "Actual Document",
-				//Path = AppDomain.CurrentDomain.BaseDirectory + "Files\\LawContractTemplates\\" + "template3.docx"
-				Path = rootPath + "Files\\LawContractTemplates\\" + "template3.docx"
-			};
+				Path = rootPath + "template3.docx",
+                Active = true
+            };
 
-            lawFace1.CurrentLawContractTemplate = template1;
-	        lawFace2.CurrentLawContractTemplate = template3;
             context.LawFaces.AddOrUpdate(p => p.Name, lawFace1);
             context.LawFaces.AddOrUpdate(p => p.Name, lawFace2);
             context.LawContractTemplates.AddOrUpdate(p => p.Path, template1);
@@ -103,7 +90,7 @@ namespace FreeLance.Migrations
 
 		private ProblemModels addProblem(ApplicationDbContext context, string name, string desc, ProblemStatus status, ApplicationUser employer)
 		{
-			var problem = new ProblemModels { Name = name, SmallDescription = desc, Description = desc, Status = status, Employer = employer };
+			var problem = new ProblemModels { Name = name, SmallDescription = desc, Description = desc, Status = status, Employer = employer, CreationDate = DateTime.Now, Cost = 100};
 			context.ProblemModels.AddOrUpdate(p => p.Name, problem);
 			return problem;
 		}
@@ -125,7 +112,9 @@ namespace FreeLance.Migrations
 
 		private ContractModels addContract(ApplicationDbContext context, string details, ContractStatus status, ProblemModels problem, ApplicationUser freelancer)
 		{
-			var contract = new ContractModels { Details = details, Problem = problem, Status = status, Freelancer = freelancer };
+			Random rnd = new Random();
+			var contract = new ContractModels { Details = details, Problem = problem, Status = status, Freelancer = freelancer,
+				CreationDate = DateTime.Now, EndingDate = DateTime.Now.AddDays(30).AddHours(5), Comment="Comment about freelancer's work", Rate=rnd.Next(1,6) };
 			context.ContractModels.AddOrUpdate(p => p.Details, contract);
 			return contract;
 		}
@@ -136,7 +125,7 @@ namespace FreeLance.Migrations
 			context.Roles.AddOrUpdate(r => r.Name, new IdentityRole { Name = "Freelancer" });
 			context.Roles.AddOrUpdate(r => r.Name, new IdentityRole { Name = "Employer" });
 			context.Roles.AddOrUpdate(r => r.Name, new IdentityRole { Name = "Incognito" });
-			context.Roles.AddOrUpdate(r => r.Name, new IdentityRole { Name = "WithoutDocuments" });
+			context.Roles.AddOrUpdate(r => r.Name, new IdentityRole { Name = "Trash" });
 			context.Roles.AddOrUpdate(r => r.Name, new IdentityRole { Name = "Coordinator" });
 			context.SaveChanges();
 		}
@@ -149,7 +138,7 @@ namespace FreeLance.Migrations
 			addUser(context, userManager, "freelancer", "freelancer@ya.ru", "111111", "Freelancer");
             addUser(context, userManager, "incognito", "incognito@ya.ru", "111111", "Incognito");
 			addUser(context, userManager, "incognito2", "incognito2@ya.ru", "111111", "Incognito");
-			addUser(context, userManager, "withoutDocuments", "withoutDocuments@ya.ru", "111111", "WithoutDocuments");
+			addUser(context, userManager, "withoutDocuments", "withoutDocuments@ya.ru", "111111", "Incognito");
 			addUser(context, userManager, "coordinator", "coordinator@ya.ru", "111111", "Coordinator");
 		}
 
