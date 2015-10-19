@@ -23,19 +23,6 @@ else
 	<!-- Include Raty JS file -->
 	<script type="text/javascript" src="~/Scripts/jquery-2.1.4.min.js"></script>
 	<script type="text/javascript" src="~/Scripts/jquery.raty.js"></script>
-	<script>
-			$(function () {
-				$(".stars").each(function () {
-					$(this).raty({
-						path: "../../Content/images",
-						readOnly: true,
-						score: function () {
-							return $(this).attr('data-score');
-						}
-					});
-				});
-			});
-	</script>
 }
 
 
@@ -81,4 +68,20 @@ else
 			</a>
 		}
 	</div>
-</div>	
+</div>
+
+@{
+	<script>
+			$(function () {
+				$(".stars").each(function () {
+					$(this).raty({
+						path: "../../Content/images",
+						readOnly: true,
+						score: function () {
+							return $(this).attr('data-score');
+						}
+					});
+				});
+			});
+	</script>
+}	

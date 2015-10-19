@@ -26,15 +26,6 @@
 			@if (contract.Status == FreeLance.Models.ContractStatus.Closed)
 			{
 				<div id="star" data-score=@contract.Rate></div>
-				<script>
-					$('#star').raty({
-						path: "../../Content/images",
-						readOnly: true,
-						score: function() {
-							return $(this).attr('data-score');
-						}
-					});
-				</script>
 				<p><strong>Дата закрытия: </strong> @Html.DisplayFor(model => contract.EndingDate)</p>
 				<p><strong>Комментарий работодателя: </strong> @Html.DisplayFor(model => contract.Comment)</p>
 			}
@@ -68,23 +59,16 @@
 					using (Html.BeginForm("Close", "Contract", FormMethod.Post))
 					{
 						<div>
-							<b>Оцените работу фрилансера: </b>
-							<div id="star"></div>
+							<b>Оцените работу фрилансера<span style="color:red">*</span>:</b>
+							<div id="starToRate"></div>
 						</div>
-						<script>
-							$('#star').raty({
-								path: "../../Content/images",
-								click: function (score, evt) {
-									document.getElementById("hint").value = score;
-								}
-							});
-						</script>
 						<input type="hidden" id="hint" name="rate" value="0" />
 						<input name="id" type="hidden" value="@contract.ContractId" />
 						<div>
 							<textarea name="comment" placeholder="Почему именно такая оценка?" required></textarea>
 						</div>
-						<input class="btn btn-success btn-lg" type="submit" value="Принять работу" />
+						<input id ="closeContractBtn" class="btn btn-success btn-lg" type="submit" 
+							   value="Принять работу" disabled/>
 					}
 				}
 				@foreach (var button in Model.ChangeStatusButtons)
@@ -101,5 +85,26 @@
 		</div>
 	</div>
 </div>
+
+
+<script>
+	
+
+	$('#star').raty({
+		path: "../../Content/images",
+		readOnly: true,
+		score: function () {
+			return $(this).attr('data-score');
+		}
+	});
+
+	$('#starToRate').raty({
+		path: "../../Content/images",
+		click: function (score, evt) {
+			document.getElementById("closeContractBtn").disabled = false;
+			document.getElementById("hint").value = score;
+		}
+	});
+</script>
 
 
