@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Entity.Migrations;
+using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -425,12 +426,12 @@ namespace FreeLance.Controllers
         [Authorize(Roles="Coordinator")]
 	    public ActionResult ToggleActiveLawContractTemplate(int templateId)
 	    {
-	        LawContractTemplate template = db.LawContractTemplates.Find(templateId);
+	        LawContractTemplate template = db.LawContractTemplates.Include( t => t.LawFace ).Single( t => t.Id == templateId );
             if (template == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 	        template.Active = !template.Active;
-	        try
-	        {
+	        try { 
+	        
 	            db.SaveChanges();
 	        }
 	        catch (Exception e)
