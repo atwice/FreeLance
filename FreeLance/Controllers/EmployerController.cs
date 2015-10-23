@@ -203,9 +203,22 @@ namespace FreeLance.Controllers
 				db.SaveChanges();
 				return RedirectToAction("Problem", new { id = problem.ProblemId });
 			}
-
 			return View(problem);
 		}
 
+		public ActionResult Settings()
+		{
+			ApplicationUser user = db.Users.Find(User.Identity.GetUserId());
+			return View(user.EmailNotificationPolicy);
+		}
+
+		[HttpPost]
+		public ActionResult Settings(ApplicationUser.EmailNotificationPolicyModel policy)
+		{
+			ApplicationUser user = db.Users.Find(User.Identity.GetUserId());
+			user.EmailNotificationPolicy = policy;
+			db.SaveChanges();
+			return View(user.EmailNotificationPolicy);
+		}
 	}
 }

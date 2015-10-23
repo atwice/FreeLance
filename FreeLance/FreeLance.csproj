@@ -321,6 +321,9 @@
     <Content Include="Views\Emails\_Header.cshtml" />
     <Content Include="Views\Emails\OnStatusChange.cshtml" />
     <Content Include="Views\Emails\OnNewApplication.cshtml" />
+    <Content Include="Views\Freelancer\Settings.cshtml" />
+    <Content Include="Views\Employer\Settings.cshtml" />
+    <Content Include="Views\Coordinator\Settings.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
