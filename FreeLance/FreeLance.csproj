@@ -326,6 +326,14 @@
     <Content Include="Views\Notification\GetPageNotifications.cshtml" />
     <Content Include="Views\Emails\_ViewStart.cshtml" />
     <Content Include="Views\Emails\Web.config" />
+    <Content Include="Views\Emails\OnNewComment.cshtml" />
+    <Content Include="Views\Emails\_Footer.cshtml" />
+    <Content Include="Views\Emails\_Header.cshtml" />
+    <Content Include="Views\Emails\OnStatusChange.cshtml" />
+    <Content Include="Views\Emails\OnNewApplication.cshtml" />
+    <Content Include="Views\Freelancer\Settings.cshtml" />
+    <Content Include="Views\Employer\Settings.cshtml" />
+    <Content Include="Views\Coordinator\Settings.cshtml" />
     <Content Include="Views\Emails\Example.cshtml" />
     <Content Include="Views\Chat\CreateChat.cshtml" />
   </ItemGroup>
