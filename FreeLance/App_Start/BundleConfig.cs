@@ -26,6 +26,14 @@ namespace FreeLance
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/site.css"));
+
+			bundles.Add(new ScriptBundle("~/bundles/jquery-comments/js").Include(
+					  "~/Scripts/jquery-comments.js"));
+
+			bundles.Add(new StyleBundle("~/bundles/jquery-comments/css").Include(
+						"~/Content/jquery-comments.css"
+						//"~/Content/font-awesome.min.css"
+						));
         }
     }
 }
