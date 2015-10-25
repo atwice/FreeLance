@@ -1,0 +1,120 @@
+﻿@model FreeLance.Controllers.ChatController.ChatVR
+
+@{ string ownerClass = "owner-" + @Model.ObjectId + "-" + Model.Owner; }
+
+<div class="chat body @ownerClass">
+	<div id="comments-container-2"></div>
+</div>
+
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/jquery-comments/js")
+@Styles.Render("~/bundles/jquery-comments/css")
+<script>
+
+	$('#comments-container-2').comments({
+		timeFormatter: function(time) {
+			var date = new Date(time);
+			return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+		},
+		profilePictureURL: '/Content/Avatars/default.png',
+		enableReplying: true,
+		enableEditing: true,
+		enableUpvoting: false,
+		enableDeleting: true,
+		enableDeletingCommentWithReplies: false,
+		fieldMappings: {
+			id: 'Id',
+			parent: 'ParentId',
+			created: 'Date',
+			modified: 'Modified',
+			content: 'Comment',
+			fullname: 'Author',
+			profilePictureURL: 'UserAvatar',
+			createdByAdmin: 'created_by_admin',
+			createdByCurrentUser: 'CreatedByCurrentUser',
+			upvoteCount: 'upvote_count',
+			userHasUpvoted: 'user_has_upvoted',
+		},
+		getComments: function (success, error) {
+    		$.ajax({
+    			url: '@Url.Action("GetChatMessages", "Chat")',
+    			type: 'POST',
+    			data: { "objectId": @Model.ObjectId, "owner": "@Model.Owner" },
+    			dataType: "json",
+    			success: function (result) {
+    				if (result.Status == "Ok") {
+    					success(result.Result);
+    				} else {
+    					error(result.Reason);
+    				}
+    			}
+    		});
+		},
+		postComment: function(commentJSON, success, error) {
+			$.ajax({
+				type: 'POST',
+				url: '@Url.Action("SendMessage", "Chat")',
+				data: {
+					'objectId' : @Model.ObjectId,
+					'owner' : '@Model.Owner',
+					'parentId' : commentJSON.ParentId,
+					'text' : commentJSON.Comment
+				},
+				dataType: "json",
+				success: function(comment) {
+					if (comment.Status == 'Ok') {
+						success(comment.Result);
+					} else {
+						error(comment.Reason);
+					}
+				},
+				error: error
+			});
+		},
+		deleteComment: function(commentJSON, success, error) {
+			$.ajax({
+				type: 'POST',
+				url: '@Url.Action("DeleteMessage", "Chat")',
+				data: {
+					'objectId' : @Model.ObjectId,
+					'owner' : '@Model.Owner',
+					'messageId' : commentJSON.Id
+				},
+				dataType: "json",
+				success: success,
+				error: error
+			});
+		}
+	});
+</script>
+<script>
+
+	function GetChatMessages(owner, objectId){
+        $.ajax({
+        	url: '@Url.Action("GetChatMessages", "Chat")',
+            type: 'POST',
+            data: {"objectId" : objectId, "owner" : owner },
+            dataType: "json",
+            success: function (result) {
+            	if (result.Status == "Ok") {
+            		ownerClass = "owner-" + objectId + "-" + owner;
+            		text = "";
+            		for (var i = 0; i < result.Result.length; i++) {
+            			msg = result.Result[i];
+            			text += "<p>" + msg.Id + 
+								"<p>" + msg.Author + 
+								"<p>" + msg.Comment + 
+								"<p>" + msg.ParentId + 
+								"<p>" + msg.UserAvatar +
+								"<p>" + msg.CanDelete +
+								"<p>" + msg.CanReply + 
+								"<p>" + msg.Date + "<p>\n"
+            		}
+            		$(".chat.body." + ownerClass).html(text);
+            	} else {
+					alert(result.Reason)
+            	}
+            }
+        });
+    }
+</script>

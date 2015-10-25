@@ -183,6 +183,7 @@
     <Compile Include="Code\EmailManager.cs" />
     <Compile Include="Code\DocumentManager.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\ChatController.cs" />
     <Compile Include="Controllers\ContractController.cs" />
     <Compile Include="Controllers\CoordinatorController.cs" />
     <Compile Include="Controllers\DocumentPackageController.cs" />
@@ -200,8 +201,13 @@
     <Compile Include="Migrations\201510161740434_from-scratch.Designer.cs">
       <DependentUpon>201510161740434_from-scratch.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201510251719171_chat.cs" />
+    <Compile Include="Migrations\201510251719171_chat.Designer.cs">
+      <DependentUpon>201510251719171_chat.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\ChatModels.cs" />
     <Compile Include="Models\LawModels.cs" />
     <Compile Include="Models\ContractModels.cs" />
     <Compile Include="Models\DocumentPackageModels.cs" />
@@ -213,9 +219,11 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\font-awesome.min.css" />
     <Content Include="Content\freelance.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\jquery-comments.css" />
     <Content Include="Content\jquery.raty.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
@@ -231,6 +239,8 @@
     <Content Include="Scripts\jquery-2.1.4.min.js" />
     <Content Include="Scripts\jquery-2.1.4.min.map" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery-comments.js" />
+    <Content Include="Scripts\jquery-comments.min.js" />
     <Content Include="Scripts\jquery.raty.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
@@ -324,10 +334,13 @@
     <Content Include="Views\Freelancer\Settings.cshtml" />
     <Content Include="Views\Employer\Settings.cshtml" />
     <Content Include="Views\Coordinator\Settings.cshtml" />
+    <Content Include="Views\Emails\Example.cshtml" />
+    <Content Include="Views\Chat\CreateChat.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Files\LawContracts\" />
+    <Folder Include="Views\StaticContent\" />
     <Folder Include="Views\Subscription\" />
   </ItemGroup>
   <ItemGroup>
@@ -340,6 +353,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201510161740434_from-scratch.resx">
       <DependentUpon>201510161740434_from-scratch.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201510251719171_chat.resx">
+      <DependentUpon>201510251719171_chat.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

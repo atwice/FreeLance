@@ -15,5 +15,6 @@ namespace FreeLance.Models
 		public virtual ApplicationUser Freelancer { get; set; }
 		[Index("IX_data", 2, IsUnique = true)]
 		public virtual ProblemModels Problem { get; set; }
+		public int? ChatId { get; set; }
 	}
 }

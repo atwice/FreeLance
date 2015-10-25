@@ -1,6 +1,9 @@
 ﻿@model FreeLance.Controllers.ProblemController.DetailsView
-@{ FreeLance.Models.ProblemModels problem = Model.ProblemModels;
-	bool isSubscribed = Model.IsSubscibed;}
+@using Microsoft.AspNet.Identity;
+@{ 
+	FreeLance.Models.ProblemModels problem = Model.ProblemModels;
+	bool isSubscribed = Model.IsSubscibed;
+	}
 @{
 	ViewBag.Title = "Problem";
 }
@@ -108,5 +111,8 @@
             }
         </div>
     </div>
+	@if (User.IsInRole("Freelancer") || Model.ProblemModels.Employer.Id == User.Identity.GetUserId()) {
+		@Html.Action("ProblemChat", "Chat", new { problemId = Model.ProblemModels.ProblemId });
+	}
 </div>
 
