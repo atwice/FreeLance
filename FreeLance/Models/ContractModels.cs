@@ -9,7 +9,7 @@ namespace FreeLance.Models
 {
 	public enum ContractStatus
 	{
-		Opened, InProgress, Done, Failed, СancelledByFreelancer, СancelledByEmployer, Closed
+		Opened, InProgress, Done, Failed, СancelledByFreelancer, СancelledByEmployer, Closed, ClosedNotPaid
 	}
 
 	public class ContractModels

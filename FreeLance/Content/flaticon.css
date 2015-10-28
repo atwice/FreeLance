@@ -1,0 +1,42 @@
+@font-face {
+	font-family: "Flaticon";
+	src: url("flaticon.eot");
+	src: url("flaticon.eot#iefix") format("embedded-opentype"),
+	url("flaticon.woff") format("woff"),
+	url("flaticon.ttf") format("truetype"),
+	url("flaticon.svg") format("svg");
+	font-weight: normal;
+	font-style: normal;
+}
+[class^="flaticon-"]:before, [class*=" flaticon-"]:before,
+[class^="flaticon-"]:after, [class*=" flaticon-"]:after {   
+	font-family: Flaticon;
+    font-size: 20px;
+	font-style: normal;
+    margin-right: .1em;
+    text-align: center;
+    margin-left: .1em;
+}.flaticon-calendar68:before {
+	content: "\e000";
+}
+.flaticon-comments16:before {
+	content: "\e001";
+}
+.flaticon-justice4:before {
+	content: "\e002";
+}
+.flaticon-payment7:before {
+	content: "\e003";
+}
+.flaticon-question41:before {
+	content: "\e004";
+}
+.flaticon-ruble:before {
+	content: "\e005";
+}
+.flaticon-settings48:before {
+	content: "\e006";
+}
+.flaticon-two185:before {
+	content: "\e007";
+}

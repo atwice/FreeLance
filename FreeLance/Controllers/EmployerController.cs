@@ -16,8 +16,38 @@ namespace FreeLance.Controllers
 
 		public class HomeViewModel
 		{
-			public List<ContractModels> ActualContracts { get; set; }
-			public List<ProblemModels> OpenProblems { get; set; }
+			public List<ProblemInProgressViewModel> ProblemsInProgress { get; set; }
+			public List<ProblemOpenViewModel> ProblemsOpen { get; set; }
+		}
+
+		public class ProblemOpenViewModel
+		{
+			public String Name { get; set; }
+			public String ShortDescription { get; set; }
+			public decimal Cost { get; set; }
+			public int SubscribersCount { get; set; }
+			public int Id { get; set; }
+			public int NewMsgCount { get; set; }
+		}
+
+		public class ProblemInProgressViewModel
+		{
+			public String Name { get; set; }
+			public int Id { get; set; }
+			public List<ContractInProgressViewModel> Contracts { get; set; }
+		}
+
+		public class ContractInProgressViewModel
+		{
+			public String FIO { get; set; }
+			public String freelancerId { get; set; }
+			public int id { get; set; }
+			public ContractStatus status { get; set; }
+			public int newMsgCount { get; set; }
+			public decimal Cost { get; set; }
+			public String EndingDate { get; set; }
+			public String CreationDate { get; set;  }
+			public String StatusIcon { get; set; }
 		}
 
 		public class ProblemView
@@ -60,22 +90,112 @@ namespace FreeLance.Controllers
 			return RedirectToAction("Home");
 		}
 
+
+		public String getStatusIcon(ContractStatus status)
+		{
+			String answer = "";
+			switch(status)
+			{
+				case ContractStatus.Opened:
+					answer = "flaticon-question41";
+					break;
+
+				case ContractStatus.InProgress:
+					answer = "flaticon-two185";
+					break;
+
+				case ContractStatus.Done:
+					answer = "flaticon-justice4";
+					break;
+
+				case ContractStatus.ClosedNotPaid:
+					answer = "flaticon-payment7";
+					break;
+			}
+			return answer;
+		}
+
+		public List<ContractInProgressViewModel> getProblemContract(int problemId)
+		{
+			List<ContractInProgressViewModel> contractsData = new List<ContractInProgressViewModel>();
+			ICollection<ContractModels> contrats = db.ProblemModels
+				.Where(
+					p => p.ProblemId == problemId
+				)
+				.Select(
+					p => p.Contracts
+				)
+				.ToList()[0];
+			foreach(var contract in contrats)
+			{
+				if(contract.Status == ContractStatus.ClosedNotPaid ||
+					contract.Status == ContractStatus.Done ||
+					contract.Status == ContractStatus.InProgress ||
+					contract.Status == ContractStatus.Opened)
+				{
+					contractsData.Add(
+					new ContractInProgressViewModel
+						{
+							FIO = contract.Freelancer.FIO,
+							freelancerId = contract.Freelancer.Id,
+							id = contract.ContractId,
+							status = contract.Status,
+							newMsgCount = 0, // TODO
+							EndingDate = DateTime.Now.AddDays(30).ToString("dd/MM/yyyy"), // TODO
+							Cost = contract.Cost,
+							CreationDate = contract.CreationDate.ToString("dd/MM/yyyy"),
+							StatusIcon = getStatusIcon(contract.Status)
+						}
+					);
+				}
+			}
+			return contractsData;
+		}
+
 		// GET: Employer
 		public ActionResult Home()
 		{
 			string userId = User.Identity.GetUserId();
 			var model = new HomeViewModel();
-			model.ActualContracts = db.ContractModels.Where(
-				c => c.Problem.Employer.Id == userId
-					&& (
-                    c.Status == ContractStatus.Opened
-                    || c.Status == ContractStatus.InProgress
-                    || c.Status == ContractStatus.Done
-                    )).ToList();
-			model.OpenProblems = db.ProblemModels.Where(
-				p => p.Employer.Id == userId
-					&& p.Status == ProblemStatus.Opened
-				).ToList();
+
+			model.ProblemsInProgress = db.ProblemModels
+				.Where(
+					p => p.Employer.Id == userId && 
+						(p.Status == ProblemStatus.Opened || p.Status == ProblemStatus.InProgress)
+						&& p.Contracts.Count != 0
+				)
+				.Select(
+					p => new ProblemInProgressViewModel
+					{
+						Name = p.Name,
+						Id = p.ProblemId
+					}
+				)
+				.ToList();
+
+			foreach(var problem in model.ProblemsInProgress)
+			{
+				problem.Contracts = getProblemContract(problem.Id);
+			}
+
+			model.ProblemsOpen = db.ProblemModels
+				.Where(
+					p => p.Employer.Id == userId
+						&& p.Status == ProblemStatus.Opened
+				)
+				.Select(
+					p => new ProblemOpenViewModel
+					{
+						Name = p.Name,
+						Id = p.ProblemId,
+						ShortDescription = p.SmallDescription,
+						Cost = p.Cost,
+						SubscribersCount = p.Subscriptions.Count,
+						NewMsgCount = 0
+					}
+				)
+				.ToList();
+
 			return View( model );
 		}
 
