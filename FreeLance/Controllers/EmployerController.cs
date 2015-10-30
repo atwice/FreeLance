@@ -60,6 +60,7 @@ namespace FreeLance.Controllers
 		{
 			public String Name { get; set; }
 			public string Id { get; set;  }
+			public string Email { get; set; }
 			public int ClosedContractsCount { get; set; }
 			public int OpenContractsCount { get; set; }
 			public decimal Rate { get; set; }
@@ -263,7 +264,7 @@ namespace FreeLance.Controllers
 
 			List<ArchivedContractViewModel> model = new List<ArchivedContractViewModel>();
 			foreach (var contract in contracts) { 
-				if(!hideFailed || (hideFailed && contract.Status == ContractStatus.СancelledByEmployer))
+				if(!hideFailed || (hideFailed && contract.Status == ContractStatus.Closed))
 				{
 					model.Add(getClosedContractData(contract));
 				}
@@ -357,6 +358,7 @@ namespace FreeLance.Controllers
 			{
 				Rate = 0,
 				Name = freelancer.FIO,
+				Email = freelancer.Email,
 				ClosedContractsCount = 0,
 				OpenContractsCount = 0,
 				Id = id
@@ -364,7 +366,10 @@ namespace FreeLance.Controllers
 			decimal rate = 0;
 			foreach (var contract in contracts)
 			{
-				if (contract.Status == ContractStatus.Closed)
+				if (contract.Status == ContractStatus.Closed 
+					|| contract.Status == ContractStatus.Failed
+					|| contract.Status == ContractStatus.СancelledByEmployer
+					|| contract.Status == ContractStatus.СancelledByFreelancer)
 				{
 					rate += contract.Rate;
 					model.ClosedContractsCount += 1;
@@ -382,7 +387,7 @@ namespace FreeLance.Controllers
 			return model;
 		}
 
-		public ActionResult Freelancers()
+		public ActionResult Freelancers(String searchString, String sortOrder)
 		{
 			List<string> Ids = AccountController.GetApplicationUsersInRole(db, "Freelancer").Select(
 				u => u.Id ).ToList();
@@ -391,6 +396,63 @@ namespace FreeLance.Controllers
 			{
 				model.Add(GetFreelancerInfo(id));
 			}
+
+			if (!String.IsNullOrEmpty(searchString))
+			{
+				model = model.Where(c => c.Name.Contains(searchString) || c.Email.Contains(searchString) ).ToList();
+			}
+
+			ViewBag.sortEmail = "email";
+			ViewBag.sortName = "name";
+			ViewBag.sortRate = "rate";
+			ViewBag.sortDone = "done";
+			ViewBag.sortInProgress = "in_progress";
+
+			switch (sortOrder)
+			{
+				case "email_desc":
+					model = model.OrderByDescending(с => с.Email).ToList();
+					break;
+				case "email":
+					ViewBag.sortEmail = "sort_desc";
+					model = model.OrderBy(с => с.Email).ToList();
+					break;
+				case "name_desc":
+					model = model.OrderByDescending(с => с.Name).ToList();
+					break;
+				case "name":
+					ViewBag.sortName = "name_desc";
+					model = model.OrderBy(с => с.Name).ToList();
+					break;
+				case "rate_desc":
+					model = model.OrderByDescending(с => с.Rate).ToList();
+					break;
+				case "rate":
+					ViewBag.sortRate = "rate_desc";
+					model = model.OrderBy(с => с.Rate).ToList();
+					break;
+				case "done_desc":
+					model = model.OrderByDescending(с => с.ClosedContractsCount).ToList();
+					break;
+				case "done":
+					ViewBag.sortDone = "done_desc";
+					model = model.OrderBy(с => с.ClosedContractsCount).ToList();
+					break;
+				case "in_progress_desc":
+					model = model.OrderByDescending(с => с.OpenContractsCount).ToList();
+					break;
+				case "in_progress":
+					ViewBag.sortInProgress = "in_progress_desc";
+					model = model.OrderBy(с => с.OpenContractsCount).ToList();
+					break;
+
+				default:
+					model = model.OrderBy(c => c.Name).ToList();
+					break;
+			}
+
+			ViewBag.sortOrder = sortOrder;
+
 			return View(model);
 		}
 

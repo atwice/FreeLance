@@ -30,7 +30,7 @@ else
 <div class="row">
 	<div class="col-sm-10">
 		<h2>Архив контрактов:</h2>
-		<div>
+		<p>
 			<a href=@Url.Action("Archive", "Employer",
 				new { sortOrder = ViewBag.sortCost }) class="btn btn-info">
 				<span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
@@ -60,7 +60,7 @@ else
 				<input id="hideFailed" type="checkbox"> 
             }
 			Скрыть расторгнутые
-		</div>
+		</p>
 		<div>
 			@foreach (var contract in Model)
 			{
@@ -81,7 +81,7 @@ else
 									<a href="/Freelancer/Details/@contract.FreelancerId">@contract.FreelancerName</a>
 								</td>
 								<td>
-									Стоимость: @contract.Cost рублей
+									Стоимость: @contract.Cost <span class="flaticon-ruble"></span>
 								</td>
 								<td>Работа: @contract.StatusMessage</td>
 							</tr>

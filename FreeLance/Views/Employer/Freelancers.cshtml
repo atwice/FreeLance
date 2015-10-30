@@ -1,11 +1,16 @@
 ﻿@model IEnumerable<FreeLance.Controllers.EmployerController.FreelancerViewModel>
 @{
-    ViewBag.Title = "Все исполнители";
+	ViewBag.Title = "Исполнители";
 	ViewBag.MenuPick = "Freelancers";
 }
 
 @section css {
 	<link rel="stylesheet" href="~/Content/jquery.raty.css">
+	<style>
+		td, th {
+			text-align : center;
+		}
+	</style>
 }
 
 @section PageScripts{
@@ -14,37 +19,97 @@
 	<script type="text/javascript" src="~/Scripts/jquery.raty.js"></script>
 }
 
-<div class="col-md-10">
-	<h2>@ViewBag.Title</h2>
-	<div class="list-group">
-		@foreach (var freelancer in @Model)
+<div class="row">
+	<div class="col-sm-10">
+		<h2>@ViewBag.Title:</h2>
+		@using (Html.BeginForm())
 		{
-			<a href="/Freelancer/Details/@freelancer.Id" class="list-group-item">
-				<h4 class="list-group-item-heading">@freelancer.Name</h4>
-				@if (freelancer.ClosedContractsCount != 0)
-				{
-					<div class="stars" data-score=@freelancer.Rate.ToString().Replace(",",".")></div>
-					
-				}
-				<p class="list-group-item-text"><strong>Контрактов в процессе выполнения: </strong>@freelancer.OpenContractsCount</p>
-				<p class="list-group-item-text"><strong>Выполнил(а) контрактов: </strong>@freelancer.ClosedContractsCount</p>
-			</a>
+			<p>
+				@Html.TextBox("searchString")
+				<input class="btn btn-info" type="submit" value="Поиск" />
+			</p>
 		}
+		<table  id="myTable" class="table table-striped table-bordered">
+			<thead>
+				<tr>
+					<th>
+						<a href=@Url.Action("Freelancers", "Employer",
+							new { sortOrder = ViewBag.sortName })>
+							<span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+							ФИО
+						</a>
+					</th>
+					<th>
+						<a href=@Url.Action("Freelancers", "Employer",
+							new { sortOrder = ViewBag.sortEmail })>
+							<span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+							Email
+						</a>
+					</th>
+					<th>
+						<a href=@Url.Action("Freelancers", "Employer",
+							new { sortOrder = ViewBag.sortDone })>
+							<span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+							Контрактов<br />закрыто
+						</a>
+					</th>
+					<th>
+						<a href=@Url.Action("Freelancers", "Employer",
+							new { sortOrder = ViewBag.sortInProgress })>
+							<span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+							Контрактов<br />в работе
+						</a>
+					</th>
+					<th>
+						<a href=@Url.Action("Freelancers", "Employer",
+							new { sortOrder = ViewBag.sortRate })>
+							<span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+							Рейтинг
+						</a>
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var freelancer in @Model)
+			{
+					<tr>
+						<td>
+							<a href="/Freelancer/Details/@freelancer.Id">
+								@freelancer.Name
+							</a>
+						</td>
+						<td>
+							@freelancer.Email
+						</td>
+						<td>
+							@freelancer.ClosedContractsCount
+						</td>
+						<td>
+							@freelancer.OpenContractsCount
+						</td>
+						<td>
+							<span class="stars" data-score=@freelancer.Rate.ToString().Replace(",",".")></span>
+						</td>
+					</tr>
+			}
+			</tbody>
+		</table>
 	</div>
 </div>
 
-@{
-	<script>
-		$(function () {
-			$(".stars").each(function () {
-				$(this).raty({
-					path: "../../Content/images",
-					readOnly: true,
-					score: function () {
-						return $(this).attr('data-score');
-					}
-				});
+
+
+<script>
+	$(function () {
+		$(".stars").each(function () {
+			$(this).raty({
+				path: "../../Content/images",
+				readOnly: true,
+				score: function () {
+					return $(this).attr('data-score');
+				}
 			});
 		});
-	</script>
-}
+	});
+</script>
+

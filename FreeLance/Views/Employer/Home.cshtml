@@ -37,7 +37,7 @@ else
 							<p>
 								<i class="flaticon-calendar68"></i>
 								<i><b>@contract.EndingDate - @contract.CreationDate</b></i>
-								<span class="pull-right"><b style="font-size:17px">@contract.Cost</b><span class="flaticon-ruble"></span> </span>
+								<span class="pull-right"><b>@contract.Cost</b><span class="flaticon-ruble"></span> </span>
 							</p>
 							<p><i><b>Исполнитель:</b></i> <a style="padding-left:5px" href="/Freelancer/Details/@contract.freelancerId">@contract.FIO</a></p>
 
@@ -61,7 +61,7 @@ else
 					<div class="panel-body">
 						<p>
 							<b>@problem.SubscribersCount подписчиков</b>
-							<span class="pull-right"><b style="font-size:17px">@problem.Cost</b><span class="flaticon-ruble"></span> </span>
+							<span class="pull-right"><b>@problem.Cost</b><span class="flaticon-ruble"></span> </span>
 						</p>
 						<p><i> @Truncate(problem.ShortDescription, 200)</i></p>
 						<div>
