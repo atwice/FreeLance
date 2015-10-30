@@ -15,6 +15,16 @@ namespace FreeLance.Migrations
 
 	internal sealed class Configuration : DbMigrationsConfiguration<FreeLance.Models.ApplicationDbContext>
 	{
+
+		private static readonly Random random = new Random();
+
+		private static double RandomNumberBetween(double minValue, double maxValue)
+		{
+			var next = random.NextDouble();
+
+			return minValue + (next * (maxValue - minValue));
+		}
+
 		public Configuration()
 		{
 			AutomaticMigrationsEnabled = true;
@@ -114,7 +124,11 @@ namespace FreeLance.Migrations
 		{
 			Random rnd = new Random();
 			var contract = new ContractModels { Details = details, Problem = problem, Status = status, Freelancer = freelancer,
-				CreationDate = DateTime.Now, EndingDate = DateTime.Now.AddDays(30).AddHours(5), Comment="Comment about freelancer's work", Rate=rnd.Next(1,6) };
+				CreationDate = DateTime.Now.AddDays(rnd.Next(1, 40)).AddHours(5),
+				EndingDate = DateTime.Now.AddDays(rnd.Next(50, 100)).AddHours(5),
+				Comment ="Comment about freelancer's work", Rate=rnd.Next(1,6),
+				Cost = (decimal) RandomNumberBetween(10.1, 5000.0)
+			};
 			context.ContractModels.AddOrUpdate(p => p.Details, contract);
 			return contract;
 		}

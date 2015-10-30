@@ -63,7 +63,7 @@ else
 							<b>@problem.SubscribersCount подписчиков</b>
 							<span class="pull-right"><b style="font-size:17px">@problem.Cost</b><span class="flaticon-ruble"></span> </span>
 						</p>
-						<p class="list-group-item-text"><i> @Truncate(problem.ShortDescription, 200)</i></p>
+						<p><i> @Truncate(problem.ShortDescription, 200)</i></p>
 						<div>
 							<i class="flaticon-comments16"></i> <span class="badge">@problem.NewMsgCount</span>
 							<a href="/Problem/Details/@problem.Id" class="btn btn-info pull-right" role="button">К задаче</a>
