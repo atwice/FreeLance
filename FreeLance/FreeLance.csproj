@@ -220,6 +220,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\flaticon.css" />
+    <Content Include="Content\boostrap-4-flex.css" />
+    <Content Include="Content\boostrap-4.css" />
     <Content Include="Content\font-awesome.min.css" />
     <Content Include="Content\freelance.css" />
     <Content Include="Content\bootstrap.css" />
@@ -230,6 +232,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Scripts\bootstrap-4.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Files\test.docx" />
@@ -340,6 +343,9 @@
     <Content Include="Views\Freelancer\_DetailsForEmployerComments.cshtml" />
     <Content Include="Views\Freelancer\_DetailsForEmployerProfile.cshtml" />
     <Content Include="Views\Freelancer\_DetailsForEmployerProblems.cshtml" />
+    <Content Include="Views\Problem\SmallViewCoordinator.cshtml" />
+    <Content Include="Views\Contract\SmallView.cshtml" />
+    <Content Include="Views\Shared\ContractSmallViewCoordinator.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

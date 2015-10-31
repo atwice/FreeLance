@@ -25,7 +25,8 @@ namespace FreeLance
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
-                      "~/Content/site.css"));
+                      "~/Content/Site.css"
+                      ));
 
 			bundles.Add(new ScriptBundle("~/bundles/jquery-comments/js").Include(
 					  "~/Scripts/jquery-comments.js"));

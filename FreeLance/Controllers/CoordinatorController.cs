@@ -25,6 +25,7 @@ namespace FreeLance.Controllers
 		{
 			public List<ApplicationUser> IncognitosSmallList { get; set; }
 			public List<ApplicationUser> WithoutDocumentsSmallList { get; set; }
+            public List<ContractModels> ContractsList { get; set; }
 		}
 
 		public class FreelancersViewModel
@@ -149,6 +150,7 @@ namespace FreeLance.Controllers
 				model.WithoutDocumentsSmallList = model.WithoutDocumentsSmallList.GetRange(0, 3);
 				ViewBag.ManyWithoutDocuments = true;
 			}
+		    model.ContractsList = db.ContractModels.ToList();
 			return View(model);
 		}
 

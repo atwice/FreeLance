@@ -12,9 +12,21 @@
     <title>Coordinator's Home</title>
 </head>
 <body>
-    <div class="col-md-10">
-        <h2>@ViewBag.Title</h2>
-        <h3>Анкеты на подтверждение</h3>
+<div class="row">
+    <div class="col-md-6">
+        <h2>Новые контракты</h2>
+        <p>Список новых контрактов</p>
+        @foreach (var contract in Model.ContractsList)
+        {
+            Html.RenderPartial("~/Views/Contract/SmallView.cshtml", contract);
+        }
+        <h2>Ожидают выплаты</h2>
+        <p>Список ожидающих выплаты</p>
+    </div>
+    <div class="col-md-6">
+        <h2>Новые работодатели</h2>
+        <p>Список новых работодателей</p>
+        <h2>Новые пользователи</h2>
         <div class="list-group">
             @if (Model.IncognitosSmallList.Count == 0)
             {
@@ -25,53 +37,129 @@
                 foreach (var incognito in Model.IncognitosSmallList)
                 {
                     <div class="list-group-item">
-						@using (Html.BeginForm("IncognitoToFreelancer", "Coordinator", new { usernameID = incognito.Id, redirect = "Home" }))
-						{
-							<input type="submit" value="Допустить в систему" class="pull-right btn btn-success" />
-						}
-						
-                        <h4 class="list-group-item-heading">@incognito.FIO</h4>
-                        <p class="list-group-item-text" style="color:lightgray"><i>@incognito.Email</i></p>
-                        <p class="list-group-item-text" style="color:lightgray"><i>@incognito.PhoneNumber</i></p>
-                    </div>
-				}
-				if (ViewBag.ManyIncognitos)
-				{
-					<div class="list-group-item">
-						<h4 class="list-group-item-heading" align="center">...</h4>
-					</div>
-				}
-			}
-        </div>
+                        @using (Html.BeginForm("IncognitoToFreelancer", "Coordinator", new { usernameID = incognito.Id, redirect = "Home" }))
+                        {
+                            <input type="submit" value="Допустить в систему" class="pull-right btn btn-success" />
+                        }
 
-        <h3>Документы на подтверждение</h3>
+                        <h4 class="list-group-item-heading">@incognito.FIO</h4>
+                        <p class="list-group-item-text" style="color: lightgray">
+                            <i>@incognito.Email</i>
+                        </p>
+                        <p class="list-group-item-text" style="color: lightgray">
+                            <i>@incognito.PhoneNumber</i>
+                        </p>
+                    </div>
+                }
+                if (ViewBag.ManyIncognitos)
+                {
+                    <div class="list-group-item">
+                        <h4 class="list-group-item-heading" align="center">...</h4>
+                    </div>
+                }
+            }
+        </div>
+        <h2>Документы на проверку</h2>
         <div class="list-group">
             @if (Model.WithoutDocumentsSmallList.Count == 0)
             {
                 <h5>У всех фрилансеров подтверждены документы. Отличная работа!</h5>
-			}
-			else
-			{
-				foreach (var withoutDoc in Model.WithoutDocumentsSmallList)
-				{
+            }
+            else
+            {
+                foreach (var withoutDoc in Model.WithoutDocumentsSmallList)
+                {
                     <div class="list-group-item">
-						@using (Html.BeginForm("ViewFreelancerDocuments", "Coordinator", new { userId = withoutDoc.Id }))
-						{
-							<input type="submit" value="Проверить документы" class="pull-right btn btn-success" />
-						}
+                        @using (Html.BeginForm("ViewFreelancerDocuments", "Coordinator", new { userId = withoutDoc.Id }))
+                        {
+                            <input type="submit" value="Проверить документы" class="pull-right btn btn-success" />
+                        }
                         <h4 class="list-group-item-heading">@withoutDoc.FIO</h4>
-                        <p class="list-group-item-text" style="color: lightgray"><i>@withoutDoc.Email</i></p>
-                        <p class="list-group-item-text" style="color: lightgray"><i>@withoutDoc.PhoneNumber</i></p>
+                        <p class="list-group-item-text" style="color: lightgray">
+                            <i>@withoutDoc.Email</i>
+                        </p>
+                        <p class="list-group-item-text" style="color: lightgray">
+                            <i>@withoutDoc.PhoneNumber</i>
+                        </p>
                     </div>
-				}
-				if (ViewBag.ManyWithoutDocuments)
-				{
-					<div class="list-group-item">
-						<h4 class="list-group-item-heading" align="center">...</h4>
-					</div>
-				}
-			}
-         </div>
-	</div>
+                }
+                if (ViewBag.ManyWithoutDocuments)
+                {
+                    <div class="list-group-item">
+                        <h4 class="list-group-item-heading" align="center">...</h4>
+                    </div>
+                }
+            }
+        </div>
+        <h2>Новые отзывы</h2>
+        <p>Список новых отзывов</p>
+    </div>
+</div>
+<hr/>
+<div class="col-md-10">
+    <h2>@ViewBag.Title</h2>
+    <h3>Анкеты на подтверждение</h3>
+    <div class="list-group">
+        @if (Model.IncognitosSmallList.Count == 0)
+        {
+            <h5>Все заявки подтверждены. Отличная работа!</h5>
+        }
+        else
+        {
+            foreach (var incognito in Model.IncognitosSmallList)
+            {
+                <div class="list-group-item">
+                    @using (Html.BeginForm("IncognitoToFreelancer", "Coordinator", new {usernameID = incognito.Id, redirect = "Home"}))
+                    {
+                        <input type="submit" value="Допустить в систему" class="pull-right btn btn-success"/>
+                    }
+
+                    <h4 class="list-group-item-heading">@incognito.FIO</h4>
+                    <p class="list-group-item-text" style="color: lightgray"><i>@incognito.Email</i>
+                    </p>
+                    <p class="list-group-item-text" style="color: lightgray"><i>@incognito.PhoneNumber</i>
+                    </p>
+                </div>
+            }
+            if (ViewBag.ManyIncognitos)
+            {
+                <div class="list-group-item">
+                    <h4 class="list-group-item-heading" align="center">...</h4>
+                </div>
+            }
+        }
+    </div>
+
+    <h3>Документы на подтверждение</h3>
+    <div class="list-group">
+        @if (Model.WithoutDocumentsSmallList.Count == 0)
+        {
+            <h5>У всех фрилансеров подтверждены документы. Отличная работа!</h5>
+        }
+        else
+        {
+            foreach (var withoutDoc in Model.WithoutDocumentsSmallList)
+            {
+                <div class="list-group-item">
+                    @using (Html.BeginForm("ViewFreelancerDocuments", "Coordinator", new {userId = withoutDoc.Id}))
+                    {
+                        <input type="submit" value="Проверить документы" class="pull-right btn btn-success"/>
+                    }
+                    <h4 class="list-group-item-heading">@withoutDoc.FIO</h4>
+                    <p class="list-group-item-text" style="color: lightgray"><i>@withoutDoc.Email</i>
+                    </p>
+                    <p class="list-group-item-text" style="color: lightgray"><i>@withoutDoc.PhoneNumber</i>
+                    </p>
+                </div>
+            }
+            if (ViewBag.ManyWithoutDocuments)
+            {
+                <div class="list-group-item">
+                    <h4 class="list-group-item-heading" align="center">...</h4>
+                </div>
+            }
+        }
+    </div>
+</div>
 </body>
 </html>

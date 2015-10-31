@@ -1,0 +1,16 @@
+﻿@using FreeLance.Controllers
+@model FreeLance.Models.ContractModels
+
+<div class="card">
+    <div class="card-block">
+        <h4 class="card-title">@Model.Problem.Name</h4>
+        <p class="card-text">@Model.Problem.SmallDescription</p>
+        <a href="#" class="btn btn-primary">Go somewhere</a>
+    </div>
+</div>
+
+<div>
+    <h5>@Model.Problem.Name</h5>
+    <p>@Model.Details</p>
+    <span>@Model.Cost</span>
+</div>
