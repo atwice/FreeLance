@@ -11,7 +11,7 @@
 [class^="flaticon-"]:before, [class*=" flaticon-"]:before,
 [class^="flaticon-"]:after, [class*=" flaticon-"]:after {   
 	font-family: Flaticon;
-    font-size: 12px;
+    font-size: 20px;
 	font-style: normal;
     margin-right: .1em;
     text-align: center;
@@ -33,6 +33,7 @@
 }
 .flaticon-ruble:before {
 	content: "\e005";
+	font-size: 12px;
 }
 .flaticon-ruble-big:before {
 	content: "\e005";
