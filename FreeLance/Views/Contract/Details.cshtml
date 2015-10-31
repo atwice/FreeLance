@@ -1,59 +1,75 @@
 ﻿@using Microsoft.AspNet.Identity
-@model FreeLance.Controllers.ContractController.DetailsVR
-@{ FreeLance.Models.ContractModels contract = Model.Contract; }
+@model FreeLance.Controllers.ContractController.DetailsView
 @{
 	ViewBag.Title = "Contract";
+}
+
+@section PageScripts{
+	<!-- Include Raty JS file -->
+
+	<script type="text/javascript" src="~/Scripts/jquery-2.1.4.min.js"></script>
+	<script type="text/javascript" src="~/Scripts/jquery.raty.js"></script>
+
 }
 
 @section css {
 	<link rel="stylesheet" href="~/Content/jquery.raty.css">
 }
 
-@section PageScripts{
-	<!-- Include Raty JS file -->
-	<script type="text/javascript" src="~/Scripts/jquery-2.1.4.min.js"></script>
-	<script type="text/javascript" src="~/Scripts/jquery.raty.js"></script>
-}
-
-
-<div>
-	<div class="panel panel-default">
-		<div class="panel-heading">
-			<h5 class="contact-preheader">Описание контракта:</h5>
-			<h2> @Html.DisplayFor(model => contract.Problem.Name)</h2>
-		</div>
-		<div class="panel-body">
-			@if (contract.Status == FreeLance.Models.ContractStatus.Closed)
-			{
-				<div id="star" data-score=@contract.Rate></div>
-				<p><strong>Дата закрытия: </strong> @Html.DisplayFor(model => contract.EndingDate)</p>
-				<p><strong>Комментарий работодателя: </strong> @Html.DisplayFor(model => contract.Comment)</p>
-			}
-			<p> <strong>Дата создания: </strong> @Html.DisplayFor(model => contract.CreationDate)</p>
-			<p> <strong>Детали контракта: </strong> @Html.DisplayFor(model => contract.Details)</p>
-			<p> <strong>Краткое описание задачи: </strong> @Html.Raw(contract.Problem.SmallDescription)</p>
-			<p> <strong>Общее описание задачи: </strong> @Html.Raw(contract.Problem.Description)</p>
-			<table class="table">
-				<tbody>
+<div class="row">
+	<div class="col-sm-10">
+		<h2>Контракт</h2>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<table>
 					<tr>
-						<td>
-							<span class="glyphicon glyphicon-euro" aria-hidden="true"></span>
-							@Html.DisplayFor(model => contract.Cost)
+						<td width="80">
+							<img src=@Model.PhotoPath height="70" width="70">
 						</td>
 						<td>
-							<span class="glyphicon glyphicon-user" aria-hidden="true"></span>
-							@Html.DisplayFor(model => contract.Problem.Employer.FIO)
+							<a href="/Freelancer/Details/@Model.FreelancerId">
+								<h3>@Model.FreelancerName</h3>
+							</a>
+							<i>@Model.FreelancerEmail</i>
 						</td>
-						<td><b>Статус:</b> @Html.DisplayFor(model => contract.Status)</td>
-						<td><b>Id:</b> @Html.DisplayFor(model => contract.ContractId)</td>
 					</tr>
-				</tbody>
-			</table>
-		</div>
-		
-		<div class="panel-footer">	
+				</table>
+			</div>
+			<div class="panel-body container-fluid">
+				<div class="row">
+					<div class="col-xs-12">
+						<h2>@Model.ProblemName</h2>
+						<hr />
+					</div>
+				</div>
+				<div class="row text-center" style="font-size:16px">
+					<div class="col-xs-4">
+						<b>Создан:</b> @Model.CreatingDate
+					</div>
+					<div class="col-xs-4">
+						<b>Сделать до: </b> @Model.DeadlineDate
+					</div>
+					<div class="col-xs-4">
+						<b style="font-size:20px">@Model.Cost</b>
+						<span class="flaticon-ruble-big"></span>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-12">
+						<hr />
+						@Model.Details
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-12">
+						<hr />
+						<a href="#">Приложение 1</a>
+					</div>
+				</div>
+			</div>
+			<div class="panel-footer">
 				@if (User.IsInRole("Employer") &&
-				Model.Contract.Status == FreeLance.Models.ContractStatus.Done)
+				Model.Status == FreeLance.Models.ContractStatus.Done)
 				{
 
 					using (Html.BeginForm("Close", "Contract", FormMethod.Post))
@@ -63,37 +79,39 @@
 							<div id="starToRate"></div>
 						</div>
 						<input type="hidden" id="hint" name="rate" value="0" />
-						<input name="id" type="hidden" value="@contract.ContractId" />
+						<input name="id" type="hidden" value="@Model.ContractId" />
 						<div>
 							<textarea name="comment" placeholder="Почему именно такая оценка?" required></textarea>
 						</div>
-						<input id ="closeContractBtn" class="btn btn-success btn-lg" type="submit" 
-							   value="Принять работу" disabled/>
+						<input id="closeContractBtn" class="btn btn-success" type="submit"
+							   value="Принять работу" style="margin-top:5px" disabled />
 					}
 				}
 				@foreach (var button in Model.ChangeStatusButtons)
 				{
 					<div>
-						@using (Html.BeginForm("ChangeStatus", "Contract", FormMethod.Post)) {
-						<input name="id" type="hidden" value="@contract.ContractId" />
-						<input name="status" type="hidden" value="@button.Status" />
-						<input name="redirect" type="hidden" value="@button.Redirect" />
-						<input type="submit" class="btn @button.Classes btn-lg" value="@button.Text" />
+						@using (Html.BeginForm("ChangeStatus", "Contract", FormMethod.Post))
+						{
+							<input name="id" type="hidden" value="@Model.ContractId" />
+							<input name="status" type="hidden" value="@button.Status" />
+							<input name="redirect" type="hidden" value="@button.Redirect" />
+							<input type="submit" class="btn @button.Classes" value="@button.Text" style="margin-top:5px"/>
 						}
 					</div>
 				}
+			</div>
 		</div>
+
+		@{ string userId = User.Identity.GetUserId(); }
+		@if (Model.FreelancerId == userId || Model.EmployerId == userId)
+		{
+			@Html.Action("ContractChat", "Chat", new { contractId = Model.ContractId });
+		}
 	</div>
-	@{ string userId = User.Identity.GetUserId(); }
-	@if (Model.Contract.Freelancer.Id == userId || Model.Contract.Problem.Employer.Id == userId) {
-		@Html.Action("ContractChat", "Chat", new { contractId = Model.Contract.ContractId });
-	}
 </div>
 
 
 <script>
-	
-
 	$('#star').raty({
 		path: "../../Content/images",
 		readOnly: true,
@@ -110,5 +128,7 @@
 		}
 	});
 </script>
+
+
 
 
