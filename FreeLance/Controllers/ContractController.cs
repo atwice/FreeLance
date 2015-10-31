@@ -52,6 +52,7 @@ namespace FreeLance.Controllers
 			}
 
 			public List<ChangeStatusButton> ChangeStatusButtons;
+			public ChangeStatusButton finishButton;
 		}
 
 		public DetailsView getContractDetails(ContractModels c)
@@ -72,7 +73,7 @@ namespace FreeLance.Controllers
 				ProblemId = c.Problem.ProblemId,
 				Status = c.Status,
 				Details = c.Details,
-				PhotoPath = "http://placehold.it/300x300", //TODO
+				PhotoPath = "/Content/placeholder_avatar.png", //TODO
 				ContractId = c.ContractId
 			};
 
@@ -144,14 +145,21 @@ namespace FreeLance.Controllers
 						Status = ContractStatus.InProgress,
 						Redirect = "/Contract/Details/" + view.ContractId
 					});
+					view.finishButton = new DetailsView.ChangeStatusButton
+					{
+						Text = "Принять работу",
+						Classes = "btn-success",
+						Status = ContractStatus.ClosedNotPaid,
+						Redirect = "/Contract/Details/" + view.ContractId
+					};
 				} else if (view.Status == ContractStatus.InProgress
 							|| view.Status == ContractStatus.Opened) {
-					view.ChangeStatusButtons.Add(new DetailsView.ChangeStatusButton {
+					view.finishButton = new DetailsView.ChangeStatusButton {
 						Text = "Прервать контракт",
 						Classes = "btn-danger",
 						Status = ContractStatus.СancelledByEmployer,
 						Redirect = "/Employer/Archive"
-					});
+					};
 				}
 			}
 			return View(view);
@@ -224,7 +232,7 @@ namespace FreeLance.Controllers
 
 		[HttpPost]
 		[Authorize(Roles = "Employer")]
-		public ActionResult Close(int id, string comment, int rate)
+		public ActionResult Close(int id, string comment, int rate, ContractStatus newStatus)
 		{
 			ContractModels contract = db.ContractModels.Include(c => c.Problem).Single(c => c.ContractId == id);
 			if (contract == null || contract.Freelancer == null || contract.Problem.Employer.Id != User.Identity.GetUserId())
@@ -233,7 +241,7 @@ namespace FreeLance.Controllers
 			}
 			contract.Rate = rate;
 			contract.Comment = comment;
-			contract.Status = ContractStatus.Closed;
+			contract.Status = newStatus;
 			contract.EndingDate = DateTime.Now;
 			db.SaveChanges();
 			return Redirect("/Contract/Details/" + id.ToString());

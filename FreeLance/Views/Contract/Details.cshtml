@@ -41,30 +41,40 @@
 					<div class="col-xs-12">
 						<h2>
 							@Model.ProblemName
-							@if (Model.Status == FreeLance.Models.ContractStatus.Closed || Model.Status == FreeLance.Models.ContractStatus.Failed
-								|| Model.Status == FreeLance.Models.ContractStatus.СancelledByEmployer || Model.Status == FreeLance.Models.ContractStatus.СancelledByFreelancer)
+							@if (Model.Status == FreeLance.Models.ContractStatus.Closed 
+								|| Model.Status == FreeLance.Models.ContractStatus.Failed 
+								|| Model.Status == FreeLance.Models.ContractStatus.ClosedNotPaid
+								|| Model.Status == FreeLance.Models.ContractStatus.СancelledByEmployer 
+								|| Model.Status == FreeLance.Models.ContractStatus.СancelledByFreelancer)
 							{
 								<span id="star" class="pull-right" data-score=@Model.Rate.ToString().Replace(",",".")></span>
 							}
 						</h2>
 
 						<hr />
-						@if (Model.Status == FreeLance.Models.ContractStatus.Closed || Model.Status == FreeLance.Models.ContractStatus.Failed
-							|| Model.Status == FreeLance.Models.ContractStatus.СancelledByEmployer || Model.Status == FreeLance.Models.ContractStatus.СancelledByFreelancer)
+						@if ((User.IsInRole("Employer") || User.IsInRole("Coordinator")) 
+							&& (Model.Status == FreeLance.Models.ContractStatus.Closed 
+							|| Model.Status == FreeLance.Models.ContractStatus.Failed 
+							|| Model.Status == FreeLance.Models.ContractStatus.ClosedNotPaid
+							|| Model.Status == FreeLance.Models.ContractStatus.СancelledByEmployer 
+							|| Model.Status == FreeLance.Models.ContractStatus.СancelledByFreelancer))
 						{
 							<p><b>Комментарий работодателя:</b> @Model.Comment</p>
 							<hr />
 						}
 					</div>
 				</div>
-				<div class="row text-center" style="font-size:16px">
-					<div class="col-xs-4">
+				<div class="row text-center" >
+					<div class="col-xs-3">
 						<b>Создан:</b> @Model.CreatingDate
 					</div>
-					<div class="col-xs-4">
+					<div class="col-xs-3">
 						<b>Сделать до: </b> @Model.DeadlineDate
 					</div>
-					<div class="col-xs-4">
+					<div class="col-xs-3">
+						<b>Статус: </b> @Model.Status
+					</div>
+					<div class="col-xs-3">
 						<b style="font-size:20px">@Model.Cost</b>
 						<span class="flaticon-ruble-big"></span>
 					</div>
@@ -84,7 +94,9 @@
 			</div>
 			<div class="panel-footer">
 				@if (User.IsInRole("Employer") &&
-				Model.Status == FreeLance.Models.ContractStatus.Done)
+					(Model.Status == FreeLance.Models.ContractStatus.Done 
+					|| Model.Status == FreeLance.Models.ContractStatus.InProgress
+					|| Model.Status == FreeLance.Models.ContractStatus.Opened))
 				{
 
 					using (Html.BeginForm("Close", "Contract", FormMethod.Post))
@@ -95,11 +107,12 @@
 						</div>
 						<input type="hidden" id="hint" name="rate" value="0" />
 						<input name="id" type="hidden" value="@Model.ContractId" />
+						<input name="newStatus" type="hidden" value="@Model.finishButton.Status" />
 						<div>
 							<textarea name="comment" placeholder="Почему именно такая оценка?" required></textarea>
 						</div>
-						<input id="closeContractBtn" class="btn btn-success" type="submit"
-							   value="Принять работу" style="margin-top:5px" disabled />
+						<input id="closeContractBtn" class="btn @Model.finishButton.Classes" type="submit"
+							   value="@Model.finishButton.Text" style="margin-top:5px" disabled />
 					}
 				}
 				@foreach (var button in Model.ChangeStatusButtons)
