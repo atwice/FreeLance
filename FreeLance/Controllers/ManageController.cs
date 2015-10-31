@@ -236,6 +236,10 @@ namespace FreeLance.Controllers
                 {
                     await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
                 }
+				if(User.IsInRole("Employer"))
+				{
+					return Redirect("/Employer/Profile");
+				}
                 return RedirectToAction("Index", new { Message = ManageMessageId.ChangePasswordSuccess });
             }
             AddErrors(result);

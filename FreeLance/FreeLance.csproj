@@ -308,7 +308,6 @@
     <Content Include="Views\Freelancer\Home.cshtml" />
     <Content Include="Views\Freelancer\Archive.cshtml" />
     <Content Include="Views\Freelancer\Contract.cshtml" />
-    <Content Include="Views\Employer\NewProblem.cshtml" />
     <Content Include="Views\Employer\Problem.cshtml" />
     <Content Include="Views\Freelancer\Profile.cshtml" />
     <Content Include="Views\Coordinator\Home.cshtml" />
@@ -337,6 +336,7 @@
     <Content Include="Views\Coordinator\Settings.cshtml" />
     <Content Include="Views\Emails\Example.cshtml" />
     <Content Include="Views\Chat\CreateChat.cshtml" />
+    <Content Include="Views\Employer\Profile.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
