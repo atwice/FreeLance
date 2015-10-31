@@ -456,27 +456,6 @@ namespace FreeLance.Controllers
 			return View(model);
 		}
 
-		
-
-		public ActionResult NewProblem()
-		{
-			return View();
-		}
-
-		[HttpPost]
-		[ValidateAntiForgeryToken]
-		public ActionResult NewProblem([Bind(Include = "ProblemId,Name,Description,Status,Cost")] ProblemModels problem)
-		{
-			if (ModelState.IsValid)
-			{
-				problem.CreationDate = DateTime.Now;
-				problem.Employer = db.Users.Find(User.Identity.GetUserId());
-				db.ProblemModels.Add(problem);
-				db.SaveChanges();
-				return RedirectToAction("Problem", new { id = problem.ProblemId });
-			}
-			return View(problem);
-		}
 
 		public ActionResult Settings()
 		{
