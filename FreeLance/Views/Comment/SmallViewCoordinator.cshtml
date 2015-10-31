@@ -1,0 +1,19 @@
+﻿@model FreeLance.Models.ContractModels
+
+<div class="panel panel-default">
+    <div class="panel-heading"><b>@Model.Problem.Name</b> <span class="stars pull-right" data-score=@Model.Rate.ToString().Replace(",",".")></span></div>
+    <div class="panel-body">
+        <span class="left-category">Работодатель: </span>
+        <span class="right-category"> <a>@Model.Problem.Employer.FIO </a>  </span>
+        <span class="left-category">Исполнитель: </span>
+        <span class="right-category"><a> @Model.Freelancer.FIO </a> </span> <br/>
+        <p>@Model.Comment</p>
+        <span class="left-category">Завершен: </span>
+        <span class="right-category">@Model.EndingDate.ToShortDateString()</span> 
+    </div>
+    <div class="panel-footer">
+        <a class="btn btn-danger">Редактировать</a>
+        <a class="btn btn-success pull-right">Опубликовать</a>
+
+    </div>
+</div>

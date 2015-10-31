@@ -1,0 +1,18 @@
+﻿@model FreeLance.Models.DocumentPackageModels
+
+<div class="panel panel-default">
+    <div class="panel-heading"><b>@Model.Freelancer.FIO</b> </div>
+    <div class="panel-body">
+        <span class="left-category">Телефон: </span>
+        <span class="right-category"> <a>@Model.Phone </a>  </span> <br/>>
+        <span class="left-category">Адрес: </span>
+        <span class="right-category"><a> @Model.Adress </a> </span> <br/>
+        <span class="left-category">Детали оплаты:  </span>
+        <span class="right-category"><a> @Model.PaymentDetails </a> </span> <br />
+    </div>
+    <div class="panel-footer">
+        <a class="btn btn-danger">Отклонить</a>
+        <a class="btn btn-success pull-right">Одобрить</a>
+
+    </div>
+</div>

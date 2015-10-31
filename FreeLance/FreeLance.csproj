@@ -346,6 +346,10 @@
     <Content Include="Views\Problem\SmallViewCoordinator.cshtml" />
     <Content Include="Views\Contract\SmallView.cshtml" />
     <Content Include="Views\Shared\ContractSmallViewCoordinator.cshtml" />
+    <Content Include="Views\Employer\SmallViewCoordinatorHome.cshtml" />
+    <Content Include="Views\Freelancer\SmallViewCoordinatorHome.cshtml" />
+    <Content Include="Views\Comment\SmallViewCoordinator.cshtml" />
+    <Content Include="Views\Freelancer\DocumentSmallView.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

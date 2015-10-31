@@ -26,6 +26,10 @@ namespace FreeLance.Controllers
 			public List<ApplicationUser> IncognitosSmallList { get; set; }
 			public List<ApplicationUser> WithoutDocumentsSmallList { get; set; }
             public List<ContractModels> ContractsList { get; set; }
+            public List<ApplicationUser> NewEmployers { get; set; }
+            public List<ApplicationUser> NewFreelancers { get; set; }
+            public List<ContractModels> ContractWithComments { get; set; }
+            public List<DocumentPackageModels> DocumetsUnapproved { get; set; }
 		}
 
 		public class FreelancersViewModel
@@ -151,6 +155,10 @@ namespace FreeLance.Controllers
 				ViewBag.ManyWithoutDocuments = true;
 			}
 		    model.ContractsList = db.ContractModels.ToList();
+		    model.NewEmployers = getApplicationUsersApproved(false, "Employer").ToList();
+		    model.NewFreelancers = getApplicationUsersApproved(false, "Freelancer").ToList();
+		    model.ContractWithComments = db.ContractModels.Where(x => x.Comment != null).ToList();
+		    model.DocumetsUnapproved = db.DocumentPackageModels.ToList();
 			return View(model);
 		}
 
