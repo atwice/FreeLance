@@ -14,6 +14,7 @@
 
 @section css {
 	<link rel="stylesheet" href="~/Content/jquery.raty.css">
+<link rel="stylesheet" type="text/css" href="~/Content/flaticon.css">
 }
 
 <div class="row">
@@ -38,8 +39,22 @@
 			<div class="panel-body container-fluid">
 				<div class="row">
 					<div class="col-xs-12">
-						<h2>@Model.ProblemName</h2>
+						<h2>
+							@Model.ProblemName
+							@if (Model.Status == FreeLance.Models.ContractStatus.Closed || Model.Status == FreeLance.Models.ContractStatus.Failed
+								|| Model.Status == FreeLance.Models.ContractStatus.СancelledByEmployer || Model.Status == FreeLance.Models.ContractStatus.СancelledByFreelancer)
+							{
+								<span id="star" class="pull-right" data-score=@Model.Rate.ToString().Replace(",",".")></span>
+							}
+						</h2>
+
 						<hr />
+						@if (Model.Status == FreeLance.Models.ContractStatus.Closed || Model.Status == FreeLance.Models.ContractStatus.Failed
+							|| Model.Status == FreeLance.Models.ContractStatus.СancelledByEmployer || Model.Status == FreeLance.Models.ContractStatus.СancelledByFreelancer)
+						{
+							<p><b>Комментарий работодателя:</b> @Model.Comment</p>
+							<hr />
+						}
 					</div>
 				</div>
 				<div class="row text-center" style="font-size:16px">
