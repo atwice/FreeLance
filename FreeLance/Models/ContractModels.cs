@@ -9,7 +9,7 @@ namespace FreeLance.Models
 {
 	public enum ContractStatus
 	{
-		Opened, InProgress, Done, Failed, СancelledByFreelancer, СancelledByEmployer, Closed
+		Opened, InProgress, Done, Failed, СancelledByFreelancer, СancelledByEmployer, Closed, ClosedNotPaid
 	}
 
 	public class ContractModels
@@ -31,6 +31,6 @@ namespace FreeLance.Models
 		public decimal Cost { get; set; }
 		public decimal Rate { get; set; }
 		public string Comment { get; set; }
-
+		public int? ChatId { get; set; }
 	}
 }

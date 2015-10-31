@@ -24,9 +24,18 @@ namespace FreeLance.Models
 		public bool IsApprovedByCoordinator { get; set; }
 		public string FIO { get; set; }
 		public virtual DocumentPackageModels DocumentPackage { get; set; }
-    }
+		public EmailNotificationPolicyModel EmailNotificationPolicy { get; set; }
 
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+		public class EmailNotificationPolicyModel
+		{
+			public bool IsCommentsEnabled { get; set; }
+			public bool IsDocumentsEnabled { get; set; }
+			public bool IsNewApplicantsEnabled { get; set; }
+			public bool IsContractStatusEnabled { get; set; }
+		}
+	}
+
+	public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext()
             : base("DefaultConnection", throwIfV1Schema: false)
@@ -51,6 +60,8 @@ namespace FreeLance.Models
         public System.Data.Entity.DbSet<FreeLance.Models.LawFace> LawFaces { get; set; }
         public System.Data.Entity.DbSet<FreeLance.Models.LawContractTemplate> LawContractTemplates { get; set; }
         public System.Data.Entity.DbSet<FreeLance.Models.LawContract> LawContracts { get; set; }
-        
-    }
+		public System.Data.Entity.DbSet<FreeLance.Models.Chat> Chats { get; set; }
+		public System.Data.Entity.DbSet<FreeLance.Models.ChatMessage> ChatMessages { get; set; }
+
+	}
 }

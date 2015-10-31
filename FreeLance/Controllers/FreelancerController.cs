@@ -403,5 +403,20 @@ namespace FreeLance.Controllers
 			return documents;
 		}
 
+		public ActionResult Settings()
+		{
+			ApplicationUser user = db.Users.Find(User.Identity.GetUserId());
+			return View(user.EmailNotificationPolicy);
+		}
+
+		[HttpPost]
+		public ActionResult Settings(ApplicationUser.EmailNotificationPolicyModel policy)
+		{
+			ApplicationUser user = db.Users.Find(User.Identity.GetUserId());
+			user.EmailNotificationPolicy = policy;
+			db.SaveChanges();
+			return View(user.EmailNotificationPolicy);
+		}
+
 	}
 }

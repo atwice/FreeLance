@@ -84,6 +84,10 @@
 				}
 		</div>
 	</div>
+	@{ string userId = User.Identity.GetUserId(); }
+	@if (Model.Contract.Freelancer.Id == userId || Model.Contract.Problem.Employer.Id == userId) {
+		@Html.Action("ContractChat", "Chat", new { contractId = Model.Contract.ContractId });
+	}
 </div>
 
 

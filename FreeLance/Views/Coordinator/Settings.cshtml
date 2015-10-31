@@ -1,0 +1,21 @@
+﻿@model FreeLance.Models.ApplicationUser.EmailNotificationPolicyModel
+
+@{
+    ViewBag.Title = "Settings";
+}
+
+<h2>Настройки</h2>
+<h3>Email - уведомления </h3>
+
+@using (Html.BeginForm("Settings","Coordinator", FormMethod.Post))
+{
+    <div class="checkbox">
+        @Html.CheckBoxFor(m => m.IsDocumentsEnabled)
+        @Html.Label("Получать уведомления об изменениях документов")
+     </div>
+     <div class="checkbox">
+        @Html.CheckBoxFor(m => m.IsNewApplicantsEnabled)
+        @Html.Label("Получать уведомления о новых участниках")
+    </div>
+    <input type="submit" value="Сохранить" class="btn btn-success"/>
+}
