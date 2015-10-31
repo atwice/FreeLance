@@ -6,142 +6,185 @@
 
 @section css {
 	<link rel="stylesheet" type="text/css" href="~/Content/flaticon.css">
+	<style>
+		.info-container {
+			margin: 15px 0;
+		}
+		.info-block {
+			text-align: center;
+			padding: 5px;
+		}
+		.info-block-money {
+			margin-right: 125px;
+		}
+		.info-wrapper {
+			border: 1px solid #dddddd;
+			border-radius: 15px;
+			padding: 0 20px;
+			margin: 20px;
+		}
+		.form-send {
+			text-align: right;
+		}
+		.avatar-photo {
+			float: left;
+			border: 1px solid #dddddd;
+			border-radius: 2px;
+			padding: 1px;
+			margin: 1px;
+			width: 70px;
+			height: 70px;
+		}
+		.avatar-info {
+			margin-left: 85px;
+			height: 70px;
+			position: relative;
+		}
+		.avatar-name {
+			position: absolute;
+			margin: 0;
+			top: 0;
+		}
+		.avatar-mail {
+			position: absolute;
+			bottom : 0;
+		}
+	</style>
 }
 
 <div class="row">
 	<div class="col-sm-10">
 		<h2>Задача</h2>
 		<div class="panel panel-default">
-			<div class="panel-heading">
-				<table>
-					<tr>
-						<td width="80">
-							<img src=@Model.PhotoPath height="70" width="70">
-						</td>
-						<td>
-							<h3>@Model.EmployerName</h3>
-							<i>@Model.EmployerEmail</i>
-						</td>
-					</tr>
-				</table>
+			<div class="panel-heading clearfix">
+					<img src=@Model.PhotoPath class="avatar-photo">
+				<div class="avatar-info">
+					<h3 class="avatar-name">@Model.EmployerName</h3>
+					<i class="avatar-mail">@Model.EmployerEmail</i>
+				</div>
 			</div>
 			<div class="panel-body">
 				<h2>@Model.ProblemName</h2>
 				<p>@Model.ProblemShortDescription</p>
-				<table class="table" style="text-align:center;">
-					<tr>
-						<td >
-							Создано: @Model.CreatingDate
-						</td>
-						<td>
-							<b style="font-size:20px">@Model.Cost</b>
-							<span class="flaticon-ruble-big"></span>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							Сделать до: @Model.DeadlineDate
-						</td>
-						<td>
-							<b style="font-size:18px">Рабочих мест: @Model.AmountOfWorkers</b>
-						</td>
-					</tr>
-				</table>
-				@if (Context.User.IsInRole("Employer") && Model.EmployerId == User.Identity.GetUserId())
-				{
-					<table class="table" style="text-align:center">
-						<tbody>
-							<tr>
-								<td>
+				<div class="info-wrapper">
+					<div class="container info-container">
+						<div class="row">
+							<div class="col-md-6 info-block">
+								<h4>Создано: @Model.CreatingDate</h4>
+							</div>
+
+							<div class="col-md-6 info-block">
+								<span class="info-block-money">
+									<b style="font-size:20px">@Model.Cost</b>
+									<span class="flaticon-ruble-big"></span>
+								</span>
+							</div>
+						</div>
+						<div class="row">
+
+							<div class="col-md-6 info-block">
+								<h4>Сделать до: @Model.DeadlineDate</h4>
+							</div>
+
+							<div class="col-md-6 info-block">
+								<b style="font-size:18px">рабочих мест: @Model.AmountOfWorkers</b>
+							</div>
+						</div>
+					</div>
+					@if (Context.User.IsInRole("Employer") && Model.EmployerId == User.Identity.GetUserId())
+					{
+						<div class="container info-container">
+							<div class="row">
+								<div class="col-md-4 info-block">
 									<h4>Контракты в работе</h4>
 									<table class="table table-bordered" style="text-align:center">
 										@foreach (var contract in @Model.ContractsInProgress)
 										{
-											<tr>
-												<td>
-													<a href="/Freelancer/Details/@contract.FreelancerId">
-														@contract.FreelancerName
-													</a>
-												</td>
-												<td>
-													<a href="/Contract/Details/@contract.ContractId">
-														К контракту
-													</a>
-												</td>
-											</tr>
+								<tr>
+									<td>
+										<a href="/Freelancer/Details/@contract.FreelancerId">
+											@contract.FreelancerName
+										</a>
+									</td>
+									<td>
+										<a href="/Contract/Details/@contract.ContractId">
+											К контракту
+										</a>
+									</td>
+								</tr>
 										}
 										@if (@Model.ContractsInProgress.Count == 0)
 										{
-											<tr>
-												<td>
-													Пока что их нет.
-												</td>
-											</tr>
+								<tr>
+									<td>
+										Пока что их нет.
+									</td>
+								</tr>
 										}
 									</table>
-								</td>
-								<td>
+								</div>
+								<div class="col-md-4 info-block">
 									<h4>Завершенные контракты</h4>
 									<table class="table table-bordered" style="text-align:center; ">
-								 		@foreach (var contract in @Model.ContratsClosed)
-										{
-								 		<tr>
-								 			<td>
-								 				<a href="/Freelancer/Details/@contract.FreelancerId">
-								 					@contract.FreelancerName
-								 				</a>
-								 			</td>
-								 			<td>
-								 				<a href="/Contract/Details/@contract.ContractId">
-								 					К контракту
-								 				</a>
-								 			</td>
-										 </tr>
-										} 
+										@foreach (var contract in @Model.ContratsClosed)
+							{
+								<tr>
+									<td>
+										<a href="/Freelancer/Details/@contract.FreelancerId">
+											@contract.FreelancerName
+										</a>
+									</td>
+									<td>
+										<a href="/Contract/Details/@contract.ContractId">
+											К контракту
+										</a>
+									</td>
+								</tr>
+							}
 										@if (@Model.ContratsClosed.Count == 0)
-										{
-											<tr>
-												<td>
-													Пока что их нет.
-												</td>
-											</tr>
-										}
+							{
+								<tr>
+									<td>
+										Пока что их нет.
+									</td>
+								</tr>
+							}
 									</table>
-								</td>
-								<td>
+								</div>
+								<div class="col-md-4 info-block">
 									<h4>Подписчики</h4>
 									<table class="table table-bordered" style="text-align:center; ">
 										@foreach (var subscriber in @Model.Subscribers)
 										{
-											<tr>
-												<td>
-													<a href="/Freelancer/Details/@subscriber.FreelancerId">
-														@subscriber.FreelancerName
-													</a>
-												</td>
-												<td>
-													@Html.ActionLink("Подписать контракт", "Create", "Contract", new
+								<tr>
+									<td>
+										<a href="/Freelancer/Details/@subscriber.FreelancerId">
+											@subscriber.FreelancerName
+										</a>
+									</td>
+									<td>
+										@Html.ActionLink("Подписать контракт", "Create", "Contract", new
 													   {
 														   problemID = Model.ProblemId,
 														   freelancerId = subscriber.FreelancerId
 													   }, null)
-												</td>
-											</tr>
+									</td>
+								</tr>
 										}
 										@if (@Model.Subscribers.Count == 0)
 										{
-											<tr>
-												<td>
-													Пока что их нет.
-												</td>
-											</tr>
+								<tr>
+									<td>
+										Пока что их нет.
+									</td>
+								</tr>
 										}
 									</table>
-								</td>
-							</tr>
-						</tbody>	
-					</table>
-				}
+								</div>
+							</div>
+						</div>
+					}
+				</div>
 				<p>@Html.Raw(Model.ProblemFullDescription)</p>
 			</div>
 			<div class="panel-footer">
@@ -170,7 +213,7 @@
 				{
 					if (Model.Status != FreeLance.Models.ProblemStatus.Closed)
 					{
-						using (Html.BeginForm("ChangeStatus", "Problem", FormMethod.Post))
+						using (Html.BeginForm("ChangeStatus", "Problem", FormMethod.Post, new { @class = "form-send" }))
 						{
 								<input name="id" type="hidden" value="@Model.ProblemId" />
 								<input name="status" type="hidden" value="@FreeLance.Models.ProblemStatus.Closed" />

@@ -4,37 +4,71 @@
 	ViewBag.Title = "Contract";
 }
 
-@section PageScripts{
-	<!-- Include Raty JS file -->
-
-	<script type="text/javascript" src="~/Scripts/jquery-2.1.4.min.js"></script>
-	<script type="text/javascript" src="~/Scripts/jquery.raty.js"></script>
-
-}
 
 @section css {
 	<link rel="stylesheet" href="~/Content/jquery.raty.css">
-<link rel="stylesheet" type="text/css" href="~/Content/flaticon.css">
+	<link rel="stylesheet" type="text/css" href="~/Content/flaticon.css">
+	<style>
+		.form-wrapper {
+			position: relative;
+		}
+
+		.form-stars {
+			display: inline-block; 
+			margin: 0 5px;
+		}
+
+		.form-comment {
+			width: 100%; 
+			max-width: initial; 
+			margin: 15px 0;
+		}
+
+		.form-change-status {
+			position: absolute; 
+			right: 0; 
+			bottom: 0;
+		}
+		/*input[type="submit"] {
+			margin: 5px;
+		}*/
+
+		.avatar-photo {
+			float: left;
+			border: 1px solid #dddddd;
+			border-radius: 2px;
+			padding: 1px;
+			margin: 1px;
+			width: 70px;
+			height: 70px;
+		}
+		.avatar-info {
+			margin-left: 85px;
+			height: 70px;
+			position: relative;
+		}
+		.avatar-name {
+			position: absolute;
+			margin: 0;
+			top: 0;
+		}
+		.avatar-mail {
+			position: absolute;
+			bottom : 0;
+		}
+	</style>
 }
 
 <div class="row">
 	<div class="col-sm-10">
 		<h2>Контракт</h2>
 		<div class="panel panel-default">
-			<div class="panel-heading">
-				<table>
-					<tr>
-						<td width="80">
-							<img src=@Model.PhotoPath height="70" width="70">
-						</td>
-						<td>
-							<a href="/Freelancer/Details/@Model.FreelancerId">
-								<h3>@Model.FreelancerName</h3>
-							</a>
-							<i>@Model.FreelancerEmail</i>
-						</td>
-					</tr>
-				</table>
+			<div class="panel-heading clearfix">
+				<img src=@Model.PhotoPath class="avatar-photo">
+				<div class="avatar-info">
+					<a href="/Freelancer/Details/@Model.FreelancerId"><h3 class="avatar-name">@Model.FreelancerName</h3></a>
+					<i class="avatar-mail">@Model.FreelancerEmail</i>
+				</div>
 			</div>
 			<div class="panel-body container-fluid">
 				<div class="row">
@@ -93,40 +127,40 @@
 				</div>
 			</div>
 			<div class="panel-footer">
-				@if (User.IsInRole("Employer") &&
-					(Model.Status == FreeLance.Models.ContractStatus.Done 
-					|| Model.Status == FreeLance.Models.ContractStatus.InProgress
-					|| Model.Status == FreeLance.Models.ContractStatus.Opened))
-				{
-
-					using (Html.BeginForm("Close", "Contract", FormMethod.Post))
+				<div class="form-wrapper">
+					@if (User.IsInRole("Employer") &&
+			(Model.Status == FreeLance.Models.ContractStatus.Done
+			|| Model.Status == FreeLance.Models.ContractStatus.InProgress
+			|| Model.Status == FreeLance.Models.ContractStatus.Opened))
 					{
-						<div>
-							<b>Оцените работу фрилансера<span style="color:red">*</span>:</b>
-							<div id="starToRate"></div>
-						</div>
-						<input type="hidden" id="hint" name="rate" value="0" />
-						<input name="id" type="hidden" value="@Model.ContractId" />
-						<input name="newStatus" type="hidden" value="@Model.finishButton.Status" />
-						<div>
-							<textarea name="comment" placeholder="Почему именно такая оценка?" required></textarea>
-						</div>
-						<input id="closeContractBtn" class="btn @Model.finishButton.Classes" type="submit"
-							   value="@Model.finishButton.Text" style="margin-top:5px" disabled />
+
+						using (Html.BeginForm("Close", "Contract", FormMethod.Post))
+						{
+							<div>
+								<b>Оцените работу фрилансера<span style="color:red">*</span>:</b>
+								<div id="starToRate" class="form-stars"></div>
+							</div>
+							<input type="hidden" id="hint" name="rate" value="0" />
+							<input name="id" type="hidden" value="@Model.ContractId" />
+							<input name="newStatus" type="hidden" value="@Model.finishButton.Status" />
+							<div>
+								<textarea name="comment" class="form-comment" placeholder="Почему именно такая оценка?" required></textarea>
+							</div>
+							<input id="closeContractBtn" class="btn @Model.finishButton.Classes" type="submit"
+								   value="@Model.finishButton.Text" disabled />
+						}
 					}
-				}
-				@foreach (var button in Model.ChangeStatusButtons)
-				{
-					<div>
-						@using (Html.BeginForm("ChangeStatus", "Contract", FormMethod.Post))
+					@foreach (var button in Model.ChangeStatusButtons)
+					{
+						using (Html.BeginForm("ChangeStatus", "Contract", FormMethod.Post, new { @class = "form-change-status" }))
 						{
 							<input name="id" type="hidden" value="@Model.ContractId" />
 							<input name="status" type="hidden" value="@button.Status" />
 							<input name="redirect" type="hidden" value="@button.Redirect" />
-							<input type="submit" class="btn @button.Classes" value="@button.Text" style="margin-top:5px"/>
+							<input type="submit" class="btn @button.Classes" value="@button.Text" />
 						}
-					</div>
-				}
+					}
+				</div>
 			</div>
 		</div>
 
@@ -138,16 +172,17 @@
 	</div>
 </div>
 
-
+<script type="text/javascript" src="~/Scripts/jquery.raty.js"></script>
 <script>
 	$('#star').raty({
-		path: "../../Content/images",
+		path: "../../content/images",
 		readOnly: true,
 		score: function () {
 			return $(this).attr('data-score');
 		}
 	});
-
+	
+	
 	$('#starToRate').raty({
 		path: "../../Content/images",
 		click: function (score, evt) {
