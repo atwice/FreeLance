@@ -101,7 +101,7 @@ namespace FreeLance.Controllers
 				ProblemId = p.ProblemId,
 				Status = p.Status,
 				EmployerId = p.Employer.Id,
-				PhotoPath = "http://placehold.it/300x300", //TODO
+				PhotoPath = "/Content/placeholder_avatar.png", //TODO
 				EmployerName = p.Employer.FIO,
 				EmployerEmail = p.Employer.Email,
 				ProblemName = p.Name,
