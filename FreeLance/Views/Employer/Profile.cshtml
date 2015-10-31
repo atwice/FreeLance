@@ -1,0 +1,71 @@
+﻿@model FreeLance.Controllers.EmployerController.ProfileView
+@{
+	ViewBag.Title = "Profile";
+}
+
+<div class="row">
+	<div class="col-sm-12">
+
+		<h2>Профиль</h2>
+	</div>
+</div>
+<div class="row">
+	<div class="col-sm-5">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h2 class="panel-title">Моя статистика</h2>
+			</div>
+			<table class="table" align="center">
+				<tr>
+					<td>Открытых задач</td>
+					<td>@Model.OpenProblemsCount</td>
+				</tr>
+				<tr>
+					<td>Закрытых задач</td>
+					<td>@Model.ClosedProblemsCount</td>
+				</tr>
+				<tr>
+					<td>Контрактов в процессе</td>
+					<td>@Model.OpenContractsCount</td>
+				</tr>
+				<tr>
+					<td>Контрактов выполнено</td>
+					<td>@Model.ClosedContractsCount</td>
+				</tr>
+			</table>
+		</div>
+
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h2 class="panel-title">Уведомления</h2>
+			</div>
+			<div class="panel-body">
+				@using (Html.BeginForm("Settings", "Employer", FormMethod.Post))
+			{
+					<div class="checkbox">
+						@Html.CheckBoxFor(m => m.emailNotifications.IsCommentsEnabled)
+						@Html.Label("Получать уведомления о новых комментариях")
+					</div>
+					<div class="checkbox">
+						@Html.CheckBoxFor(m => m.emailNotifications.IsContractStatusEnabled)
+						@Html.Label("Получать уведомления об изменениях контракта")
+					</div>
+					<input type="submit" value="Сохранить" class="btn btn-success" />
+			}
+			</div>
+		</div>
+
+	</div>
+	<div class="col-sm-5 ">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h2 class="panel-title">Учетная запись</h2>
+			</div>
+			<div class="panel-body">
+				<p>Email: @Model.EmployerEmail</p>
+				<a href="/Manage/ChangePassword" class="btn btn-info">Сменить пароль</a>
+			</div>
+		</div>
+		
+	</div>
+</div>

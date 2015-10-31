@@ -66,6 +66,16 @@ namespace FreeLance.Controllers
 			public decimal Rate { get; set; }
 		}
 
+		public class ProfileView
+		{
+			public String EmployerEmail { get; set; }
+			public int OpenProblemsCount { get; set; }
+			public int OpenContractsCount { get; set; }
+			public int ClosedProblemsCount { get; set; }
+			public int ClosedContractsCount { get; set; }
+			public ApplicationUser.EmailNotificationPolicyModel emailNotifications { get; set; }
+		}
+
 
         public class ArchivedContractViewModel
 		{
@@ -456,6 +466,33 @@ namespace FreeLance.Controllers
 			return View(model);
 		}
 
+		[Authorize(Roles = "Employer")]
+		public ActionResult Profile()
+		{
+			String id = User.Identity.GetUserId();
+            ApplicationUser employer = db.Users.Find(id);
+
+			ProfileView model = new ProfileView
+			{
+				EmployerEmail = employer.Email,
+				OpenContractsCount = db.ContractModels.Where(
+					c => c.Problem.Employer.Id == id && (c.Status == ContractStatus.Done 
+					|| c.Status == ContractStatus.InProgress || c.Status == ContractStatus.ClosedNotPaid
+					|| c.Status == ContractStatus.Opened)).Count(),
+				ClosedContractsCount = db.ContractModels.Where(
+					c => c.Problem.Employer.Id == id && (c.Status == ContractStatus.Closed
+					|| c.Status == ContractStatus.Failed || c.Status == ContractStatus.СancelledByEmployer
+					|| c.Status == ContractStatus.СancelledByFreelancer)).Count(),
+				OpenProblemsCount = db.ProblemModels.Where(
+					p => p.Employer.Id == id 
+					&& (p.Status == ProblemStatus.InProgress || p.Status == ProblemStatus.InProgress)).Count(),
+				ClosedProblemsCount = db.ProblemModels.Where(
+					p => p.Employer.Id == id
+					&& p.Status == ProblemStatus.Closed).Count(),
+				emailNotifications = employer.EmailNotificationPolicy
+			};
+			return View(model);
+		}
 
 		public ActionResult Settings()
 		{
