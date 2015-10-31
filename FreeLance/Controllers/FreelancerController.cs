@@ -227,7 +227,7 @@ namespace FreeLance.Controllers
 			return View();
 		}
 
-		[Authorize(Roles = "Admin, Freelancer, Coordinator, WithoutDocuments")]
+		[Authorize(Roles = "Admin, Freelancer, Coordinator, WithoutDocuments, Employer")]
 		public ViewResult OpenProblems(String sortOrder, string searchString)
 		{
 			if (User.IsInRole("Freelancer"))
