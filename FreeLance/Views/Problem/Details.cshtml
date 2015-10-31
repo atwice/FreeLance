@@ -1,118 +1,193 @@
 ﻿@model FreeLance.Controllers.ProblemController.DetailsView
 @using Microsoft.AspNet.Identity;
-@{ 
-	FreeLance.Models.ProblemModels problem = Model.ProblemModels;
-	bool isSubscribed = Model.IsSubscibed;
-	}
 @{
-	ViewBag.Title = "Problem";
+	ViewBag.Title = "Задача";
 }
 
-<div class="container">
-    <div class="panel panel-default">
-        <div class="panel-heading"><h2>@Html.DisplayFor(model => problem.Name)</h2></div>
-        <div class="panel-body">
-			<p><b>Краткое описание:</b> @Html.Raw(Model.ProblemModels.SmallDescription)</p>
-            <p><b>Полное описание:</b> @Html.Raw(Model.ProblemModels.Description)</p>
-            <table class="table">
-                <tbody>
-                <tr>
-                    <td><span class="glyphicon glyphicon-euro" aria-hidden="true"></span> @Html.DisplayFor(model => problem.Cost)</td>
-                    <td><span class="glyphicon glyphicon-user" aria-hidden="true"></span> @Html.DisplayFor(model => problem.Employer.FIO)</td>
-                    @if (problem.Contracts.Count > 0)
-                    {
-                        <td>Выполняют задачу: @Html.DisplayFor(model => problem.Contracts.Count)</td>
-                    }
-                    @if (problem.Subscriptions.Count > 0)
-                    {
-                        <td>Подписалось на задачу: @Html.DisplayFor(model => problem.Subscriptions.Count)</td>
-                    }
-                    else
-                    {
-                        <td>Нет подписок на эту задачу</td>
-                    }
-                </tr>
-                </tbody>
-            </table>
-            @if (Context.User.IsInRole("Employer"))
-            {
-                if (problem.Status != FreeLance.Models.ProblemStatus.Closed)
-                {
-                    using (Html.BeginForm("ChangeStatus", "Problem", FormMethod.Post))
-                    {
-                        <input name="id" type="hidden" value="@problem.ProblemId" />
-                            <input name="status" type="hidden" value="@FreeLance.Models.ProblemStatus.Closed" />
-                            <input name="redirect" type="hidden" value="/Problem/Details/@problem.ProblemId" />
-                            <input type="submit" class="btn btn-danger btn-lg" value="Закрыть задачу" />
-                    }
-                }
+@section css {
+	<link rel="stylesheet" type="text/css" href="~/Content/flaticon.css">
+}
 
-                if (problem.Contracts.Count > 0)
-                {
-                    <div class="list-group">
-                        <div class="list-group-item-heading"><h5>Задачу уже выполняют:</h5>
-                        </div>
-                        @foreach (var contract in problem.Contracts)
-                        {
-                            <div class="list-group-item">
-                              @Html.ActionLink(contract.Freelancer.UserName, "Profile", "Freelancer", new { id = contract.Freelancer.Id }, null)
-                                <div class="pull-right">
-                                    @Html.ActionLink("Посмотреть подробности контракта", "Details", "Contract", new { id = contract.ContractId }, null)
-                                </div>
-                            </div>
-                        }
-                    </div>
-                }
+<div class="row">
+	<div class="col-sm-10">
+		<h2>Задача</h2>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<table>
+					<tr>
+						<td width="80">
+							<img src=@Model.PhotoPath height="70" width="70">
+						</td>
+						<td>
+							<h3>@Model.EmployerName</h3>
+							<i>@Model.EmployerEmail</i>
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div class="panel-body">
+				<h2>@Model.ProblemName</h2>
+				<p>@Model.ProblemShortDescription</p>
+				<table class="table" style="text-align:center;">
+					<tr>
+						<td >
+							Создано: @Model.CreatingDate
+						</td>
+						<td>
+							<b style="font-size:20px">@Model.Cost</b>
+							<span class="flaticon-ruble-big"></span>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							Сделать до: @Model.DeadlineDate
+						</td>
+						<td>
+							<b style="font-size:18px">Рабочих мест: @Model.AmountOfWorkers</b>
+						</td>
+					</tr>
+				</table>
+				@if (Context.User.IsInRole("Employer") && Model.EmployerId == User.Identity.GetUserId())
+				{
+					<table class="table" style="text-align:center">
+						<tbody>
+							<tr>
+								<td>
+									<h4>Контракты в работе</h4>
+									<table class="table table-bordered" style="text-align:center">
+										@foreach (var contract in @Model.ContractsInProgress)
+										{
+											<tr>
+												<td>
+													<a href="/Freelancer/Details/@contract.FreelancerId">
+														@contract.FreelancerName
+													</a>
+												</td>
+												<td>
+													<a href="/Contract/Details/@contract.ContractId">
+														К контракту
+													</a>
+												</td>
+											</tr>
+										}
+										@if (@Model.ContractsInProgress.Count == 0)
+										{
+											<tr>
+												<td>
+													Пока что их нет.
+												</td>
+											</tr>
+										}
+									</table>
+								</td>
+								<td>
+									<h4>Завершенные контракты</h4>
+									<table class="table table-bordered" style="text-align:center; ">
+								 		@foreach (var contract in @Model.ContratsClosed)
+										{
+								 		<tr>
+								 			<td>
+								 				<a href="/Freelancer/Details/@contract.FreelancerId">
+								 					@contract.FreelancerName
+								 				</a>
+								 			</td>
+								 			<td>
+								 				<a href="/Contract/Details/@contract.ContractId">
+								 					К контракту
+								 				</a>
+								 			</td>
+										 </tr>
+										} 
+										@if (@Model.ContratsClosed.Count == 0)
+										{
+											<tr>
+												<td>
+													Пока что их нет.
+												</td>
+											</tr>
+										}
+									</table>
+								</td>
+								<td>
+									<h4>Подписчики</h4>
+									<table class="table table-bordered" style="text-align:center; ">
+										@foreach (var subscriber in @Model.Subscribers)
+										{
+											<tr>
+												<td>
+													<a href="/Freelancer/Details/@subscriber.FreelancerId">
+														@subscriber.FreelancerName
+													</a>
+												</td>
+												<td>
+													@Html.ActionLink("Подписать контракт", "Create", "Contract", new
+													   {
+														   problemID = Model.ProblemId,
+														   freelancerId = subscriber.FreelancerId
+													   }, null)
+												</td>
+											</tr>
+										}
+										@if (@Model.Subscribers.Count == 0)
+										{
+											<tr>
+												<td>
+													Пока что их нет.
+												</td>
+											</tr>
+										}
+									</table>
+								</td>
+							</tr>
+						</tbody>	
+					</table>
+				}
+				<p>@Html.Raw(Model.ProblemFullDescription)</p>
+			</div>
+			<div class="panel-footer">
+				@if (Context.User.IsInRole("Freelancer") && Model.IsApproved)
+				{
+					if (!Model.IsSubscibed)
+					{
+						using (Html.BeginForm("Subscribe", "Subscription", FormMethod.Post))
+						{
+								<input name="id" type="hidden" value="@Model.ProblemId" />
+								<input type="submit" class="btn btn-success btn-lg" value="Подписаться на задачу" />
+						}
 
-                if ((problem.Subscriptions.Count > 0))
-                {
-                    <div class="list-group">
-                        <div class="list-group-item-heading"><h5>Подписались на задачу:</h5>
-                        </div>
-                        @foreach (var subscription in Model.Subscriptions)
-                        {
-                            <div class="list-group-item">
-                                @Html.ActionLink(subscription.Freelancer.FIO, "Profile", "Freelancer", new {id = subscription.Freelancer.Id}, null)
-                                <div class="pull-right">
-                                    @Html.ActionLink("Подписать контракт", "Create", "Contract", new
-                                    {
-                                        problemID = Model.ProblemModels.ProblemId,
-                                        freelancerId = subscription.Freelancer.Id
-                                    }, null)
-                                </div>
-                            </div>
-                        }
-                    </div>
-                }
-            }
-        </div>
+					}
+					else
+					{
+						using (Html.BeginForm("UnSubscribe", "Subscription", FormMethod.Post))
+						{
+								<input name="id" type="hidden" value="@Model.ProblemId" />
+								<input type="submit" class="btn btn-danger btn-lg" value="Отписаться от задачи" />
+						}
 
-        <div class="panel-footer">
-            @if (Context.User.IsInRole("Freelancer") && Model.IsApproved)
-            {
-                if (!isSubscribed)
-                {
-                    using (Html.BeginForm("Subscribe", "Subscription", FormMethod.Post))
-                    {
-                        <input name="id" type="hidden" value="@problem.ProblemId"/>
-                        <input  type="submit" class="btn btn-success btn-lg" value="Подписаться на задачу"/>
-                    }
+					}
+				}
+				@if (Context.User.IsInRole("Employer") && Model.EmployerId == User.Identity.GetUserId())
+				{
+					if (Model.Status != FreeLance.Models.ProblemStatus.Closed)
+					{
+						using (Html.BeginForm("ChangeStatus", "Problem", FormMethod.Post))
+						{
+								<input name="id" type="hidden" value="@Model.ProblemId" />
+								<input name="status" type="hidden" value="@FreeLance.Models.ProblemStatus.Closed" />
+								<input name="redirect" type="hidden" value="/Problem/Details/@Model.ProblemId" />
+								<input type="submit" class="btn btn-danger btn-lg" value="Закрыть задачу" />
+						}
+					}
+				}
+			</div>
+		</div>
 
-                }
-                else
-                {
-                    using (Html.BeginForm("UnSubscribe", "Subscription", FormMethod.Post))
-                    {
-                        <input name="id" type="hidden" value="@problem.ProblemId" />
-                        <input type="submit" class="btn btn-danger btn-lg" value="Отписаться от задачи" />
-                    }
-
-                }
-            }
-        </div>
-    </div>
-	@if (User.IsInRole("Freelancer") || Model.ProblemModels.Employer.Id == User.Identity.GetUserId()) {
-		@Html.Action("ProblemChat", "Chat", new { problemId = Model.ProblemModels.ProblemId });
-	}
+		@if (User.IsInRole("Freelancer") || Model.EmployerId == User.Identity.GetUserId())
+		{
+			@Html.Action("ProblemChat", "Chat", new { problemId = Model.ProblemId });
+		}
+	</div>
 </div>
+
+
 

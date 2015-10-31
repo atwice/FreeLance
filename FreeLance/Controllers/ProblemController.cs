@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using FreeLance.Models;
+using FreeLance.Controllers;
 using Microsoft.AspNet.Identity;
 
 
@@ -22,43 +23,144 @@ namespace FreeLance.Controllers
 
 		public class DetailsView
 		{
-			public ProblemModels ProblemModels { get; set; }
+			public String EmployerId { get; set; }
+			public int ProblemId { get; set; }
+			public ProblemStatus Status { get; set; }
+			public String ProblemName { get; set; }
+			public String EmployerName { get; set; }
+			public String PhotoPath { get; set; }
+			public String EmployerEmail { get; set; }
+			public String ProblemShortDescription { get; set; }
+			public String ProblemFullDescription { get; set; }
+			public String CreatingDate { get; set; }
+			public String DeadlineDate { get; set; }
+			public decimal Cost { get; set; }
+			public int AmountOfWorkers { get; set; } 
+			public List<ContractInfoModel> ContractsInProgress { get; set; }
+			public List<ContractInfoModel> ContratsClosed { get; set; }
+			public List<SubscriberInfoModel> Subscribers { get; set;  }
+
+			
 			public bool IsSubscibed { get; set; }
-			public List<SubscriptionModels> Subscriptions { get; set; }
 			public bool IsApproved { get; set; }
 		}
+
+		public class ContractInfoModel
+		{
+			public int ContractId { get; set; }
+			public String FreelancerName { get; set; }
+			public String FreelancerId { get; set; }
+		}
+
+		public class SubscriberInfoModel
+		{
+			public String FreelancerName { get; set; }
+			public String FreelancerId { get; set; }
+		}
+
+		public List<ContractInfoModel> getContractsWithStatus(ICollection<ContractModels> contracts,
+			List<ContractStatus> statuses)
+		{
+			List<ContractInfoModel> result = new List<ContractInfoModel>();
+
+			foreach(var c in contracts)
+			{
+				if (statuses.Contains(c.Status))
+				{
+					result.Add(new ContractInfoModel {
+						ContractId = c.ContractId,
+						FreelancerId = c.Freelancer.Id,
+						FreelancerName = c.Freelancer.FIO
+					});
+				}
+			}
+			return result;
+		}
+
+		public List<SubscriberInfoModel> getProblemSubcribers(ICollection<SubscriptionModels> subscribers)
+		{
+			List<SubscriberInfoModel> result = new List<SubscriberInfoModel>();
+
+			foreach(var s in subscribers)
+			{
+				result.Add(new SubscriberInfoModel
+				{
+					FreelancerId = s.Freelancer.Id,
+					FreelancerName = s.Freelancer.FIO
+				});
+			}
+
+			return result;
+		}
+
+
+		public DetailsView getProblemDetails(ProblemModels p)
+		{
+			DetailsView details = new DetailsView
+			{
+				ProblemId = p.ProblemId,
+				Status = p.Status,
+				EmployerId = p.Employer.Id,
+				PhotoPath = "http://placehold.it/300x300", //TODO
+				EmployerName = p.Employer.FIO,
+				EmployerEmail = p.Employer.Email,
+				ProblemName = p.Name,
+				ProblemShortDescription = p.SmallDescription,
+				ProblemFullDescription = p.Description,
+				CreatingDate = p.CreationDate.ToShortDateString(),
+				DeadlineDate = DateTime.Now.AddDays(100).ToShortDateString(), //TODO
+				Cost = p.Cost,
+				AmountOfWorkers = 10 //TODO
+			};
+
+			details.ContractsInProgress = getContractsWithStatus(p.Contracts, 
+				new List<ContractStatus> { ContractStatus.InProgress,
+					ContractStatus.Opened, ContractStatus.Done, ContractStatus.ClosedNotPaid});
+
+			details.ContratsClosed = getContractsWithStatus(p.Contracts,
+				new List<ContractStatus> { ContractStatus.Closed,
+					ContractStatus.Failed, ContractStatus.СancelledByEmployer,
+					ContractStatus.СancelledByFreelancer});
+
+			details.Subscribers = getProblemSubcribers(p.Subscriptions);
+
+			return details;
+		}
+
 		
 		public ActionResult Details(int? id)
 		{
+			string userId = User.Identity.GetUserId();
+			if (User.IsInRole("Freelancer"))
+			{
+				ApplicationUser freelancer = db.Users.Find(userId);
+				bool withLawContract = db.LawContracts.Where(c => c.User.Id == userId).Count() > 0 ? true : false;
+				if (!withLawContract)
+				{
+					ViewBag.ErrorMessage = "Вам не заплатят за выполненную работу, пока вы не заключите ГПХ.";
+				}
+			}
+
 			if (id == null)
 			{
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
-            ProblemModels problemModels = db.ProblemModels.Find(id);
-			if (problemModels == null)
+
+            ProblemModels problem = db.ProblemModels.Find(id);
+			if (problem == null)
 			{
 				return HttpNotFound();
 			}
-			string userId = User.Identity.GetUserId();
-            if (User.IsInRole("Freelancer"))
-            {
-                ApplicationUser freelancer = db.Users.Find(userId);
-                bool withLawContract = db.LawContracts.Where(c => c.User.Id == userId).Count() > 0 ? true : false;
-                if (!withLawContract)
-                {
-                    ViewBag.ErrorMessage = "Вам не заплатят за выполненную работу, пока вы не заключите ГПХ.";
-                }
-            }
-            SubscriptionModels[] subscriptions = db.SubscriptionModels.Where(sub => sub.Freelancer.Id == userId
+
+			DetailsView view = getProblemDetails(problem);
+
+			//For Freelancer view	
+			SubscriptionModels[] subscriptions = db.SubscriptionModels.Where(sub => sub.Freelancer.Id == userId
 													&& sub.Problem.ProblemId == id).Distinct().ToArray();
 			SubscriptionModels subscription = subscriptions.Length > 0 ? subscriptions[0] : null;
-			DetailsView view = new DetailsView
-			{
-				ProblemModels = problemModels,
-				IsSubscibed = subscription != null,
-				Subscriptions = db.SubscriptionModels.Where(x => x.Problem.ProblemId == id).ToList(),
-				IsApproved = db.Users.Find(userId).IsApprovedByCoordinator
-			};
+			view.IsSubscibed = subscription != null;
+			view.IsSubscibed = db.Users.Find(userId).IsApprovedByCoordinator;
+            
 			return View(view);
 		}
 

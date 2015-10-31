@@ -95,7 +95,7 @@ namespace FreeLance.Controllers
 		}
 
 
-		public String getStatusIcon(ContractStatus status)
+		public static String getStatusIcon(ContractStatus status)
 		{
 			String answer = "";
 			switch(status)

@@ -34,6 +34,10 @@
 .flaticon-ruble:before {
 	content: "\e005";
 }
+.flaticon-ruble-big:before {
+	content: "\e005";
+	font-size: 18px;
+}
 .flaticon-settings48:before {
 	content: "\e006";
 }
