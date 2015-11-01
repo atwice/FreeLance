@@ -374,12 +374,13 @@ namespace FreeLance.Controllers
 				Id = id
 			};
 			decimal rate = 0;
+			int cancelByFreelancer = 0;
 			foreach (var contract in contracts)
 			{
 				if (contract.Status == ContractStatus.Closed 
 					|| contract.Status == ContractStatus.Failed
 					|| contract.Status == ContractStatus.СancelledByEmployer
-					|| contract.Status == ContractStatus.СancelledByFreelancer)
+					|| contract.Status == ContractStatus.ClosedNotPaid)
 				{
 					rate += contract.Rate;
 					model.ClosedContractsCount += 1;
@@ -388,12 +389,16 @@ namespace FreeLance.Controllers
 				  contract.Status == ContractStatus.Opened)
 				{
 					model.OpenContractsCount += 1;
+				} else if (contract.Status == ContractStatus.СancelledByFreelancer)
+				{
+					cancelByFreelancer += 1;
 				}
 			}
 			if(model.ClosedContractsCount != 0)
 			{
 				model.Rate = rate / model.ClosedContractsCount;
 			}
+			model.ClosedContractsCount += cancelByFreelancer;
 			return model;
 		}
 

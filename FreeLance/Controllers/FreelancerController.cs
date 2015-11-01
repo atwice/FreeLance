@@ -64,6 +64,223 @@ namespace FreeLance.Controllers
 			return RedirectToAction("Home");
 		}
 
+		public class ContractInfoForEmployer
+		{
+			public String ProblemName { get; set; }
+			public int ProblemId { get; set; }
+			public String DeadlineDate { get; set; }
+			public String CreationDate { get; set; }
+			public String EndingDate { get; set; }
+			public decimal Cost { get; set; }
+			public decimal Rate { get; set; }
+			public String EmployerName { get; set; }
+			public String EmployerId { get; set; }
+			public int ContractId { get; set; }
+			public String StatusIcon { get; set; }
+
+		}
+
+		public class SubscriptionInfoForEmployer
+		{
+			public String ProblemName { get; set; }
+			public int ProblemId { get; set; }
+			public String EmployerName { get; set; }
+			public String EmployerId { get; set; }
+			public decimal Cost { get; set; }
+			public DateTime DeadlineDate { get; set; }
+		}
+
+		public ContractInfoForEmployer getContractInfoForEmployer(ContractModels contract)
+		{
+			ContractInfoForEmployer info = new ContractInfoForEmployer
+			{
+				ProblemName = contract.Problem.Name,
+				ProblemId = contract.Problem.ProblemId,
+				DeadlineDate = DateTime.Now.AddDays(100).ToShortDateString(), // TODO
+				CreationDate = contract.CreationDate.ToShortDateString(),
+				EndingDate = contract.EndingDate.ToShortDateString(),
+				Cost = contract.Cost,
+				Rate = contract.Rate,
+				EmployerName = contract.Problem.Employer.FIO,
+				EmployerId = contract.Problem.Employer.Id,
+				ContractId = contract.ContractId,
+				StatusIcon = EmployerController.getStatusIcon(contract.Status)
+			};
+			return info;
+        }
+
+		public SubscriptionInfoForEmployer getSubscriptionInfoForEmployer(SubscriptionModels subscription)
+		{
+			SubscriptionInfoForEmployer info = new SubscriptionInfoForEmployer
+			{
+				ProblemName = subscription.Problem.Name,
+				ProblemId = subscription.Problem.ProblemId,
+				DeadlineDate = DateTime.Now.AddDays(100), // TODO
+				Cost = subscription.Problem.Cost,
+				EmployerName = subscription.Problem.Employer.FIO,
+				EmployerId = subscription.Problem.Employer.Id
+			};
+			return info;
+		}
+
+		public class DetailsForEmployerView
+		{
+			public String FreelancerName { get; set; }
+			public String FreelancerEmail { get; set; }
+			public decimal FreelancerRate { get; set; }
+			public String PhotoPath { get; set; }
+			public String FreelancerId { get; set; }
+			public String info;
+			public String lastSort;
+
+			public List<ContractInfoForEmployer> ClosedContracts { get; set; }
+			public List<ContractInfoForEmployer> InProgressContracts { get; set; }
+			public List<SubscriptionInfoForEmployer> Subscriptions { get; set; }
+		}
+
+		public bool checkIfContractRated(ContractStatus status)
+		{
+			return status == ContractStatus.Closed
+				|| status == ContractStatus.ClosedNotPaid
+				|| status == ContractStatus.Failed
+				|| status == ContractStatus.СancelledByEmployer;
+		}
+
+		public bool checkIfContractClosed(ContractStatus status)
+		{
+			return status == ContractStatus.Closed
+				|| status == ContractStatus.ClosedNotPaid
+				|| status == ContractStatus.Failed
+				|| status == ContractStatus.СancelledByEmployer
+				|| status == ContractStatus.СancelledByFreelancer;
+		}
+
+		public decimal getFreelancerRate(List<ContractModels> contracts)
+		{
+			decimal rate = 0;
+			int ratedContrats = 0;
+			foreach(var contract in contracts)
+			{
+				if(checkIfContractRated(contract.Status)) {
+					ratedContrats += 1;
+					rate += contract.Rate;
+				}
+			}
+			if(ratedContrats != 0)
+			{
+				rate /= ratedContrats;
+			}
+			return rate;
+		}
+
+		public DetailsForEmployerView sortSubcriptionsForEmployer(String sortOrder, DetailsForEmployerView model, String lastSort)
+		{
+			if (lastSort == sortOrder)
+			{
+				switch (sortOrder)
+				{
+					case "cost":
+						sortOrder = "cost_desc";
+						break;
+					case "problemName":
+						sortOrder = "problemName_desc";
+						break;
+					case "employerName":
+						sortOrder = "employerName_desc";
+						break;
+					case "deadlineDate":
+						sortOrder = "deadlineDate_desc";
+						break;
+				}
+			}
+
+			switch (sortOrder)
+			{
+				case "cost_desc":
+					model.Subscriptions = model.Subscriptions.OrderByDescending(s => s.Cost).ToList();
+					break;
+				case "cost":
+					model.Subscriptions = model.Subscriptions.OrderBy(s => s.Cost).ToList();
+					break;
+
+				case "problemName_desc":
+					model.Subscriptions = model.Subscriptions.OrderByDescending(s => s.ProblemName).ToList();
+					break;
+				case "problemName":
+					model.Subscriptions = model.Subscriptions.OrderBy(s => s.ProblemName).ToList();
+					break;
+
+				case "employerName_desc":
+					model.Subscriptions = model.Subscriptions.OrderByDescending(s => s.EmployerName).ToList();
+					break;
+				case "employerName":
+					model.Subscriptions = model.Subscriptions.OrderBy(s => s.EmployerName).ToList();
+					break;
+
+				case "deadlineDate_desc":
+					model.Subscriptions = model.Subscriptions.OrderByDescending(s => s.DeadlineDate).ToList();
+					break;
+				case "deadlineDate":
+					ViewBag.sortCost = "deadlineDate_desc";
+					model.Subscriptions = model.Subscriptions.OrderBy(s => s.DeadlineDate).ToList();
+					break;
+
+				default:
+					model.Subscriptions = model.Subscriptions.OrderBy(s => s.ProblemName).ToList();
+					break;
+			}
+
+			model.lastSort = sortOrder;
+
+			return model;
+		}
+
+		public DetailsForEmployerView getDetailsForEmployer(ApplicationUser freelancer, String _info, String sortOrder, String lastSort)
+		{
+			List<ContractModels> contracts = db.ContractModels
+				.Where(c => c.Freelancer.Id == freelancer.Id).ToList();
+
+			List<SubscriptionModels> subscriptions = db.SubscriptionModels
+				.Where(s => s.Freelancer.Id == freelancer.Id).ToList();
+
+			if (_info == null)
+			{
+				_info = "profile";
+			}
+
+            DetailsForEmployerView model = new DetailsForEmployerView
+			{
+				info = _info,
+				FreelancerEmail = freelancer.Email,
+				FreelancerName = freelancer.FIO,
+				PhotoPath = "/Content/placeholder_avatar.png", //TODO
+				FreelancerRate = getFreelancerRate(contracts),
+				FreelancerId = freelancer.Id,
+				ClosedContracts = new List<ContractInfoForEmployer>(),
+				InProgressContracts = new List<ContractInfoForEmployer>(),
+				Subscriptions = new List<SubscriptionInfoForEmployer>()
+			};
+
+			foreach(var contract in contracts)
+			{
+				if (checkIfContractClosed(contract.Status)){
+					model.ClosedContracts.Add(getContractInfoForEmployer(contract));
+				} else
+				{
+					model.InProgressContracts.Add(getContractInfoForEmployer(contract));
+				}
+			}
+
+			foreach (var subscription in subscriptions)
+			{
+				model.Subscriptions.Add(getSubscriptionInfoForEmployer(subscription));
+			}
+
+			model= sortSubcriptionsForEmployer(sortOrder, model, lastSort);
+
+			return model;
+		}
+
 		// GET: Freelancer
 		public ActionResult Home()
 		{
@@ -87,7 +304,9 @@ namespace FreeLance.Controllers
 			return View(viewModel);
 		}
 
-		public ActionResult Details(string id, String sortOrder)
+		
+		/// <param name="info">Профиль -> profile, Задачи -> problems, Отзывы -> comments</param>
+		public ActionResult Details(string id, String sortOrder, String info, String lastSort)
 		{
 			if (id == null)
 			{
@@ -98,7 +317,12 @@ namespace FreeLance.Controllers
 			{
 				return HttpNotFound();
 			}
-			
+
+			if (User.IsInRole("Employer"))
+			{
+				return PartialView("_DetailsForEmployer", getDetailsForEmployer(freelancerModel, info, sortOrder, lastSort));
+			}
+
 			DetailsView view = new DetailsView
 			{
 				freelancer = freelancerModel, 

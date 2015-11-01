@@ -1,0 +1,124 @@
+﻿@model FreeLance.Controllers.FreelancerController.DetailsForEmployerView
+@{
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	ViewBag.Title = Model.FreelancerName;
+}
+
+@functions{
+	public String getActiveClass(String name) {
+		if (Model.info == name)
+		{
+			return "active";
+		}
+		return "";
+	}
+}
+
+@section css {
+	<link rel="stylesheet" href="~/Content/jquery.raty.css">
+	<link rel="stylesheet" type="text/css" href="~/Content/flaticon.css">
+	<style>
+		.avatar-photo {
+			float: left;
+			border: 1px solid #dddddd;
+			border-radius: 2px;
+			padding: 1px;
+			margin: 1px;
+			width: 70px;
+			height: 70px;
+		}
+
+		.avatar-info {
+			margin-top: 30px;
+			margin-left: 85px;
+			height: 70px;
+			position: relative;
+		}
+
+		.avatar-name {
+			position: absolute;
+			margin: 0;
+			top: 0;
+		}
+
+		.avatar-mail {
+			position: absolute;
+			bottom: 30%;
+		}
+
+		.avatar-rate {
+			position: absolute;
+			bottom: 0;
+		}
+
+		.info-block {
+			margin-top: 30px;
+		}
+
+		.to-problem-btn {
+			margin-left: 5px;
+		}
+
+		.text-info-in-panel {
+			margin-left: 5px;
+		}
+
+		th, td {
+			text-align:center;
+		}
+	</style>
+}
+
+
+<div class="row">
+	<div class="col-md-12">
+		<img src=@Model.PhotoPath class="avatar-photo">
+		<div class="avatar-info">
+			<h3 class="avatar-name">@Model.FreelancerName</h3>
+			<i class="avatar-mail">@Model.FreelancerEmail</i>
+			<span id="star" class="avatar-rate" data-score=@Model.FreelancerRate.ToString().Replace(",",".")></span>
+		</div>
+	</div>
+</div>
+<div class="row info-block">
+	<div class="col-md-10">
+		<ul class="nav nav-tabs">
+			<li role="presentation" class="@getActiveClass("profile")">
+				<a href="@Url.Action("Details", "Freelancer", new {id = Model.FreelancerId, info = "profile"})">Профиль</a>
+			</li>
+			<li role="presentation" class="@getActiveClass("problems")">
+				<a href="@Url.Action("Details", "Freelancer", new {id = Model.FreelancerId, info = "problems"})">Задачи</a>
+			</li>
+			<li role="presentation" class="@getActiveClass("comments")">
+				<a href="@Url.Action("Details", "Freelancer", new {id = Model.FreelancerId, info = "comments"})">Отзывы</a>
+			</li>
+		</ul>
+
+		@switch (Model.info)
+		{
+			case "profile":
+				Html.RenderPartial("_DetailsForEmployerProfile", Model);
+				break;
+			case "problems":
+				Html.RenderPartial("_DetailsForEmployerProblems", Model);
+				break;
+			case "comments":
+				Html.RenderPartial("_DetailsForEmployerComments", Model);
+				break;
+		}
+    </div>
+</div>
+
+
+
+
+<script type="text/javascript" src="~/Scripts/jquery.raty.js"></script>
+<script>
+	$('#star').raty({
+		path: "../../content/images",
+		readOnly: true,
+		score: function () {
+				return $(this).attr('data-score');
+			}
+		});
+</script>
