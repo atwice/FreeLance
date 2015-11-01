@@ -23,91 +23,146 @@ namespace FreeLance.Controllers
 			return View(db.ContractModels.ToList());
 		}
 
-		public class DetailsVR {
-			public ContractModels Contract { get; set; }
-			public class ChangeStatusButton {
+		public class DetailsView
+		{
+			public String Comment { get; set; }
+			public String EmployerId { get; set; }
+			public int ProblemId { get; set; }
+			public ContractStatus Status { get; set; }
+			public String ProblemName { get; set; }
+			public String FreelancerName { get; set; }
+			public String FreelancerId { get; set; }
+			public String PhotoPath { get; set; }
+			public String FreelancerEmail { get; set; }
+			public String Details { get; set; }
+			public String CreatingDate { get; set; }
+			public String DeadlineDate { get; set; }
+			public String EndingDate { get; set; }
+			public decimal Cost { get; set; }
+			public int ContractId { get; set; }
+			public decimal Rate { get; set; }
+
+
+			public class ChangeStatusButton
+			{
 				public string Text { get; set; }
 				public string Classes { get; set; }
 				public string Redirect { get; set; }
 				public Models.ContractStatus Status { get; set; }
 			}
+
 			public List<ChangeStatusButton> ChangeStatusButtons;
+			public ChangeStatusButton finishButton;
 		}
 
-        // GET: Contract/Details/5
-        [Authorize(Roles = "Employer,Freelancer,Admin,Coordinator")]
+		public DetailsView getContractDetails(ContractModels c)
+		{
+			DetailsView details = new DetailsView
+			{
+				Comment = c.Comment,
+				Rate = c.Rate,
+				EmployerId = c.Problem.Employer.Id,
+				FreelancerName = c.Freelancer.FIO,
+				FreelancerEmail = c.Freelancer.Email,
+				FreelancerId = c.Freelancer.Id,
+				ProblemName = c.Problem.Name,
+				CreatingDate = c.CreationDate.ToShortDateString(),
+				EndingDate = c.EndingDate.ToShortDateString(),
+				DeadlineDate = DateTime.Now.AddDays(100).ToShortDateString(), //TODO
+				Cost = c.Cost,
+				ProblemId = c.Problem.ProblemId,
+				Status = c.Status,
+				Details = c.Details,
+				PhotoPath = "/Content/placeholder_avatar.png", //TODO
+				ContractId = c.ContractId
+			};
+
+			return details;
+		}
+
+		// GET: Contract/Details/5
+		[Authorize(Roles = "Employer,Freelancer,Admin,Coordinator")]
         public ActionResult Details(int? id)
 		{
 			if (id == null) {
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
-			ContractModels contractModels = db.ContractModels.Find(id);
-			if (contractModels == null) {
+
+			ContractModels contract = db.ContractModels.Find(id);
+			if (contract == null) {
 				return HttpNotFound();
 			}
-			if ((User.IsInRole("Freelancer") && User.Identity.GetUserId() != contractModels.Freelancer.Id)
-				|| (User.IsInRole("Employer") && User.Identity.GetUserId() != contractModels.Problem.Employer.Id)) 
+			if ((User.IsInRole("Freelancer") && User.Identity.GetUserId() != contract.Freelancer.Id)
+				|| (User.IsInRole("Employer") && User.Identity.GetUserId() != contract.Problem.Employer.Id)) 
 			{
 				return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
 			}
-			DetailsVR detailsVR = new DetailsVR {
-				Contract = contractModels,
-				ChangeStatusButtons = new List<DetailsVR.ChangeStatusButton>()
-			};
+
+			DetailsView view = getContractDetails(contract);
+
+			view.ChangeStatusButtons = new List<DetailsView.ChangeStatusButton>();
+
 			if (User.IsInRole("Freelancer")) {
-				if (contractModels.Status == ContractStatus.Opened) {
-					detailsVR.ChangeStatusButtons.Add(new DetailsVR.ChangeStatusButton {
+				if (view.Status == ContractStatus.Opened) {
+					view.ChangeStatusButtons.Add(new DetailsView.ChangeStatusButton {
 						Text = "Подписать контракт",
 						Classes = "btn-success",
 						Status = ContractStatus.InProgress,
-						Redirect = "/Contract/Details/" + contractModels.ContractId
+						Redirect = "/Contract/Details/" + view.ContractId
 					});
-					detailsVR.ChangeStatusButtons.Add(new DetailsVR.ChangeStatusButton {
+					view.ChangeStatusButtons.Add(new DetailsView.ChangeStatusButton {
 						Text = "Отклонить контракт",
 						Classes = "btn-danger",
 						Status = ContractStatus.Failed,
 						Redirect = "/Freelancer/Home"
 					});
-				} else if (contractModels.Status == ContractStatus.InProgress) {
-					detailsVR.ChangeStatusButtons.Add(new DetailsVR.ChangeStatusButton {
+				} else if (view.Status == ContractStatus.InProgress) {
+					view.ChangeStatusButtons.Add(new DetailsView.ChangeStatusButton {
 						Text = "Завершить контракт",
 						Classes = "btn-success",
 						Status = ContractStatus.Done,
-						Redirect = "/Contract/Details/" + contractModels.ContractId
+						Redirect = "/Contract/Details/" + view.ContractId
 					});
-					detailsVR.ChangeStatusButtons.Add(new DetailsVR.ChangeStatusButton {
+					view.ChangeStatusButtons.Add(new DetailsView.ChangeStatusButton {
 						Text = "Прервать контракт",
 						Classes = "btn-danger",
 						Status = ContractStatus.СancelledByFreelancer,
-						Redirect = "/Contract/Details/" + contractModels.ContractId
+						Redirect = "/Contract/Details/" + view.ContractId
 					});
-				} else if (contractModels.Status == ContractStatus.Done) {
-					detailsVR.ChangeStatusButtons.Add(new DetailsVR.ChangeStatusButton {
+				} else if (view.Status == ContractStatus.Done) {
+					view.ChangeStatusButtons.Add(new DetailsView.ChangeStatusButton {
 						Text = "Открыть заново",
 						Classes = "btn-danger",
 						Status = ContractStatus.InProgress,
-						Redirect = "/Contract/Details/" + contractModels.ContractId
+						Redirect = "/Contract/Details/" + view.ContractId
 					});
 				}
 			} else if (User.IsInRole("Employer")) {
-				if (contractModels.Status == ContractStatus.Done) {
-					detailsVR.ChangeStatusButtons.Add(new DetailsVR.ChangeStatusButton {
+				if (view.Status == ContractStatus.Done) {
+					view.ChangeStatusButtons.Add(new DetailsView.ChangeStatusButton {
 						Text = "Отправить на доработку",
 						Classes = "btn-danger",
 						Status = ContractStatus.InProgress,
-						Redirect = "/Contract/Details/" + contractModels.ContractId
+						Redirect = "/Contract/Details/" + view.ContractId
 					});
-				} else if (contractModels.Status == ContractStatus.InProgress
-							|| contractModels.Status == ContractStatus.Opened) {
-					detailsVR.ChangeStatusButtons.Add(new DetailsVR.ChangeStatusButton {
+					view.finishButton = new DetailsView.ChangeStatusButton
+					{
+						Text = "Принять работу",
+						Classes = "btn-success",
+						Status = ContractStatus.ClosedNotPaid,
+						Redirect = "/Contract/Details/" + view.ContractId
+					};
+				} else if (view.Status == ContractStatus.InProgress
+							|| view.Status == ContractStatus.Opened) {
+					view.finishButton = new DetailsView.ChangeStatusButton {
 						Text = "Прервать контракт",
 						Classes = "btn-danger",
 						Status = ContractStatus.СancelledByEmployer,
 						Redirect = "/Employer/Archive"
-					});
+					};
 				}
 			}
-			return View(detailsVR);
+			return View(view);
 		}
 
 		// GET: Contract/Create
@@ -177,7 +232,7 @@ namespace FreeLance.Controllers
 
 		[HttpPost]
 		[Authorize(Roles = "Employer")]
-		public ActionResult Close(int id, string comment, int rate)
+		public ActionResult Close(int id, string comment, int rate, ContractStatus newStatus)
 		{
 			ContractModels contract = db.ContractModels.Include(c => c.Problem).Single(c => c.ContractId == id);
 			if (contract == null || contract.Freelancer == null || contract.Problem.Employer.Id != User.Identity.GetUserId())
@@ -186,7 +241,7 @@ namespace FreeLance.Controllers
 			}
 			contract.Rate = rate;
 			contract.Comment = comment;
-			contract.Status = ContractStatus.Closed;
+			contract.Status = newStatus;
 			contract.EndingDate = DateTime.Now;
 			db.SaveChanges();
 			return Redirect("/Contract/Details/" + id.ToString());

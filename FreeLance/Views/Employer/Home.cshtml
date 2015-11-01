@@ -17,12 +17,17 @@ else
 
 @section css {
 	<link rel="stylesheet" type="text/css" href="~/Content/flaticon.css">
+	<style>
+		.text-info-in-panel {
+			margin-left: 5px;
+		}
+	</style>
 }
 
 
 <div class="row">
-	<div class="col-sm-9">
-		<div class="col-xs-6">
+	<div class="col-md-9">
+		<div class="col-md-6">
 			<h3>В работе:</h3>
 
 			@foreach (var problem in Model.ProblemsInProgress)
@@ -36,10 +41,10 @@ else
 						<div class="panel-body">
 							<p>
 								<i class="flaticon-calendar68"></i>
-								<i><b>@contract.EndingDate - @contract.CreationDate</b></i>
+								@contract.CreationDate - @contract.EndingDate
 								<span class="pull-right"><b>@contract.Cost</b><span class="flaticon-ruble"></span> </span>
 							</p>
-							<p><i><b>Исполнитель:</b></i> <a style="padding-left:5px" href="/Freelancer/Details/@contract.freelancerId">@contract.FIO</a></p>
+							<p><b>Исполнитель:</b><a class="text-info-in-panel" href="/Freelancer/Details/@contract.freelancerId">@contract.FIO</a></p>
 
 							<div>
 								<i class="flaticon-comments16"></i> <span class="badge">@contract.newMsgCount</span>
@@ -50,7 +55,7 @@ else
 				}
 			}
 		</div>
-		<div class="col-xs-6">
+		<div class="col-md-6">
 			<h3>Поиск исполнителей:</h3>
 			@foreach (var problem in Model.ProblemsOpen)
 			{
@@ -73,7 +78,7 @@ else
 			}
 		</div>
 	</div>
-	<div class="col-sm-3 text-center">
+	<div class="col-md-3 text-center">
 		<a href="@Url.Action("Create", "Problem")" class="btn btn-success btn-lg" role="button" style="margin-top: 20px;">
 			Создать задачу
 		</a>

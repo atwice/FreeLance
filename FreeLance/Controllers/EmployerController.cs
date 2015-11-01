@@ -66,6 +66,16 @@ namespace FreeLance.Controllers
 			public decimal Rate { get; set; }
 		}
 
+		public class ProfileView
+		{
+			public String EmployerEmail { get; set; }
+			public int OpenProblemsCount { get; set; }
+			public int OpenContractsCount { get; set; }
+			public int ClosedProblemsCount { get; set; }
+			public int ClosedContractsCount { get; set; }
+			public ApplicationUser.EmailNotificationPolicyModel emailNotifications { get; set; }
+		}
+
         public class ArchivedContractViewModel
 		{
 			public String ProblemName { get; set; }
@@ -94,7 +104,7 @@ namespace FreeLance.Controllers
 		}
 
 
-		public String getStatusIcon(ContractStatus status)
+		public static String getStatusIcon(ContractStatus status)
 		{
 			String answer = "";
 			switch(status)
@@ -203,12 +213,15 @@ namespace FreeLance.Controllers
 		}
 
 
-		public String getStatusMessage(ContractStatus status)
+		public static String getStatusMessage(ContractStatus status)
 		{
 			String result = "";
 			switch(status)
 			{
 				case ContractStatus.Closed:
+					result = "Выполнена полностью";
+					break;
+				case ContractStatus.ClosedNotPaid:
 					result = "Выполнена полностью";
 					break;
 				case ContractStatus.Failed:
@@ -363,12 +376,13 @@ namespace FreeLance.Controllers
 				Id = id
 			};
 			decimal rate = 0;
+			int cancelByFreelancer = 0;
 			foreach (var contract in contracts)
 			{
 				if (contract.Status == ContractStatus.Closed 
 					|| contract.Status == ContractStatus.Failed
 					|| contract.Status == ContractStatus.СancelledByEmployer
-					|| contract.Status == ContractStatus.СancelledByFreelancer)
+					|| contract.Status == ContractStatus.ClosedNotPaid)
 				{
 					rate += contract.Rate;
 					model.ClosedContractsCount += 1;
@@ -377,12 +391,16 @@ namespace FreeLance.Controllers
 				  contract.Status == ContractStatus.Opened)
 				{
 					model.OpenContractsCount += 1;
+				} else if (contract.Status == ContractStatus.СancelledByFreelancer)
+				{
+					cancelByFreelancer += 1;
 				}
 			}
 			if(model.ClosedContractsCount != 0)
 			{
 				model.Rate = rate / model.ClosedContractsCount;
 			}
+			model.ClosedContractsCount += cancelByFreelancer;
 			return model;
 		}
 
@@ -455,26 +473,32 @@ namespace FreeLance.Controllers
 			return View(model);
 		}
 
-		
-
-		public ActionResult NewProblem()
+		[Authorize(Roles = "Employer")]
+		public ActionResult Profile()
 		{
-			return View();
-		}
+			String id = User.Identity.GetUserId();
+            ApplicationUser employer = db.Users.Find(id);
 
-		[HttpPost]
-		[ValidateAntiForgeryToken]
-		public ActionResult NewProblem([Bind(Include = "ProblemId,Name,Description,Status,Cost")] ProblemModels problem)
-		{
-			if (ModelState.IsValid)
+			ProfileView model = new ProfileView
 			{
-				problem.CreationDate = DateTime.Now;
-				problem.Employer = db.Users.Find(User.Identity.GetUserId());
-				db.ProblemModels.Add(problem);
-				db.SaveChanges();
-				return RedirectToAction("Problem", new { id = problem.ProblemId });
-			}
-			return View(problem);
+				EmployerEmail = employer.Email,
+				OpenContractsCount = db.ContractModels.Where(
+					c => c.Problem.Employer.Id == id && (c.Status == ContractStatus.Done 
+					|| c.Status == ContractStatus.InProgress || c.Status == ContractStatus.ClosedNotPaid
+					|| c.Status == ContractStatus.Opened)).Count(),
+				ClosedContractsCount = db.ContractModels.Where(
+					c => c.Problem.Employer.Id == id && (c.Status == ContractStatus.Closed
+					|| c.Status == ContractStatus.Failed || c.Status == ContractStatus.СancelledByEmployer
+					|| c.Status == ContractStatus.СancelledByFreelancer)).Count(),
+				OpenProblemsCount = db.ProblemModels.Where(
+					p => p.Employer.Id == id 
+					&& (p.Status == ProblemStatus.InProgress || p.Status == ProblemStatus.InProgress)).Count(),
+				ClosedProblemsCount = db.ProblemModels.Where(
+					p => p.Employer.Id == id
+					&& p.Status == ProblemStatus.Closed).Count(),
+				emailNotifications = employer.EmailNotificationPolicy
+			};
+			return View(model);
 		}
 
 		public ActionResult Settings()
