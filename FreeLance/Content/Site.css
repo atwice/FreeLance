@@ -28,13 +28,21 @@ textarea {
     font-style: italic;
 }
 
+
 .left-category {
-    color: grey;
+    font-family: cursive;
+    color: green;
 }
 
 
 .right-category {
-    font-style: italic;
+    font-family: cursive;  
+    color: black;
+}
+
+.right-category a {
+    font-family: cursive;  
+    color: darkmagenta
 }
 
 
