@@ -1,10 +1,6 @@
-﻿@* @model FreeLance.Models.ContractModels *@
-@* @model IEnumerable<FreeLance.Models.ContractModels> *@
-
-@model FreeLance.Controllers.FreelancerController.HomeView
-
+﻿@model FreeLance.Controllers.FreelancerController.HomeViewModel
 @{
-    ViewBag.Title = "Личный кабинет";
+	ViewBag.Title = "Личный кабинет";
 	ViewBag.MenuPick = "Home";
 }
 @helper Truncate(string input, int length)
@@ -19,43 +15,113 @@ else
 }
 }
 
-<div class="col-md-10">
-	<h2>@ViewBag.Title</h2>
-	<h3>Мои открытые контракты</h3>
-	@if (Model.Contracts.Any())
-	{
-		<div class="list-group">
-			@foreach (var contract in Model.Contracts)
+@section css {
+	<link rel="stylesheet" type="text/css" href="~/Content/flaticon.css">
+	<style>
+		.text-info-in-panel {
+			margin-left: 5px;
+		}
+	</style>
+}
+
+
+<div class="row">
+	<div class="col-md-9">
+		<div class="col-md-6">
+			<h3>Мои контракты:</h3>
+			@foreach (var contract in Model.ContractsInWork)
 			{
-				<a href="/Contract/Details/@contract.ContractId" class="list-group-item">
-					<h4 class="list-group-item-heading">@contract.Problem.Name <small class="status">@contract.Status</small></h4>
-					<p class="list-group-item-text" style="color:lightgray"><i>@contract.Problem.Employer.FIO</i></p>
-					<p class="list-group-item-text"> @Truncate(contract.Details, 200)</p>
-				</a>
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<b>@contract.Name<span class="flaticon-question41 pull-right"></span></b>
+					</div>
+					<div class="panel-body">
+						<P>
+							<b>@contract.Author</b>
+						</P>
+						<p>
+							<i class="flaticon-calendar68"></i>
+							@contract.Deadline
+						</p>
+						<div>
+							<i class="flaticon-comments16"></i> <span class="badge">@contract.CommentNumber</span>
+							<a href="/Contract/Details/@contract.ContractId" class="btn btn-info pull-right" role="button">К контракту</a>
+						</div>
+					</div>
+				</div>
+			}
+
+			<hr>
+
+			@foreach (var contract in Model.ContractsPending)
+			{
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<b>@contract.Name<span class="flaticon-question41 pull-right"></span></b>
+					</div>
+					<div class="panel-body">
+						<P>
+							<b>@contract.Author</b>
+						</P>
+						<p>
+							<i class="flaticon-calendar68"></i>
+							@contract.Deadline
+						</p>
+						<div>
+							<i class="flaticon-comments16"></i> <span class="badge">@contract.CommentNumber</span>
+							<a href="/Contract/Details/@contract.ContractId" class="btn btn-info pull-right" role="button">К контракту</a>
+						</div>
+					</div>
+				</div>
+			}
+
+			<hr>
+
+			@foreach (var contract in Model.ContractsWaitingMoney)
+			{
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<b>@contract.Name<span class="flaticon-question41 pull-right"></span></b>
+					</div>
+					<div class="panel-body">
+						<P>
+							<b>@contract.Author</b>
+						</P>
+						<p>
+							<i class="flaticon-calendar68"></i>
+							@contract.Deadline
+						</p>
+						<div>
+							<i class="flaticon-comments16"></i> <span class="badge">@contract.CommentNumber</span>
+							<a href="/Contract/Details/@contract.ContractId" class="btn btn-info pull-right" role="button">К контракту</a>
+						</div>
+					</div>
+				</div>
 			}
 		</div>
-	}
-	else
-	{
-		<p>Открытых контрактов нет</p>
-	}
 
-	<h3>Мои подписки</h3>
-	@if (Model.Problems.Any())
-	{
-		<div class="list-group">
+		<div class="col-md-6">
+			<h3>Мои подписки:</h3>
 			@foreach (var problem in Model.Problems)
 			{
-				<a href="/Contract/Details/@problem.ProblemId" class="list-group-item">
-					<h4 class="list-group-item-heading">@problem.Name <small class="status">@problem.Status</small></h4>
-					<p class="list-group-item-text" style="color:lightgray"><i>@problem.Employer.FIO</i></p>
-					<p class="list-group-item-text">@Truncate(problem.Description, 200)</p>
-				</a>
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<b>@problem.Name</b>
+					</div>
+					<div class="panel-body">
+						<P>
+							<b>@problem.ShortDescription</b>
+						</P>
+						<p>
+							<b class="pull-right">Исполнителей : @problem.Others</b>
+							@problem.Money<span class="flaticon-ruble"></span>
+						</p>
+						<div>
+							<i class="flaticon-comments16"></i> <span class="badge">@problem.CommentNumber</span>
+							<a href="/Problem/Details/@problem.ProblemId" class="btn btn-info pull-right" role="button">К контракту</a>
+						</div>
+					</div>
+				</div>
 			}
 		</div>
-	}
-	else
-	{
-		<p>Подписок нет</p>
-	}
 </div>

@@ -76,7 +76,6 @@ namespace FreeLance.Controllers
 			public ApplicationUser.EmailNotificationPolicyModel emailNotifications { get; set; }
 		}
 
-
         public class ArchivedContractViewModel
 		{
 			public String ProblemName { get; set; }

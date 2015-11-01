@@ -10,34 +10,39 @@ using Microsoft.AspNet.Identity.EntityFramework;
 namespace FreeLance.Controllers
 {
 	[Authorize]
-    public class NotificationController : Controller
-    {
+	public class NotificationController : Controller
+	{
 
-		public class NotificationContext {
+		public class NotificationContext
+		{
 			public ApplicationUser User { get; set; }
 			public string Action { get; set; }
 			public string Controller { get; set; }
-        }
+		}
 
-		public interface Notification {
+		public interface Notification
+		{
 			bool WillBeShown(NotificationContext context);
 			string GetPartialViewName();
 			Object GetPartialViewModel();
 		}
 
-		public class ErrorNotification : Notification {
+		public class ErrorNotification : Notification
+		{
 			private Func<NotificationContext, bool> willBeShownFunc;
 			string text;
-			public ErrorNotification(Func<NotificationContext, bool> willBeShown, string text) {
+			public ErrorNotification(Func<NotificationContext, bool> willBeShown, string text)
+			{
 				willBeShownFunc = willBeShown;
 				this.text = text;
 			}
-			public bool WillBeShown(NotificationContext context) {
+			public bool WillBeShown(NotificationContext context)
+			{
 				return willBeShownFunc(context);
 			}
 			public string GetPartialViewName() { return "_ErrorNotification"; }
 			public Object GetPartialViewModel() { return text; }
-        }
+		}
 
 
 		public List<Notification> NotificationList = new List<Notification> {
@@ -46,23 +51,27 @@ namespace FreeLance.Controllers
 		};
 
 		[HttpPost]
-		public ActionResult GetPageNotifications(string action, string controller) {
-			NotificationContext context = new NotificationContext {
+		public ActionResult GetPageNotifications(string action, string controller)
+		{
+			NotificationContext context = new NotificationContext
+			{
 				User = db.Users.Find(User.Identity.GetUserId()),
 				Action = action,
 				Controller = controller
 			};
-            List<Notification> selectedNotifications = NotificationList.Where(not => not.WillBeShown(context)).ToList();
-            return PartialView(selectedNotifications);
+			List<Notification> selectedNotifications = NotificationList.Where(not => not.WillBeShown(context)).ToList();
+			return PartialView(selectedNotifications);
 		}
 
-		public string Index() {
+		public string Index()
+		{
 			return "";
 		}
 
 
 		private static ApplicationDbContext db = new ApplicationDbContext();
-		private static bool checkUserIsInRole(ApplicationUser user, string roleName) {
+		private static bool checkUserIsInRole(ApplicationUser user, string roleName)
+		{
 			IdentityRole role = db.Roles.Where(r => r.Name == roleName).Single();
 			return user.Roles.Where(r => r.RoleId == role.Id).Any();
 		}

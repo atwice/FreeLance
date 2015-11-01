@@ -1,0 +1,14 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="jumbotron">
+</div>
+
+<div class="row">
+    <p>
+        @User.Identity.AuthenticationType
+        @User.Identity.IsAuthenticated
+        @User.Identity.Name
+    </p>
+</div>

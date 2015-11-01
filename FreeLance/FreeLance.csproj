@@ -334,6 +334,7 @@
     <Content Include="Views\Coordinator\Settings.cshtml" />
     <Content Include="Views\Emails\Example.cshtml" />
     <Content Include="Views\Chat\CreateChat.cshtml" />
+    <Content Include="Views\Freelancer\Problems.cshtml" />
     <Content Include="Views\Employer\Profile.cshtml" />
     <Content Include="Views\Freelancer\_DetailsForEmployer.cshtml" />
     <Content Include="Views\Freelancer\_DetailsForEmployerComments.cshtml" />
@@ -349,6 +350,7 @@
     <Content Include="Views\Coordinator\_ApproveUserButton.cshtml" />
     <Content Include="Views\Coordinator\_ApprovePaymentButton.cshtml" />
     <Content Include="Views\User\CoordinatorApprovial.cshtml" />
+    <Content Include="Views\Freelancer\_OpenProblemsForEmployer.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -23,7 +23,7 @@ namespace FreeLance.Models
 		public virtual ApplicationUser Employer { get; set; }
 		[Required]
 		public string Name { get; set; }
-		[Required,DataType(DataType.MultilineText)]
+		[Required, DataType(DataType.MultilineText)]
 		[AllowHtml]
 		public string Description { get; set; }
 		[Required, DataType(DataType.MultilineText)]
