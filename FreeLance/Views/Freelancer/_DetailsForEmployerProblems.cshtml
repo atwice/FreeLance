@@ -1,0 +1,136 @@
+﻿@model FreeLance.Controllers.FreelancerController.DetailsForEmployerView
+@using Microsoft.AspNet.Identity
+
+
+<div class="row">
+	<div class="col-md-5">
+		<h3>Выполненные:</h3>
+		@foreach (var contract in Model.InProgressContracts)
+		{
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<b>@contract.ProblemName <span class="stars pull-right" data-score=@contract.Rate.ToString().Replace(",",".")></span></b>
+				</div>
+				<div class="panel-body">
+					<p>
+						<b>Завершено: </b><span class="text-info-in-panel">@contract.EndingDate</span>
+						<span class="pull-right"><b>@contract.Cost</b><span class="flaticon-ruble"></span> </span>
+					</p>
+					<p><b>Работодатель:</b> <a class="text-info-in-panel" href="#">@contract.EmployerName</a></p>
+
+					<div>
+						<a href="/Problem/Details/@contract.ProblemId" class="btn btn-info pull-right to-problem-btn" role="button">К задаче</a>
+						@if (User.Identity.GetUserId() == contract.EmployerId)
+						{
+							<a href="/Contract/Details/@contract.ContractId" class="btn btn-info pull-right" role="button">К контракту</a>
+						}
+					</div>
+				</div>
+			</div>
+		}
+	</div>
+	<div class="col-md-5 col-md-offset-1">
+		<h3>В работе:</h3>
+		@foreach (var contract in Model.InProgressContracts)
+		{
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<b>@contract.ProblemName<span class="@contract.StatusIcon pull-right"></span></b>
+			</div>
+			<div class="panel-body">
+				<p>
+					<i class="flaticon-calendar68"></i>
+					@contract.CreationDate - @contract.DeadlineDate
+					<span class="pull-right"><b>@contract.Cost</b><span class="flaticon-ruble"></span> </span>
+				</p>
+				<p><b>Работодатель:</b><a class="text-info-in-panel" href="#">@contract.EmployerName</a></p>
+
+				<div>
+					<a href="/Problem/Details/@contract.ProblemId" class="btn btn-info pull-right to-problem-btn" role="button">К задаче</a>
+					@if (User.Identity.GetUserId() == contract.EmployerId)
+					{
+						<a href="/Contract/Details/@contract.ContractId" class="btn btn-info pull-right" role="button">К контракту</a>
+					}
+				</div>
+			</div>
+		</div>
+		}
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-11">
+		<h3>Подписки:</h3>
+		<table class="table table-striped table-bordered table-subscriptions">
+			<thead>
+				<tr>
+					<th>
+						<a href=@Url.Action("Details", "Freelancer",
+							new { sortOrder = "problemName", info = Model.info, id = Model.FreelancerId, lastSort = Model.lastSort })>
+							<span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+							Задача
+						</a>
+					</th>
+					<th>
+						<a href=@Url.Action("Details", "Freelancer",
+							new { sortOrder = "employerName", info = Model.info, id = Model.FreelancerId, lastSort = Model.lastSort })>
+							<span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+							Работодатель
+						</a>
+					</th>
+					<th>
+						<a href=@Url.Action("Details", "Freelancer",
+							new { sortOrder = "cost", info = Model.info, id = Model.FreelancerId, lastSort = Model.lastSort })>
+							<span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+							Цена
+						</a>
+					</th>
+					<th>
+						<a href=@Url.Action("Details", "Freelancer",
+							new { sortOrder = "deadlineDate", info = Model.info, id = Model.FreelancerId, lastSort = Model.lastSort })>
+							<span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+							Срок
+						</a>
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var subscription in @Model.Subscriptions)
+				{
+						<tr>
+							<td>
+								<a href="/Problem/Details/@subscription.ProblemId.ToString()">
+									@subscription.ProblemName
+								</a>
+							</td>
+							<td>
+								<a href="#">
+									@subscription.EmployerName
+								</a>
+							</td>
+							<td>
+								@subscription.Cost
+							</td>
+							<td>
+								@subscription.DeadlineDate.ToShortDateString()
+							</td>
+						</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<script>
+	$(function () {
+		$(".stars").each(function () {
+			$(this).raty({
+				path: "../../Content/images",
+				readOnly: true,
+				score: function () {
+					return $(this).attr('data-score');
+				}
+			});
+		});
+	});
+</script>

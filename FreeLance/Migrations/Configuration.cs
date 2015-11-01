@@ -45,6 +45,8 @@ namespace FreeLance.Migrations
 			AddEmployerFreelancerProblemContractAuto(context, "Employer2", "Freelancer2");
 			AddEmployerFreelancerProblemContractAuto(context, "Employer", "Freelancer3");
 			AddProblemWithSubscriber(context, "Employer4", "Subscriber1");
+			AddProblemWithSubscriber(context, "Employer5", "Subscriber1");
+			AddProblemWithSubscriber(context, "Employer6", "Subscriber1");
 			AddProblemWithSubscriber(context, "Employer5", "Subscriber2");
 			AddProblemWithSubscriber(context, "Employer6", "Subscriber3");
 			AddClosedContracts(context);
