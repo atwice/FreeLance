@@ -67,6 +67,8 @@ namespace FreeLance.Controllers
 		public class ContractInfoForEmployer
 		{
 			public String ProblemName { get; set; }
+			public String Comment { get; set; }
+			public String WorkMessage { get; set; }
 			public int ProblemId { get; set; }
 			public String DeadlineDate { get; set; }
 			public String CreationDate { get; set; }
@@ -95,6 +97,8 @@ namespace FreeLance.Controllers
 			ContractInfoForEmployer info = new ContractInfoForEmployer
 			{
 				ProblemName = contract.Problem.Name,
+				Comment = contract.Comment,
+				WorkMessage = EmployerController.getStatusMessage(contract.Status),
 				ProblemId = contract.Problem.ProblemId,
 				DeadlineDate = DateTime.Now.AddDays(100).ToShortDateString(), // TODO
 				CreationDate = contract.CreationDate.ToShortDateString(),
@@ -127,6 +131,7 @@ namespace FreeLance.Controllers
 		{
 			public String FreelancerName { get; set; }
 			public String FreelancerEmail { get; set; }
+			public String FreelancerPhone { get; set; }
 			public decimal FreelancerRate { get; set; }
 			public String PhotoPath { get; set; }
 			public String FreelancerId { get; set; }
@@ -252,6 +257,7 @@ namespace FreeLance.Controllers
 			{
 				info = _info,
 				FreelancerEmail = freelancer.Email,
+				FreelancerPhone = "+7(916)0001122", // TODO
 				FreelancerName = freelancer.FIO,
 				PhotoPath = "/Content/placeholder_avatar.png", //TODO
 				FreelancerRate = getFreelancerRate(contracts),
