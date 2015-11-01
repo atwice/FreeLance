@@ -197,13 +197,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201510161740434_from-scratch.cs" />
-    <Compile Include="Migrations\201510161740434_from-scratch.Designer.cs">
-      <DependentUpon>201510161740434_from-scratch.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201510251719171_chat.cs" />
-    <Compile Include="Migrations\201510251719171_chat.Designer.cs">
-      <DependentUpon>201510251719171_chat.cs</DependentUpon>
+    <Compile Include="Migrations\201511011628178_approve-by-coordinator-null.cs" />
+    <Compile Include="Migrations\201511011628178_approve-by-coordinator-null.Designer.cs">
+      <DependentUpon>201511011628178_approve-by-coordinator-null.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -350,6 +346,9 @@
     <Content Include="Views\Freelancer\SmallViewCoordinatorHome.cshtml" />
     <Content Include="Views\Comment\SmallViewCoordinator.cshtml" />
     <Content Include="Views\Freelancer\DocumentSmallView.cshtml" />
+    <Content Include="Views\Coordinator\_ApproveUserButton.cshtml" />
+    <Content Include="Views\Coordinator\_ApprovePaymentButton.cshtml" />
+    <Content Include="Views\User\CoordinatorApprovial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -365,11 +364,8 @@
     <None Include="Project_Readme.html" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201510161740434_from-scratch.resx">
-      <DependentUpon>201510161740434_from-scratch.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201510251719171_chat.resx">
-      <DependentUpon>201510251719171_chat.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201511011628178_approve-by-coordinator-null.resx">
+      <DependentUpon>201511011628178_approve-by-coordinator-null.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

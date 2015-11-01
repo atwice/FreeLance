@@ -3,30 +3,25 @@ namespace FreeLance.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class fromscratch : DbMigration
+    public partial class approvebycoordinatornull : DbMigration
     {
         public override void Up()
         {
             CreateTable(
-                "dbo.ContractModels",
+                "dbo.ChatMessages",
                 c => new
                     {
-                        ContractId = c.Int(nullable: false, identity: true),
+                        Id = c.Int(nullable: false, identity: true),
+                        ParentId = c.Int(),
+                        ChatId = c.Int(nullable: false),
+                        Content = c.String(nullable: false),
                         CreationDate = c.DateTime(nullable: false),
-                        EndingDate = c.DateTime(nullable: false),
-                        Details = c.String(),
-                        Status = c.Int(nullable: false),
-                        Cost = c.Decimal(nullable: false, precision: 18, scale: 2),
-                        Rate = c.Decimal(nullable: false, precision: 18, scale: 2),
-                        Comment = c.String(),
-                        Freelancer_Id = c.String(nullable: false, maxLength: 128),
-                        Problem_ProblemId = c.Int(nullable: false),
+                        ModificationDate = c.DateTime(),
+                        User_Id = c.String(nullable: false, maxLength: 128),
                     })
-                .PrimaryKey(t => t.ContractId)
-                .ForeignKey("dbo.AspNetUsers", t => t.Freelancer_Id)
-                .ForeignKey("dbo.ProblemModels", t => t.Problem_ProblemId)
-                .Index(t => t.Freelancer_Id)
-                .Index(t => t.Problem_ProblemId);
+                .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.AspNetUsers", t => t.User_Id)
+                .Index(t => t.User_Id);
             
             CreateTable(
                 "dbo.AspNetUsers",
@@ -35,6 +30,10 @@ namespace FreeLance.Migrations
                         Id = c.String(nullable: false, maxLength: 128),
                         IsApprovedByCoordinator = c.Boolean(nullable: false),
                         FIO = c.String(),
+                        EmailNotificationPolicy_IsCommentsEnabled = c.Boolean(nullable: false),
+                        EmailNotificationPolicy_IsDocumentsEnabled = c.Boolean(nullable: false),
+                        EmailNotificationPolicy_IsNewApplicantsEnabled = c.Boolean(nullable: false),
+                        EmailNotificationPolicy_IsContractStatusEnabled = c.Boolean(nullable: false),
                         Email = c.String(maxLength: 256),
                         EmailConfirmed = c.Boolean(nullable: false),
                         PasswordHash = c.String(),
@@ -106,11 +105,56 @@ namespace FreeLance.Migrations
                 .Index(t => t.RoleId);
             
             CreateTable(
+                "dbo.Chats",
+                c => new
+                    {
+                        Id = c.Int(nullable: false, identity: true),
+                    })
+                .PrimaryKey(t => t.Id);
+            
+            CreateTable(
+                "dbo.ContractModels",
+                c => new
+                    {
+                        ContractId = c.Int(nullable: false, identity: true),
+                        CreationDate = c.DateTime(nullable: false),
+                        EndingDate = c.DateTime(nullable: false),
+                        Details = c.String(),
+                        Status = c.Int(nullable: false),
+                        Cost = c.Decimal(nullable: false, precision: 18, scale: 2),
+                        Rate = c.Decimal(nullable: false, precision: 18, scale: 2),
+                        Comment = c.String(),
+                        ChatId = c.Int(),
+                        IsApprovedByCoordinator = c.Boolean(nullable: false),
+                        IsPayed = c.Boolean(nullable: false),
+                        Freelancer_Id = c.String(nullable: false, maxLength: 128),
+                        LawFace_Id = c.Int(),
+                        Problem_ProblemId = c.Int(nullable: false),
+                    })
+                .PrimaryKey(t => t.ContractId)
+                .ForeignKey("dbo.AspNetUsers", t => t.Freelancer_Id)
+                .ForeignKey("dbo.LawFaces", t => t.LawFace_Id)
+                .ForeignKey("dbo.ProblemModels", t => t.Problem_ProblemId)
+                .Index(t => t.Freelancer_Id)
+                .Index(t => t.LawFace_Id)
+                .Index(t => t.Problem_ProblemId);
+            
+            CreateTable(
+                "dbo.LawFaces",
+                c => new
+                    {
+                        Id = c.Int(nullable: false, identity: true),
+                        Name = c.String(nullable: false),
+                    })
+                .PrimaryKey(t => t.Id);
+            
+            CreateTable(
                 "dbo.ProblemModels",
                 c => new
                     {
                         ProblemId = c.Int(nullable: false, identity: true),
                         CreationDate = c.DateTime(nullable: false),
+                        ChatId = c.Int(),
                         Name = c.String(nullable: false),
                         Description = c.String(nullable: false),
                         SmallDescription = c.String(nullable: false),
@@ -127,6 +171,7 @@ namespace FreeLance.Migrations
                 c => new
                     {
                         SubscriptionId = c.Int(nullable: false, identity: true),
+                        ChatId = c.Int(),
                         Freelancer_Id = c.String(maxLength: 128),
                         Problem_ProblemId = c.Int(),
                     })
@@ -167,15 +212,6 @@ namespace FreeLance.Migrations
                 .Index(t => t.LawFace_Id);
             
             CreateTable(
-                "dbo.LawFaces",
-                c => new
-                    {
-                        Id = c.Int(nullable: false, identity: true),
-                        Name = c.String(nullable: false),
-                    })
-                .PrimaryKey(t => t.Id);
-            
-            CreateTable(
                 "dbo.AspNetRoles",
                 c => new
                     {
@@ -197,7 +233,9 @@ namespace FreeLance.Migrations
             DropForeignKey("dbo.SubscriptionModels", "Problem_ProblemId", "dbo.ProblemModels");
             DropForeignKey("dbo.SubscriptionModels", "Freelancer_Id", "dbo.AspNetUsers");
             DropForeignKey("dbo.ProblemModels", "Employer_Id", "dbo.AspNetUsers");
+            DropForeignKey("dbo.ContractModels", "LawFace_Id", "dbo.LawFaces");
             DropForeignKey("dbo.ContractModels", "Freelancer_Id", "dbo.AspNetUsers");
+            DropForeignKey("dbo.ChatMessages", "User_Id", "dbo.AspNetUsers");
             DropForeignKey("dbo.AspNetUserRoles", "UserId", "dbo.AspNetUsers");
             DropForeignKey("dbo.AspNetUserLogins", "UserId", "dbo.AspNetUsers");
             DropForeignKey("dbo.DocumentPackageModels", "Freelancer_Id", "dbo.AspNetUsers");
@@ -209,26 +247,30 @@ namespace FreeLance.Migrations
             DropIndex("dbo.SubscriptionModels", new[] { "Problem_ProblemId" });
             DropIndex("dbo.SubscriptionModels", new[] { "Freelancer_Id" });
             DropIndex("dbo.ProblemModels", new[] { "Employer_Id" });
+            DropIndex("dbo.ContractModels", new[] { "Problem_ProblemId" });
+            DropIndex("dbo.ContractModels", new[] { "LawFace_Id" });
+            DropIndex("dbo.ContractModels", new[] { "Freelancer_Id" });
             DropIndex("dbo.AspNetUserRoles", new[] { "RoleId" });
             DropIndex("dbo.AspNetUserRoles", new[] { "UserId" });
             DropIndex("dbo.AspNetUserLogins", new[] { "UserId" });
             DropIndex("dbo.DocumentPackageModels", new[] { "Freelancer_Id" });
             DropIndex("dbo.AspNetUserClaims", new[] { "UserId" });
             DropIndex("dbo.AspNetUsers", "UserNameIndex");
-            DropIndex("dbo.ContractModels", new[] { "Problem_ProblemId" });
-            DropIndex("dbo.ContractModels", new[] { "Freelancer_Id" });
+            DropIndex("dbo.ChatMessages", new[] { "User_Id" });
             DropTable("dbo.AspNetRoles");
-            DropTable("dbo.LawFaces");
             DropTable("dbo.LawContractTemplates");
             DropTable("dbo.LawContracts");
             DropTable("dbo.SubscriptionModels");
             DropTable("dbo.ProblemModels");
+            DropTable("dbo.LawFaces");
+            DropTable("dbo.ContractModels");
+            DropTable("dbo.Chats");
             DropTable("dbo.AspNetUserRoles");
             DropTable("dbo.AspNetUserLogins");
             DropTable("dbo.DocumentPackageModels");
             DropTable("dbo.AspNetUserClaims");
             DropTable("dbo.AspNetUsers");
-            DropTable("dbo.ContractModels");
+            DropTable("dbo.ChatMessages");
         }
     }
 }

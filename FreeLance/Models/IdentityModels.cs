@@ -21,7 +21,7 @@ namespace FreeLance.Models
         }
 
 		[Required]
-		public bool IsApprovedByCoordinator { get; set; }
+		public bool? IsApprovedByCoordinator { get; set; }
 		public string FIO { get; set; }
 		public virtual DocumentPackageModels DocumentPackage { get; set; }
 		public EmailNotificationPolicyModel EmailNotificationPolicy { get; set; }

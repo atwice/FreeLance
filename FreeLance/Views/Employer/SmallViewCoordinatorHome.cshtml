@@ -6,7 +6,17 @@
 
     </div>
     <div class="panel-footer">
-        <a class="btn btn-danger">Заблокировать</a>
-        <a class="btn btn-success pull-right">Подтвердить</a>
- </div>
+        @{
+             using (Html.BeginForm("ApproveUserByCoordinator", "Coordinator", new { userId = Model.Id, value = false }))
+             {
+                    <input type="submit" value="Заблокировать" class="btn btn-danger" />
+            }
+            <div class="pull-right">
+                @using (Html.BeginForm("ApproveUserByCoordinator", "Coordinator", new { userId = Model.Id, value = true }))
+                {
+                <input type="submit" value="Допустить в систему" class="btn btn-success" />
+                }
+            </div>
+        }
+    </div>
 </div>

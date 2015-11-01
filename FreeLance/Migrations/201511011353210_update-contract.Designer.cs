@@ -7,13 +7,13 @@ namespace FreeLance.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class chat : IMigrationMetadata
+    public sealed partial class updatecontract : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(chat));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(updatecontract));
         
         string IMigrationMetadata.Id
         {
-            get { return "201510251719171_chat"; }
+            get { return "201511011353210_update-contract"; }
         }
         
         string IMigrationMetadata.Source

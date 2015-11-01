@@ -25,14 +25,14 @@
                  Html.RenderPartial("~/Views/Contract/SmallView.cshtml", contract);
              }
         }
-        <h2>Ожидают выплаты <span class="badge">@Model.ContractsList.Count</span></h2>
-@if (Model.ContractsList.Count == 0)
+        <h2>Ожидают выплаты <span class="badge">@Model.ContractsToPay.Count</span></h2>
+@if (Model.ContractsToPay.Count == 0)
 {
     <p> Нет контрактов, ожидающих выплаты.  </p>
 }
 else
 {
-    foreach (var contract in Model.ContractsList.GetRange(0, 1))
+    foreach (var contract in Model.ContractsToPay.GetRange(0, 1))
      {
          Html.RenderPartial("~/Views/Contract/SmallView.cshtml", contract);
      }
@@ -52,7 +52,7 @@ else
             }
         }
         <h2>Новые пользователи <span class="badge">@Model.NewFreelancers.Count</span> </h2>
-@if (Model.ContractsList.Count == 0)
+@if (Model.NewFreelancers.Count == 0)
 {
     <p>Все новые фрилансеры подтверждены. Замечательно! </p>
 }
@@ -155,18 +155,5 @@ else
         }
     </div>
 </div>
-    <script>
-	$(function () {
-		$(".stars").each(function () {
-			$(this).raty({
-				path: "../../Content/images",
-				readOnly: true,
-				score: function () {
-					return $(this).attr('data-score');
-				}
-			});
-		});
-	});
-    </script>
 </body>
 </html>
