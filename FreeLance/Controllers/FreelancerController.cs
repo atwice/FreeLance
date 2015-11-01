@@ -38,10 +38,18 @@ namespace FreeLance.Controllers
 			public int ContractId { get; set; }
 			public String Name { get; set; }
 			public String EmployerName { get; set; }
+			public String EmployerId { get; set; }
 			public String Comment { get; set; }
 			public decimal Rate { get; set; }
 			public DateTime EndingDate { get; set; }
-			public ContractStatus Status { get; set; }
+			public decimal Cost { get; set; }
+		}
+
+		public class FreelancerLawContractViewModel
+		{
+			public String LawFace { get; set; }
+			public DateTime StartingDate { get; set; }
+			public DateTime EndingDate { get; set; }
 		}
 
 		public class ArchiveViewModel
@@ -54,9 +62,7 @@ namespace FreeLance.Controllers
 		{
 			public ApplicationUser freelancer { get; set; }
 			public decimal Rate { get; set; }
-			public int OpenContractsCount { get; set; }
-			public int ClosedContractsCount { get; set; }
-			public List<FreelancerContractViewModel> Contracts { get; set; }
+			public List<FreelancerLawContractViewModel> LawContracts { get; set; }
 		}
 
 		public ActionResult Index()
@@ -87,7 +93,7 @@ namespace FreeLance.Controllers
 			return View(viewModel);
 		}
 
-		public ActionResult Details(string id, String sortOrder)
+		public ActionResult Details(string id)
 		{
 			if (id == null)
 			{
@@ -102,56 +108,165 @@ namespace FreeLance.Controllers
 			DetailsView view = new DetailsView
 			{
 				freelancer = freelancerModel, 
-				Contracts = db.ContractModels
+				LawContracts = db.LawContracts
 				.Where(
-					c => c.Freelancer.Id == id)
+					c => c.User.Id == id)
+				.Select(
+					c => new FreelancerLawContractViewModel
+					{
+						LawFace = c.LawContractTemplate.LawFace.Name,
+						StartingDate = c.EndData,
+						EndingDate = c.EndData
+					})
+				.ToList(),
+				Rate = countRating(id)
+			};
+			return View(view);
+		}
+
+		/* 
+			Count the rating for freelancer with id
+		*/
+		private decimal countRating(string id)
+		{
+			decimal rating = 0;
+			List<ContractModels> contracts = db.ContractModels
+				.Where(
+					c => c.Freelancer.Id == id
+					&& c.Status == ContractStatus.Closed)
+				.ToList();
+			foreach (var contract in contracts)
+			{
+				rating += contract.Rate;
+			}
+			if (contracts.Count != 0)
+			{
+				rating = rating / contracts.Count;
+			}
+			return rating;
+		}
+
+		public class FreelancerProblemViewModel
+		{
+			public int ProblemId { get; set; }
+			public String Name { get; set; }
+			public String EmployerName { get; set; }
+			public decimal Cost { get; set; }
+			public DateTime EndingDate { get; set; }
+		}
+
+		public class ProblemsView
+		{
+			public ApplicationUser freelancer { get; set; }
+			public decimal Rate { get; set; }
+			public List<FreelancerContractViewModel> OpenContracts { get; set; }
+			public List<FreelancerContractViewModel> UnpaidContracts { get; set; }
+			public List<FreelancerProblemViewModel> SubscribedProblems { get; set; }
+		}
+		
+		/*
+			Auxiliary methods return view models for page
+			Координатор. Фрилансер. Вкладка Задачи
+		*/
+
+		private List<FreelancerContractViewModel> extractUnpaidContracts(string freelancerId)
+		{
+			return db.ContractModels
+				.Where(
+					c => c.Freelancer.Id == freelancerId
+						&& c.Status == ContractStatus.ClosedNotPaid)
 				.Select(
 					c => new FreelancerContractViewModel
 					{
 						ContractId = c.ContractId,
 						EmployerName = c.Problem.Employer.FIO,
+						EmployerId = c.Problem.Employer.Id,
 						Name = c.Problem.Name,
 						Comment = c.Comment,
 						Rate = c.Rate,
 						EndingDate = c.EndingDate,
-						Status = c.Status
+						Cost = c.Cost
 					})
-				.ToList(),
-				ClosedContractsCount = 0,
-				OpenContractsCount = 0
+				.ToList();
+        }
+
+		private List<FreelancerContractViewModel> extractOpenContracts(string freelancerId)
+		{
+			return db.ContractModels
+				.Where(
+					c => c.Freelancer.Id == freelancerId
+						&& c.Status != ContractStatus.Closed)
+				.Select(
+					c => new FreelancerContractViewModel
+					{
+						ContractId = c.ContractId,
+						EmployerName = c.Problem.Employer.FIO,
+						EmployerId = c.Problem.Employer.Id,
+						Name = c.Problem.Name,
+						Comment = c.Comment,
+						Rate = c.Rate,
+						EndingDate = c.EndingDate,
+						Cost = c.Cost
+					})
+				.ToList();
+        }
+
+		private List<FreelancerProblemViewModel> extractSubscribedProblems(string freelancerId)
+		{
+			return db.SubscriptionModels
+				.Where(
+					c => c.Freelancer.Id == freelancerId
+						&& c.Problem.Status != ProblemStatus.Closed)
+				.Select(
+					c => new FreelancerProblemViewModel
+					{
+						ProblemId = c.Problem.ProblemId,
+						EmployerName = c.Problem.Employer.FIO,
+						Name = c.Problem.Name,
+						EndingDate = c.Problem.CreationDate,
+						Cost = c.Problem.Cost
+					})
+				.ToList();
+        }
+
+		/*
+			Координатор. Фрилансер. Вкладка Задачи
+		*/
+		[Authorize(Roles = "Admin, Coordinator")]
+		public ActionResult Problems(string id, String sortOrder)
+		{
+			if (id == null)
+			{
+				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+			}
+			ApplicationUser freelancerModel = db.Users.Find(id);
+			if (freelancerModel == null)
+			{
+				return HttpNotFound();
+			}
+			ProblemsView view = new ProblemsView
+			{
+				freelancer = freelancerModel,
+				Rate = countRating(id),
+				UnpaidContracts = extractUnpaidContracts(id),
+				OpenContracts = extractOpenContracts(id),
+				SubscribedProblems = extractSubscribedProblems(id)
 			};
-			decimal rate = 0;
-			foreach (var contract in view.Contracts)
-			{
-				if(contract.Status == ContractStatus.Closed)
-				{
-					rate += contract.Rate;
-					view.ClosedContractsCount += 1;
-				} else if(contract.Status == ContractStatus.InProgress ||
-					contract.Status == ContractStatus.Opened)
-				{
-					view.OpenContractsCount += 1;
-				}
-			}
-			if(view.ClosedContractsCount != 0)
-			{
-				view.Rate = rate / view.ClosedContractsCount;
-			}
 			ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
 			ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
 			switch (sortOrder)
 			{
 				case "name_desc":
-					view.Contracts = view.Contracts.OrderByDescending(с => с.Name).ToList();
+					view.SubscribedProblems = view.SubscribedProblems.OrderByDescending(с => с.Name).ToList();
 					break;
 				case "Date":
-					view.Contracts = view.Contracts.OrderBy(s => s.EndingDate).ToList();
+					view.SubscribedProblems = view.SubscribedProblems.OrderBy(s => s.EndingDate).ToList();
 					break;
 				case "date_desc":
-					view.Contracts = view.Contracts.OrderByDescending(s => s.EndingDate).ToList();
+					view.SubscribedProblems = view.SubscribedProblems.OrderByDescending(s => s.EndingDate).ToList();
 					break;
 				default:
-					view.Contracts = view.Contracts.OrderBy(s => s.Name).ToList();
+					view.SubscribedProblems = view.SubscribedProblems.OrderBy(s => s.Name).ToList();
 					break;
 			}
 			return View(view);
@@ -264,10 +379,6 @@ namespace FreeLance.Controllers
 					break;
 			}
 			return View(openProblems.ToList());
-
-			//ProblemModels[] openProblems = db.ProblemModels
-			//	.Where(x => x.Status == 0 && x.Employer.IsApprovedByCoordinator).ToArray();
-			//return View(openProblems);
 		}
 
 		public ActionResult Profile()
@@ -296,7 +407,6 @@ namespace FreeLance.Controllers
 			}
 			return View(model);
 		}
-
 
 		public class DocumentPackageViewModel
 		{

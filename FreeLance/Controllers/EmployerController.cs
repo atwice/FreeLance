@@ -66,7 +66,6 @@ namespace FreeLance.Controllers
 			public decimal Rate { get; set; }
 		}
 
-
         public class ArchivedContractViewModel
 		{
 			public String ProblemName { get; set; }
