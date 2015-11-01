@@ -127,6 +127,42 @@ namespace FreeLance.Controllers
 			return info;
 		}
 
+		public class OpenProblemsForEmployer
+		{
+			public String lastSort { get; set; }
+			public List<ProblemInfoForEmployer> openProblems { get; set; }
+		}
+
+		public class ProblemInfoForEmployer
+		{
+			public String ProblemName { get; set; }
+			public String ProblemShortDescription { get; set; }
+			public String EmployerName { get; set; }
+			public DateTime CreationDate { get; set; }
+			public DateTime DeadlineDate { get; set; }
+			public decimal Cost { get; set; }
+			public int AmountOfWorkers { get; set; }
+			public int ProblemId { get; set; }
+		}
+
+		public ProblemInfoForEmployer getOpenProblemForEmployer(ProblemModels problem)
+		{
+			ProblemInfoForEmployer info = new ProblemInfoForEmployer
+			{
+				ProblemName = problem.Name,
+				ProblemShortDescription = problem.SmallDescription,
+				EmployerName = problem.Employer.FIO,
+				CreationDate = problem.CreationDate,
+				DeadlineDate = DateTime.Now.AddDays(50), // TODO
+				Cost = problem.Cost,
+				AmountOfWorkers = 10, // TODO
+				ProblemId = problem.ProblemId
+			};
+			return info;
+        }
+
+
+
 		public class DetailsForEmployerView
 		{
 			public String FreelancerName { get; set; }
@@ -266,8 +302,9 @@ namespace FreeLance.Controllers
 				InProgressContracts = new List<ContractInfoForEmployer>(),
 				Subscriptions = new List<SubscriptionInfoForEmployer>()
 			};
+			
 
-			foreach(var contract in contracts)
+			foreach (var contract in contracts)
 			{
 				if (checkIfContractClosed(contract.Status)){
 					model.ClosedContracts.Add(getContractInfoForEmployer(contract));
@@ -457,9 +494,90 @@ namespace FreeLance.Controllers
 			return View();
 		}
 
-		[Authorize(Roles = "Admin, Freelancer, Coordinator, WithoutDocuments, Employer")]
-		public ViewResult OpenProblems(String sortOrder, string searchString)
+
+		public OpenProblemsForEmployer sortProblems(OpenProblemsForEmployer model, String sortOrder, String lastSort)
 		{
+
+			if (lastSort == sortOrder)
+			{
+				switch (sortOrder)
+				{
+					case "cost":
+						sortOrder = "cost_desc";
+						break;
+					case "creationDate":
+						sortOrder = "creationDate_desc";
+						break;
+					case "deadlineDate":
+						sortOrder = "deadlineDate_desc";
+						break;
+				}
+			}
+
+			switch (sortOrder)
+			{
+				case "cost_desc":
+					model.openProblems = model.openProblems.OrderByDescending(s => s.Cost).ToList();
+					break;
+				case "cost":
+					model.openProblems = model.openProblems.OrderBy(s => s.Cost).ToList();
+					break;
+
+				case "creationDate_desc":
+					model.openProblems = model.openProblems.OrderByDescending(s => s.CreationDate).ToList();
+					break;
+				case "creationDate":
+					ViewBag.sortCost = "creationDate_desc";
+					model.openProblems = model.openProblems.OrderBy(s => s.CreationDate).ToList();
+					break;
+
+				case "deadlineDate_desc":
+					model.openProblems = model.openProblems.OrderByDescending(s => s.DeadlineDate).ToList();
+					break;
+				case "deadlineDate":
+					ViewBag.sortCost = "deadlineDate_desc";
+					model.openProblems = model.openProblems.OrderBy(s => s.DeadlineDate).ToList();
+					break;
+
+				default:
+					model.openProblems = model.openProblems.OrderBy(s => s.CreationDate).ToList();
+					break;
+			}
+
+			model.lastSort = sortOrder;
+
+			return model;
+		}
+
+		public OpenProblemsForEmployer getOpenProblemsForEmployer(String sortOrder, string lastSort) {
+			List<ProblemModels> problems = db.ProblemModels
+				.Where(p => p.Status == ProblemStatus.InProgress || p.Status == ProblemStatus.Opened)
+				.ToList();
+
+			OpenProblemsForEmployer model = new OpenProblemsForEmployer
+			{
+				openProblems = new List<ProblemInfoForEmployer>()
+			};
+
+			foreach(var p in problems)
+			{
+				model.openProblems.Add(getOpenProblemForEmployer(p));
+			}
+
+			model = sortProblems(model, sortOrder, lastSort);
+
+			return model;
+        }
+
+
+		[Authorize(Roles = "Admin, Freelancer, Coordinator, WithoutDocuments, Employer")]
+		public ActionResult OpenProblems(String sortOrder, string searchString, string lastSort)
+		{
+			if (User.IsInRole("Employer"))
+			{
+				return PartialView("_OpenProblemsForEmployer", getOpenProblemsForEmployer(sortOrder, lastSort));
+			}
+
 			if (User.IsInRole("Freelancer"))
 			{
 				string userId = User.Identity.GetUserId();
