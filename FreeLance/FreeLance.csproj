@@ -340,6 +340,7 @@
     <Content Include="Views\Freelancer\_DetailsForEmployerComments.cshtml" />
     <Content Include="Views\Freelancer\_DetailsForEmployerProfile.cshtml" />
     <Content Include="Views\Freelancer\_DetailsForEmployerProblems.cshtml" />
+    <Content Include="Views\Freelancer\_OpenProblemsForEmployer.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
