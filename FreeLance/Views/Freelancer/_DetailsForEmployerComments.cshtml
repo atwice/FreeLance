@@ -1,1 +1,57 @@
-﻿Комментарии
+﻿@model FreeLance.Controllers.FreelancerController.DetailsForEmployerView
+@using Microsoft.AspNet.Identity
+
+
+<div class="row">
+	<div class="col-md-11 info-block-inside">
+		@foreach (var contract in Model.ClosedContracts)
+		{
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<b>@contract.ProblemName<span class="stars pull-right" data-score=@contract.Rate.ToString().Replace(",",".")></span></b>	
+				</div>
+				<div class="panel-body">
+					<p>@contract.Comment</p>
+				</div>
+				<table class="table">
+					<tr>
+						<td>
+							Работодатель:
+							<a href="#">@contract.EmployerName</a>
+						</td>
+						<td>
+							Стоимость: @contract.Cost <span class="flaticon-ruble"></span>
+						</td>
+						<td>Работа: @contract.WorkMessage</td>
+					</tr>
+					<tr>
+						<td>Начата: @contract.CreationDate</td>
+						<td>Завершена: @contract.EndingDate</td>
+						<td>Срок: @contract.DeadlineDate</td>
+					</tr>
+				</table>
+				<div class="panel-body">
+					<a href="/Problem/Details/@contract.ProblemId" class="btn btn-info pull-right to-problem-btn" role="button">К задаче</a>
+					@if (User.Identity.GetUserId() == contract.EmployerId)
+					{
+						<a href="/Contract/Details/@contract.ContractId" class="btn btn-info pull-right" role="button">К контракту</a>
+					}
+				</div>
+			</div>
+		}
+	</div>
+</div>
+
+<script>
+	$(function () {
+		$(".stars").each(function () {
+			$(this).raty({
+				path: "../../Content/images",
+				readOnly: true,
+				score: function () {
+					return $(this).attr('data-score');
+				}
+			});
+		});
+	});
+</script>

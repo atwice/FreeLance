@@ -18,6 +18,11 @@ else
 @section css {
 	<link rel="stylesheet" href="~/Content/jquery.raty.css">
 	<link rel="stylesheet" type="text/css" href="~/Content/flaticon.css">
+	<style>
+		th, td {
+			text-align:center;
+		}
+	</style>
 	
 }
 
@@ -28,7 +33,7 @@ else
 }
 
 <div class="row">
-	<div class="col-sm-10">
+	<div class="col-md-10">
 		<h2>Архив контрактов:</h2>
 		<p>
 			<a href=@Url.Action("Archive", "Employer",
@@ -72,25 +77,26 @@ else
 						</b>
 					</div>
 					<div class="panel-body">
-						<p><i> @Truncate(contract.Details, 200)</i></p>
-
-						<table class="table">
-							<tr>
-								<td>
-									Исполнитель:
-									<a href="/Freelancer/Details/@contract.FreelancerId">@contract.FreelancerName</a>
-								</td>
-								<td>
-									Стоимость: @contract.Cost <span class="flaticon-ruble"></span>
-								</td>
-								<td>Работа: @contract.StatusMessage</td>
-							</tr>
-							<tr>
-								<td>Начата: @contract.CreationDate.ToString("dd/MM/yyyy")</td>
-								<td>Завершена: @contract.EndingDate.ToString("dd/MM/yyyy")</td>
-								<td>Срок: @contract.DeadlineDate.ToString("dd/MM/yyyy")</td>
-							</tr>
-						</table>
+						<p>@Truncate(contract.Details, 200)</p>
+					</div>
+					<table class="table">
+						<tr>
+							<td>
+								Исполнитель:
+								<a href="/Freelancer/Details/@contract.FreelancerId">@contract.FreelancerName</a>
+							</td>
+							<td>
+								Стоимость: @contract.Cost <span class="flaticon-ruble"></span>
+							</td>
+							<td>Работа: @contract.StatusMessage</td>
+						</tr>
+						<tr>
+							<td>Начата: @contract.CreationDate.ToString("dd/MM/yyyy")</td>
+							<td>Завершена: @contract.EndingDate.ToString("dd/MM/yyyy")</td>
+							<td>Срок: @contract.DeadlineDate.ToString("dd/MM/yyyy")</td>
+						</tr>
+					</table>
+					<div class="panel-body">
 						<a href="/Contract/Details/@contract.ContractId" class="btn btn-info pull-right" role="button">Подробнее</a>
 					</div>
 				</div>

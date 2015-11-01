@@ -214,12 +214,15 @@ namespace FreeLance.Controllers
 		}
 
 
-		public String getStatusMessage(ContractStatus status)
+		public static String getStatusMessage(ContractStatus status)
 		{
 			String result = "";
 			switch(status)
 			{
 				case ContractStatus.Closed:
+					result = "Выполнена полностью";
+					break;
+				case ContractStatus.ClosedNotPaid:
 					result = "Выполнена полностью";
 					break;
 				case ContractStatus.Failed:
