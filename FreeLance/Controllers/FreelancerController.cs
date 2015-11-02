@@ -8,6 +8,7 @@ using System.Net;
 using System.Web;
 using System.Web.DynamicData;
 using System.Web.Mvc;
+using Antlr.Runtime.Misc;
 using FreeLance.Code;
 using Microsoft.AspNet.Identity;
 using Novacode;
@@ -65,6 +66,34 @@ namespace FreeLance.Controllers
 			public List<FreelancerLawContractViewModel> LawContracts { get; set; }
 		}
 
+		public class ContractHomeViewModel
+		{
+			public string Name { get; set; }
+			public string Author { get; set; }
+			public DateTime Deadline { get; set; }
+			public int CommentNumber { get; set; }
+			public int ContractId { get; set; }
+		}
+
+		public class ProblemHomeViewModel
+		{
+			public int ProblemId { get; set; }
+			public string Name { get; set; }
+			public decimal Money { get; set; }
+			public string ShortDescription { get; set; }
+			public int CommentNumber { get; set; }
+			public int Others { get; set; }
+		}
+
+		public class HomeViewModel
+		{
+			public List<ContractHomeViewModel> ContractsInWork;
+			public List<ContractHomeViewModel> ContractsPending;
+			public List<ContractHomeViewModel> ContractsWaitingMoney;
+			public List<ProblemHomeViewModel> Problems;
+		}
+
+
 		public ActionResult Index()
 		{
 			return RedirectToAction("Home");
@@ -117,7 +146,7 @@ namespace FreeLance.Controllers
 				StatusIcon = EmployerController.getStatusIcon(contract.Status)
 			};
 			return info;
-        }
+		}
 
 		public SubscriptionInfoForEmployer getSubscriptionInfoForEmployer(SubscriptionModels subscription)
 		{
@@ -165,7 +194,7 @@ namespace FreeLance.Controllers
 				ProblemId = problem.ProblemId
 			};
 			return info;
-        }
+		}
 
 
 
@@ -206,14 +235,15 @@ namespace FreeLance.Controllers
 		{
 			decimal rate = 0;
 			int ratedContrats = 0;
-			foreach(var contract in contracts)
+			foreach (var contract in contracts)
 			{
-				if(checkIfContractRated(contract.Status)) {
+				if (checkIfContractRated(contract.Status))
+				{
 					ratedContrats += 1;
 					rate += contract.Rate;
 				}
 			}
-			if(ratedContrats != 0)
+			if (ratedContrats != 0)
 			{
 				rate /= ratedContrats;
 			}
@@ -295,7 +325,7 @@ namespace FreeLance.Controllers
 				_info = "profile";
 			}
 
-            DetailsForEmployerView model = new DetailsForEmployerView
+			DetailsForEmployerView model = new DetailsForEmployerView
 			{
 				info = _info,
 				FreelancerEmail = freelancer.Email,
@@ -308,13 +338,15 @@ namespace FreeLance.Controllers
 				InProgressContracts = new List<ContractInfoForEmployer>(),
 				Subscriptions = new List<SubscriptionInfoForEmployer>()
 			};
-			
+
 
 			foreach (var contract in contracts)
 			{
-				if (checkIfContractClosed(contract.Status)){
+				if (checkIfContractClosed(contract.Status))
+				{
 					model.ClosedContracts.Add(getContractInfoForEmployer(contract));
-				} else
+				}
+				else
 				{
 					model.InProgressContracts.Add(getContractInfoForEmployer(contract));
 				}
@@ -325,9 +357,66 @@ namespace FreeLance.Controllers
 				model.Subscriptions.Add(getSubscriptionInfoForEmployer(subscription));
 			}
 
-			model= sortSubcriptionsForEmployer(sortOrder, model, lastSort);
+			model = sortSubcriptionsForEmployer(sortOrder, model, lastSort);
 
 			return model;
+		}
+
+
+		private int getContractCommentsNumber(long contractId)
+		{
+			// todo get right new messages number
+			return 6;
+		}
+
+		private int getProblemCommentsNumber(long problemId)
+		{
+			// todo get right new messages number
+			return 5;
+		}
+
+		private List<ContractHomeViewModel> getContractsInState(string userId, ContractStatus status)
+		{
+			List<ContractModels> contracts = db.ContractModels.Where(
+				contract => (contract.Status == status && contract.Freelancer.Id == userId)).ToList();
+			List<ContractHomeViewModel> result = new List<ContractHomeViewModel>();
+			foreach (var contract in contracts)
+			{
+				result.Add(new ContractHomeViewModel()
+				{
+					Author = contract.Problem.Employer.FIO,
+					CommentNumber = getContractCommentsNumber(contract.ContractId),
+					ContractId = contract.ContractId,
+					Deadline = contract.EndingDate,
+					Name = contract.Problem.Name
+				});
+			}
+			return result;
+		}
+
+		private List<ProblemHomeViewModel> getProblemInState(string userId, ProblemStatus status)
+		{
+			List<ProblemModels> problems = db.ProblemModels.Where(
+				problem => (problem.Status == status)).ToList();
+			List<ProblemHomeViewModel> result = new List<ProblemHomeViewModel>();
+			foreach (var problem in problems)
+			{
+				if (problem.Subscriptions.Where(subscription => subscription.Freelancer.Id == userId).ToList().Capacity == 0)
+				{
+					continue;
+				}
+
+				result.Add(new ProblemHomeViewModel()
+				{
+					CommentNumber = getProblemCommentsNumber(problem.ProblemId),
+					Money = problem.Cost,
+					Name = problem.Name,
+					ProblemId = problem.ProblemId,
+					ShortDescription = problem.SmallDescription,
+					Others = problem.Subscriptions.Count
+				});
+			}
+			return result;
 		}
 
 		// GET: Freelancer
@@ -338,7 +427,14 @@ namespace FreeLance.Controllers
 				return RedirectToAction("Profile");
 			}
 			string userId = User.Identity.GetUserId();
-			var viewModel = new HomeView
+
+			HomeViewModel model = new HomeViewModel();
+			model.ContractsInWork = getContractsInState(userId, ContractStatus.InProgress);
+			model.ContractsPending = getContractsInState(userId, ContractStatus.Opened);
+			model.ContractsWaitingMoney = getContractsInState(userId, ContractStatus.ClosedNotPaid);
+			model.Problems = getProblemInState(userId, ProblemStatus.Opened);
+
+			/*var viewModel = new HomeView
 			{
 				Contracts = db.ContractModels.Where(
 					contract => (
@@ -349,10 +445,11 @@ namespace FreeLance.Controllers
 					).ToList(),
 				Problems = db.SubscriptionModels.Where(subscription => subscription.Freelancer.Id == userId)
 												.Select(subscription => subscription.Problem).ToList()
-			};
-			return View(viewModel);
+			};*/
+
+			return View(model);
 		}
-		
+
 		/// <param name="info">Профиль -> profile, Задачи -> problems, Отзывы -> comments</param>
 		public ActionResult Details(string id, String sortOrder, String info, String lastSort)
 		{
@@ -373,7 +470,7 @@ namespace FreeLance.Controllers
 
 			DetailsView view = new DetailsView
 			{
-				freelancer = freelancerModel, 
+				freelancer = freelancerModel,
 				LawContracts = db.LawContracts
 				.Where(
 					c => c.User.Id == id)
@@ -429,7 +526,7 @@ namespace FreeLance.Controllers
 			public List<FreelancerContractViewModel> UnpaidContracts { get; set; }
 			public List<FreelancerProblemViewModel> SubscribedProblems { get; set; }
 		}
-		
+
 		/*
 			Auxiliary methods return view models for page
 			Координатор. Фрилансер. Вкладка Задачи
@@ -454,7 +551,7 @@ namespace FreeLance.Controllers
 						Cost = c.Cost
 					})
 				.ToList();
-        }
+		}
 
 		private List<FreelancerContractViewModel> extractOpenContracts(string freelancerId)
 		{
@@ -475,7 +572,7 @@ namespace FreeLance.Controllers
 						Cost = c.Cost
 					})
 				.ToList();
-        }
+		}
 
 		private List<FreelancerProblemViewModel> extractSubscribedProblems(string freelancerId)
 		{
@@ -493,7 +590,7 @@ namespace FreeLance.Controllers
 						Cost = c.Problem.Cost
 					})
 				.ToList();
-        }
+		}
 
 		/*
 			Координатор. Фрилансер. Вкладка Задачи
@@ -663,7 +760,8 @@ namespace FreeLance.Controllers
 			return model;
 		}
 
-		public OpenProblemsForEmployer getOpenProblemsForEmployer(String sortOrder, string lastSort) {
+		public OpenProblemsForEmployer getOpenProblemsForEmployer(String sortOrder, string lastSort)
+		{
 			List<ProblemModels> problems = db.ProblemModels
 				.Where(p => p.Status == ProblemStatus.InProgress || p.Status == ProblemStatus.Opened)
 				.ToList();
@@ -673,7 +771,7 @@ namespace FreeLance.Controllers
 				openProblems = new List<ProblemInfoForEmployer>()
 			};
 
-			foreach(var p in problems)
+			foreach (var p in problems)
 			{
 				model.openProblems.Add(getOpenProblemForEmployer(p));
 			}
@@ -681,7 +779,7 @@ namespace FreeLance.Controllers
 			model = sortProblems(model, sortOrder, lastSort);
 
 			return model;
-        }
+		}
 
 
 		[Authorize(Roles = "Admin, Freelancer, Coordinator, WithoutDocuments, Employer")]

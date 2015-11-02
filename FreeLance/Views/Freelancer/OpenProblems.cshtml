@@ -1,21 +1,21 @@
 ﻿@model IEnumerable<FreeLance.Models.ProblemModels>
 @{
     ViewBag.Title = "Биржа";
-	ViewBag.MenuPick = "OpenProblems";
+    ViewBag.MenuPick = "OpenProblems";
 }
 @helper Truncate(string input, int length)
 {
 if (input.Length <= length)
 {
-		@input
+        @input
 }
 else
 {
-		@input.Substring(0, length)<text>...</text>
+        @input.Substring(0, length)<text>...</text>
 }
 }
 <div class="col-md-10">
-	<h2>Биржа задач</h2>
+    <h2>Биржа задач</h2>
     <div class="list-group">
         @using (Html.BeginForm())
         {
