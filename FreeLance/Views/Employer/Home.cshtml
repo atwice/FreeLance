@@ -15,34 +15,72 @@ else
 }
 }
 
-<div class="col-md-10">
-	<h2>@ViewBag.Title</h2>
-	<h3>Контракты</h3>
-	<div class="list-group">
-		@foreach (var contract in Model.ActualContracts)
-		{
-			<a href="/Contract/Details/@contract.ContractId" class="list-group-item">
-				<h4 class="list-group-item-heading">@contract.Problem.Name <small class="status">@contract.Status</small></h4>
-				<p class="list-group-item-text" style="color:lightgray"><i>@contract.Freelancer.FIO</i></p>
-				<p class="list-group-item-text"> @Truncate(contract.Details, 200)</p>
-			</a>
+@section css {
+	<link rel="stylesheet" type="text/css" href="~/Content/flaticon.css">
+	<style>
+		.text-info-in-panel {
+			margin-left: 5px;
 		}
+	</style>
+}
+
+
+<div class="row">
+	<div class="col-md-9">
+		<div class="col-md-6">
+			<h3>В работе:</h3>
+
+			@foreach (var problem in Model.ProblemsInProgress)
+			{
+				foreach (var contract in problem.Contracts)
+				{
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<b>@problem.Name<span class="@contract.StatusIcon pull-right"></span></b>
+						</div>
+						<div class="panel-body">
+							<p>
+								<i class="flaticon-calendar68"></i>
+								@contract.CreationDate - @contract.EndingDate
+								<span class="pull-right"><b>@contract.Cost</b><span class="flaticon-ruble"></span> </span>
+							</p>
+							<p><b>Исполнитель:</b><a class="text-info-in-panel" href="/Freelancer/Details/@contract.freelancerId">@contract.FIO</a></p>
+
+							<div>
+								<i class="flaticon-comments16"></i> <span class="badge">@contract.newMsgCount</span>
+								<a href="/Contract/Details/@contract.id" class="btn btn-info pull-right" role="button">К контракту</a>
+							</div>
+						</div>
+					</div>
+				}
+			}
+		</div>
+		<div class="col-md-6">
+			<h3>Поиск исполнителей:</h3>
+			@foreach (var problem in Model.ProblemsOpen)
+			{
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<b>@problem.Name</b>
+					</div>
+					<div class="panel-body">
+						<p>
+							<b>@problem.SubscribersCount подписчиков</b>
+							<span class="pull-right"><b>@problem.Cost</b><span class="flaticon-ruble"></span> </span>
+						</p>
+						<p><i> @Truncate(problem.ShortDescription, 200)</i></p>
+						<div>
+							<i class="flaticon-comments16"></i> <span class="badge">@problem.NewMsgCount</span>
+							<a href="/Problem/Details/@problem.Id" class="btn btn-info pull-right" role="button">К задаче</a>
+						</div>
+					</div>
+				</div>
+			}
+		</div>
 	</div>
-	<h3>Мои открытые задачи</h3>
-	<div class="list-group">
-		@foreach (var problem in Model.OpenProblems)
-		{
-			<a href="/Problem/Details/@problem.ProblemId" class="list-group-item">
-				<h4 class="list-group-item-heading">@problem.Name</h4>
-				<p class="list-group-item-text" style="color:forestgreen"><i>Откликнулось @problem.Subscriptions.Count исполнителей</i></p>
-			    <p class="list-group-item-text"> @Truncate(problem.SmallDescription, 200)</p>
-                <p class="list-group-item-text"> @problem.CreationDate </p>
-			</a>
-		}
+	<div class="col-md-3 text-center">
+		<a href="@Url.Action("Create", "Problem")" class="btn btn-success btn-lg" role="button" style="margin-top: 20px;">
+			Создать задачу
+		</a>
 	</div>
-</div>
-<div class="col-md-2">
-	<a href="@Url.Action("Create", "Problem")">
-		<button style="margin-top: 20px;" type="button" class="btn btn-success btn-lg">Создать задачу</button>
-	</a>
 </div>

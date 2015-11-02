@@ -219,6 +219,7 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\flaticon.css" />
     <Content Include="Content\font-awesome.min.css" />
     <Content Include="Content\freelance.css" />
     <Content Include="Content\bootstrap.css" />
@@ -307,7 +308,6 @@
     <Content Include="Views\Freelancer\Home.cshtml" />
     <Content Include="Views\Freelancer\Archive.cshtml" />
     <Content Include="Views\Freelancer\Contract.cshtml" />
-    <Content Include="Views\Employer\NewProblem.cshtml" />
     <Content Include="Views\Employer\Problem.cshtml" />
     <Content Include="Views\Freelancer\Profile.cshtml" />
     <Content Include="Views\Coordinator\Home.cshtml" />
@@ -332,10 +332,15 @@
     <Content Include="Views\Emails\OnStatusChange.cshtml" />
     <Content Include="Views\Emails\OnNewApplication.cshtml" />
     <Content Include="Views\Freelancer\Settings.cshtml" />
-    <Content Include="Views\Employer\Settings.cshtml" />
     <Content Include="Views\Coordinator\Settings.cshtml" />
     <Content Include="Views\Emails\Example.cshtml" />
     <Content Include="Views\Chat\CreateChat.cshtml" />
+    <Content Include="Views\Employer\Profile.cshtml" />
+    <Content Include="Views\Freelancer\_DetailsForEmployer.cshtml" />
+    <Content Include="Views\Freelancer\_DetailsForEmployerComments.cshtml" />
+    <Content Include="Views\Freelancer\_DetailsForEmployerProfile.cshtml" />
+    <Content Include="Views\Freelancer\_DetailsForEmployerProblems.cshtml" />
+    <Content Include="Views\Freelancer\_OpenProblemsForEmployer.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

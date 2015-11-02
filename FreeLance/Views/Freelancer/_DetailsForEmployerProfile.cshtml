@@ -1,0 +1,41 @@
+﻿@model FreeLance.Controllers.FreelancerController.DetailsForEmployerView
+
+
+
+<div class="row info-block-inside">
+	<div class="col-md-5">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h2 class="panel-title">Cтатистика</h2>
+			</div>
+			<table class="table" align="center">
+				<tr>
+					<td>Рейтинг</td>
+					<td>@Model.FreelancerRate.ToString().Replace(",", ".")</td>
+				</tr>
+				<tr>
+					<td>Контрактов в процессе</td>
+					<td>@Model.InProgressContracts.Count()</td>
+				</tr>
+				<tr>
+					<td>Контрактов выполнено</td>
+					<td>@Model.ClosedContracts.Count()</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<div class="col-md-5 col-md-offset-1">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h2 class="panel-title">Дополнительная информация</h2>
+			</div>
+			<table class="table" align="center">
+				<tr>
+					<td>Телефон</td>
+					<td>@Model.FreelancerPhone</td>
+				</tr>
+			</table>
+		</div>
+
+	</div>
+</div>

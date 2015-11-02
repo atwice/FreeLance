@@ -15,6 +15,16 @@ namespace FreeLance.Migrations
 
 	internal sealed class Configuration : DbMigrationsConfiguration<FreeLance.Models.ApplicationDbContext>
 	{
+
+		private static readonly Random random = new Random();
+
+		private static double RandomNumberBetween(double minValue, double maxValue)
+		{
+			var next = random.NextDouble();
+
+			return minValue + (next * (maxValue - minValue));
+		}
+
 		public Configuration()
 		{
 			AutomaticMigrationsEnabled = true;
@@ -35,6 +45,8 @@ namespace FreeLance.Migrations
 			AddEmployerFreelancerProblemContractAuto(context, "Employer2", "Freelancer2");
 			AddEmployerFreelancerProblemContractAuto(context, "Employer", "Freelancer3");
 			AddProblemWithSubscriber(context, "Employer4", "Subscriber1");
+			AddProblemWithSubscriber(context, "Employer5", "Subscriber1");
+			AddProblemWithSubscriber(context, "Employer6", "Subscriber1");
 			AddProblemWithSubscriber(context, "Employer5", "Subscriber2");
 			AddProblemWithSubscriber(context, "Employer6", "Subscriber3");
 			AddClosedContracts(context);
@@ -90,7 +102,16 @@ namespace FreeLance.Migrations
 
 		private ProblemModels addProblem(ApplicationDbContext context, string name, string desc, ProblemStatus status, ApplicationUser employer)
 		{
-			var problem = new ProblemModels { Name = name, SmallDescription = desc, Description = desc, Status = status, Employer = employer, CreationDate = DateTime.Now, Cost = 100};
+			Random rnd = new Random();
+			String additionalDescription = " Although moreover mistaken kindness me feelings do be marianne. Son over own nay with tell they cold upon are. Cordial village and settled she ability law herself. Finished why bringing but sir bachelor unpacked any thoughts. Unpleasing unsatiable particular inquietude did nor sir. Get his declared appetite distance his together now families. Friends am himself at on norland it viewing. Suspected elsewhere you belonging continued commanded she. Do commanded an shameless we disposing do.Indulgence ten remarkably nor are impression out. Power is lived means oh every in we quiet. Remainder provision an in intention.Saw supported too joy promotion engrossed propriety.Me till like it sure no sons. ";
+            var problem = new ProblemModels {
+				Name = name,
+				SmallDescription = desc + additionalDescription,
+				Description = desc + additionalDescription, Status = status,
+				Employer = employer,
+				CreationDate = DateTime.Now.AddDays(rnd.Next(1, 40)).AddHours(5),
+				Cost = (decimal)RandomNumberBetween(10.1, 5000.0)
+			};
 			context.ProblemModels.AddOrUpdate(p => p.Name, problem);
 			return problem;
 		}
@@ -114,7 +135,11 @@ namespace FreeLance.Migrations
 		{
 			Random rnd = new Random();
 			var contract = new ContractModels { Details = details, Problem = problem, Status = status, Freelancer = freelancer,
-				CreationDate = DateTime.Now, EndingDate = DateTime.Now.AddDays(30).AddHours(5), Comment="Comment about freelancer's work", Rate=rnd.Next(1,6) };
+				CreationDate = DateTime.Now.AddDays(rnd.Next(1, 40)).AddHours(5),
+				EndingDate = DateTime.Now.AddDays(rnd.Next(50, 100)).AddHours(5),
+				Comment ="Comment about freelancer's work", Rate=rnd.Next(1,6),
+				Cost = (decimal) RandomNumberBetween(10.1, 5000.0)
+			};
 			context.ContractModels.AddOrUpdate(p => p.Details, contract);
 			return contract;
 		}
