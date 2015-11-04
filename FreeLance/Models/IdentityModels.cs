@@ -20,7 +20,6 @@ namespace FreeLance.Models
             return userIdentity;
         }
 
-		[Required]
 		public bool? IsApprovedByCoordinator { get; set; }
 		public string FIO { get; set; }
 		public virtual DocumentPackageModels DocumentPackage { get; set; }

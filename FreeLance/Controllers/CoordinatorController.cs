@@ -142,20 +142,6 @@ namespace FreeLance.Controllers
 		public ActionResult Home()
 		{
 			var model = new HomeViewModel();
-			ViewBag.ManyIncognitos = false;
-			model.IncognitosSmallList = getApplicationUsersInRole("Incognito").ToList();
-			if (model.IncognitosSmallList.Count() > 3)
-			{
-				model.IncognitosSmallList = model.IncognitosSmallList.GetRange(0, 3);
-				ViewBag.ManyIncognitos = true;
-			}
-			ViewBag.ManyWithoutDocuments = false;
-			model.WithoutDocumentsSmallList = getApplicationUsersApproved(false, "Freelancer").ToList();
-			if (model.WithoutDocumentsSmallList.Count() > 3)
-			{
-				model.WithoutDocumentsSmallList = model.WithoutDocumentsSmallList.GetRange(0, 3);
-				ViewBag.ManyWithoutDocuments = true;
-			}
 		    model.ContractsList = db.ContractModels.Where(x => x.IsApprovedByCoordinator == false).ToList();
 		    model.ContractsToPay = db.ContractModels.Where(x => x.Status == ContractStatus.ClosedNotPaid).ToList();
 		    model.NewEmployers = getApplicationUsersApproved(null, "Employer").ToList();
