@@ -412,7 +412,7 @@ namespace FreeLance.Controllers
 				}
 			}
 			List<FillLawContractTemplateVR.FreelancerVR> freelancers = getApplicationUsersInRole("Freelancer")
-				.Where(x => x.IsApprovedByCoordinator == true && (freelancerId == null || freelancerId == x.Id))
+				.Where(x => (freelancerId == null || freelancerId == x.Id))
 				.Select(x => new FillLawContractTemplateVR.FreelancerVR {
 					FIO = x.FIO,
 					Id = x.Id
@@ -429,7 +429,7 @@ namespace FreeLance.Controllers
 			ApplicationUser employer = db.Users.Find(employerId);
 			LawContractTemplate lawContractTemplate = db.LawContractTemplates.Find(lawContractTemplateId);
 			var employerRole = db.Roles.Where(role => role.Name == "Employer").ToArray()[0];
-			if (employer == null || lawContractTemplate == null || employer.IsApprovedByCoordinator == null || employer.IsApprovedByCoordinator == false
+			if (employer == null || lawContractTemplate == null 
 				|| employer.Roles.Where(x => x.RoleId == employerRole.Id).Any()) {
 				return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
 			}
