@@ -165,6 +165,7 @@ namespace FreeLance.Controllers
 		public class OpenProblemsInfo
 		{
 			public String lastSort { get; set; }
+			public string showSubscriptions { get; set; }
 			public List<OpenProblemInfo> openProblems { get; set; }
 		}
 
@@ -761,7 +762,7 @@ namespace FreeLance.Controllers
 			return model;
 		}
 
-		public OpenProblemsInfo getOpenProblemsInfo(String sortOrder, string lastSort, bool hideSubscriptions)
+		public OpenProblemsInfo getOpenProblemsInfo(String sortOrder, string lastSort, string showSubscriptionsParam)
 		{
 			List<ProblemModels> problems = db.ProblemModels
 				.Where(p => p.Status == ProblemStatus.InProgress || p.Status == ProblemStatus.Opened)
@@ -769,13 +770,14 @@ namespace FreeLance.Controllers
 
 			OpenProblemsInfo model = new OpenProblemsInfo
 			{
-				openProblems = new List<OpenProblemInfo>()
+				openProblems = new List<OpenProblemInfo>(),
+				showSubscriptions = showSubscriptionsParam
 			};
 
 			foreach (var p in problems)
 			{
 				OpenProblemInfo info = getOpenProblemInfo(p);
-				if (!info.IsSubscribed || !hideSubscriptions)
+				if (!info.IsSubscribed || showSubscriptionsParam != null)
 				{
 					model.openProblems.Add(info);
 				}
@@ -787,16 +789,16 @@ namespace FreeLance.Controllers
 		}
 
 		[Authorize(Roles = "Admin, Freelancer, Coordinator, WithoutDocuments, Employer")]
-		public ActionResult OpenProblems(String sortOrder, string searchString, string lastSort)
+		public ActionResult OpenProblems(String sortOrder, string searchString, string lastSort, string showSubscriptionsParam)
 		{
 			if (User.IsInRole("Employer"))
 			{
-				return PartialView("_OpenProblemsForEmployer", getOpenProblemsInfo(sortOrder, lastSort, false));
+				return PartialView("_OpenProblemsForEmployer", getOpenProblemsInfo(sortOrder, lastSort, "show"));
 			}
 
 			if (User.IsInRole("Freelancer"))
 			{
-				return View(getOpenProblemsInfo(sortOrder, lastSort, false));
+				return View(getOpenProblemsInfo(sortOrder, lastSort, showSubscriptionsParam));
 			}
 
 			return Redirect("index");

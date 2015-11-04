@@ -48,19 +48,30 @@ else
 		<h2>Задачи:</h2>
 		<p>
 			<a href=@Url.Action("OpenProblems", "Freelancer",
-				new { sortOrder = "cost", lastSort = Model.lastSort }) class="btn btn-info">
+				new { sortOrder = "cost", lastSort = Model.lastSort}) class="btn btn-info">
 				<span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
 				По стоимости
 			</a>
 			<a href=@Url.Action("OpenProblems", "Freelancer",
-				new { sortOrder = "creationDate", lastSort = Model.lastSort }) class="btn btn-info">
+				new { sortOrder = "creationDate", lastSort = Model.lastSort}) class="btn btn-info">
 				<span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
 				По дате создания
 			</a>
 			<a href=@Url.Action("OpenProblems", "Freelancer",
-				new { sortOrder = "deadlineDate", lastSort = Model.lastSort }) class="btn btn-info">
+						new {sortOrder = "deadlineDate", lastSort = Model.lastSort}) class="btn btn-info">
 				<span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
 				По дате сдачи
+			</a>
+			<a href=@Url.Action("OpenProblems", "Freelancer",
+				new { sortOrder = Model.lastSort, lastSort = Model.lastSort, showSubscriptionsParam = Model.showSubscriptions == null? "show" : null }) class="btn btn-info">
+				@if (Model.showSubscriptions == null)
+				{
+				    <span>Показать подписки</span>
+                }
+                else
+                {
+                    <span>Спрятать подписки</span>
+                }
 			</a>
 		</p>
 		<div>
@@ -94,8 +105,25 @@ else
 							<div class="col-md-3 info-block">
 								Срок: @problem.DeadlineDate.ToString("dd/MM/yyyy")
 							</div>
-							<div class="col-md-3 btn-details">
-								<a href="/Problem/Details/@problem.ProblemId" class="btn btn-info pull-right" role="button">Подробнее</a>
+							<div class="col-md-3">
+								<div class="btn-details pull-right">
+									<a href="/Problem/Details/@problem.ProblemId" class="btn btn-info pull-right" role="button">Подробнее</a>
+								</div>
+								@if (problem.IsSubscribed)
+								{
+									<div class="text-success">
+										Подписан
+									</div>
+								}
+								else
+								{
+									using (Html.BeginForm("Subscribe", "Subscription", FormMethod.Post))
+									{
+										<input name="id" type="hidden" value="@problem.ProblemId" />
+										<input type="submit" class="btn btn-success pull-right" value="Подписаться" />
+									}
+								}
+
 							</div>
 						</div>
 					</div>
