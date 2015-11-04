@@ -162,13 +162,13 @@ namespace FreeLance.Controllers
 			return info;
 		}
 
-		public class OpenProblemsForEmployer
+		public class OpenProblemsInfo
 		{
 			public String lastSort { get; set; }
-			public List<ProblemInfoForEmployer> openProblems { get; set; }
+			public List<OpenProblemInfo> openProblems { get; set; }
 		}
 
-		public class ProblemInfoForEmployer
+		public class OpenProblemInfo
 		{
 			public String ProblemName { get; set; }
 			public String ProblemShortDescription { get; set; }
@@ -178,11 +178,12 @@ namespace FreeLance.Controllers
 			public decimal Cost { get; set; }
 			public int AmountOfWorkers { get; set; }
 			public int ProblemId { get; set; }
+			public bool IsSubscribed { get; set; }
 		}
 
-		public ProblemInfoForEmployer getOpenProblemForEmployer(ProblemModels problem)
+		public OpenProblemInfo getOpenProblemInfo(ProblemModels problem)
 		{
-			ProblemInfoForEmployer info = new ProblemInfoForEmployer
+			OpenProblemInfo info = new OpenProblemInfo
 			{
 				ProblemName = problem.Name,
 				ProblemShortDescription = problem.SmallDescription,
@@ -191,7 +192,8 @@ namespace FreeLance.Controllers
 				DeadlineDate = DateTime.Now.AddDays(50), // TODO
 				Cost = problem.Cost,
 				AmountOfWorkers = 10, // TODO
-				ProblemId = problem.ProblemId
+				ProblemId = problem.ProblemId,
+				IsSubscribed = problem.Subscriptions.Any(s => s.Freelancer.Id == User.Identity.GetUserId())
 			};
 			return info;
 		}
@@ -208,7 +210,6 @@ namespace FreeLance.Controllers
 			public String FreelancerId { get; set; }
 			public String info;
 			public String lastSort;
-
 			public List<ContractInfoForEmployer> ClosedContracts { get; set; }
 			public List<ContractInfoForEmployer> InProgressContracts { get; set; }
 			public List<SubscriptionInfoForEmployer> Subscriptions { get; set; }
@@ -706,7 +707,7 @@ namespace FreeLance.Controllers
 		}
 
 
-		public OpenProblemsForEmployer sortProblems(OpenProblemsForEmployer model, String sortOrder, String lastSort)
+		public OpenProblemsInfo sortProblems(OpenProblemsInfo model, String sortOrder, String lastSort)
 		{
 
 			if (lastSort == sortOrder)
@@ -760,20 +761,24 @@ namespace FreeLance.Controllers
 			return model;
 		}
 
-		public OpenProblemsForEmployer getOpenProblemsForEmployer(String sortOrder, string lastSort)
+		public OpenProblemsInfo getOpenProblemsInfo(String sortOrder, string lastSort, bool hideSubscriptions)
 		{
 			List<ProblemModels> problems = db.ProblemModels
 				.Where(p => p.Status == ProblemStatus.InProgress || p.Status == ProblemStatus.Opened)
 				.ToList();
 
-			OpenProblemsForEmployer model = new OpenProblemsForEmployer
+			OpenProblemsInfo model = new OpenProblemsInfo
 			{
-				openProblems = new List<ProblemInfoForEmployer>()
+				openProblems = new List<OpenProblemInfo>()
 			};
 
 			foreach (var p in problems)
 			{
-				model.openProblems.Add(getOpenProblemForEmployer(p));
+				OpenProblemInfo info = getOpenProblemInfo(p);
+				if (!info.IsSubscribed || !hideSubscriptions)
+				{
+					model.openProblems.Add(info);
+				}
 			}
 
 			model = sortProblems(model, sortOrder, lastSort);
@@ -781,49 +786,20 @@ namespace FreeLance.Controllers
 			return model;
 		}
 
-
 		[Authorize(Roles = "Admin, Freelancer, Coordinator, WithoutDocuments, Employer")]
 		public ActionResult OpenProblems(String sortOrder, string searchString, string lastSort)
 		{
 			if (User.IsInRole("Employer"))
 			{
-				return PartialView("_OpenProblemsForEmployer", getOpenProblemsForEmployer(sortOrder, lastSort));
+				return PartialView("_OpenProblemsForEmployer", getOpenProblemsInfo(sortOrder, lastSort, false));
 			}
 
 			if (User.IsInRole("Freelancer"))
 			{
-				string userId = User.Identity.GetUserId();
-				ApplicationUser freelancer = db.Users.Find(userId);
-				bool withLawContract = db.LawContracts.Where(c => c.User.Id == userId).Count() > 0 ? true : false;
-				if (!withLawContract)
-				{
-					ViewBag.ErrorMessage = "Вам не заплатят за выполненную работу, пока вы не заключите ГПХ.";
-				}
-			}
-			ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
-			ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
-			var openProblems = from s in db.ProblemModels where s.Status == 0 select s;
-			if (!String.IsNullOrEmpty(searchString))
-			{
-				openProblems = openProblems.Where(s => s.Name.Contains(searchString) || s.Description.Contains(searchString) || s.SmallDescription.Contains(searchString));
+				return View(getOpenProblemsInfo(sortOrder, lastSort, false));
 			}
 
-			switch (sortOrder)
-			{
-				case "name_desc":
-					openProblems = openProblems.OrderByDescending(s => s.Name);
-					break;
-				case "Date":
-					openProblems = openProblems.OrderBy(s => s.CreationDate);
-					break;
-				case "date_desc":
-					openProblems = openProblems.OrderByDescending(s => s.CreationDate);
-					break;
-				default:
-					openProblems = openProblems.OrderBy(s => s.Name);
-					break;
-			}
-			return View(openProblems.ToList());
+			return Redirect("index");
 		}
 
 		public ActionResult Profile()

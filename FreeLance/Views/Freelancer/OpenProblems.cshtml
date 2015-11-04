@@ -1,51 +1,107 @@
-﻿@model IEnumerable<FreeLance.Models.ProblemModels>
+﻿@model FreeLance.Controllers.FreelancerController.OpenProblemsInfo
 @{
-    ViewBag.Title = "Биржа";
-    ViewBag.MenuPick = "OpenProblems";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	ViewBag.Title = "Биржа";
 }
+
 @helper Truncate(string input, int length)
 {
 if (input.Length <= length)
 {
-        @input
+		@input
 }
 else
 {
-        @input.Substring(0, length)<text>...</text>
+		@input.Substring(0, length)<text>...</text>
 }
 }
-<div class="col-md-10">
-    <h2>Биржа задач</h2>
-    <div class="list-group">
-        @using (Html.BeginForm())
-        {
-            <p>
-                Найти: @Html.TextBox("SearchString")
-                <input type="submit" value="Поиск" />
-            </p>
-        }
-        <h4>
-            <tr>
-                <th>
-                    @Html.ActionLink("Имя", "OpenProblems", new {sortOrder = ViewBag.NameSortParm})
-                </th>
-                <th>
-                </th>
-                <th>
-                    @Html.ActionLink("Дата создания", "OpenProblems", new {sortOrder = ViewBag.DateSortParm})
-                </th>
-                <th></th>
-            </tr>
-        </h4>
-        @foreach (var problem in Model)
-        {
-            <a href="/Problem/Details/@problem.ProblemId" class="list-group-item">
-                <h4 class="list-group-item-heading">@problem.Name <small class="status">@problem.Status</small></h4>
-                <p class="list-group-item-text" style="color: lightgray">
-                    <i>@problem.Employer.FIO</i>
-                </p>
-                <p class="list-group-item-text"> @Truncate(problem.SmallDescription, 200)</p>
-            </a>
-        }
-    </div>
+
+@section css {
+	<link rel="stylesheet" type="text/css" href="~/Content/flaticon.css">
+	<style>
+		.info-block {
+			text-align: center;
+			padding-top: 6px;
+			font-size: medium;
+		}
+
+		.head-info {
+			font-size: large;
+		}
+
+		.btn-details {
+			text-align: right;
+		}
+
+		.panel-footer {
+			padding: 4px 15px;
+		}
+
+		.flaticon-ruble-big:before {
+			font-size: 15px;
+		}
+	</style>
+}
+
+<div class="row">
+	<div class="col-md-10">
+		<h2>Задачи:</h2>
+		<p>
+			<a href=@Url.Action("OpenProblems", "Freelancer",
+				new { sortOrder = "cost", lastSort = Model.lastSort }) class="btn btn-info">
+				<span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+				По стоимости
+			</a>
+			<a href=@Url.Action("OpenProblems", "Freelancer",
+				new { sortOrder = "creationDate", lastSort = Model.lastSort }) class="btn btn-info">
+				<span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+				По дате создания
+			</a>
+			<a href=@Url.Action("OpenProblems", "Freelancer",
+				new { sortOrder = "deadlineDate", lastSort = Model.lastSort }) class="btn btn-info">
+				<span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+				По дате сдачи
+			</a>
+		</p>
+		<div>
+			@foreach (var problem in Model.openProblems)
+			{
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<span class="head-info">
+							@problem.ProblemName
+							<span class="pull-right">
+								@problem.Cost
+								<span class="flaticon-ruble-big"></span> на @problem.AmountOfWorkers исполнителей
+							</span>
+						</span>
+					</div>
+					<div class="panel-body">
+						<div class="row">
+							<div class="col-md-12">
+								<p>@Truncate(problem.ProblemShortDescription, 600)</p>
+							</div>
+						</div>
+					</div>
+					<div class="panel-footer">
+						<div class="row">
+							<div class="col-md-3 info-block">
+								<a href="#">@problem.EmployerName</a>
+							</div>
+							<div class="col-md-3 info-block">
+								Создана: @problem.CreationDate.ToString("dd/MM/yyyy")
+							</div>
+							<div class="col-md-3 info-block">
+								Срок: @problem.DeadlineDate.ToString("dd/MM/yyyy")
+							</div>
+							<div class="col-md-3 btn-details">
+								<a href="/Problem/Details/@problem.ProblemId" class="btn btn-info pull-right" role="button">Подробнее</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			}
+		</div>
+	</div>
 </div>
+
