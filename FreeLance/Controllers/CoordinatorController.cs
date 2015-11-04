@@ -147,7 +147,7 @@ namespace FreeLance.Controllers
 		    model.NewEmployers = getApplicationUsersApproved(null, "Employer").ToList();
 		    model.NewFreelancers = getApplicationUsersApproved(null, "Freelancer").ToList();
 		    model.ContractWithComments = db.ContractModels.Where(x => x.Comment != null).ToList();
-		    model.DocumetsUnapproved = db.DocumentPackageModels.ToList();
+		    model.DocumetsUnapproved = db.DocumentPackageModels.Where(x => x.IsApproved == null).ToList();
 			return View(model);
 		}
 
@@ -282,6 +282,8 @@ namespace FreeLance.Controllers
 			return RedirectToAction("ViewFreelancerDocuments", new { userId = freelancerId });
 	    }
 
+
+
 		public ActionResult Employers()
 		{
 			var model = new EmployersViewModel();
@@ -319,10 +321,24 @@ namespace FreeLance.Controllers
 	        return Redirect("/Coordinator/Home");
 	    }
 
-	    public enum Approvable
+        [HttpPost]
+        public ActionResult ApproveDocuments(string docId, bool value)
+        {
+            int id = Int32.Parse(docId);
+            DocumentPackageModels doc = db.DocumentPackageModels.Include(x => x.Freelancer).Single(x => x.Id == id);
+            if (doc == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            doc.IsApproved = value;
+            db.SaveChanges();
+            return Redirect("/Coordinator/Home");
+        }
+
+        public enum Approvable
 	    {
 	        Contract,
-	        Payment
+	        Payment, 
 	    };
 
         [HttpPost]
