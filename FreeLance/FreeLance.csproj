@@ -320,7 +320,6 @@
     <Content Include="Views\Coordinator\FillLawContractTemplate.cshtml" />
     <Content Include="Views\Coordinator\LawFace.cshtml" />
     <Content Include="Views\Freelancer\Documents.cshtml" />
-    <Content Include="Views\Freelancer\Details.cshtml" />
     <Content Include="Views\Notification\_ErrorNotification.cshtml" />
     <Content Include="Views\Notification\GetPageNotifications.cshtml" />
     <Content Include="Views\Emails\_ViewStart.cshtml" />
@@ -334,7 +333,6 @@
     <Content Include="Views\Coordinator\Settings.cshtml" />
     <Content Include="Views\Emails\Example.cshtml" />
     <Content Include="Views\Chat\CreateChat.cshtml" />
-    <Content Include="Views\Freelancer\Problems.cshtml" />
     <Content Include="Views\Employer\Profile.cshtml" />
     <Content Include="Views\Freelancer\_DetailsForEmployer.cshtml" />
     <Content Include="Views\Freelancer\_DetailsForEmployerComments.cshtml" />
@@ -351,6 +349,10 @@
     <Content Include="Views\Coordinator\_ApprovePaymentButton.cshtml" />
     <Content Include="Views\User\CoordinatorApprovial.cshtml" />
     <Content Include="Views\Freelancer\_OpenProblemsForEmployer.cshtml" />
+    <Content Include="Views\Freelancer\_DetailsForCoordinator.cshtml" />
+    <Content Include="Views\Freelancer\_DetailsForCoordinatorProfile.cshtml" />
+    <Content Include="Views\Freelancer\_DetailsForCoordinatorProblems.cshtml" />
+    <Content Include="Views\Freelancer\_DetailsForCoordinatorComments.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

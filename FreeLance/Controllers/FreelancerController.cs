@@ -43,6 +43,7 @@ namespace FreeLance.Controllers
 			public String Comment { get; set; }
 			public decimal Rate { get; set; }
 			public DateTime EndingDate { get; set; }
+			public DateTime StartDate { get; set; }
 			public decimal Cost { get; set; }
 		}
 
@@ -57,13 +58,6 @@ namespace FreeLance.Controllers
 		{
 			public List<ArchivedContractViewModel> SuccessfulContracts { get; set; } // with Closed status
 			public List<ArchivedContractViewModel> FailedContracts { get; set; } // with CancelledByEmpoyer, CancelledByFreelancer & Failed status
-		}
-
-		public class DetailsView
-		{
-			public ApplicationUser freelancer { get; set; }
-			public decimal Rate { get; set; }
-			public List<FreelancerLawContractViewModel> LawContracts { get; set; }
 		}
 
 		public class ContractHomeViewModel
@@ -92,7 +86,6 @@ namespace FreeLance.Controllers
 			public List<ContractHomeViewModel> ContractsWaitingMoney;
 			public List<ProblemHomeViewModel> Problems;
 		}
-
 
 		public ActionResult Index()
 		{
@@ -196,8 +189,6 @@ namespace FreeLance.Controllers
 			return info;
 		}
 
-
-
 		public class DetailsForEmployerView
 		{
 			public String FreelancerName { get; set; }
@@ -212,6 +203,21 @@ namespace FreeLance.Controllers
 			public List<ContractInfoForEmployer> ClosedContracts { get; set; }
 			public List<ContractInfoForEmployer> InProgressContracts { get; set; }
 			public List<SubscriptionInfoForEmployer> Subscriptions { get; set; }
+		}
+
+		public class DetailsForCoordinatorView
+		{
+			public String FreelancerName { get; set; }
+			public String FreelancerEmail { get; set; }
+			public String FreelancerPhone { get; set; }
+			public decimal FreelancerRate { get; set; }
+			public String PhotoPath { get; set; }
+			public String FreelancerId { get; set; }
+			public String info;
+			public String lastSort;
+
+			public DetailsProblemsView ProblemsView;
+			public DetailsProfileView ProfileView;
 		}
 
 		public bool checkIfContractRated(ContractStatus status)
@@ -248,6 +254,65 @@ namespace FreeLance.Controllers
 				rate /= ratedContrats;
 			}
 			return rate;
+		}
+
+		private List<FreelancerProblemViewModel> sortProblemsForCoordinator(String sortOrder, List<FreelancerProblemViewModel> problems, String lastSort)
+		{
+			if (lastSort == sortOrder)
+			{
+				switch (sortOrder)
+				{
+					case "sortCost":
+						sortOrder = "cost_desc";
+						break;
+					case "sortProblemName":
+						sortOrder = "problemName_desc";
+						break;
+					case "sortEmployerName":
+						sortOrder = "employerName_desc";
+						break;
+					case "sortEndDate":
+						sortOrder = "endDate_desc";
+						break;
+				}
+			}
+
+			switch (sortOrder)
+			{
+				case "cost_desc":
+					problems = problems.OrderByDescending(s => s.Cost).ToList();
+					break;
+				case "cost":
+					problems = problems.OrderBy(s => s.Cost).ToList();
+					break;
+
+				case "problemName_desc":
+					problems = problems.OrderByDescending(s => s.Name).ToList();
+					break;
+				case "problemName":
+					problems = problems.OrderBy(s => s.Name).ToList();
+					break;
+
+				case "employerName_desc":
+					problems = problems.OrderByDescending(s => s.EmployerName).ToList();
+					break;
+				case "employerName":
+					problems = problems.OrderBy(s => s.EmployerName).ToList();
+					break;
+
+				case "endDate_desc":
+					problems = problems.OrderByDescending(s => s.EndingDate).ToList();
+					break;
+				case "endDate":
+					problems = problems.OrderBy(s => s.EndingDate).ToList();
+					break;
+
+				default:
+					problems = problems.OrderBy(s => s.Name).ToList();
+					break;
+			}
+
+			return problems;
 		}
 
 		public DetailsForEmployerView sortSubcriptionsForEmployer(String sortOrder, DetailsForEmployerView model, String lastSort)
@@ -362,6 +427,54 @@ namespace FreeLance.Controllers
 			return model;
 		}
 
+		public DetailsForCoordinatorView getDetailsForCoordinator(ApplicationUser freelancer, String _info, String sortOrder, String lastSort)
+		{			
+			if (_info == null)
+			{
+				_info = "profile";
+			}
+
+			string id = freelancer.Id;
+
+			DetailsForCoordinatorView model = new DetailsForCoordinatorView
+			{
+				info = _info,
+				FreelancerEmail = freelancer.Email,
+				FreelancerPhone = "+7(916)0001122", // TODO
+				FreelancerName = freelancer.FIO,
+				PhotoPath = "/Files/profile_pic.jpg", //TODO
+				FreelancerRate = countRating(id),
+				FreelancerId = id,
+
+				ProfileView = new DetailsProfileView
+				{
+					freelancer = freelancer,
+					LawContracts = db.LawContracts
+						.Where(
+							c => c.User.Id == id)
+						.Select(
+							c => new FreelancerLawContractViewModel
+							{
+								LawFace = c.LawContractTemplate.LawFace.Name,
+								StartingDate = c.EndData,
+								EndingDate = c.EndData
+							})
+						.ToList()
+				},
+
+				ProblemsView = new DetailsProblemsView
+				{
+					freelancer = freelancer,
+					UnpaidContracts = extractUnpaidContracts(id),
+					OpenContracts = extractOpenContracts(id),
+					SubscribedProblems = extractSubscribedProblems(id)
+				}
+			};
+
+			model.ProblemsView.SubscribedProblems = sortProblemsForCoordinator(sortOrder, model.ProblemsView.SubscribedProblems, lastSort);
+			model.lastSort = sortOrder;
+			return model;
+		}
 
 		private int getContractCommentsNumber(long contractId)
 		{
@@ -434,19 +547,6 @@ namespace FreeLance.Controllers
 			model.ContractsWaitingMoney = getContractsInState(userId, ContractStatus.ClosedNotPaid);
 			model.Problems = getProblemInState(userId, ProblemStatus.Opened);
 
-			/*var viewModel = new HomeView
-			{
-				Contracts = db.ContractModels.Where(
-					contract => (
-						contract.Status == ContractStatus.Opened
-						|| contract.Status == ContractStatus.InProgress)
-						&& contract.Freelancer != null
-						&& contract.Freelancer.Id == userId
-					).ToList(),
-				Problems = db.SubscriptionModels.Where(subscription => subscription.Freelancer.Id == userId)
-												.Select(subscription => subscription.Problem).ToList()
-			};*/
-
 			return View(model);
 		}
 
@@ -468,6 +568,11 @@ namespace FreeLance.Controllers
 				return PartialView("_DetailsForEmployer", getDetailsForEmployer(freelancerModel, info, sortOrder, lastSort));
 			}
 
+			if (User.IsInRole("Coordinator"))
+			{
+				return PartialView("_DetailsForCoordinator", getDetailsForCoordinator(freelancerModel, info, sortOrder, lastSort));
+			}
+			/*
 			DetailsView view = new DetailsView
 			{
 				freelancer = freelancerModel,
@@ -485,6 +590,8 @@ namespace FreeLance.Controllers
 				Rate = countRating(id)
 			};
 			return View(view);
+			*/
+			return View();
 		}
 
 		/* 
@@ -514,18 +621,26 @@ namespace FreeLance.Controllers
 			public int ProblemId { get; set; }
 			public String Name { get; set; }
 			public String EmployerName { get; set; }
+			public String EmployerId { get; set; }
 			public decimal Cost { get; set; }
 			public DateTime EndingDate { get; set; }
 		}
 
-		public class ProblemsView
+		public class DetailsProfileView
 		{
 			public ApplicationUser freelancer { get; set; }
-			public decimal Rate { get; set; }
+			public List<FreelancerLawContractViewModel> LawContracts { get; set; }
+		}
+
+		public class DetailsProblemsView
+		{
+			public ApplicationUser freelancer { get; set; }
 			public List<FreelancerContractViewModel> OpenContracts { get; set; }
 			public List<FreelancerContractViewModel> UnpaidContracts { get; set; }
 			public List<FreelancerProblemViewModel> SubscribedProblems { get; set; }
 		}
+
+		// todo: comments
 
 		/*
 			Auxiliary methods return view models for page
@@ -552,7 +667,7 @@ namespace FreeLance.Controllers
 					})
 				.ToList();
 		}
-
+		
 		private List<FreelancerContractViewModel> extractOpenContracts(string freelancerId)
 		{
 			return db.ContractModels
@@ -569,6 +684,7 @@ namespace FreeLance.Controllers
 						Comment = c.Comment,
 						Rate = c.Rate,
 						EndingDate = c.EndingDate,
+						StartDate = c.CreationDate,
 						Cost = c.Cost
 					})
 				.ToList();
@@ -585,54 +701,12 @@ namespace FreeLance.Controllers
 					{
 						ProblemId = c.Problem.ProblemId,
 						EmployerName = c.Problem.Employer.FIO,
+						EmployerId = c.Problem.Employer.Id,
 						Name = c.Problem.Name,
 						EndingDate = c.Problem.CreationDate,
 						Cost = c.Problem.Cost
 					})
 				.ToList();
-		}
-
-		/*
-			Координатор. Фрилансер. Вкладка Задачи
-		*/
-		[Authorize(Roles = "Admin, Coordinator")]
-		public ActionResult Problems(string id, String sortOrder)
-		{
-			if (id == null)
-			{
-				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-			}
-			ApplicationUser freelancerModel = db.Users.Find(id);
-			if (freelancerModel == null)
-			{
-				return HttpNotFound();
-			}
-			ProblemsView view = new ProblemsView
-			{
-				freelancer = freelancerModel,
-				Rate = countRating(id),
-				UnpaidContracts = extractUnpaidContracts(id),
-				OpenContracts = extractOpenContracts(id),
-				SubscribedProblems = extractSubscribedProblems(id)
-			};
-			ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
-			ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
-			switch (sortOrder)
-			{
-				case "name_desc":
-					view.SubscribedProblems = view.SubscribedProblems.OrderByDescending(с => с.Name).ToList();
-					break;
-				case "Date":
-					view.SubscribedProblems = view.SubscribedProblems.OrderBy(s => s.EndingDate).ToList();
-					break;
-				case "date_desc":
-					view.SubscribedProblems = view.SubscribedProblems.OrderByDescending(s => s.EndingDate).ToList();
-					break;
-				default:
-					view.SubscribedProblems = view.SubscribedProblems.OrderBy(s => s.Name).ToList();
-					break;
-			}
-			return View(view);
 		}
 
 		[Authorize(Roles = "Admin, Freelancer, Coordinator, WithoutDocuments")]
@@ -704,7 +778,6 @@ namespace FreeLance.Controllers
 			ViewBag.subscriptionsSize = subscriptions.LongCount();
 			return View();
 		}
-
 
 		public OpenProblemsForEmployer sortProblems(OpenProblemsForEmployer model, String sortOrder, String lastSort)
 		{
@@ -780,7 +853,6 @@ namespace FreeLance.Controllers
 
 			return model;
 		}
-
 
 		[Authorize(Roles = "Admin, Freelancer, Coordinator, WithoutDocuments, Employer")]
 		public ActionResult OpenProblems(String sortOrder, string searchString, string lastSort)

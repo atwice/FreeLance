@@ -1,0 +1,156 @@
+﻿@model FreeLance.Controllers.FreelancerController.DetailsForCoordinatorView
+@using Microsoft.AspNet.Identity
+
+@section css {
+    <link rel="stylesheet" href="~/Content/jquery.raty.css">
+}
+
+@section PageScripts{
+    <!-- Include Raty JS file -->
+    <script type="text/javascript" src="~/Scripts/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery.raty.js"></script>
+}
+
+<div class="row">
+    <div class="col-sm-9">
+        <div class="col-xs-6">
+            <h3>Ожидают выплаты:</h3>
+            @if (Model.ProblemsView.UnpaidContracts.Count == 0)
+            {
+                <h5>Все выполненные контракты оплачены!</h5>
+            }
+            else
+            {
+                foreach (var contract in Model.ProblemsView.UnpaidContracts)
+                {
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <b>@contract.Name</b>
+                            <b>@contract.Cost</b>
+                        </div>
+                        <div class="panel-body">
+                            <p><i><b>Работодатель:</b></i> <a style="padding-left:5px" href="/Employer/Details/@contract.EmployerId">@contract.EmployerName</a></p>
+                            <p><i><b>Юр лицо:</b></i> <a style="padding-left:5px">ООО "Аби продакшн"</a></p>
+                            <a>сменить</a>
+                            <p>
+                                <i><b>Завершен: @contract.EndingDate</b></i>
+                                <span class="pull-right"><b>@contract.Cost рублей</b><span class="flaticon-ruble"></span> </span>
+                            </p>
+
+                            <div>
+                                <a href="/Contract/Details/@contract.ContractId" class="btn btn-info pull-left" role="button">К контракту</a>
+                                Html.RenderPartial("_DetailsForCoordinatorComments", @contract);
+                            </div>
+                        </div>
+                    </div>
+}
+            }
+        </div>
+        <div class="col-xs-6">
+            <h3>В работе:</h3>
+            @if (Model.ProblemsView.OpenContracts.Count == 0)
+            {
+                <h5>Нет контрактов на исполнении.</h5>}
+            else
+            {
+                foreach (var contract in Model.ProblemsView.OpenContracts)
+                {
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <b>@contract.Name</b>
+                        </div>
+                        <div class="panel-body">
+                            <p>
+                                <i class="flaticon-calendar68"></i>
+                                <i><b>До:</b></i> <span>@contract.EndingDate</span>
+                                <span class="pull-right"><b>@contract.Cost рублей</b><span class="flaticon-ruble"></span> </span>
+                            </p>
+                            <p><i><b>Работодатель:</b></i> <a style="padding-left:5px" href="/Employer/Details/@contract.EmployerId">@contract.EmployerName</a></p>
+                            <p>
+                                <i><b>Юр лицо:</b></i> <span>ООО "Аби продакшн"</span>
+                                <a>(сменить)</a>
+                            </p>
+                            <p><i><b>Создан:</b></i> <span>@contract.StartDate</span></p>
+                            <div>
+                                <a href="/Contract/Details/@contract.ContractId" class="btn btn-info pull-left" role="button">К контракту</a>
+                                <a class="btn btn-danger pull-right">Шаблон ГПХ</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>
+
+<div class="col-sm-9">
+    @if (Model.ProblemsView.SubscribedProblems.Count != 0)
+    {
+        <table id="myTable" class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>
+                        <a href=@Url.Action("Details", "Freelancer", new {
+                               sortOrder = ViewBag.sortName,
+                               info = Model.info,
+                               id = Model.FreelancerId,
+                               lastSort = Model.lastSort })>
+                            Задача
+                        </a>
+                    </th>
+                    <th>
+                        <a href=@Url.Action("Details", "Freelancer", new {
+                               sortOrder = ViewBag.sortEmployer,
+                               info = Model.info,
+                               id = Model.FreelancerId,
+                               lastSort = Model.lastSort })>
+                            Работодатель
+                        </a>
+                    </th>
+                    <th>
+                        <a href=@Url.Action("Details", "Freelancer", new {
+                               sortOrder = ViewBag.sortCost,
+                               info = Model.info,
+                               id = Model.FreelancerId,
+                               lastSort = Model.lastSort })>
+                            Цена
+                        </a>
+                    </th>
+                    <th>
+                        <a href=@Url.Action("Details", "Freelancer", new {
+                               sortOrder = ViewBag.sortEndDate,
+                               info = Model.info,
+                               id = Model.FreelancerId,
+                               lastSort = Model.lastSort })>
+                            Срок
+                        </a>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var problem in @Model.ProblemsView.SubscribedProblems)
+                {
+                    <tr>
+                        <td>
+                            <a href="/Problem/Details/@problem.ProblemId">
+                                @problem.Name
+                            </a>
+                        </td>
+                        <td>
+                            <a href="/Employer/Details/@problem.EmployerId">
+                                @problem.EmployerName
+                            </a>
+                        </td>
+                        <td>
+                            @problem.Cost
+                        </td>
+                        <td>
+                            @problem.EndingDate
+                        </td>
+                    </tr>}
+            </tbody>
+        </table>
+    }
+</div>
+
+
