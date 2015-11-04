@@ -142,26 +142,12 @@ namespace FreeLance.Controllers
 		public ActionResult Home()
 		{
 			var model = new HomeViewModel();
-			ViewBag.ManyIncognitos = false;
-			model.IncognitosSmallList = getApplicationUsersInRole("Incognito").ToList();
-			if (model.IncognitosSmallList.Count() > 3)
-			{
-				model.IncognitosSmallList = model.IncognitosSmallList.GetRange(0, 3);
-				ViewBag.ManyIncognitos = true;
-			}
-			ViewBag.ManyWithoutDocuments = false;
-			model.WithoutDocumentsSmallList = getApplicationUsersApproved(false, "Freelancer").ToList();
-			if (model.WithoutDocumentsSmallList.Count() > 3)
-			{
-				model.WithoutDocumentsSmallList = model.WithoutDocumentsSmallList.GetRange(0, 3);
-				ViewBag.ManyWithoutDocuments = true;
-			}
 		    model.ContractsList = db.ContractModels.Where(x => x.IsApprovedByCoordinator == false).ToList();
 		    model.ContractsToPay = db.ContractModels.Where(x => x.Status == ContractStatus.ClosedNotPaid).ToList();
 		    model.NewEmployers = getApplicationUsersApproved(null, "Employer").ToList();
 		    model.NewFreelancers = getApplicationUsersApproved(null, "Freelancer").ToList();
 		    model.ContractWithComments = db.ContractModels.Where(x => x.Comment != null).ToList();
-		    model.DocumetsUnapproved = db.DocumentPackageModels.ToList();
+		    model.DocumetsUnapproved = db.DocumentPackageModels.Where(x => x.IsApproved == null).ToList();
 			return View(model);
 		}
 
@@ -296,6 +282,8 @@ namespace FreeLance.Controllers
 			return RedirectToAction("ViewFreelancerDocuments", new { userId = freelancerId });
 	    }
 
+
+
 		public ActionResult Employers()
 		{
 			var model = new EmployersViewModel();
@@ -333,10 +321,24 @@ namespace FreeLance.Controllers
 	        return Redirect("/Coordinator/Home");
 	    }
 
-	    public enum Approvable
+        [HttpPost]
+        public ActionResult ApproveDocuments(string docId, bool value)
+        {
+            int id = Int32.Parse(docId);
+            DocumentPackageModels doc = db.DocumentPackageModels.Include(x => x.Freelancer).Single(x => x.Id == id);
+            if (doc == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            doc.IsApproved = value;
+            db.SaveChanges();
+            return Redirect("/Coordinator/Home");
+        }
+
+        public enum Approvable
 	    {
 	        Contract,
-	        Payment
+	        Payment, 
 	    };
 
         [HttpPost]
@@ -426,7 +428,7 @@ namespace FreeLance.Controllers
 				}
 			}
 			List<FillLawContractTemplateVR.FreelancerVR> freelancers = getApplicationUsersInRole("Freelancer")
-				.Where(x => x.IsApprovedByCoordinator == true && (freelancerId == null || freelancerId == x.Id))
+				.Where(x => (freelancerId == null || freelancerId == x.Id))
 				.Select(x => new FillLawContractTemplateVR.FreelancerVR {
 					FIO = x.FIO,
 					Id = x.Id
@@ -443,7 +445,7 @@ namespace FreeLance.Controllers
 			ApplicationUser employer = db.Users.Find(employerId);
 			LawContractTemplate lawContractTemplate = db.LawContractTemplates.Find(lawContractTemplateId);
 			var employerRole = db.Roles.Where(role => role.Name == "Employer").ToArray()[0];
-			if (employer == null || lawContractTemplate == null || employer.IsApprovedByCoordinator == null || employer.IsApprovedByCoordinator == false
+			if (employer == null || lawContractTemplate == null 
 				|| employer.Roles.Where(x => x.RoleId == employerRole.Id).Any()) {
 				return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
 			}

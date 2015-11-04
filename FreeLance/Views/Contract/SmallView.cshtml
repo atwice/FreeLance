@@ -30,7 +30,9 @@
     </div>
     <div class="panel-footer">
         <a class="btn btn-default" href="/Contract/Details/@Model.ContractId">К контракту</a>
-        <a class="btn btn-danger">Шаблон ГПХ</a>
+        <a href="@Url.Action("FillLawContractTemplate", "Coordinator", new { freelancerId = Model.Freelancer.Id })">
+            <input type="button" value="Шаблон ГПХ" class=" btn btn-danger" />
+        </a>
         <div class="pull-right">
             @if (Model.Status != ContractStatus.ClosedNotPaid)
             {

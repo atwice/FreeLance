@@ -48,6 +48,14 @@
       <HintPath>..\packages\DocX.1.0.0.18\lib\net40\DocX.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.AspNet.SignalR.Core, Version=2.1.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.SignalR.Core.2.1.2\lib\net45\Microsoft.AspNet.SignalR.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.SignalR.SystemWeb, Version=2.1.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.SignalR.SystemWeb.2.1.2\lib\net45\Microsoft.AspNet.SignalR.SystemWeb.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
       <Private>True</Private>
@@ -179,6 +187,7 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="ChatHub.cs" />
     <Compile Include="Code\EmailBuilder.cs" />
     <Compile Include="Code\EmailManager.cs" />
     <Compile Include="Code\DocumentManager.cs" />
@@ -197,10 +206,6 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201511011628178_approve-by-coordinator-null.cs" />
-    <Compile Include="Migrations\201511011628178_approve-by-coordinator-null.Designer.cs">
-      <DependentUpon>201511011628178_approve-by-coordinator-null.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\ChatModels.cs" />
@@ -215,6 +220,7 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\chat.css" />
     <Content Include="Content\flaticon.css" />
     <Content Include="Content\boostrap-4-flex.css" />
     <Content Include="Content\boostrap-4.css" />
@@ -235,6 +241,7 @@
     <Content Include="Files\test1.docx" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <None Include="Scripts\jquery-2.1.4-vsdoc.js" />
+    <Content Include="Scripts\chat.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
     <Content Include="Scripts\jquery-2.1.4.min.map" />
@@ -242,6 +249,8 @@
     <Content Include="Scripts\jquery-comments.js" />
     <Content Include="Scripts\jquery-comments.min.js" />
     <Content Include="Scripts\jquery.raty.js" />
+    <Content Include="Scripts\jquery.signalR-2.1.2.js" />
+    <Content Include="Scripts\jquery.signalR-2.1.2.min.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
     <Content Include="Scripts\jquery.validate.js" />
@@ -340,7 +349,6 @@
     <Content Include="Views\Freelancer\_DetailsForEmployerProblems.cshtml" />
     <Content Include="Views\Problem\SmallViewCoordinator.cshtml" />
     <Content Include="Views\Contract\SmallView.cshtml" />
-    <Content Include="Views\Shared\ContractSmallViewCoordinator.cshtml" />
     <Content Include="Views\Employer\SmallViewCoordinatorHome.cshtml" />
     <Content Include="Views\Freelancer\SmallViewCoordinatorHome.cshtml" />
     <Content Include="Views\Comment\SmallViewCoordinator.cshtml" />
@@ -366,11 +374,6 @@
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="packages.config" />
     <None Include="Project_Readme.html" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\201511011628178_approve-by-coordinator-null.resx">
-      <DependentUpon>201511011628178_approve-by-coordinator-null.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

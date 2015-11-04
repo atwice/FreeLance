@@ -3,12 +3,52 @@
 @{ string ownerClass = "owner-" + @Model.ObjectId + "-" + Model.Owner; }
 
 <div class="chat body @ownerClass">
+	<!--
 	<div id="comments-container-2"></div>
+	<div>
+		<div class="container">
+			<input type="text" id="message-2" />
+			<input type="button" id="sendmessage" value="Send" />
+			<input type="hidden" id="displayname" />
+			<ul id="discussion"></ul>
+		</div>
+		
+	</div>
+	-->
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<h4>Отправить сообщение</h4>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<textarea id="messageText" class="form-control"></textarea>
+			</div>
+			<div class="col-md-12">
+				<button id='sendMessage' class='btn btn-primary pull-right'>Send</button>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<input type="hidden" id="lastCommentTime" value="0" />
+				<div id="chat"></div>
+			</div>
+		</div>
+	</div>
 </div>
 
 @Scripts.Render("~/bundles/jquery")
 @Scripts.Render("~/bundles/jquery-comments/js")
 @Styles.Render("~/bundles/jquery-comments/css")
+
+@Scripts.Render("~/bundles/chat/js")
+@Styles.Render("~/bundles/chat/css")
+
+
+@Scripts.Render("~/bundles/jquery-signalR")
+<script src="~/signalr/hubs"></script>
+
 <script>
 
 	$('#comments-container-2').comments({
@@ -87,34 +127,153 @@
 		}
 	});
 </script>
-<script>
 
-	function GetChatMessages(owner, objectId){
-        $.ajax({
-        	url: '@Url.Action("GetChatMessages", "Chat")',
-            type: 'POST',
-            data: {"objectId" : objectId, "owner" : owner },
-            dataType: "json",
-            success: function (result) {
-            	if (result.Status == "Ok") {
-            		ownerClass = "owner-" + objectId + "-" + owner;
-            		text = "";
-            		for (var i = 0; i < result.Result.length; i++) {
-            			msg = result.Result[i];
-            			text += "<p>" + msg.Id + 
-								"<p>" + msg.Author + 
-								"<p>" + msg.Comment + 
-								"<p>" + msg.ParentId + 
-								"<p>" + msg.UserAvatar +
-								"<p>" + msg.CanDelete +
-								"<p>" + msg.CanReply + 
-								"<p>" + msg.Date + "<p>\n"
-            		}
-            		$(".chat.body." + ownerClass).html(text);
-            	} else {
-					alert(result.Reason)
-            	}
-            }
+<!--
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+			<h4>Отправить сообщение</h4>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<textarea id="messageText" class="form-control"></textarea>
+		</div>
+		<!--<div>
+			<label>
+				<input type="checkbox" id="isStarred" />
+				Звездочка
+			</label>
+		</div>
+		<div class="col-md-12">
+			<button id='sendMessage' class='btn btn-primary pull-right'>Send</button>
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="col-md-12">
+			
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<h1>Text</h1>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<input id="textText" class="form-control" />
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<div>
+				<label>
+					<input type="checkbox" id="isError" />
+					Ошибка ли
+				</label>
+				<button id='sendText' class='btn btn-primary pull-right'>Send</button>
+			</div>
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="col-md-12">
+			<div id="chat"></div>
+		</div>
+	</div>
+</div>
+-->
+<script type="text/javascript">
+	function showChatMessage(data) {
+		$( "#chat" ).chat().addMessage({
+			name: data.Author,
+			text: data.Comment,
+			photoUrl: data.UserAvatar,
+			isStarred: data.CreatedByCurrentUser
+		});
+	}
+	function updateChatMessages() {
+		var chat = $( "#chat" ).chat();
+		//chat.clear();
+		$.ajax({
+			url: '@Url.Action("GetChatMessages", "Chat")',
+			type: 'POST',
+			data: { "objectId": @Model.ObjectId, "owner": "@Model.Owner" },
+			dataType: "json",
+			success: function (result) {
+				if (result.Status == "Ok") {
+					var lastTime = +($("#lastCommentTime").val());
+					for (var i = 0; i < result.Result.length; i++) {
+						if (result.Result[i].Date > lastTime) {
+							showChatMessage(result.Result[i]);
+							lastTime = result.Result[i].Date;
+						}
+					}
+					$("#lastCommentTime").val(lastTime);
+				} else {
+					chat.addText( { style: "error", text: comment.Reason } );
+				}
+			}
+		});
+	}
+	$( function() {
+		updateChatMessages();
+	});
+		$( function() {
+			var chat = $( "#chat" ).chat();
+
+			$("#sendText").click( function() {
+				var textObject = {};
+				textObject.text = $("#textText").val();
+				textObject.style = $("#isError").prop("checked") ? "error" : "default";
+
+				chat.addText( textObject );
+			});
+
+			
+		});
+</script>
+
+<script type="text/javascript">
+        $(function () {
+            // Declare a proxy to reference the hub.
+        	var chat = $.connection.chatHub;
+            // Create a function that the hub can call to broadcast messages.
+            chat.client.broadcastMessage = function (name, message) {
+            	updateChatMessages();
+            };
+            $.connection.hub.start().done(function () {
+                $('#sendmessage').click(function () {
+                    // Call the Send method on the hub.
+                    chat.server.send("a", "b");
+                    // Clear text box and reset focus for next comment.
+                    $('#message-2').val('').focus();
+                });
+
+                $("#sendMessage").click( function() {
+
+                	$.ajax({
+                		type: 'POST',
+                		url: '@Url.Action("SendMessage", "Chat")',
+                		data: {
+                			'objectId' : @Model.ObjectId,
+                			'owner' : '@Model.Owner',
+                			'parentId' : null,
+                			'text' : $("#messageText").val()
+                		},
+                		dataType: "json",
+                		success: function(comment) {
+                			if (comment.Status == 'Ok') {
+                				//showChatMessage(comment.Result);
+                			} else {
+                				$( "#chat" ).chat().addText( { style: "error", text: comment.Reason } );
+                			}
+                			chat.server.send("a", "b");
+                		}
+                	});
+                });
+
+            });
         });
-    }
 </script>

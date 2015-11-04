@@ -17,7 +17,7 @@ namespace FreeLance.Controllers
 		private ApplicationDbContext db = new ApplicationDbContext();
 
 		public enum ChatOwner {
-			Problem, Contract, Subscription
+			Problem, Contract
 		}
 
 		public class ChatVR {
@@ -47,8 +47,6 @@ namespace FreeLance.Controllers
 						return getProblemMessages(Int32.Parse(objectId));
 					case ChatOwner.Contract:
 						return getContractMessages(Int32.Parse(objectId));
-					case ChatOwner.Subscription:
-						return new HttpStatusCodeResult(HttpStatusCode.InternalServerError);
 					default:
 						return Json(new { Status = "Error", Reason = "Unexpected Owner" });
 				}
@@ -65,8 +63,6 @@ namespace FreeLance.Controllers
 						return sendProblemMessage(Int32.Parse(objectId), parentId, text);
 					case ChatOwner.Contract:
 						return sendContractMessage(Int32.Parse(objectId), parentId, text);
-					case ChatOwner.Subscription:
-						return new HttpStatusCodeResult(HttpStatusCode.InternalServerError);
 					default:
 						return Json(new { Status = "Error", Reason = "Unexpected Owner" });
 				}
@@ -74,7 +70,7 @@ namespace FreeLance.Controllers
 				return Json(new { Status = "Error", Reason = e.Message });
 			}
 		}
-
+		/*
 		[HttpPost]
 		public ActionResult DeleteMessage(string objectId, ChatOwner owner, int messageId) {
 			try {
@@ -83,15 +79,13 @@ namespace FreeLance.Controllers
 						return deleteProblemMessage(Int32.Parse(objectId), messageId);
 					case ChatOwner.Contract:
 						return deleteContractMessage(Int32.Parse(objectId), messageId);
-					case ChatOwner.Subscription:
-						return new HttpStatusCodeResult(HttpStatusCode.InternalServerError);
 					default:
 						return Json(new { Status = "Error", Reason = "Unexpected Owner" });
 				}
 			} catch (Exception e) {
 				return Json(new { Status = "Error", Reason = e.Message });
 			}
-		}
+		}*/
 
 		private ActionResult sendProblemMessage(int problemId, int? parentId, string text) {
 			ProblemModels problem = db.ProblemModels.Find(problemId);
@@ -99,12 +93,14 @@ namespace FreeLance.Controllers
 			if (problem == null || !(problem.Employer.Id == userId || User.IsInRole("Freelancer"))) {
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
-			if (problem.ChatId == null) {
+			ProblemChat problemChat = db.ProblemChats.Where(pc => pc.Problem.ProblemId == problem.ProblemId).SingleOrDefault();
+			if (problemChat == null) {
 				Chat chat = db.Chats.Add(new Chat { });
+				problemChat = new Models.ProblemChat { ChatId = chat.Id, Problem = problem };
+				db.ProblemChats.Add(problemChat);
 				db.SaveChanges();
-                problem.ChatId = chat.Id;
 			}
-			return sendMessage(problem.ChatId.Value, parentId, text);
+			return sendMessage(problemChat.ChatId, parentId, text);
 		}
 
 		private ActionResult sendContractMessage(int contractId, int? parentId, string text) {
@@ -113,12 +109,14 @@ namespace FreeLance.Controllers
 			if (contract == null || !(contract.Freelancer.Id == userId || contract.Problem.Employer.Id == userId)) {
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
-			if (contract.ChatId == null) {
+			ContractChat contractChat = db.ContractChats.Where(ch => ch.Contract.ContractId == contractId).SingleOrDefault();
+			if (contractChat == null) {
 				Chat chat = db.Chats.Add(new Chat { });
+				contractChat = new Models.ContractChat { ChatId = chat.Id, Contract = contract };
+				db.ContractChats.Add(contractChat);
 				db.SaveChanges();
-				contract.ChatId = chat.Id;
 			}
-			return sendMessage(contract.ChatId.Value, parentId, text);
+			return sendMessage(contractChat.ChatId, parentId, text);
 		}
 
 		private ActionResult getProblemMessages(int problemId) {
@@ -127,7 +125,12 @@ namespace FreeLance.Controllers
 			if (problem == null || !(problem.Employer.Id == userId || User.IsInRole("Freelancer"))) {
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
-			return getChatMessages(problem.ChatId);
+			ProblemChat problemChat = db.ProblemChats.Where(pc => pc.Problem.ProblemId == problem.ProblemId).SingleOrDefault();
+			int? chatId = null;
+			if (problemChat != null) {
+				chatId = problemChat.ChatId;
+			}
+            return getChatMessages(chatId);
 		}
 
 		private ActionResult getContractMessages(int contractId) {
@@ -136,9 +139,14 @@ namespace FreeLance.Controllers
 			if (contract == null || !(contract.Freelancer.Id == userId || contract.Problem.Employer.Id == userId)) {
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
-			return getChatMessages(contract.ChatId);
+			ContractChat contractChat = db.ContractChats.Where(ch => ch.Contract.ContractId == contractId).SingleOrDefault();
+			int? chatId = null;
+			if (contractChat != null) {
+				chatId = contractChat.ChatId;
+			}
+			return getChatMessages(chatId);
 		}
-
+		/*
 		private ActionResult deleteProblemMessage(int problemId, int messageId) {
 			ProblemModels problem = db.ProblemModels.Find(problemId);
 			string userId = User.Identity.GetUserId();
@@ -155,7 +163,7 @@ namespace FreeLance.Controllers
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
 			return deleteChatMessage(contract.ChatId, messageId);
-		}
+		}*/
 
 		private ActionResult sendMessage(int chatId, int? parentId, string text) {
 			if (parentId != null) {
