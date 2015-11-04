@@ -60,6 +60,8 @@ namespace FreeLance.Models
         public System.Data.Entity.DbSet<FreeLance.Models.LawContractTemplate> LawContractTemplates { get; set; }
         public System.Data.Entity.DbSet<FreeLance.Models.LawContract> LawContracts { get; set; }
 		public System.Data.Entity.DbSet<FreeLance.Models.Chat> Chats { get; set; }
+		public System.Data.Entity.DbSet<FreeLance.Models.ContractChat> ContractChats { get; set; }
+		public System.Data.Entity.DbSet<FreeLance.Models.ProblemChat> ProblemChats { get; set; }
 		public System.Data.Entity.DbSet<FreeLance.Models.ChatMessage> ChatMessages { get; set; }
 
 	}
