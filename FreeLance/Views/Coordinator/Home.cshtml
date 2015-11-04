@@ -20,7 +20,8 @@
         }
         else
         {
-            foreach (var contract in Model.ContractsList.GetRange(0, 2))
+            var rangeCount = Model.ContractsList.Count > 1 ? 2 : 1;
+            foreach (var contract in Model.ContractsList.GetRange(0, rangeCount))
              {
                  Html.RenderPartial("~/Views/Contract/SmallView.cshtml", contract);
              }
