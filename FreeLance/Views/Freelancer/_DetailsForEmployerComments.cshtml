@@ -17,10 +17,10 @@
 					<tr>
 						<td>
 							Работодатель:
-							<a href="#">@contract.EmployerName</a>
+							<a href="/Employer/Details/@contract.EmployerId">@contract.EmployerName</a>
 						</td>
 						<td>
-							Стоимость: @contract.Cost <span class="flaticon-ruble"></span>
+							Стоимость: @contract.Cost рублей<span class="flaticon-ruble"></span>
 						</td>
 						<td>Работа: @contract.WorkMessage</td>
 					</tr>
@@ -37,6 +37,7 @@
 						<a href="/Contract/Details/@contract.ContractId" class="btn btn-info pull-right" role="button">К контракту</a>
 					}
 				</div>
+
 			</div>
 		}
 	</div>

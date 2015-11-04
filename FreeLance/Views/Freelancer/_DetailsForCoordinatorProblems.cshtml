@@ -38,12 +38,12 @@
                             </p>
 
                             <div>
-                                <a href="/Contract/Details/@contract.ContractId" class="btn btn-info pull-left" role="button">К контракту</a>
+                                <a href="/Contract/Details/@contract.ContractId" class="btn btn-default pull-left" role="button">К контракту</a>
                                 @using (Html.BeginForm("ApproveInContractByCoordinator", "Coordinator", 
                                     new { contractId = contract.ContractId,
                                             approvable = CoordinatorController.Approvable.Payment }))
                                 {
-                                    <input type="submit" value="Выплата произведена" class="btn btn-success pull-rigth" />
+                                    <input type="submit" value="Выплата произведена" class="btn btn-info pull-right" />
                                 }
                             </div>
                         </div>
@@ -68,7 +68,7 @@
                             <p>
                                 <i class="flaticon-calendar68"></i>
                                 <i><b>До:</b></i> <span>@contract.EndingDate</span>
-                                <span class="pull-right"><b>@contract.Cost рублей</b><span class="flaticon-ruble"></span> </span>
+                                <span class="pull-right"><b>@contract.Cost</b><span class="flaticon-ruble"></span> </span>
                             </p>
                             <p><i><b>Работодатель:</b></i> <a style="padding-left:5px" href="/Employer/Details/@contract.EmployerId">@contract.EmployerName</a></p>
                             <p>
@@ -77,8 +77,8 @@
                             </p>
                             <p><i><b>Создан:</b></i> <span>@contract.StartDate</span></p>
                             <div>
-                                <a href="/Contract/Details/@contract.ContractId" class="btn btn-info pull-left" role="button">К контракту</a>
-                                <a class="btn btn-danger pull-right">Шаблон ГПХ</a>
+                                <a href="/Contract/Details/@contract.ContractId" class="btn btn-default pull-left" role="button">К контракту</a>
+                                <a class="btn btn-info pull-right">Шаблон ГПХ</a>
                             </div>
                         </div>
                     </div>
