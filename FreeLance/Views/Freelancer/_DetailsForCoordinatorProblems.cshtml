@@ -1,4 +1,5 @@
-﻿@model FreeLance.Controllers.FreelancerController.DetailsForCoordinatorView
+﻿@using FreeLance.Controllers
+@model FreeLance.Controllers.FreelancerController.DetailsForCoordinatorView
 @using Microsoft.AspNet.Identity
 
 @section css {
@@ -26,7 +27,7 @@
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <b>@contract.Name</b>
-                            <b>@contract.Cost</b>
+                            <span class="pull-right"><b>@contract.Cost рублей</b></span>
                         </div>
                         <div class="panel-body">
                             <p><i><b>Работодатель:</b></i> <a style="padding-left:5px" href="/Employer/Details/@contract.EmployerId">@contract.EmployerName</a></p>
@@ -34,12 +35,16 @@
                             <a>сменить</a>
                             <p>
                                 <i><b>Завершен: @contract.EndingDate</b></i>
-                                <span class="pull-right"><b>@contract.Cost рублей</b><span class="flaticon-ruble"></span> </span>
                             </p>
 
                             <div>
                                 <a href="/Contract/Details/@contract.ContractId" class="btn btn-info pull-left" role="button">К контракту</a>
-                                Html.RenderPartial("_DetailsForCoordinatorComments", @contract);
+                                @using (Html.BeginForm("ApproveInContractByCoordinator", "Coordinator", 
+                                    new { contractId = contract.ContractId,
+                                            approvable = CoordinatorController.Approvable.Payment }))
+                                {
+                                    <input type="submit" value="Выплата произведена" class="btn btn-success pull-rigth" />
+                                }
                             </div>
                         </div>
                     </div>

@@ -216,6 +216,7 @@ namespace FreeLance.Controllers
 			public String info;
 			public String lastSort;
 
+			public List<ContractInfoForEmployer> ClosedContracts { get; set; }
 			public DetailsProblemsView ProblemsView;
 			public DetailsProfileView ProfileView;
 		}
@@ -435,6 +436,8 @@ namespace FreeLance.Controllers
 			}
 
 			string id = freelancer.Id;
+			List<ContractModels> contracts = db.ContractModels
+				.Where(c => c.Freelancer.Id == freelancer.Id).ToList();
 
 			DetailsForCoordinatorView model = new DetailsForCoordinatorView
 			{
@@ -445,6 +448,7 @@ namespace FreeLance.Controllers
 				PhotoPath = "/Files/profile_pic.jpg", //TODO
 				FreelancerRate = countRating(id),
 				FreelancerId = id,
+				ClosedContracts = new List<ContractInfoForEmployer>(),
 
 				ProfileView = new DetailsProfileView
 				{
@@ -470,6 +474,14 @@ namespace FreeLance.Controllers
 					SubscribedProblems = extractSubscribedProblems(id)
 				}
 			};
+
+			foreach (var contract in contracts)
+			{
+				if (checkIfContractClosed(contract.Status))
+				{
+					model.ClosedContracts.Add(getContractInfoForEmployer(contract));
+				}
+			}
 
 			model.ProblemsView.SubscribedProblems = sortProblemsForCoordinator(sortOrder, model.ProblemsView.SubscribedProblems, lastSort);
 			model.lastSort = sortOrder;
