@@ -188,7 +188,7 @@
 				<p>@Html.Raw(Model.ProblemFullDescription)</p>
 			</div>
 			<div class="panel-footer">
-				@if (Context.User.IsInRole("Freelancer") && Model.IsApproved)
+				@if (Context.User.IsInRole("Freelancer") && Model.IsApproved == true)
 				{
 					if (!Model.IsSubscibed)
 					{
