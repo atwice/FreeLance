@@ -34,5 +34,6 @@ namespace FreeLance.Controllers
 			}
 			return View(new DetailsVR { DocumentPackage = documentPackage });
 		}
+
     }
 }

@@ -28,3 +28,26 @@ textarea {
     font-style: italic;
 }
 
+
+.left-category {
+    font-family: cursive;
+    color: green;
+}
+
+
+.right-category {
+    font-family: cursive;  
+    color: black;
+}
+
+.right-category a {
+    font-family: cursive;  
+    color: darkmagenta
+}
+
+
+
+
+
+
+

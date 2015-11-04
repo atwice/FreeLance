@@ -7,29 +7,44 @@
 
 <div class="col-md-10">
     <h2>Список юрлиц</h2><br/>
-    <ul>
+
+    <ul class="list-group">
         @foreach (var lawFaceView in Model.LawFaceViews)
         {
-            <li>
-                <span>@lawFaceView.LawFace.Name</span>
-                <ul>
+            <li class="list-group-item">
+                <span class="list-group-item-heading"><h4>@lawFaceView.LawFace.Name</h4></span>
+                <ul class="list-group">
                     @foreach (var template in lawFaceView.LawContractTemplates)
                     {
 
-                        <li>@Html.ActionLink(template.Name, "ViewFile", new {path = template.Path})
-                           <input type="checkbox" class="lawContractActive lawContractId-@template.Id" checked="@template.Active.ToString().ToLower()" value="@template.Id"/>
+                        <li class="list-group-item">@Html.ActionLink(template.Name, "ViewFile", new {path = template.Path})
+                            @if (template.Active)
+                            {
+                                <input type="checkbox" class="lawContractActive lawContractId-@template.Id pull-right" checked value="@template.Id"/>
+                            }
+                            else
+                            {
+                                <input type="checkbox" class="lawContractActive lawContractId-@template.Id pull-right" value="@template.Id" />
+                            }
+                        </li>
 
-                     </li>
-                   
                     }
 
-                </ul>
-                @Html.ActionLink("Добавить Шаблон", "AddLawContractTemplate", new {lawFaceId = lawFaceView.LawFace.Id})
+                    <li class="list-group-item ">
+                        @Html.ActionLink("Добавить Шаблон ГПХ", "AddLawContractTemplate", new { lawFaceId = lawFaceView.LawFace.Id }, new { @class = "btn btn-success", style = "color:white;" })
+                    </li>
 
+                </ul>
+                
+              
             </li>
         }
+
+        <li class="list-group-item ">
+            @Html.ActionLink("Добавить Юрлицо", "LawFace", "Coordinator",  new {},  new { @class = "btn btn-success", style = "color:white;" })
+        </li>
     </ul>
-    @Html.ActionLink("Добавить Юрлицо", "LawFace", "Coordinator")
+
 </div>
 <script>
     $(".lawContractActive").click(function () {

@@ -1,0 +1,8 @@
+﻿@using FreeLance.Controllers
+@model FreeLance.Models.ContractModels
+    
+@using (Html.BeginForm("ApproveInContractByCoordinator", "Coordinator", new { contractId = Model.ContractId, approvable=CoordinatorController.Approvable.Contract }))
+            {
+    <input type="submit" value="Подтвердить контракт" class="btn btn-success" />
+}
+

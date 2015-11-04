@@ -7,18 +7,18 @@ namespace FreeLance.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class fromscratch : IMigrationMetadata
+    public sealed partial class updatecontract : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(fromscratch));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(updatecontract));
         
         string IMigrationMetadata.Id
         {
-            get { return "201510161740434_from-scratch"; }
+            get { return "201511011353210_update-contract"; }
         }
         
         string IMigrationMetadata.Source
         {
-            get { return null; }
+            get { return Resources.GetString("Source"); }
         }
         
         string IMigrationMetadata.Target

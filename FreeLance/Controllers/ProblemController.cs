@@ -42,7 +42,7 @@ namespace FreeLance.Controllers
 
 			
 			public bool IsSubscibed { get; set; }
-			public bool IsApproved { get; set; }
+			public bool? IsApproved { get; set; }
 		}
 
 		public class ContractInfoModel
@@ -159,7 +159,7 @@ namespace FreeLance.Controllers
 													&& sub.Problem.ProblemId == id).Distinct().ToArray();
 			SubscriptionModels subscription = subscriptions.Length > 0 ? subscriptions[0] : null;
 			view.IsSubscibed = subscription != null;
-			view.IsSubscibed = db.Users.Find(userId).IsApprovedByCoordinator;
+			view.IsSubscibed = db.Users.Find(userId).IsApprovedByCoordinator == true;
             
 			return View(view);
 		}
@@ -174,7 +174,7 @@ namespace FreeLance.Controllers
 		public ActionResult Create()
 		{
 			ApplicationUser employer = db.Users.Find(User.Identity.GetUserId());
-			if (!employer.IsApprovedByCoordinator) {
+			if (employer.IsApprovedByCoordinator != true) {
 				ViewBag.ErrorMessage = "Ваши задачи не будут показаны исполнителям, пока ваш аккаунт не подтвердит координатор";
 			}
 			return View();
@@ -190,7 +190,7 @@ namespace FreeLance.Controllers
 			{
 				return View();
 			}
-			if (!employer.IsApprovedByCoordinator) {
+			if (employer.IsApprovedByCoordinator != true) {
 				ViewBag.ErrorMessage = "Задача создана, но не будет показана исполнителям, пока ваш аккаунт не подтвердит координатор";
 			}
 			problem.Employer = db.Users.Find(User.Identity.GetUserId());

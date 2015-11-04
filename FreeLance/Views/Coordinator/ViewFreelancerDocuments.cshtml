@@ -27,7 +27,7 @@
          </a>
      }
     <a href="@Url.Action("ApproveFreelancer", "Coordinator", new {freelancerId = freelancer.Id})">
-        @if (freelancer.IsApprovedByCoordinator)
+        @if (freelancer.IsApprovedByCoordinator == true)
         {
             <input type="button" value="Отозвать документы" class="btn btn-success"/>    
         }

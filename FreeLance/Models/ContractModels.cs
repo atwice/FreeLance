@@ -31,6 +31,8 @@ namespace FreeLance.Models
 		public decimal Cost { get; set; }
 		public decimal Rate { get; set; }
 		public string Comment { get; set; }
-		public int? ChatId { get; set; }
+        public virtual LawFace LawFace { get; set; }
+        public bool IsApprovedByCoordinator { get; set; }
+        public bool IsPayed { get; set; }
 	}
 }

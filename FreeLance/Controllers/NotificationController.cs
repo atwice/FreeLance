@@ -46,7 +46,7 @@ namespace FreeLance.Controllers
 
 
 		public List<Notification> NotificationList = new List<Notification> {
-			new ErrorNotification(context => checkUserIsInRole(context.User, "Employer") && !context.User.IsApprovedByCoordinator,
+			new ErrorNotification(context => checkUserIsInRole(context.User, "Employer") && context.User.IsApprovedByCoordinator != true,
 				"Ваш профиль не подтвержден координатором. Вы не можете создавать задачи.")
 		};
 
