@@ -28,4 +28,33 @@ namespace FreeLance.Models {
 		public DateTime? ModificationDate { get; set; }
 	}
 
+	public class ProblemChat {
+		[Key]
+		public int Id { get; set; }
+		[Required]
+		public int ChatId { get; set; }
+		[Required]
+		public virtual ProblemModels Problem { get; set; }
+	}
+
+	public class ContractChat {
+		[Key]
+		public int Id { get; set; }
+		[Required]
+		public int ChatId { get; set; }
+		[Required]
+		public virtual ContractModels Contract { get; set; }
+	}
+
+	public class ChatUserStatistic {
+		[Key]
+		public int Id { get; set; }
+		[Required]
+		public virtual ApplicationUser User { get; set; }
+		[Required]
+		public int ChatId { get; set; }
+		[Required]
+		public DateTime LastVisit { get; set; }
+	}
+
 }

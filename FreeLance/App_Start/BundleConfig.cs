@@ -27,6 +27,9 @@ namespace FreeLance
                       "~/Content/bootstrap.css",
                       "~/Content/site.css"));
 
+			bundles.Add(new ScriptBundle("~/bundles/jquery-signalR").Include(
+						"~/Scripts/jquery.signalR-2.1.2.js"));
+
 			bundles.Add(new ScriptBundle("~/bundles/jquery-comments/js").Include(
 					  "~/Scripts/jquery-comments.js"));
 
@@ -34,6 +37,12 @@ namespace FreeLance
 						"~/Content/jquery-comments.css"
 						//"~/Content/font-awesome.min.css"
 						));
-        }
-    }
+
+			bundles.Add(new ScriptBundle("~/bundles/chat/js").Include(
+						"~/Scripts/chat.js"));
+
+			bundles.Add(new StyleBundle("~/bundles/chat/css").Include(
+						"~/Content/chat.css"));
+		}
+	}
 }

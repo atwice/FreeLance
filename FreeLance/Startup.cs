@@ -8,6 +8,7 @@ namespace FreeLance
     {
         public void Configuration(IAppBuilder app)
         {
+			app.MapSignalR();
             ConfigureAuth(app);
         }
     }

@@ -31,6 +31,5 @@ namespace FreeLance.Models
 		public decimal Cost { get; set; }
 		public decimal Rate { get; set; }
 		public string Comment { get; set; }
-		public int? ChatId { get; set; }
 	}
 }

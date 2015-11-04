@@ -13,7 +13,7 @@ namespace FreeLance.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201510251719171_chat"; }
+            get { return "201511030759013_chat"; }
         }
         
         string IMigrationMetadata.Source

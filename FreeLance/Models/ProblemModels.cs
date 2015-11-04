@@ -18,7 +18,6 @@ namespace FreeLance.Models
 		public int ProblemId { get; set; }
 		[DataType(DataType.Date)]
 		public DateTime CreationDate { get; set; }
-		public int? ChatId { get; set; }
 		[Required]
 		public virtual ApplicationUser Employer { get; set; }
 		[Required]
