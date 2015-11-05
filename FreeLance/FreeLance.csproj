@@ -361,6 +361,10 @@
     <Content Include="Views\Freelancer\_DetailsForCoordinatorProfile.cshtml" />
     <Content Include="Views\Freelancer\_DetailsForCoordinatorProblems.cshtml" />
     <Content Include="Views\Freelancer\_DetailsForCoordinatorComments.cshtml" />
+    <Content Include="Views\Employer\_DetailsForCoordinator.cshtml" />
+    <Content Include="Views\Employer\_DetailsForCoordinatorProfile.cshtml" />
+    <Content Include="Views\Employer\_DetailsForCoordinatorProblems.cshtml" />
+    <Content Include="Views\Employer\_DetailsForCoordinatorComments.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

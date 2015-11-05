@@ -1,0 +1,59 @@
+﻿@model FreeLance.Controllers.EmployerController.DetailsForCoordinatorView
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = Model.Name;
+}
+
+@functions{
+    public String getActiveClass(String name)
+    {
+        if (Model.info == name)
+        {
+            return "active";
+        }
+        return "";
+    }
+}
+
+<div class="row">
+    <div class="col-md-2">
+        <img src="~/Files/profile_pic.jpg" class="img-thumbnail" style="margin-top: 20px;">
+    </div>
+    <div class="col-md-10">
+        <h2><strong>@Model.Name</strong></h2>
+        @if (Model.Phone != null)
+        {
+            <p>@Model.Phone</p>
+        }
+        <p>@Model.Email</p>
+
+    </div>
+</div>
+
+<div class="row" style="margin-top: 20px;">
+    <ul class="nav nav-tabs">
+        <li role="presentation" class="@getActiveClass("profile")">
+            <a href="@Url.Action("Details", "Employer", new {id = Model.Id, info = "profile"})">Профиль</a>
+        </li>
+        <li role="presentation" class="@getActiveClass("problems")">
+            <a href="@Url.Action("Details", "Employer", new {id = Model.Id, info = "problems"})">Задачи</a>
+        </li>
+        <li role="presentation" class="@getActiveClass("comments")">
+            <a href="@Url.Action("Details", "Employer", new {id = Model.Id, info = "comments"})">Отзывы</a>
+        </li>
+    </ul>
+</div>
+
+@switch (Model.info)
+{
+    case "profile":
+        Html.RenderPartial("_DetailsForCoordinatorProfile", Model);
+        break;
+    case "problems":
+        Html.RenderPartial("_DetailsForCoordinatorProblems", Model);
+        break;
+    case "comments":
+        Html.RenderPartial("_DetailsForCoordinatorComments", Model);
+        break;
+}
+

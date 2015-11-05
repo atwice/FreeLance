@@ -212,6 +212,62 @@ namespace FreeLance.Controllers
 			return View( model );
 		}
 
+		public ActionResult Details(string id, String sortOrder, String info, String lastSort)
+		{
+			if (id == null)
+			{
+				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+			}
+			ApplicationUser employer = db.Users.Find(id);
+			if (employer == null)
+			{
+				return HttpNotFound();
+			}
+
+			if (User.IsInRole("Coordinator"))
+			{
+				return PartialView("_DetailsForCoordinator", getDetailsForCoordinator(employer, info, sortOrder, lastSort));
+			}
+			return View();
+		}
+
+		public class DetailsForCoordinatorView
+		{
+			public String Name { get; set; }
+			public String Email { get; set; }
+			public String Phone { get; set; }
+			public String PhotoPath { get; set; }
+			public String Id { get; set; }
+			public String info;
+			public String lastSort;
+			
+			//public DetailsProblemsView ProblemsView;
+		}
+
+		public DetailsForCoordinatorView getDetailsForCoordinator(ApplicationUser employer, String _info, String sortOrder, String lastSort)
+		{
+			if (_info == null)
+			{
+				_info = "profile";
+			}
+
+			string id = employer.Id;
+			List<ContractModels> contracts = db.ContractModels
+				.Where(c => c.Freelancer.Id == employer.Id).ToList();
+
+			DetailsForCoordinatorView model = new DetailsForCoordinatorView
+			{
+				info = _info,
+				Email = employer.Email,
+				Phone = "+7(916)0001122", // TODO
+				Name = employer.FIO,
+				PhotoPath = "/Files/profile_pic.jpg", //TODO
+				Id = id
+			};
+			
+			return model;
+		}
+
 
 		public static String getStatusMessage(ContractStatus status)
 		{
