@@ -35,12 +35,12 @@ namespace FreeLance.Controllers
 			public String CreatingDate { get; set; }
 			public String DeadlineDate { get; set; }
 			public decimal Cost { get; set; }
-			public int AmountOfWorkers { get; set; } 
+			public int AmountOfWorkers { get; set; }
 			public List<ContractInfoModel> ContractsInProgress { get; set; }
 			public List<ContractInfoModel> ContratsClosed { get; set; }
-			public List<SubscriberInfoModel> Subscribers { get; set;  }
+			public List<SubscriberInfoModel> Subscribers { get; set; }
 
-			
+
 			public bool IsSubscibed { get; set; }
 			public bool? IsApproved { get; set; }
 		}
@@ -63,11 +63,12 @@ namespace FreeLance.Controllers
 		{
 			List<ContractInfoModel> result = new List<ContractInfoModel>();
 
-			foreach(var c in contracts)
+			foreach (var c in contracts)
 			{
 				if (statuses.Contains(c.Status))
 				{
-					result.Add(new ContractInfoModel {
+					result.Add(new ContractInfoModel
+					{
 						ContractId = c.ContractId,
 						FreelancerId = c.Freelancer.Id,
 						FreelancerName = c.Freelancer.FIO
@@ -81,7 +82,7 @@ namespace FreeLance.Controllers
 		{
 			List<SubscriberInfoModel> result = new List<SubscriberInfoModel>();
 
-			foreach(var s in subscribers)
+			foreach (var s in subscribers)
 			{
 				result.Add(new SubscriberInfoModel
 				{
@@ -113,7 +114,7 @@ namespace FreeLance.Controllers
 				AmountOfWorkers = 10 //TODO
 			};
 
-			details.ContractsInProgress = getContractsWithStatus(p.Contracts, 
+			details.ContractsInProgress = getContractsWithStatus(p.Contracts,
 				new List<ContractStatus> { ContractStatus.InProgress,
 					ContractStatus.Opened, ContractStatus.Done, ContractStatus.ClosedNotPaid});
 
@@ -127,7 +128,7 @@ namespace FreeLance.Controllers
 			return details;
 		}
 
-		
+
 		public ActionResult Details(int? id)
 		{
 			string userId = User.Identity.GetUserId();
@@ -146,7 +147,7 @@ namespace FreeLance.Controllers
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
 
-            ProblemModels problem = db.ProblemModels.Find(id);
+			ProblemModels problem = db.ProblemModels.Find(id);
 			if (problem == null)
 			{
 				return HttpNotFound();
@@ -159,8 +160,8 @@ namespace FreeLance.Controllers
 													&& sub.Problem.ProblemId == id).Distinct().ToArray();
 			SubscriptionModels subscription = subscriptions.Length > 0 ? subscriptions[0] : null;
 			view.IsSubscibed = subscription != null;
-			view.IsSubscibed = db.Users.Find(userId).IsApprovedByCoordinator == true;
-            
+			view.IsApproved = db.Users.Find(userId).IsApprovedByCoordinator == true;
+
 			return View(view);
 		}
 
@@ -174,7 +175,8 @@ namespace FreeLance.Controllers
 		public ActionResult Create()
 		{
 			ApplicationUser employer = db.Users.Find(User.Identity.GetUserId());
-			if (employer.IsApprovedByCoordinator != true) {
+			if (employer.IsApprovedByCoordinator != true)
+			{
 				ViewBag.ErrorMessage = "Ваши задачи не будут показаны исполнителям, пока ваш аккаунт не подтвердит координатор";
 			}
 			return View();
@@ -183,14 +185,15 @@ namespace FreeLance.Controllers
 		[HttpPost]
 		[Authorize(Roles = "Employer")]
 		[ValidateAntiForgeryToken]
-        public ActionResult Create(ProblemModels problem)
+		public ActionResult Create(ProblemModels problem)
 		{
 			ApplicationUser employer = db.Users.Find(User.Identity.GetUserId());
-			if(problem.Description == null)
+			if (problem.Description == null)
 			{
 				return View();
 			}
-			if (employer.IsApprovedByCoordinator != true) {
+			if (employer.IsApprovedByCoordinator != true)
+			{
 				ViewBag.ErrorMessage = "Задача создана, но не будет показана исполнителям, пока ваш аккаунт не подтвердит координатор";
 			}
 			problem.Employer = db.Users.Find(User.Identity.GetUserId());
@@ -202,22 +205,22 @@ namespace FreeLance.Controllers
 			//return View(problem);
 		}
 
-        [HttpPost]
-        [Authorize(Roles = "Employer")]
-        public ActionResult ChangeStatus(int id, ProblemStatus status, string redirect)
-        {
-            ProblemModels problem = db.ProblemModels.Include(c => c.Employer).Single(c => c.ProblemId == id);
-            if (problem == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            problem.Status = status;
-            db.SaveChanges();
-            return Redirect(redirect == null ? "/Problem/Details/" + id.ToString() : redirect);
-        }
+		[HttpPost]
+		[Authorize(Roles = "Employer")]
+		public ActionResult ChangeStatus(int id, ProblemStatus status, string redirect)
+		{
+			ProblemModels problem = db.ProblemModels.Include(c => c.Employer).Single(c => c.ProblemId == id);
+			if (problem == null)
+			{
+				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+			}
+			problem.Status = status;
+			db.SaveChanges();
+			return Redirect(redirect == null ? "/Problem/Details/" + id.ToString() : redirect);
+		}
 
-        // GET: Problem/Edit/5
-        public ActionResult Edit(int? id)
+		// GET: Problem/Edit/5
+		public ActionResult Edit(int? id)
 		{
 			if (id == null)
 			{

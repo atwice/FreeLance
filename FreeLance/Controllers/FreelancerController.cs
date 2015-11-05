@@ -28,10 +28,18 @@ namespace FreeLance.Controllers
 
 		public class ArchivedContractViewModel
 		{
+			public String ProblemName { get; set; }
 			public int ContractId { get; set; }
-			public String Name { get; set; }
 			public String EmployerName { get; set; }
 			public String Details { get; set; }
+			public String EmployerId { get; set; }
+			public decimal Cost { get; set; }
+			public DateTime EndingDate { get; set; }
+			public DateTime CreationDate { get; set; }
+			public DateTime DeadlineDate { get; set; }
+			public ContractStatus Status { get; set; }
+			public String StatusMessage { get; set; }
+			public decimal Rate { get; set; }
 		}
 
 		public class FreelancerContractViewModel
@@ -431,7 +439,7 @@ namespace FreeLance.Controllers
 		}
 
 		public DetailsForCoordinatorView getDetailsForCoordinator(ApplicationUser freelancer, String _info, String sortOrder, String lastSort)
-		{			
+		{
 			if (_info == null)
 			{
 				_info = "profile";
@@ -681,7 +689,7 @@ namespace FreeLance.Controllers
 					})
 				.ToList();
 		}
-		
+
 		private List<FreelancerContractViewModel> extractOpenContracts(string freelancerId)
 		{
 			return db.ContractModels
@@ -723,40 +731,119 @@ namespace FreeLance.Controllers
 				.ToList();
 		}
 
-		[Authorize(Roles = "Admin, Freelancer, Coordinator, WithoutDocuments")]
-		public ActionResult Archive()
+		public static String getStatusMessage(ContractStatus status)
 		{
+			String result = "";
+			switch (status)
+			{
+				case ContractStatus.Closed:
+					result = "Выполнена полностью";
+					break;
+				case ContractStatus.ClosedNotPaid:
+					result = "Выполнена полностью";
+					break;
+				case ContractStatus.Failed:
+					result = "Не выполнена: работодатель не принял работу";
+					break;
+				case ContractStatus.СancelledByEmployer:
+					result = "Не выполнена: работодатель отменил заказ";
+					break;
+				case ContractStatus.СancelledByFreelancer:
+					result = "Не выполнена: исполнитель отказался от задачи";
+					break;
+			}
+			return result;
+		}
+
+		public ArchivedContractViewModel getClosedContractData(ContractModels c)
+		{
+			var contract = new ArchivedContractViewModel
+			{
+
+				ProblemName = c.Problem.Name,
+				ContractId = c.ContractId,
+				EmployerName = c.Problem.Employer.FIO,
+				Details = c.Details,
+				EmployerId = c.Freelancer.Id,
+				Cost = c.Cost,
+				Status = c.Status,
+				Rate = c.Rate,
+				CreationDate = c.CreationDate,
+				EndingDate = c.EndingDate,
+				DeadlineDate = DateTime.Now.AddDays(30), // TODO
+				StatusMessage = getStatusMessage(c.Status)
+			};
+
+			return contract;
+		}
+
+
+		public ActionResult Archive(String sortOrder, bool hideFailed = false)
+		{
+			ViewBag.hideFailed = hideFailed;
+
 			string userId = User.Identity.GetUserId();
-			var model = new ArchiveViewModel();
-			model.SuccessfulContracts = db.ContractModels
+			ICollection<ContractModels> contracts = db.ContractModels
 				.Where(
 					c => c.Freelancer.Id == userId
-						&& c.Status == ContractStatus.Closed)
-				.Select(
-					c => new ArchivedContractViewModel
-					{
-						ContractId = c.ContractId,
-						EmployerName = c.Problem.Employer.FIO,
-						Name = c.Problem.Name,
-						Details = c.Details
-					})
+						&& (c.Status == ContractStatus.Closed
+							|| c.Status == ContractStatus.Failed
+							|| c.Status == ContractStatus.СancelledByEmployer
+							|| c.Status == ContractStatus.СancelledByFreelancer))
 				.ToList();
-			model.FailedContracts = db.ContractModels
-				.Where(
-					c => c.Freelancer.Id == userId
-						&& (
-						c.Status == ContractStatus.Failed
-						|| c.Status == ContractStatus.СancelledByEmployer
-						|| c.Status == ContractStatus.СancelledByFreelancer))
-				.Select(
-					c => new ArchivedContractViewModel
-					{
-						ContractId = c.ContractId,
-						EmployerName = c.Problem.Employer.FIO,
-						Name = c.Problem.Name,
-						Details = c.Details
-					})
-				.ToList();
+
+			List<ArchivedContractViewModel> model = new List<ArchivedContractViewModel>();
+			foreach (var contract in contracts)
+			{
+				if (!hideFailed || (hideFailed && contract.Status == ContractStatus.Closed))
+				{
+					model.Add(getClosedContractData(contract));
+				}
+			}
+
+			ViewBag.sortCost = "cost";
+			ViewBag.sortName = "name";
+			ViewBag.sortEndingDate = "ending_date";
+			ViewBag.sortCreationDate = "creation_date";
+
+			switch (sortOrder)
+			{
+				case "cost_desc":
+					model = model.OrderByDescending(с => с.Cost).ToList();
+					break;
+				case "cost":
+					ViewBag.sortCost = "cost_desc";
+					model = model.OrderBy(с => с.Cost).ToList();
+					break;
+				case "name_desc":
+					model = model.OrderByDescending(с => с.ProblemName).ToList();
+					break;
+				case "name":
+					ViewBag.sortName = "name_desc";
+					model = model.OrderBy(с => с.ProblemName).ToList();
+					break;
+				case "ending_date_desc":
+					model = model.OrderByDescending(с => с.EndingDate).ToList();
+					break;
+				case "ending_date":
+					ViewBag.sortEndingDate = "ending_date_desc";
+					model = model.OrderBy(с => с.EndingDate).ToList();
+					break;
+				case "creation_date_desc":
+					model = model.OrderByDescending(с => с.CreationDate).ToList();
+					break;
+				case "creation_date":
+					ViewBag.sortCreationDate = "creation_date_desc";
+					model = model.OrderBy(с => с.CreationDate).ToList();
+					break;
+
+				default:
+					model = model.OrderBy(c => c.ProblemName).ToList();
+					break;
+			}
+
+			ViewBag.sortOrder = sortOrder;
+
 			return View(model);
 		}
 
