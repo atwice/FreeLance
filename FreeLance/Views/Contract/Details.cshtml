@@ -66,8 +66,19 @@
 			<div class="panel-heading clearfix">
 				<img src=@Model.PhotoPath class="avatar-photo">
 				<div class="avatar-info">
-					<a href="/Freelancer/Details/@Model.FreelancerId"><h3 class="avatar-name">@Model.FreelancerName</h3></a>
-					<i class="avatar-mail">@Model.FreelancerEmail</i>
+					@if (User.IsInRole("Employer"))
+					{
+						<a href="/Freelancer/Details/@Model.FreelancerId">
+							<h3 class="avatar-name">@Model.FreelancerName</h3></a>
+						<i class="avatar-mail">@Model.FreelancerEmail</i>
+					}
+					else
+					{
+						<a href="/Employer/Profile/@Model.EmployerId">
+							<h3 class="avatar-name">@Model.EmployerName</h3>
+						</a>
+							<i class="avatar-mail">@Model.EmployerEmail</i>
+					}
 				</div>
 			</div>
 			<div class="panel-body container-fluid">
@@ -129,9 +140,9 @@
 			<div class="panel-footer">
 				<div class="form-wrapper">
 					@if (User.IsInRole("Employer") &&
-			(Model.Status == FreeLance.Models.ContractStatus.Done
-			|| Model.Status == FreeLance.Models.ContractStatus.InProgress
-			|| Model.Status == FreeLance.Models.ContractStatus.Opened))
+									(Model.Status == FreeLance.Models.ContractStatus.Done
+									|| Model.Status == FreeLance.Models.ContractStatus.InProgress
+									|| Model.Status == FreeLance.Models.ContractStatus.Opened))
 					{
 
 						using (Html.BeginForm("Close", "Contract", FormMethod.Post))
@@ -140,26 +151,30 @@
 								<b>Оцените работу фрилансера<span style="color:red">*</span>:</b>
 								<div id="starToRate" class="form-stars"></div>
 							</div>
-							<input type="hidden" id="hint" name="rate" value="0" />
-							<input name="id" type="hidden" value="@Model.ContractId" />
-							<input name="newStatus" type="hidden" value="@Model.finishButton.Status" />
-							<div>
-								<textarea name="comment" class="form-comment" placeholder="Почему именно такая оценка?" required></textarea>
-							</div>
-							<input id="closeContractBtn" class="btn @Model.finishButton.Classes" type="submit"
-								   value="@Model.finishButton.Text" disabled />
+											<input type="hidden" id="hint" name="rate" value="0" />
+											<input name="id" type="hidden" value="@Model.ContractId" />
+											<input name="newStatus" type="hidden" value="@Model.finishButton.Status" />
+											<div>
+												<textarea name="comment" class="form-comment" placeholder="Почему именно такая оценка?" required></textarea>
+											</div>
+											<input id="closeContractBtn" class="btn @Model.finishButton.Classes" type="submit"
+												   value="@Model.finishButton.Text" disabled />
 						}
 					}
-					@foreach (var button in Model.ChangeStatusButtons)
-					{
-						using (Html.BeginForm("ChangeStatus", "Contract", FormMethod.Post, new { @class = "form-change-status" }))
+					<div class="row" >
+						@foreach (var button in Model.ChangeStatusButtons)
 						{
-							<input name="id" type="hidden" value="@Model.ContractId" />
-							<input name="status" type="hidden" value="@button.Status" />
-							<input name="redirect" type="hidden" value="@button.Redirect" />
-							<input type="submit" class="btn @button.Classes" value="@button.Text" />
+							<div class="col-xs-3">
+								@using (Html.BeginForm("ChangeStatus", "Contract", FormMethod.Post, new { @class = "form-change-status" }))
+								{
+									<input name="id" type="hidden" value="@Model.ContractId" />
+									<input name="status" type="hidden" value="@button.Status" />
+									<input name="redirect" type="hidden" value="@button.Redirect" />
+									<input type="submit" class="btn @button.Classes" value="@button.Text" />
+								}
+							</div>
 						}
-					}
+					</div>
 				</div>
 			</div>
 		</div>

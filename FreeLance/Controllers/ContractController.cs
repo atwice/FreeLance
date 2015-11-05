@@ -27,6 +27,8 @@ namespace FreeLance.Controllers
 		{
 			public String Comment { get; set; }
 			public String EmployerId { get; set; }
+			public string EmployerName { get; set; }
+			public string EmployerEmail { get; set; }
 			public int ProblemId { get; set; }
 			public ContractStatus Status { get; set; }
 			public String ProblemName { get; set; }
@@ -62,6 +64,8 @@ namespace FreeLance.Controllers
 				Comment = c.Comment,
 				Rate = c.Rate,
 				EmployerId = c.Problem.Employer.Id,
+				EmployerName = c.Problem.Employer.FIO,
+				EmployerEmail = c.Problem.Employer.Email,
 				FreelancerName = c.Freelancer.FIO,
 				FreelancerEmail = c.Freelancer.Email,
 				FreelancerId = c.Freelancer.Id,
@@ -82,18 +86,20 @@ namespace FreeLance.Controllers
 
 		// GET: Contract/Details/5
 		[Authorize(Roles = "Employer,Freelancer,Admin,Coordinator")]
-        public ActionResult Details(int? id)
+		public ActionResult Details(int? id)
 		{
-			if (id == null) {
+			if (id == null)
+			{
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
 
 			ContractModels contract = db.ContractModels.Find(id);
-			if (contract == null) {
+			if (contract == null)
+			{
 				return HttpNotFound();
 			}
 			if ((User.IsInRole("Freelancer") && User.Identity.GetUserId() != contract.Freelancer.Id)
-				|| (User.IsInRole("Employer") && User.Identity.GetUserId() != contract.Problem.Employer.Id)) 
+				|| (User.IsInRole("Employer") && User.Identity.GetUserId() != contract.Problem.Employer.Id))
 			{
 				return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
 			}
@@ -102,44 +108,59 @@ namespace FreeLance.Controllers
 
 			view.ChangeStatusButtons = new List<DetailsView.ChangeStatusButton>();
 
-			if (User.IsInRole("Freelancer")) {
-				if (view.Status == ContractStatus.Opened) {
-					view.ChangeStatusButtons.Add(new DetailsView.ChangeStatusButton {
+			if (User.IsInRole("Freelancer"))
+			{
+				if (view.Status == ContractStatus.Opened)
+				{
+					view.ChangeStatusButtons.Add(new DetailsView.ChangeStatusButton
+					{
 						Text = "Подписать контракт",
 						Classes = "btn-success",
 						Status = ContractStatus.InProgress,
 						Redirect = "/Contract/Details/" + view.ContractId
 					});
-					view.ChangeStatusButtons.Add(new DetailsView.ChangeStatusButton {
+					view.ChangeStatusButtons.Add(new DetailsView.ChangeStatusButton
+					{
 						Text = "Отклонить контракт",
 						Classes = "btn-danger",
 						Status = ContractStatus.Failed,
 						Redirect = "/Freelancer/Home"
 					});
-				} else if (view.Status == ContractStatus.InProgress) {
-					view.ChangeStatusButtons.Add(new DetailsView.ChangeStatusButton {
+				}
+				else if (view.Status == ContractStatus.InProgress)
+				{
+					view.ChangeStatusButtons.Add(new DetailsView.ChangeStatusButton
+					{
 						Text = "Завершить контракт",
 						Classes = "btn-success",
 						Status = ContractStatus.Done,
 						Redirect = "/Contract/Details/" + view.ContractId
 					});
-					view.ChangeStatusButtons.Add(new DetailsView.ChangeStatusButton {
+					view.ChangeStatusButtons.Add(new DetailsView.ChangeStatusButton
+					{
 						Text = "Прервать контракт",
 						Classes = "btn-danger",
 						Status = ContractStatus.СancelledByFreelancer,
 						Redirect = "/Contract/Details/" + view.ContractId
 					});
-				} else if (view.Status == ContractStatus.Done) {
-					view.ChangeStatusButtons.Add(new DetailsView.ChangeStatusButton {
+				}
+				else if (view.Status == ContractStatus.Done)
+				{
+					view.ChangeStatusButtons.Add(new DetailsView.ChangeStatusButton
+					{
 						Text = "Открыть заново",
 						Classes = "btn-danger",
 						Status = ContractStatus.InProgress,
 						Redirect = "/Contract/Details/" + view.ContractId
 					});
 				}
-			} else if (User.IsInRole("Employer")) {
-				if (view.Status == ContractStatus.Done) {
-					view.ChangeStatusButtons.Add(new DetailsView.ChangeStatusButton {
+			}
+			else if (User.IsInRole("Employer"))
+			{
+				if (view.Status == ContractStatus.Done)
+				{
+					view.ChangeStatusButtons.Add(new DetailsView.ChangeStatusButton
+					{
 						Text = "Отправить на доработку",
 						Classes = "btn-danger",
 						Status = ContractStatus.InProgress,
@@ -152,9 +173,12 @@ namespace FreeLance.Controllers
 						Status = ContractStatus.ClosedNotPaid,
 						Redirect = "/Contract/Details/" + view.ContractId
 					};
-				} else if (view.Status == ContractStatus.InProgress
-							|| view.Status == ContractStatus.Opened) {
-					view.finishButton = new DetailsView.ChangeStatusButton {
+				}
+				else if (view.Status == ContractStatus.InProgress
+						  || view.Status == ContractStatus.Opened)
+				{
+					view.finishButton = new DetailsView.ChangeStatusButton
+					{
 						Text = "Прервать контракт",
 						Classes = "btn-danger",
 						Status = ContractStatus.СancelledByEmployer,
@@ -175,8 +199,13 @@ namespace FreeLance.Controllers
 			{
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
-			return View(new ContractModels { Problem = problem, Freelancer = freelancer,
-				CreationDate = DateTime.Now, EndingDate = DateTime.Now.AddDays(15).AddHours(3) });
+			return View(new ContractModels
+			{
+				Problem = problem,
+				Freelancer = freelancer,
+				CreationDate = DateTime.Now,
+				EndingDate = DateTime.Now.AddDays(15).AddHours(3)
+			});
 		}
 
 		// POST: Contract/Create
@@ -185,7 +214,7 @@ namespace FreeLance.Controllers
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Authorize(Roles = "Employer")]
-		public ActionResult Create([Bind(Include = "Details,Cost")] ContractModels contract, 
+		public ActionResult Create([Bind(Include = "Details,Cost")] ContractModels contract,
 			int problemId, string freelancerId, string redirect)
 		{
 			string userId = User.Identity.GetUserId();
@@ -214,15 +243,15 @@ namespace FreeLance.Controllers
 		[Authorize(Roles = "Employer, Freelancer")]
 		public ActionResult ChangeStatus(int id, ContractStatus status, string redirect)
 		{
-			ContractModels contract = db.ContractModels.Include( c => c.Problem ).Single( c => c.ContractId == id );
+			ContractModels contract = db.ContractModels.Include(c => c.Problem).Single(c => c.ContractId == id);
 			if (contract == null || contract.Freelancer == null
 				|| (User.IsInRole("Employer") && contract.Problem.Employer.Id != User.Identity.GetUserId())
 				|| (User.IsInRole("Freelancer") && contract.Freelancer.Id != User.Identity.GetUserId()))
-            {
+			{
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
 			contract.Status = status;
-			if(status == ContractStatus.Closed)
+			if (status == ContractStatus.Closed)
 			{
 				contract.EndingDate = DateTime.Now;
 			}
