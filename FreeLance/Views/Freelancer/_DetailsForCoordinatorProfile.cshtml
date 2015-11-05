@@ -3,10 +3,84 @@
 <div class="row">
     <div class="col-sm-9">
         <div class="col-xs-6">
-            <a href="#" class="btn btn-default" style="margin-top: 20px;">Сменить документы</a>
-            <a href="#" class="btn btn-default" style="margin-top: 20px;">Сменить фото</a>
-            <a href="/Manage/ChangePassword" class="btn btn-default" style="margin-top: 20px;">Задать пароль</a>
+            <a href="#" class="btn btn-default" style="margin-top: 5px; width: 100%">Сменить документы</a>
+            <a href="#" class="btn btn-default" style="margin-top: 5px; width: 100%">Сменить фото</a>
+            <a href="/Manage/ChangePassword" class="btn btn-default" style="margin-top: 5px; width: 100%">Задать пароль</a>
+            
+            <h3>Документы:</h3>
+            <p>
+                <i><b>Паспорт:</b></i> <span>4321 727110</span>
+            </p>
+            <p>
+                <i><b>Дата выдачи:</b></i> <span>14/01/2008</span>
+            </p>
+            <p>
+                <i><b>Выдан:</b></i> <span>Районным отделением УВД в городском поселении Мытищи</span>
+            </p>
+            <p>
+                <i><b>Прописка:</b></i> <span>г.Невинномыск, просп.Ленина д.15 кв.3</span>
+            </p>
 
+            <a href="~/Files/profile_pic.jpg" 
+                class="btn btn-default" 
+                role="button"
+                style="margin-top: 5px; width: 100%">Фото первой страницы</a>
+
+            <a href="~/Files/profile_pic.jpg" 
+                class="btn btn-default" 
+                role="button"
+                style="margin-top: 5px; width: 100%">Фото прописки</a>
+
+                <a class="disabled btn btn-info pull-right" 
+                   style="margin-top: 5px;">
+                    <span class="glyphicon glyphicon-ok"></span>
+                    Документы подтверждены
+                </a>
+
+                <a href="@Url.Action("ApproveFreelancer", "Coordinator", new {freelancerId = Model.ProfileView.freelancer.Id})"
+                    class="btn btn-default pull-right"
+                    style="margin-top: 5px;">
+                    Отозвать подтверждение
+                </a>
+
+        </div>
+
+        <div class="col-xs-6">
+            <a class="btn btn-info pull-right"
+               style="margin-top: 5px;">
+                <span class="glyphicon glyphicon-ok"></span>
+                Загрузить ГПХ
+            </a>
+
+            <h3>ГПХ:</h3>
+            @if (Model.ProfileView.LawContracts.Count() == 0)
+            {
+                <span>Пока не заключено ни одного ГПХ</span>
+            }
+            else
+            {
+                foreach (var lawcontract in Model.ProfileView.LawContracts)
+                {
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <p>
+                                <span>@lawcontract.LawFace</span>
+                            </p>
+                            <p>
+                                <i class="flaticon-calendar68"></i>
+                                <i><b>Заключен:</b></i> <span>@lawcontract.StartingDate</span>
+                            </p>
+                            <p>
+                                <i class="flaticon-calendar68"></i>
+                                <i><b>Действует до:</b></i> <span>@lawcontract.EndingDate</span>
+                            </p>
+                            
+                            <a href="#" class="btn btn-default pull-left" role="button">Аннулировать</a>
+                            <a class="btn btn-info pull-right">Скачать</a>
+                        </div>
+                    </div>
+                }
+            }
         </div>
     </div>
 </div>
