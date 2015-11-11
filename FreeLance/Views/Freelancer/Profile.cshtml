@@ -1,20 +1,130 @@
-﻿@{
-    ViewBag.Title = "Профиль";
-	ViewBag.MenuPick = "Profile";
+﻿@model FreeLance.Controllers.FreelancerController.ProfileView
+@{
+	ViewBag.Title = "Profile";
 }
-<h2>Профиль</h2>
-<p> <strong>Электронная почта: </strong>
-    @{  if (Context.User.Identity.IsAuthenticated)
-            {
-            @User.Identity.Name
-        }
-        else
-        {
-            @Html.Display("You are not registered!");
-            }
-    }
-</p>
 
-<p> <strong>Всего подписок: </strong> @ViewBag.subscriptionsSize </p>
-<p> <strong>Всего контрактов: </strong> @ViewBag.contractsSize</p>
+@section css {
+	<link rel="stylesheet" href="~/Content/jquery.raty.css">
+<link rel="stylesheet" type="text/css" href="~/Content/flaticon.css">
+	<style>
+		td {
+			text-align: center;
+		}
+	</style>
+}
 
+@section PageScripts{
+	<!-- Include Raty JS file -->
+	<script type="text/javascript" src="~/Scripts/jquery-2.1.4.min.js"></script>
+	<script type="text/javascript" src="~/Scripts/jquery.raty.js"></script>
+}
+
+<div class="row">
+	<div class="col-md-12">
+		<h2>Профиль</h2>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-5">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h2 class="panel-title">Моя статистика</h2>
+			</div>
+			<table class="table" align="center">
+				<tr>
+					<td><span class="stars" data-score=@Model.Rate.ToString().Replace(",",".")></span></td>
+					<td>@Model.Rate.ToString().Replace(",", ".")/5.00</td>
+				</tr>
+				<tr>
+					<td>Заработано</td>
+					<td>@Model.TotalMoney<span class="flaticon-ruble"></span></td>
+				</tr>
+				<tr>
+					<td>Контрактов в процессе</td>
+					<td>@Model.OpenContractsCount</td>
+				</tr>
+				<tr>
+					<td>Контрактов в процессе</td>
+					<td>@Model.OpenContractsCount</td>
+				</tr>
+			</table>
+		</div>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h2 class="panel-title">Мои ГПХ</h2>
+			</div>
+			<div class="panel-body">
+				
+			</div>
+		</div>
+
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h2 class="panel-title">Документы</h2>
+			</div>
+			<div class="panel-body">
+				<p>Паспорт: @Model.Passport.Number</p>
+				<p>Дата выдачи: @Model.Passport.Date</p>
+				<p>Выдан: @Model.Passport.OfficeName</p>
+				<p>Адрес прописки: @Model.Passport.Adress</p>
+				<p>
+					<a href="#">Фото первой страницы</a>
+				</p>
+				<p>
+					<a href="#">Фото прописки</a>
+				</p>
+				<p>
+					<a href="/Freelancer/Documents" class="btn btn-info">Изменить документы</a>
+				</p>
+			</div>
+		</div>
+		
+	</div>
+	<div class="col-md-5 ">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h2 class="panel-title">Учетная запись</h2>
+			</div>
+			<div class="panel-body">
+				<p>Email: @Model.FreelancerEmail</p>
+				<a href="/Manage/ChangePassword" class="btn btn-info">Сменить пароль</a>
+			</div>
+		</div>
+
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h2 class="panel-title">Уведомления</h2>
+			</div>
+			<div class="panel-body">
+				@using (Html.BeginForm("Settings", "Freelancer", FormMethod.Post))
+			{
+					<div class="checkbox">
+						@Html.CheckBoxFor(m => m.emailNotifications.IsCommentsEnabled)
+						@Html.Label("Получать уведомления о новых комментариях")
+					</div>
+					<div class="checkbox">
+						@Html.CheckBoxFor(m => m.emailNotifications.IsContractStatusEnabled)
+						@Html.Label("Получать уведомления об изменениях контракта")
+					</div>
+					<input type="submit" value="Сохранить" class="btn btn-success" />
+			}
+			</div>
+		</div>
+
+	</div>
+</div>
+
+
+<script>
+	$(function () {
+		$(".stars").each(function () {
+			$(this).raty({
+				path: "../../Content/images",
+				readOnly: true,
+				score: function () {
+					return $(this).attr('data-score');
+				}
+			});
+		});
+	});
+</script>
