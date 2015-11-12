@@ -63,6 +63,15 @@ namespace FreeLance.Controllers
 			return PartialView(selectedNotifications);
 		}
 
+		public ActionResult GetViewBagNotifications(dynamic ViewBag) 
+		{
+			List<Notification> selectedNotifications = new List<Notification>();
+			if (ViewBag.ErrorMessage != null) {
+				selectedNotifications.Add(new ErrorNotification(x => true, (string) ViewBag.ErrorMessage));
+            }
+			return PartialView("GetPageNotifications", selectedNotifications);
+		}
+
 		public string Index()
 		{
 			return "";

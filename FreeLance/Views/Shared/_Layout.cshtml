@@ -141,7 +141,7 @@
 				</div>
 			</div>
 			<div class="col-md-10">
-
+				<!--
 				@if (ViewBag.ErrorMessage != null)
 				{
 				<div id="message">
@@ -153,6 +153,8 @@
 					</div>
 				</div>
 				}
+				-->
+				@Html.Action("GetViewBagNotifications", "Notification", new { ViewBag = ViewBag })
 				<div id="notifications"></div>
 				<div id="layout-body">
 					@RenderBody()

@@ -15,7 +15,31 @@
 		
 	</div>
 	-->
+
+	
+	<div class="row">
+		<div class="col-md-12">
+			<input type="hidden" id="lastCommentTime" value="0" />
+			<div id="chat"></div>
+		</div>
+	</div>
+	<div class='chat-message-container row'>
+		<div class='chat-message-left'>
+			<img src='~/Content/avatars/default.png' />
+			<i class='glyphicon glyphicon-star chat-star'></i>
+		</div>
+		<div class='chat-message-right'>
+
+			<div class='chat-name'>Отправить сообщение</div>
+			<textarea class="form-control col-md-8 search-input" id='messageText' rows="3"></textarea>
+		</div>
+	</div>
+	<div class="col-md-12">
+		<button id='sendMessage' class='btn btn-primary pull-right'>Send</button>
+	</div>
+	<!--
 	<div class="container">
+
 		<div class="row">
 			<div class="col-md-12">
 				<h4>Отправить сообщение</h4>
@@ -36,6 +60,7 @@
 			</div>
 		</div>
 	</div>
+		-->
 </div>
 
 @Scripts.Render("~/bundles/jquery")
