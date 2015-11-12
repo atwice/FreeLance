@@ -231,6 +231,33 @@ namespace FreeLance.Controllers
 			public DetailsProfileView ProfileView;
 		}
 
+		public class GPHInfo
+		{
+			public String Name { get; set; }
+		}
+
+		public class PassportInfo
+		{
+			public String Number { get; set; }
+			public String Date { get; set; }
+			public String Adress { get; set; }
+			public String OfficeName { get; set; }
+		}
+
+		public class ProfileView
+		{
+			public String FreelancerEmail { get; set; }
+			public decimal Rate { get; set; }
+			public decimal TotalMoney { get; set; }
+			public List<GPHInfo> GpHList { get; set; }
+			public PassportInfo Passport { get; set; }
+			public int OpenContractsCount { get; set; }
+			public int ClosedContractsCount { get; set; }
+			public String PhotoFirstPage { get; set; }
+			public String PhotoAdress { get; set; }
+			public ApplicationUser.EmailNotificationPolicyModel emailNotifications { get; set; }
+		}
+
 		public bool checkIfContractRated(ContractStatus status)
 		{
 			return status == ContractStatus.Closed
@@ -625,7 +652,10 @@ namespace FreeLance.Controllers
 			List<ContractModels> contracts = db.ContractModels
 				.Where(
 					c => c.Freelancer.Id == id
-					&& c.Status == ContractStatus.Closed)
+					&& (c.Status == ContractStatus.Closed 
+					|| c.Status == ContractStatus.ClosedNotPaid
+					|| c.Status == ContractStatus.Failed
+					|| c.Status == ContractStatus.СancelledByEmployer))
 				.ToList();
 			foreach (var contract in contracts)
 			{
@@ -976,14 +1006,34 @@ namespace FreeLance.Controllers
 			return Redirect("index");
 		}
 
+		[Authorize(Roles = "Freelancer")]
 		public ActionResult Profile()
 		{
-			string userId = User.Identity.GetUserId();
-			var contracts = db.ContractModels.Where(t => t.Freelancer.Id.Equals(userId)).ToList();
-			var subscriptions = db.SubscriptionModels.Where(t => t.Freelancer.Id.Equals(userId)).ToList();
-			ViewBag.contractsSize = contracts.LongCount();
-			ViewBag.subscriptionsSize = subscriptions.LongCount();
-			return View();
+			String id = User.Identity.GetUserId();
+			ApplicationUser freelancer = db.Users.Find(id);
+
+			ProfileView model = new ProfileView
+			{
+				FreelancerEmail = freelancer.Email,
+				OpenContractsCount = db.ContractModels.Where(
+					c => c.Freelancer.Id == id && (c.Status == ContractStatus.Done
+					|| c.Status == ContractStatus.InProgress || c.Status == ContractStatus.ClosedNotPaid
+					|| c.Status == ContractStatus.Opened)).Count(),
+				ClosedContractsCount = db.ContractModels.Where(
+					c => c.Freelancer.Id == id && (c.Status == ContractStatus.Closed
+					|| c.Status == ContractStatus.Failed || c.Status == ContractStatus.СancelledByEmployer
+					|| c.Status == ContractStatus.СancelledByFreelancer)).Count(),
+				emailNotifications = freelancer.EmailNotificationPolicy,
+				TotalMoney = db.ContractModels.Where(
+					c => c.Freelancer.Id == id && (c.Status == ContractStatus.Closed))
+					.Select(c => c.Cost).Sum(),
+				GpHList = new List<GPHInfo>(), // TODO
+				Passport = new PassportInfo {}, // TODO
+				PhotoAdress = "", // TODO
+				PhotoFirstPage = "", // TODO
+				Rate = countRating(id)
+			};
+			return View(model);
 		}
 
 		public ActionResult Documents()
@@ -1120,7 +1170,7 @@ namespace FreeLance.Controllers
 			ApplicationUser user = db.Users.Find(User.Identity.GetUserId());
 			user.EmailNotificationPolicy = policy;
 			db.SaveChanges();
-			return View(user.EmailNotificationPolicy);
+			return RedirectToAction("Profile");
 		}
 
 	}
