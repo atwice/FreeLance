@@ -193,6 +193,7 @@
     <Compile Include="Code\DocumentManager.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\ChatController.cs" />
+    <Compile Include="Controllers\CommonViews.cs" />
     <Compile Include="Controllers\ContractController.cs" />
     <Compile Include="Controllers\CoordinatorController.cs" />
     <Compile Include="Controllers\DocumentPackageController.cs" />
@@ -311,7 +312,6 @@
     <Content Include="Views\Contract\Index.cshtml" />
     <Content Include="Views\Employer\Home.cshtml" />
     <Content Include="Views\Employer\Archive.cshtml" />
-    <Content Include="Views\Employer\Freelancers.cshtml" />
     <Content Include="Views\Freelancer\OpenProblems.cshtml" />
     <Content Include="Views\Freelancer\Home.cshtml" />
     <Content Include="Views\Freelancer\Archive.cshtml" />
@@ -319,7 +319,6 @@
     <Content Include="Views\Employer\Problem.cshtml" />
     <Content Include="Views\Freelancer\Profile.cshtml" />
     <Content Include="Views\Coordinator\Home.cshtml" />
-    <Content Include="Views\Coordinator\Freelancers.cshtml" />
     <Content Include="Views\Coordinator\Employers.cshtml" />
     <Content Include="Views\DocumentPackage\Details.cshtml" />
     <Content Include="Views\Coordinator\LawFaces.cshtml" />
@@ -365,6 +364,7 @@
     <Content Include="Views\Employer\_DetailsForCoordinatorProfile.cshtml" />
     <Content Include="Views\Employer\_DetailsForCoordinatorProblems.cshtml" />
     <Content Include="Views\Employer\_DetailsForCoordinatorComments.cshtml" />
+    <Content Include="Views\_FreelancersView.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

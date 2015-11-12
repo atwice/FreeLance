@@ -4,6 +4,37 @@
 	ViewBag.MenuPick = "Employers";
 }
 
+<div class="col-md-10">
+    <h2>@ViewBag.Title</h2>
+    
+    <h3>Подтвержденные</h3>
+    <div class="list-group">
+        @if (Model.EmployersApproved.Count == 0)
+        {
+            <h5>Нет подтвержденных работодателей. Пора что-то менять!</h5>
+        }
+        else
+        {
+            foreach (var approved in Model.EmployersApproved)
+            {
+                <div class="list-group-item">
+                    @using (Html.BeginForm("ViewFreelancerDocuments", "Coordinator", new { userId = approved.Id }))
+                    {
+                        <input type="submit" value="Проверить документы" class="pull-right btn btn-success" />
+}
+                    <h4 class="list-group-item-heading">@approved.FIO</h4>
+                    <p class="list-group-item-text" style="color: lightgray">
+                        <i>@approved.Email</i>
+                    </p>
+                    <p class="list-group-item-text" style="color: lightgray">
+                        <i>@approved.PhoneNumber</i>
+                    </p>
+                </div>
+}
+        }
+    </div>
+</div>
+
 
 <div class="col-md-10">
 	<h2>@ViewBag.Title</h2>

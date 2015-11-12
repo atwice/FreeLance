@@ -56,16 +56,6 @@ namespace FreeLance.Controllers
 			public ProblemModels Problem { get; set; }
 		}
 
-		public class FreelancerViewModel
-		{
-			public String Name { get; set; }
-			public string Id { get; set;  }
-			public string Email { get; set; }
-			public int ClosedContractsCount { get; set; }
-			public int OpenContractsCount { get; set; }
-			public decimal Rate { get; set; }
-		}
-
 		public class ProfileView
 		{
 			public String EmployerEmail { get; set; }
@@ -89,12 +79,6 @@ namespace FreeLance.Controllers
 			public DateTime DeadlineDate { get; set; }
 			public ContractStatus Status { get; set; }
 			public String StatusMessage { get; set; }
-			public decimal Rate { get; set; }
-		}
-
-		public class SmallContractInfoModel
-		{
-			public ContractStatus Status { get; set; }
 			public decimal Rate { get; set; }
 		}
 
@@ -383,8 +367,6 @@ namespace FreeLance.Controllers
 
 			return View(model);
 		}
-		
-
 
 		// try /Employer/Problem/5 
 		public ActionResult Problem(int? id)
@@ -394,8 +376,7 @@ namespace FreeLance.Controllers
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
 			ProblemModels problemModels = db.ProblemModels.Find(id);
-
-			// check if employer is this problem's owner?
+			
 			if (problemModels == null)
 			{
 				return HttpNotFound();
@@ -409,56 +390,6 @@ namespace FreeLance.Controllers
 			return View(viewModel);
 		}
 
-		public FreelancerViewModel GetFreelancerInfo(string id)
-		{
-			ApplicationUser freelancer = db.Users.Find(id);
-			List<SmallContractInfoModel> contracts = db.ContractModels
-				.Where(
-					c => c.Freelancer.Id == id)
-				.Select(
-				c => new SmallContractInfoModel
-				{
-					Rate = c.Rate,
-					Status = c.Status
-				})
-				.ToList();
-			var model = new FreelancerViewModel
-			{
-				Rate = 0,
-				Name = freelancer.FIO,
-				Email = freelancer.Email,
-				ClosedContractsCount = 0,
-				OpenContractsCount = 0,
-				Id = id
-			};
-			decimal rate = 0;
-			int cancelByFreelancer = 0;
-			foreach (var contract in contracts)
-			{
-				if (contract.Status == ContractStatus.Closed 
-					|| contract.Status == ContractStatus.Failed
-					|| contract.Status == ContractStatus.СancelledByEmployer
-					|| contract.Status == ContractStatus.ClosedNotPaid)
-				{
-					rate += contract.Rate;
-					model.ClosedContractsCount += 1;
-				}
-				else if (contract.Status == ContractStatus.InProgress ||
-				  contract.Status == ContractStatus.Opened)
-				{
-					model.OpenContractsCount += 1;
-				} else if (contract.Status == ContractStatus.СancelledByFreelancer)
-				{
-					cancelByFreelancer += 1;
-				}
-			}
-			if(model.ClosedContractsCount != 0)
-			{
-				model.Rate = rate / model.ClosedContractsCount;
-			}
-			model.ClosedContractsCount += cancelByFreelancer;
-			return model;
-		}
 
 		public ActionResult Freelancers(String searchString, String sortOrder)
 		{
@@ -467,7 +398,7 @@ namespace FreeLance.Controllers
 			List<FreelancerViewModel> model = new List<FreelancerViewModel>();
 			foreach(var id in Ids)
 			{
-				model.Add(GetFreelancerInfo(id));
+				model.Add(new FreelancerViewModel(id));
 			}
 
 			if (!String.IsNullOrEmpty(searchString))
@@ -526,7 +457,7 @@ namespace FreeLance.Controllers
 
 			ViewBag.sortOrder = sortOrder;
 
-			return View(model);
+			return PartialView("~/Views/_FreelancersView.cshtml", model);
 		}
 
 		[Authorize(Roles = "Employer")]

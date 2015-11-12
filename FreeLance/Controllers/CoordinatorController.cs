@@ -91,8 +91,6 @@ namespace FreeLance.Controllers
 			return RedirectToAction("Home");
 		}
 
-
-
 		public ActionResult Upload()
 		{
 			var model = new UploadViewModel();
@@ -138,7 +136,6 @@ namespace FreeLance.Controllers
 			return path;
 		}
 
-
 		public ActionResult Home()
 		{
 			var model = new HomeViewModel();
@@ -151,31 +148,74 @@ namespace FreeLance.Controllers
 			return View(model);
 		}
 
-		public ActionResult Freelancers()
+		public ActionResult Freelancers(String searchString, String sortOrder)
 		{
-			var model = new FreelancersViewModel();
-			model.Incognitos = getApplicationUsersInRole("Incognito").ToList();
-			model.WithoutDocuments = getApplicationUsersApproved(false, "Freelancer").ToList();
-			model.WithDocuments = getApplicationUsersApproved(true, "Freelancer").ToList();
-			string userId = User.Identity.GetUserId();
-			List<ApplicationUser> freelancers = getApplicationUsersInRole("Freelancer").OrderBy(f => f.FIO).ToList();
-			model.FreelancersWithLawContract = new List<ApplicationUser>();
-			model.FreelancersWithoutLawContract = new List<ApplicationUser>();
-			foreach (var freelancer in freelancers)
+			List<string> Ids = AccountController.GetApplicationUsersInRole(db, "Freelancer").Select(
+				u => u.Id).ToList();
+			List<FreelancerViewModel> model = new List<FreelancerViewModel>();
+			foreach (var id in Ids)
 			{
-				var contracts = db.LawContracts.Where(c => c.User.Id == freelancer.Id).ToArray();
-				if (contracts.Count() > 0 && contracts.Last().EndData < DateTime.Now)
-				{
-					model.FreelancersWithLawContract.Add(freelancer);
-				}
-				else if (!model.WithoutDocuments.Contains(freelancer))
-				{
-					model.FreelancersWithoutLawContract.Add(freelancer);
-				}
+				model.Add(new FreelancerViewModel(id));
 			}
-			return View(model);
-		}
 
+			if (!String.IsNullOrEmpty(searchString))
+			{
+				model = model.Where(c => c.Name.Contains(searchString) || c.Email.Contains(searchString)).ToList();
+			}
+
+			ViewBag.sortEmail = "email";
+			ViewBag.sortName = "name";
+			ViewBag.sortRate = "rate";
+			ViewBag.sortDone = "done";
+			ViewBag.sortInProgress = "in_progress";
+
+			switch (sortOrder)
+			{
+				case "email_desc":
+					model = model.OrderByDescending(с => с.Email).ToList();
+					break;
+				case "email":
+					ViewBag.sortEmail = "sort_desc";
+					model = model.OrderBy(с => с.Email).ToList();
+					break;
+				case "name_desc":
+					model = model.OrderByDescending(с => с.Name).ToList();
+					break;
+				case "name":
+					ViewBag.sortName = "name_desc";
+					model = model.OrderBy(с => с.Name).ToList();
+					break;
+				case "rate_desc":
+					model = model.OrderByDescending(с => с.Rate).ToList();
+					break;
+				case "rate":
+					ViewBag.sortRate = "rate_desc";
+					model = model.OrderBy(с => с.Rate).ToList();
+					break;
+				case "done_desc":
+					model = model.OrderByDescending(с => с.ClosedContractsCount).ToList();
+					break;
+				case "done":
+					ViewBag.sortDone = "done_desc";
+					model = model.OrderBy(с => с.ClosedContractsCount).ToList();
+					break;
+				case "in_progress_desc":
+					model = model.OrderByDescending(с => с.OpenContractsCount).ToList();
+					break;
+				case "in_progress":
+					ViewBag.sortInProgress = "in_progress_desc";
+					model = model.OrderBy(с => с.OpenContractsCount).ToList();
+					break;
+
+				default:
+					model = model.OrderBy(c => c.Name).ToList();
+					break;
+			}
+
+			ViewBag.sortOrder = sortOrder;
+
+			return PartialView("~/Views/_FreelancersView.cshtml", model);
+		}
 
 		public ActionResult LawFaces()
 		{
@@ -203,8 +243,7 @@ namespace FreeLance.Controllers
 	        model.LawFace = db.LawFaces.Where(x => x.Id == lawFaceId).ToList()[0];
 	        return View(model);
 	    }
-
-	   
+   
         [HttpPost]
 	    public ActionResult AddLawContractTemplate([Bind(Prefix = "LawContractTemplateView")]LawContractTemplateView lawContractTemplateView)
 	    {
@@ -236,6 +275,7 @@ namespace FreeLance.Controllers
             lawContractTemplateView.File.SaveAs(path);
             return path;
         }
+
 		private IEnumerable<ApplicationUser> getApplicationUsersApproved(bool? approved, string roleName)
 		{
 			return getApplicationUsersInRole(roleName)
@@ -281,8 +321,6 @@ namespace FreeLance.Controllers
 		    db.SaveChanges();
 			return RedirectToAction("ViewFreelancerDocuments", new { userId = freelancerId });
 	    }
-
-
 
 		public ActionResult Employers()
 		{
