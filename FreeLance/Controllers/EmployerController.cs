@@ -390,7 +390,6 @@ namespace FreeLance.Controllers
 			return View(viewModel);
 		}
 
-
 		public ActionResult Freelancers(String searchString, String sortOrder)
 		{
 			List<string> Ids = AccountController.GetApplicationUsersInRole(db, "Freelancer").Select(
