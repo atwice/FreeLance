@@ -196,6 +196,7 @@ namespace FreeLance.Controllers
 			return View( model );
 		}
 
+		[Authorize(Roles = "Coordinator")]
 		public ActionResult Details(string id, String sortOrder, String info, String lastSort)
 		{
 			if (id == null)
@@ -207,12 +208,8 @@ namespace FreeLance.Controllers
 			{
 				return HttpNotFound();
 			}
-
-			if (User.IsInRole("Coordinator"))
-			{
-				return PartialView("_DetailsForCoordinator", getDetailsForCoordinator(employer, info, sortOrder, lastSort));
-			}
-			return View();
+			
+			return View(getDetailsForCoordinator(employer, info, sortOrder, lastSort));
 		}
 
 		public class DetailsForCoordinatorView
@@ -222,10 +219,7 @@ namespace FreeLance.Controllers
 			public String Phone { get; set; }
 			public String PhotoPath { get; set; }
 			public String Id { get; set; }
-			public String info;
-			public String lastSort;
 			
-			//public DetailsProblemsView ProblemsView;
 		}
 
 		public DetailsForCoordinatorView getDetailsForCoordinator(ApplicationUser employer, String _info, String sortOrder, String lastSort)
@@ -241,7 +235,6 @@ namespace FreeLance.Controllers
 
 			DetailsForCoordinatorView model = new DetailsForCoordinatorView
 			{
-				info = _info,
 				Email = employer.Email,
 				Phone = "+7(916)0001122", // TODO
 				Name = employer.FIO,

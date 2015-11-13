@@ -1,0 +1,117 @@
+﻿@model FreeLance.Controllers.EmployerController.DetailsForCoordinatorView
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = Model.Name;
+}
+
+<div class="row">
+    <div class="col-md-2">
+        <img src="~/Files/profile_pic.jpg" class="img-thumbnail" style="margin-top: 20px;">
+    </div>
+    <div class="col-md-10">
+        <h2><strong>@Model.Name</strong></h2>
+        @if (Model.Phone != null)
+        {
+            <p>@Model.Phone</p>
+        }
+        <p>@Model.Email</p>
+        <div class="col-md-3">
+            <a href="#" class="btn btn-default left" style="margin-top: 5px; width: 100%">
+                Закрыть доступ
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <h3><strong>Профиль:</strong></h3>
+        <p>
+            <i><b>Юр лицо:</b></i> <a style="padding-left:5px">ООО "Аби продакшн"</a>
+            <a>(сменить)</a>
+        </p>
+        <a href="/Manage/ChangePassword" class="btn btn-default" style="margin-top: 5px; width: 100%">Сбросить пароль</a>
+    </div>
+</div>
+
+@*<div class="row">
+    <div class="col-sm-9">
+        <div class="col-xs-6">
+            <h3>Активные задачи:</h3>
+            @if (Model.ProblemsView.UnpaidContracts.Count == 0)
+            {
+                <h5>Все выполненные контракты оплачены!</h5>}
+            else
+            {
+                foreach (var contract in Model.ProblemsView.UnpaidContracts)
+                {
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <b>@contract.Name</b>
+                            <span class="pull-right"><b>@contract.Cost рублей</b></span>
+                        </div>
+                        <div class="panel-body">
+                            <p><i><b>Работодатель:</b></i> <a style="padding-left:5px" href="/Employer/Details/@contract.EmployerId">@contract.EmployerName</a></p>
+                            <p>
+                                <i><b>Юр лицо:</b></i> <a style="padding-left:5px">ООО "Аби продакшн"</a>
+                                <a>(сменить)</a>
+                            </p>
+                            <p>
+                                <i><b>Завершен: @contract.EndingDate</b></i>
+                            </p>
+
+                            <div>
+                                <a href="/Contract/Details/@contract.ContractId" class="btn btn-default pull-left" role="button">К контракту</a>
+                                @using (Html.BeginForm("ApproveInContractByCoordinator", "Coordinator",
+                        new
+                        {
+                            contractId = contract.ContractId,
+                            approvable = CoordinatorController.Approvable.Payment
+                        }))
+                                {
+                                    <input type="submit" value="Выплата произведена" class="btn btn-info pull-right" />
+}
+                            </div>
+                        </div>
+                    </div>
+}
+            }
+        </div>
+        <div class="col-xs-6">
+            <h3>В работе:</h3>
+            @if (Model.ProblemsView.OpenContracts.Count == 0)
+            {
+                <h5>Нет контрактов на исполнении.</h5>}
+            else
+            {
+                foreach (var contract in Model.ProblemsView.OpenContracts)
+                {
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <b>@contract.Name</b>
+                        </div>
+                        <div class="panel-body">
+                            <p>
+                                <i class="flaticon-calendar68"></i>
+                                <i><b>До:</b></i> <span>@contract.EndingDate</span>
+                                <span class="pull-right"><b>@contract.Cost</b><span class="flaticon-ruble"></span> </span>
+                            </p>
+                            <p><i><b>Работодатель:</b></i> <a style="padding-left:5px" href="/Employer/Details/@contract.EmployerId">@contract.EmployerName</a></p>
+                            <p>
+                                <i><b>Юр лицо:</b></i> <span>ООО "Аби продакшн"</span>
+                                <a>(сменить)</a>
+                            </p>
+                            <p><i><b>Создан:</b></i> <span>@contract.StartDate</span></p>
+                            <div>
+                                <a href="/Contract/Details/@contract.ContractId" class="btn btn-default pull-left" role="button">К контракту</a>
+                                <a class="btn btn-info pull-right">Шаблон ГПХ</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>*@
+
+
