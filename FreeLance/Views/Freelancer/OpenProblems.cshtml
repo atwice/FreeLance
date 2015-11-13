@@ -31,6 +31,8 @@ else
 
 		.btn-details {
 			text-align: right;
+            float: right;
+            margin-right: 5px;
 		}
 
 		.panel-footer {
@@ -105,26 +107,25 @@ else
 							<div class="col-md-3 info-block">
 								Срок: @problem.DeadlineDate.ToString("dd/MM/yyyy")
 							</div>
-							<div class="col-md-3">
-								<div class="btn-details pull-right">
-									<a href="/Problem/Details/@problem.ProblemId" class="btn btn-info pull-right" role="button">Подробнее</a>
-								</div>
-								@if (problem.IsSubscribed)
-								{
-									<div class="text-success">
-										Подписан
-									</div>
-								}
-								else
-								{
-									using (Html.BeginForm("Subscribe", "Subscription", FormMethod.Post))
-									{
-										<input name="id" type="hidden" value="@problem.ProblemId" />
-										<input type="submit" class="btn btn-success pull-right" value="Подписаться" />
-									}
-								}
-
-							</div>
+                            <div class="btn-details">
+                                <a href="/Problem/Details/@problem.ProblemId" class="btn btn-info" role="button">Подробнее</a>
+                            </div>
+                            <div class="btn-details">
+                                @if (problem.IsSubscribed)
+                                {
+                                    <div class="text-success">
+                                        Подписан
+                                    </div>
+                                }
+                                else
+                                {
+                                    using (Html.BeginForm("Subscribe", "Subscription", FormMethod.Post))
+                                    {
+                                        <input name="id" type="hidden" value="@problem.ProblemId" />
+                                        <input type="submit" class="btn btn-success pull-right" value="Подписаться" />
+                                    }
+                                }
+                            </div>
 						</div>
 					</div>
 				</div>
