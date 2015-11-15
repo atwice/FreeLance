@@ -144,7 +144,7 @@
                     <div class="col">
                         @foreach (var button in Model.ChangeStatusButtons)
                         {
-                            <div class="col-md-2 btn-details">
+                            <div class="col-md-3 btn-details">
                                 @using (Html.BeginForm("ChangeStatus", "Contract", FormMethod.Post, new { @class = "form-change-status" }))
                                 {
                                     <input name="id" type="hidden" value="@Model.ContractId" />
