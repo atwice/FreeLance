@@ -614,7 +614,6 @@ namespace FreeLance.Controllers
         }
 
 
-	    [HttpPost]
         [Authorize(Roles="Coordinator")]
 	    public ActionResult ToggleActiveLawContractTemplate(int templateId)
 	    {
@@ -623,7 +622,7 @@ namespace FreeLance.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 	        template.Active = !template.Active;
             db.SaveChanges();
-	        return Json(new {templateId = templateId, active = template.Active});
+	        return RedirectToAction("LawFaces");
 	    }
 		public ActionResult Settings()
 		{

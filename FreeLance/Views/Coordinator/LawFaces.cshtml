@@ -3,61 +3,69 @@
     ViewBag.Title = "Юрлица";
     ViewBag.MenuPick = "LawFaces";
 }
-<!DOCTYPE html>
 
-<div class="col-md-10">
-    <h2>Список юрлиц</h2><br/>
+<h2>
+    Список юрлиц
+    <div class="pull-right">
 
-    <ul class="list-group">
+        @Html.ActionLink("Добавить Юрлицо", "LawFace", "Coordinator", new {}, new {@class = "btn btn-success", style = "color:white;"})
+    </div>
+</h2>
+
+
+ 
+
+
+
         @foreach (var lawFaceView in Model.LawFaceViews)
         {
-            <li class="list-group-item">
-                <span class="list-group-item-heading"><h4>@lawFaceView.LawFace.Name</h4></span>
-                <ul class="list-group">
-                    @foreach (var template in lawFaceView.LawContractTemplates)
-                    {
+            <div class="panel panel-default">
+                <div class="panel-heading"><h4>@lawFaceView.LawFace.Name
+                        <div class="pull-right">
+                            @Html.ActionLink("Добавить Шаблон ГПХ", "AddLawContractTemplate", new { lawFaceId = lawFaceView.LawFace.Id }, new { @class = "btn btn-success", style = "color:white; display:inline-block" })
+                        </div>
+                    </h4>
+                </div>
+                <div class="panel-body">
+                    <ul class="list-group">
+                        @foreach (var template in lawFaceView.LawContractTemplates)
+                        {
 
-                        <li class="list-group-item">@Html.ActionLink(template.Name, "ViewFile", new {path = template.Path})
-                            @if (template.Active)
-                            {
-                                <input type="checkbox" class="lawContractActive lawContractId-@template.Id pull-right" checked value="@template.Id"/>
-                            }
-                            else
-                            {
-                                <input type="checkbox" class="lawContractActive lawContractId-@template.Id pull-right" value="@template.Id" />
-                            }
-                        </li>
+                            <li class="list-group-item">
+                                <h5>@template.Name </h5>
+                                
 
-                    }
+                                @Html.ActionLink("Посмотреть шаблон", "ViewFile", new { path = template.Path }, new {@class = "btn btn-primary"})
+                                @if (template.Active)
+                                {
+                                    @Html.ActionLink("Не использовать", "ToggleActiveLawContractTemplate", new {templateId = @template.Id}, new {@class = "btn btn-danger"})
+                                    ;
 
-                    <li class="list-group-item ">
-                        @Html.ActionLink("Добавить Шаблон ГПХ", "AddLawContractTemplate", new { lawFaceId = lawFaceView.LawFace.Id }, new { @class = "btn btn-success", style = "color:white;" })
-                    </li>
+                                }
+                                else
+                                {
+                                    @Html.ActionLink("Использовать", "ToggleActiveLawContractTemplate", new {templateId = @template.Id}, new {@class = "btn btn-success"})
+                                    ;
+                                }
 
-                </ul>
-                
-              
-            </li>
-        }
+                            </li>
 
-        <li class="list-group-item ">
-            @Html.ActionLink("Добавить Юрлицо", "LawFace", "Coordinator",  new {},  new { @class = "btn btn-success", style = "color:white;" })
-        </li>
-    </ul>
+                        }
 
-</div>
-<script>
-    $(".lawContractActive").click(function () {
-        var id = $(this).val();
-        $.ajax({
-            url: '@Url.Action("ToggleActiveLawContractTemplate", "Coordinator")',
-            type: 'POST',
-            data: {"templateId" : +id },
-            dataType: "json",
-            success: function (result) {
-                $(".lawContractActive.lawContractId-" + result.templateId).prop("checked", result.active);
-            }
-        });
-    });
-</script>
+                        
+                            
+                      
+
+                    </ul>
+
+                </div>
+           
+                </div>
+    }
+
+
+
+
+
+
 
