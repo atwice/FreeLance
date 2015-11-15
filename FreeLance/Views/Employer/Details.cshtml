@@ -4,6 +4,36 @@
     ViewBag.Title = Model.Name;
 }
 
+@helper Truncate(string input, int length)
+{
+if (input.Length <= length)
+{
+        @input
+}
+else
+{
+        @input.Substring(0, length)<text>...</text>
+}
+}
+
+@section css {
+    <link rel="stylesheet" type="text/css" href="~/Content/flaticon.css">
+    <style>
+        .text-info-in-panel {
+            margin-left: 5px;
+        }
+        th, td {
+            text-align: center;
+        }
+    </style>
+}
+
+@section PageScripts{
+    <!-- Include Raty JS file -->
+    <script type="text/javascript" src="~/Scripts/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery.raty.js"></script>
+}
+
 <div class="row">
     <div class="col-md-2">
         <img src="~/Files/profile_pic.jpg" class="img-thumbnail" style="margin-top: 20px;">
@@ -24,7 +54,7 @@
 </div>
 
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6">
         <h3><strong>Профиль:</strong></h3>
         <p>
             <i><b>Юр лицо:</b></i> <a style="padding-left:5px">ООО "Аби продакшн"</a>
@@ -34,77 +64,80 @@
     </div>
 </div>
 
-@*<div class="row">
-    <div class="col-sm-9">
-        <div class="col-xs-6">
+<div class="row">
+    <div class="col-md-9">
+        <div class="col-md-6">
             <h3>Активные задачи:</h3>
-            @if (Model.ProblemsView.UnpaidContracts.Count == 0)
+            @if (Model.ProblemsInProgress.Count() == 0)
             {
-                <h5>Все выполненные контракты оплачены!</h5>}
+                <h5>Нет задач.</h5>
+            }
             else
             {
-                foreach (var contract in Model.ProblemsView.UnpaidContracts)
+                foreach (var problem in Model.ProblemsInProgress)
                 {
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <b>@contract.Name</b>
-                            <span class="pull-right"><b>@contract.Cost рублей</b></span>
+                            <b>@problem.Name<span></span></b>
                         </div>
                         <div class="panel-body">
-                            <p><i><b>Работодатель:</b></i> <a style="padding-left:5px" href="/Employer/Details/@contract.EmployerId">@contract.EmployerName</a></p>
                             <p>
-                                <i><b>Юр лицо:</b></i> <a style="padding-left:5px">ООО "Аби продакшн"</a>
+                                <i>До</i>
+                                @problem.EndingDate
+                                <span class="pull-right"><b>@problem.Cost</b><span class="flaticon-ruble"></span> </span>
+                            </p>
+                            <p>
+                                <b>Исполнители:</b>
+                                @foreach (var contract in problem.Contracts)
+                                {
+                                    <a class="text-info-in-panel" href="/Freelancer/Details/@contract.freelancerId">@contract.FIO</a>
+                                    <a class="text-info-in-panel" href="/Contract/Details/@contract.id">контракт</a>
+}
+                            </p>
+                            <p>
+                                <b>Юрлицо:</b><a class="text-info-in-panel" href="#">Аби Продакшн</a>
                                 <a>(сменить)</a>
                             </p>
-                            <p>
-                                <i><b>Завершен: @contract.EndingDate</b></i>
-                            </p>
-
+                            <p><b>Создан:</b><a class="text-info-in-panel">@problem.CreationDate</a></p>
                             <div>
-                                <a href="/Contract/Details/@contract.ContractId" class="btn btn-default pull-left" role="button">К контракту</a>
-                                @using (Html.BeginForm("ApproveInContractByCoordinator", "Coordinator",
-                        new
-                        {
-                            contractId = contract.ContractId,
-                            approvable = CoordinatorController.Approvable.Payment
-                        }))
-                                {
-                                    <input type="submit" value="Выплата произведена" class="btn btn-info pull-right" />
-}
+                                <i class="flaticon-comments16"></i> <span class="badge">@problem.NewMsgCount</span>
+                                <a href="/Problem/Details/@problem.Id" class="btn btn-info pull-right" role="button">К задаче</a>
                             </div>
                         </div>
                     </div>
 }
             }
         </div>
-        <div class="col-xs-6">
-            <h3>В работе:</h3>
-            @if (Model.ProblemsView.OpenContracts.Count == 0)
+        <div class="col-md-6">
+            <h3>Поиск исполнителей:</h3>
+            @if (Model.ProblemsOpen.Count() == 0)
             {
-                <h5>Нет контрактов на исполнении.</h5>}
+                <h5>Все исполнители найдены!</h5>
+            }
             else
             {
-                foreach (var contract in Model.ProblemsView.OpenContracts)
+                foreach (var problem in Model.ProblemsOpen)
                 {
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <b>@contract.Name</b>
+                            <b>@problem.Name</b>
                         </div>
                         <div class="panel-body">
                             <p>
-                                <i class="flaticon-calendar68"></i>
-                                <i><b>До:</b></i> <span>@contract.EndingDate</span>
-                                <span class="pull-right"><b>@contract.Cost</b><span class="flaticon-ruble"></span> </span>
+                                <i>До</i>
+                                @problem.EndingDate
+                                <b>@problem.SubscribersCount исполнителей</b>
+                                <span class="pull-right"><b>@problem.Cost</b><span class="flaticon-ruble"></span> </span>
                             </p>
-                            <p><i><b>Работодатель:</b></i> <a style="padding-left:5px" href="/Employer/Details/@contract.EmployerId">@contract.EmployerName</a></p>
+                            <p><i> @Truncate(problem.ShortDescription, 200)</i></p>
                             <p>
-                                <i><b>Юр лицо:</b></i> <span>ООО "Аби продакшн"</span>
+                                <b>Юрлицо:</b><a class="text-info-in-panel" href="#">Аби Продакшн</a>
                                 <a>(сменить)</a>
                             </p>
-                            <p><i><b>Создан:</b></i> <span>@contract.StartDate</span></p>
+                            <p><b>Создан:</b><a class="text-info-in-panel">@problem.CreationDate</a></p>
                             <div>
-                                <a href="/Contract/Details/@contract.ContractId" class="btn btn-default pull-left" role="button">К контракту</a>
-                                <a class="btn btn-info pull-right">Шаблон ГПХ</a>
+                                <i class="flaticon-comments16"></i> <span class="badge">@problem.NewMsgCount</span>
+                                <a href="/Problem/Details/@problem.Id" class="btn btn-info pull-right" role="button">К задаче</a>
                             </div>
                         </div>
                     </div>
@@ -112,6 +145,82 @@
             }
         </div>
     </div>
-</div>*@
+    <div class="col-md-9">
+        @if (Model.ArchievedContracts.Count() != 0)
+        { 
+            <h2>Архив контрактов:</h2>
+            <p>
+                <a href=@Url.Action("Archive", "Employer",
+			    new { sortOrder = ViewBag.sortCost }) class="btn btn-info">
+                    <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+                    По стоимости
+                </a>
+                <a href=@Url.Action("Archive", "Employer",
+			    new { sortOrder = ViewBag.sortName }) class="btn btn-info">
+                    <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+                    По имени
+                </a>
+                <a href=@Url.Action("Archive", "Employer",
+			    new { sortOrder = ViewBag.sortCreationDate }) class="btn btn-info">
+                    <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+                    По дате создания
+                </a>
+                <a href=@Url.Action("Archive", "Employer",
+			    new { sortOrder = ViewBag.sortEndingDate }) class="btn btn-info">
+                    <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+                    По дате сдачи
+                </a>
+            </p>
+            <div>
+                @foreach (var contract in Model.ArchievedContracts)
+			    {
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <b>
+                                @contract.ProblemName
+                                <span class="stars pull-right" data-score=@contract.Rate.ToString().Replace(",",".")></span>
+                            </b>
+                        </div>
+                        <div class="panel-body">
+                            <p>@Truncate(contract.Details, 200)</p>
+                        </div>
+                        <table class="table">
+                            <tr>
+                                <td>
+                                    Исполнитель:
+                                    <a href="/Freelancer/Details/@contract.FreelancerId">@contract.FreelancerName</a>
+                                </td>
+                                <td>
+                                    Стоимость: @contract.Cost <span class="flaticon-ruble"></span>
+                                </td>
+                                <td>Работа: @contract.StatusMessage</td>
+                            </tr>
+                            <tr>
+                                <td>Начата: @contract.CreationDate.ToString("dd/MM/yyyy")</td>
+                                <td>Завершена: @contract.EndingDate.ToString("dd/MM/yyyy")</td>
+                                <td>Срок: @contract.DeadlineDate.ToString("dd/MM/yyyy")</td>
+                            </tr>
+                        </table>
+                        <div class="panel-body">
+                            <a href="/Contract/Details/@contract.ContractId" class="btn btn-info pull-right" role="button">Подробнее</a>
+                        </div>
+                    </div>
+			    }
+            </div>
+            } 
+    </div>
+</div>
 
-
+<script>
+		$(function () {
+			$(".stars").each(function () {
+				$(this).raty({
+					path: "../../Content/images",
+					readOnly: true,
+					score: function () {
+						return $(this).attr('data-score');
+					}
+				});
+			});
+		});
+</script>
