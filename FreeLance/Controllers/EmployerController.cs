@@ -25,15 +25,23 @@ namespace FreeLance.Controllers
 			public String Name { get; set; }
 			public String ShortDescription { get; set; }
 			public decimal Cost { get; set; }
+			public DateTime EndingDate { get; set; }
+			public DateTime CreationDate { get; set; }
 			public int SubscribersCount { get; set; }
 			public int Id { get; set; }
 			public int NewMsgCount { get; set; }
+			public String StatusIcon { get; set; }
 		}
 
 		public class ProblemInProgressViewModel
 		{
 			public String Name { get; set; }
 			public int Id { get; set; }
+			public DateTime EndingDate { get; set; }
+			public DateTime CreationDate { get; set; }
+			public decimal Cost { get; set; }
+			public String StatusIcon { get; set; }
+			public int NewMsgCount { get; set; }
 			public List<ContractInProgressViewModel> Contracts { get; set; }
 		}
 
@@ -45,8 +53,8 @@ namespace FreeLance.Controllers
 			public ContractStatus status { get; set; }
 			public int newMsgCount { get; set; }
 			public decimal Cost { get; set; }
-			public String EndingDate { get; set; }
-			public String CreationDate { get; set;  }
+			public DateTime EndingDate { get; set; }
+			public String CreationDate { get; set; }
 			public String StatusIcon { get; set; }
 		}
 
@@ -54,16 +62,6 @@ namespace FreeLance.Controllers
 		{
 			public List<SubscriptionModels> Subscriptions { get; set; }
 			public ProblemModels Problem { get; set; }
-		}
-
-		public class FreelancerViewModel
-		{
-			public String Name { get; set; }
-			public string Id { get; set;  }
-			public string Email { get; set; }
-			public int ClosedContractsCount { get; set; }
-			public int OpenContractsCount { get; set; }
-			public decimal Rate { get; set; }
 		}
 
 		public class ProfileView
@@ -89,12 +87,6 @@ namespace FreeLance.Controllers
 			public DateTime DeadlineDate { get; set; }
 			public ContractStatus Status { get; set; }
 			public String StatusMessage { get; set; }
-			public decimal Rate { get; set; }
-		}
-
-		public class SmallContractInfoModel
-		{
-			public ContractStatus Status { get; set; }
 			public decimal Rate { get; set; }
 		}
 
@@ -154,7 +146,7 @@ namespace FreeLance.Controllers
 							id = contract.ContractId,
 							status = contract.Status,
 							newMsgCount = 0, // TODO
-							EndingDate = DateTime.Now.AddDays(30).ToString("dd/MM/yyyy"), // TODO
+							EndingDate = DateTime.Now, // TODO
 							Cost = contract.Cost,
 							CreationDate = contract.CreationDate.ToString("dd/MM/yyyy"),
 							StatusIcon = getStatusIcon(contract.Status)
@@ -165,15 +157,11 @@ namespace FreeLance.Controllers
 			return contractsData;
 		}
 
-		// GET: Employer
-		public ActionResult Home()
+		private List<ProblemInProgressViewModel> getProblemsInProgress( String userId )
 		{
-			string userId = User.Identity.GetUserId();
-			var model = new HomeViewModel();
-
-			model.ProblemsInProgress = db.ProblemModels
+			List<ProblemInProgressViewModel> problemsInProgress = db.ProblemModels
 				.Where(
-					p => p.Employer.Id == userId && 
+					p => p.Employer.Id == userId &&
 						(p.Status == ProblemStatus.Opened || p.Status == ProblemStatus.InProgress)
 						&& p.Contracts.Count != 0
 				)
@@ -181,17 +169,20 @@ namespace FreeLance.Controllers
 					p => new ProblemInProgressViewModel
 					{
 						Name = p.Name,
+						EndingDate = DateTime.Now, //TODO: add end date in ProblemModel
+						CreationDate = DateTime.Now,
+						NewMsgCount = 1, // TODO
+                        Cost = p.Cost,
 						Id = p.ProblemId
 					}
 				)
 				.ToList();
+			return problemsInProgress;
+        }
 
-			foreach(var problem in model.ProblemsInProgress)
-			{
-				problem.Contracts = getProblemContract(problem.Id);
-			}
-
-			model.ProblemsOpen = db.ProblemModels
+		private List<ProblemOpenViewModel> getOpenProblems( String userId )
+		{
+			List<ProblemOpenViewModel> openProblems = db.ProblemModels
 				.Where(
 					p => p.Employer.Id == userId
 						&& p.Status == ProblemStatus.Opened
@@ -204,15 +195,35 @@ namespace FreeLance.Controllers
 						ShortDescription = p.SmallDescription,
 						Cost = p.Cost,
 						SubscribersCount = p.Subscriptions.Count,
-						NewMsgCount = 0
+						CreationDate = p.CreationDate,
+						//EndingDate = "30/11/2016",
+						NewMsgCount = 0 // TODO
 					}
 				)
 				.ToList();
+			return openProblems;
+        }
+
+		// GET: Employer
+		public ActionResult Home()
+		{
+			string userId = User.Identity.GetUserId();
+			var model = new HomeViewModel();
+
+			model.ProblemsInProgress = getProblemsInProgress( userId );
+
+			foreach(var problem in model.ProblemsInProgress)
+			{
+				problem.Contracts = getProblemContract(problem.Id);
+			}
+
+			model.ProblemsOpen = getOpenProblems( userId );
 
 			return View( model );
 		}
 
-		public ActionResult Details(string id, String sortOrder, String info, String lastSort)
+		[Authorize(Roles = "Coordinator")]
+		public ActionResult Details(string id, String sortOrder, String lastSort)
 		{
 			if (id == null)
 			{
@@ -223,12 +234,8 @@ namespace FreeLance.Controllers
 			{
 				return HttpNotFound();
 			}
-
-			if (User.IsInRole("Coordinator"))
-			{
-				return PartialView("_DetailsForCoordinator", getDetailsForCoordinator(employer, info, sortOrder, lastSort));
-			}
-			return View();
+			
+			return View(getDetailsForCoordinator(employer, sortOrder, lastSort));
 		}
 
 		public class DetailsForCoordinatorView
@@ -238,33 +245,36 @@ namespace FreeLance.Controllers
 			public String Phone { get; set; }
 			public String PhotoPath { get; set; }
 			public String Id { get; set; }
-			public String info;
-			public String lastSort;
-			
-			//public DetailsProblemsView ProblemsView;
+
+			public List<ProblemInProgressViewModel> ProblemsInProgress { get; set; }
+			public List<ProblemOpenViewModel> ProblemsOpen { get; set; }
+			public List<ArchivedContractViewModel> ArchievedContracts { get; set; }
 		}
 
-		public DetailsForCoordinatorView getDetailsForCoordinator(ApplicationUser employer, String _info, String sortOrder, String lastSort)
+		public DetailsForCoordinatorView getDetailsForCoordinator(ApplicationUser employer, String sortOrder, String lastSort)
 		{
-			if (_info == null)
-			{
-				_info = "profile";
-			}
-
 			string id = employer.Id;
 			List<ContractModels> contracts = db.ContractModels
 				.Where(c => c.Freelancer.Id == employer.Id).ToList();
 
 			DetailsForCoordinatorView model = new DetailsForCoordinatorView
 			{
-				info = _info,
 				Email = employer.Email,
 				Phone = "+7(916)0001122", // TODO
 				Name = employer.FIO,
 				PhotoPath = "/Files/profile_pic.jpg", //TODO
 				Id = id
 			};
-			
+
+			model.ProblemsInProgress = getProblemsInProgress( id );
+			model.ArchievedContracts = getArchievedContracts( id );
+			foreach (var problem in model.ProblemsInProgress)
+			{
+				problem.Contracts = getProblemContract(problem.Id);
+			}
+
+			model.ProblemsOpen = getOpenProblems( id );
+
 			return model;
 		}
 
@@ -308,21 +318,17 @@ namespace FreeLance.Controllers
 				Rate = c.Rate,
 				CreationDate = c.CreationDate,
 				EndingDate = c.EndingDate,
-				DeadlineDate = DateTime.Now.AddDays(30), // TODO
+				DeadlineDate = DateTime.Now, // TODO
 				StatusMessage = getStatusMessage(c.Status)
 			};
 
 			return contract;
 		}
 
-		
-		public ActionResult Archive(String sortOrder, bool hideFailed=false)
+		private List<ArchivedContractViewModel> getArchievedContracts(String userId, bool hideFailed = false)
 		{
-			ViewBag.hideFailed = hideFailed;
-
-			string userId = User.Identity.GetUserId();
-			ICollection <ContractModels> contracts = db.ContractModels
-                .Where(
+			ICollection<ContractModels> contracts = db.ContractModels
+				.Where(
 					c => c.Problem.Employer.Id == userId
 						&& (c.Status == ContractStatus.Closed
 							|| c.Status == ContractStatus.Failed
@@ -331,12 +337,22 @@ namespace FreeLance.Controllers
 				.ToList();
 
 			List<ArchivedContractViewModel> model = new List<ArchivedContractViewModel>();
-			foreach (var contract in contracts) { 
-				if(!hideFailed || (hideFailed && contract.Status == ContractStatus.Closed))
+			foreach (var contract in contracts)
+			{
+				if (!hideFailed || (hideFailed && contract.Status == ContractStatus.Closed))
 				{
 					model.Add(getClosedContractData(contract));
 				}
 			}
+			return model;
+		}
+
+		public ActionResult Archive(String sortOrder, bool hideFailed=false)
+		{
+			ViewBag.hideFailed = hideFailed;
+
+			string userId = User.Identity.GetUserId();
+			List<ArchivedContractViewModel> model = getArchievedContracts(userId, hideFailed);
 
 			ViewBag.sortCost = "cost";
 			ViewBag.sortName = "name";
@@ -383,8 +399,6 @@ namespace FreeLance.Controllers
 
 			return View(model);
 		}
-		
-
 
 		// try /Employer/Problem/5 
 		public ActionResult Problem(int? id)
@@ -394,8 +408,7 @@ namespace FreeLance.Controllers
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
 			ProblemModels problemModels = db.ProblemModels.Find(id);
-
-			// check if employer is this problem's owner?
+			
 			if (problemModels == null)
 			{
 				return HttpNotFound();
@@ -409,57 +422,6 @@ namespace FreeLance.Controllers
 			return View(viewModel);
 		}
 
-		public FreelancerViewModel GetFreelancerInfo(string id)
-		{
-			ApplicationUser freelancer = db.Users.Find(id);
-			List<SmallContractInfoModel> contracts = db.ContractModels
-				.Where(
-					c => c.Freelancer.Id == id)
-				.Select(
-				c => new SmallContractInfoModel
-				{
-					Rate = c.Rate,
-					Status = c.Status
-				})
-				.ToList();
-			var model = new FreelancerViewModel
-			{
-				Rate = 0,
-				Name = freelancer.FIO,
-				Email = freelancer.Email,
-				ClosedContractsCount = 0,
-				OpenContractsCount = 0,
-				Id = id
-			};
-			decimal rate = 0;
-			int cancelByFreelancer = 0;
-			foreach (var contract in contracts)
-			{
-				if (contract.Status == ContractStatus.Closed 
-					|| contract.Status == ContractStatus.Failed
-					|| contract.Status == ContractStatus.СancelledByEmployer
-					|| contract.Status == ContractStatus.ClosedNotPaid)
-				{
-					rate += contract.Rate;
-					model.ClosedContractsCount += 1;
-				}
-				else if (contract.Status == ContractStatus.InProgress ||
-				  contract.Status == ContractStatus.Opened)
-				{
-					model.OpenContractsCount += 1;
-				} else if (contract.Status == ContractStatus.СancelledByFreelancer)
-				{
-					cancelByFreelancer += 1;
-				}
-			}
-			if(model.ClosedContractsCount != 0)
-			{
-				model.Rate = rate / model.ClosedContractsCount;
-			}
-			model.ClosedContractsCount += cancelByFreelancer;
-			return model;
-		}
-
 		public ActionResult Freelancers(String searchString, String sortOrder)
 		{
 			List<string> Ids = AccountController.GetApplicationUsersInRole(db, "Freelancer").Select(
@@ -467,7 +429,7 @@ namespace FreeLance.Controllers
 			List<FreelancerViewModel> model = new List<FreelancerViewModel>();
 			foreach(var id in Ids)
 			{
-				model.Add(GetFreelancerInfo(id));
+				model.Add(new FreelancerViewModel(id));
 			}
 
 			if (!String.IsNullOrEmpty(searchString))
@@ -526,7 +488,7 @@ namespace FreeLance.Controllers
 
 			ViewBag.sortOrder = sortOrder;
 
-			return View(model);
+			return PartialView("~/Views/_FreelancersView.cshtml", model);
 		}
 
 		[Authorize(Roles = "Employer")]

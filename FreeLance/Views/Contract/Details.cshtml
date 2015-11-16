@@ -24,6 +24,12 @@
 			margin: 15px 0;
 		}
 
+        .btn-details {
+            text-align: right;
+            float: right;
+            margin-right: 5px;
+		}
+
 		.form-change-status {
 			position: absolute; 
 			right: 0; 
@@ -135,6 +141,20 @@
 						<hr />
 						<a href="#">Приложение 1</a>
 					</div>
+                    <div class="col">
+                        @foreach (var button in Model.ChangeStatusButtons)
+                        {
+                            <div class="col-md-3 btn-details">
+                                @using (Html.BeginForm("ChangeStatus", "Contract", FormMethod.Post, new { @class = "form-change-status" }))
+                                {
+                                    <input name="id" type="hidden" value="@Model.ContractId" />
+                                    <input name="status" type="hidden" value="@button.Status" />
+                                    <input name="redirect" type="hidden" value="@button.Redirect" />
+                                    <input type="submit" class="btn @button.Classes" value="@button.Text" />
+                                }
+                            </div>
+                        }
+                    </div>
 				</div>
 			</div>
 			<div class="panel-footer">
@@ -161,20 +181,7 @@
 												   value="@Model.finishButton.Text" disabled />
 						}
 					}
-					<div class="row" >
-						@foreach (var button in Model.ChangeStatusButtons)
-						{
-							<div class="col-xs-3">
-								@using (Html.BeginForm("ChangeStatus", "Contract", FormMethod.Post, new { @class = "form-change-status" }))
-								{
-									<input name="id" type="hidden" value="@Model.ContractId" />
-									<input name="status" type="hidden" value="@button.Status" />
-									<input name="redirect" type="hidden" value="@button.Redirect" />
-									<input type="submit" class="btn @button.Classes" value="@button.Text" />
-								}
-							</div>
-						}
-					</div>
+					
 				</div>
 			</div>
 		</div>

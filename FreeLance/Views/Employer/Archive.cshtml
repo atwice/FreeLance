@@ -1,112 +1,111 @@
 ﻿@model List<FreeLance.Controllers.EmployerController.ArchivedContractViewModel>
 @{
     ViewBag.Title = "Архив";
-	ViewBag.MenuPick = "Archive";
+    ViewBag.MenuPick = "Archive";
 }
+
 @helper Truncate(string input, int length)
 {
 if (input.Length <= length)
 {
-		@input
+        @input
 }
 else
 {
-		@input.Substring(0, length)<text>...</text>
+        @input.Substring(0, length)<text>...</text>
 }
 }
 
 @section css {
-	<link rel="stylesheet" href="~/Content/jquery.raty.css">
-	<link rel="stylesheet" type="text/css" href="~/Content/flaticon.css">
-	<style>
-		th, td {
-			text-align:center;
-		}
-	</style>
-	
+    <link rel="stylesheet" href="~/Content/jquery.raty.css">
+    <link rel="stylesheet" type="text/css" href="~/Content/flaticon.css">
+    <style>
+        th, td {
+            text-align: center;
+        }
+    </style>
+
 }
 
 @section PageScripts{
-	<!-- Include Raty JS file -->
-	<script type="text/javascript" src="~/Scripts/jquery-2.1.4.min.js"></script>
-	<script type="text/javascript" src="~/Scripts/jquery.raty.js"></script>
+    <!-- Include Raty JS file -->
+    <script type="text/javascript" src="~/Scripts/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery.raty.js"></script>
 }
 
 <div class="row">
-	<div class="col-md-10">
-		<h2>Архив контрактов:</h2>
-		<p>
-			<a href=@Url.Action("Archive", "Employer",
+    <div class="col-md-10">
+        <h2>Архив контрактов:</h2>
+        <p>
+            <a href=@Url.Action("Archive", "Employer",
 				new { sortOrder = ViewBag.sortCost }) class="btn btn-info">
-				<span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
-				По стоимости
-			</a>
-			<a href=@Url.Action("Archive", "Employer",
+                <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+                По стоимости
+            </a>
+            <a href=@Url.Action("Archive", "Employer",
 				new { sortOrder = ViewBag.sortName }) class="btn btn-info">
-				<span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
-				По имени
-			</a>
-			<a href=@Url.Action("Archive", "Employer",
+                <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+                По имени
+            </a>
+            <a href=@Url.Action("Archive", "Employer",
 				new { sortOrder = ViewBag.sortCreationDate }) class="btn btn-info">
-				<span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
-				По дате создания
-			</a>
-			<a href=@Url.Action("Archive", "Employer",
+                <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+                По дате создания
+            </a>
+            <a href=@Url.Action("Archive", "Employer",
 				new { sortOrder = ViewBag.sortEndingDate }) class="btn btn-info">
-				<span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
-				По дате сдачи
-			</a>
-			@if (ViewBag.hideFailed)
+                <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+                По дате сдачи
+            </a>
+            @if (ViewBag.hideFailed)
 			{
-				<input id="hideFailed" type="checkbox" checked>
-            }
-			else
+                <input id="hideFailed" type="checkbox" checked>}
+            else
+            {
+                <input id="hideFailed" type="checkbox">}
+            Скрыть расторгнутые
+        </p>
+        <div>
+            @foreach (var contract in Model)
 			{
-				<input id="hideFailed" type="checkbox"> 
-            }
-			Скрыть расторгнутые
-		</p>
-		<div>
-			@foreach (var contract in Model)
-			{
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<b>
-							@contract.ProblemName
-							<span class="stars pull-right" data-score=@contract.Rate.ToString().Replace(",",".")></span>
-						</b>
-					</div>
-					<div class="panel-body">
-						<p>@Truncate(contract.Details, 200)</p>
-					</div>
-					<table class="table">
-						<tr>
-							<td>
-								Исполнитель:
-								<a href="/Freelancer/Details/@contract.FreelancerId">@contract.FreelancerName</a>
-							</td>
-							<td>
-								Стоимость: @contract.Cost <span class="flaticon-ruble"></span>
-							</td>
-							<td>Работа: @contract.StatusMessage</td>
-						</tr>
-						<tr>
-							<td>Начата: @contract.CreationDate.ToString("dd/MM/yyyy")</td>
-							<td>Завершена: @contract.EndingDate.ToString("dd/MM/yyyy")</td>
-							<td>Срок: @contract.DeadlineDate.ToString("dd/MM/yyyy")</td>
-						</tr>
-					</table>
-					<div class="panel-body">
-						<a href="/Contract/Details/@contract.ContractId" class="btn btn-info pull-right" role="button">Подробнее</a>
-					</div>
-				</div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <b>
+                            @contract.ProblemName
+                            <span class="stars pull-right" data-score=@contract.Rate.ToString().Replace(",",".")></span>
+                        </b>
+                    </div>
+                    <div class="panel-body">
+                        <p>@Truncate(contract.Details, 200)</p>
+                    </div>
+                    <table class="table">
+                        <tr>
+                            <td>
+                                Исполнитель:
+                                <a href="/Freelancer/Details/@contract.FreelancerId">@contract.FreelancerName</a>
+                            </td>
+                            <td>
+                                Стоимость: @contract.Cost <span class="flaticon-ruble"></span>
+                            </td>
+                            <td>Работа: @contract.StatusMessage</td>
+                        </tr>
+                        <tr>
+                            <td>Начата: @contract.CreationDate.ToString("dd/MM/yyyy")</td>
+                            <td>Завершена: @contract.EndingDate.ToString("dd/MM/yyyy")</td>
+                            <td>Срок: @contract.DeadlineDate.ToString("dd/MM/yyyy")</td>
+                        </tr>
+                    </table>
+                    <div class="panel-body">
+                        <a href="/Contract/Details/@contract.ContractId" class="btn btn-info pull-right" role="button">Подробнее</a>
+                    </div>
+                </div>
 			}
-		</div>
-	</div>
+        </div>
+    </div>
 </div>
 
 
-	<script>
+<script>
 		$(function () {
 			$(".stars").each(function () {
 				$(this).raty({
@@ -118,7 +117,7 @@ else
 				});
 			});
 		});
-		 
+
 		$('#hideFailed').click(function () {
 			var $this = $(this);
 			if ($this.is(':checked')) {
@@ -128,6 +127,8 @@ else
 			}
 		});
 
-		
-	</script>
+
+</script>
+
+
 

@@ -993,7 +993,7 @@ namespace FreeLance.Controllers
 		[Authorize(Roles = "Admin, Freelancer, Coordinator, WithoutDocuments, Employer")]
 		public ActionResult OpenProblems(String sortOrder, string searchString, string lastSort, string showSubscriptionsParam)
 		{
-			if (User.IsInRole("Employer"))
+			if (User.IsInRole("Employer") || User.IsInRole("Coordinator"))
 			{
 				return PartialView("_OpenProblemsForEmployer", getOpenProblemsInfo(sortOrder, lastSort, "show"));
 			}

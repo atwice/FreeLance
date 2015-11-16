@@ -34,19 +34,13 @@ namespace FreeLance.Controllers
             public List<DocumentPackageModels> DocumetsUnapproved { get; set; }
 		}
 
-		public class FreelancersViewModel
+		public class EmployerViewModel
 		{
-			public List<ApplicationUser> Incognitos { get; set; }
-			public List<ApplicationUser> WithoutDocuments { get; set; }
-			public List<ApplicationUser> WithDocuments { get; set; }
-			public List<ApplicationUser> FreelancersWithLawContract { get; set; }
-			public List<ApplicationUser> FreelancersWithoutLawContract { get; set; }
-		}
-
-		public class EmployersViewModel
-		{
-			public List<ApplicationUser> EmployersApproved { get; set; }
-			public List<ApplicationUser> EmployersNotApproved { get; set; }
+			public String Name { get; set; }
+			public string Id { get; set; }
+			public string Email { get; set; }
+			public int ClosedContractsCount { get; set; }
+			public int OpenContractsCount { get; set; }
 		}
 
 		public class UploadViewModel
@@ -90,8 +84,6 @@ namespace FreeLance.Controllers
 		{
 			return RedirectToAction("Home");
 		}
-
-
 
 		public ActionResult Upload()
 		{
@@ -138,7 +130,6 @@ namespace FreeLance.Controllers
 			return path;
 		}
 
-
 		public ActionResult Home()
 		{
 			var model = new HomeViewModel();
@@ -151,31 +142,74 @@ namespace FreeLance.Controllers
 			return View(model);
 		}
 
-		public ActionResult Freelancers()
+		public ActionResult Freelancers(String searchString, String sortOrder)
 		{
-			var model = new FreelancersViewModel();
-			model.Incognitos = getApplicationUsersInRole("Incognito").ToList();
-			model.WithoutDocuments = getApplicationUsersApproved(false, "Freelancer").ToList();
-			model.WithDocuments = getApplicationUsersApproved(true, "Freelancer").ToList();
-			string userId = User.Identity.GetUserId();
-			List<ApplicationUser> freelancers = getApplicationUsersInRole("Freelancer").OrderBy(f => f.FIO).ToList();
-			model.FreelancersWithLawContract = new List<ApplicationUser>();
-			model.FreelancersWithoutLawContract = new List<ApplicationUser>();
-			foreach (var freelancer in freelancers)
+			List<string> Ids = AccountController.GetApplicationUsersInRole(db, "Freelancer").Select(
+				u => u.Id).ToList();
+			List<FreelancerViewModel> model = new List<FreelancerViewModel>();
+			foreach (var id in Ids)
 			{
-				var contracts = db.LawContracts.Where(c => c.User.Id == freelancer.Id).ToArray();
-				if (contracts.Count() > 0 && contracts.Last().EndData < DateTime.Now)
-				{
-					model.FreelancersWithLawContract.Add(freelancer);
-				}
-				else if (!model.WithoutDocuments.Contains(freelancer))
-				{
-					model.FreelancersWithoutLawContract.Add(freelancer);
-				}
+				model.Add(new FreelancerViewModel(id));
 			}
-			return View(model);
-		}
 
+			if (!String.IsNullOrEmpty(searchString))
+			{
+				model = model.Where(c => c.Name.Contains(searchString) || c.Email.Contains(searchString)).ToList();
+			}
+
+			ViewBag.sortEmail = "email";
+			ViewBag.sortName = "name";
+			ViewBag.sortRate = "rate";
+			ViewBag.sortDone = "done";
+			ViewBag.sortInProgress = "in_progress";
+
+			switch (sortOrder)
+			{
+				case "email_desc":
+					model = model.OrderByDescending(с => с.Email).ToList();
+					break;
+				case "email":
+					ViewBag.sortEmail = "sort_desc";
+					model = model.OrderBy(с => с.Email).ToList();
+					break;
+				case "name_desc":
+					model = model.OrderByDescending(с => с.Name).ToList();
+					break;
+				case "name":
+					ViewBag.sortName = "name_desc";
+					model = model.OrderBy(с => с.Name).ToList();
+					break;
+				case "rate_desc":
+					model = model.OrderByDescending(с => с.Rate).ToList();
+					break;
+				case "rate":
+					ViewBag.sortRate = "rate_desc";
+					model = model.OrderBy(с => с.Rate).ToList();
+					break;
+				case "done_desc":
+					model = model.OrderByDescending(с => с.ClosedContractsCount).ToList();
+					break;
+				case "done":
+					ViewBag.sortDone = "done_desc";
+					model = model.OrderBy(с => с.ClosedContractsCount).ToList();
+					break;
+				case "in_progress_desc":
+					model = model.OrderByDescending(с => с.OpenContractsCount).ToList();
+					break;
+				case "in_progress":
+					ViewBag.sortInProgress = "in_progress_desc";
+					model = model.OrderBy(с => с.OpenContractsCount).ToList();
+					break;
+
+				default:
+					model = model.OrderBy(c => c.Name).ToList();
+					break;
+			}
+
+			ViewBag.sortOrder = sortOrder;
+
+			return PartialView("~/Views/_FreelancersView.cshtml", model);
+		}
 
 		public ActionResult LawFaces()
 		{
@@ -203,8 +237,7 @@ namespace FreeLance.Controllers
 	        model.LawFace = db.LawFaces.Where(x => x.Id == lawFaceId).ToList()[0];
 	        return View(model);
 	    }
-
-	   
+   
         [HttpPost]
 	    public ActionResult AddLawContractTemplate([Bind(Prefix = "LawContractTemplateView")]LawContractTemplateView lawContractTemplateView)
 	    {
@@ -236,6 +269,7 @@ namespace FreeLance.Controllers
             lawContractTemplateView.File.SaveAs(path);
             return path;
         }
+
 		private IEnumerable<ApplicationUser> getApplicationUsersApproved(bool? approved, string roleName)
 		{
 			return getApplicationUsersInRole(roleName)
@@ -282,15 +316,111 @@ namespace FreeLance.Controllers
 			return RedirectToAction("ViewFreelancerDocuments", new { userId = freelancerId });
 	    }
 
-
-
-		public ActionResult Employers()
+		public ActionResult Employers(String searchString, String sortOrder)
 		{
-			var model = new EmployersViewModel();
-			model.EmployersApproved = getApplicationUsersApproved(true, "Employer").ToList();
-			model.EmployersNotApproved = getApplicationUsersApproved(false, "Employer").ToList();
+			List<string> Ids = AccountController.GetApplicationUsersInRole(db, "Employer")
+				.Select( u => u.Id )
+				.ToList();
+			List<EmployerViewModel> model = new List<EmployerViewModel>();
+			foreach (var id in Ids)
+			{
+				model.Add(getInfoAboutEmployer(id));
+			}
+
+			if (!String.IsNullOrEmpty(searchString))
+			{
+				model = model.Where(c => c.Name.Contains(searchString) || c.Email.Contains(searchString)).ToList();
+			}
+
+			ViewBag.sortEmail = "email";
+			ViewBag.sortName = "name";
+			ViewBag.sortDone = "done";
+			ViewBag.sortInProgress = "in_progress";
+
+			switch (sortOrder)
+			{
+				case "email_desc":
+					model = model.OrderByDescending(с => с.Email).ToList();
+					break;
+				case "email":
+					ViewBag.sortEmail = "sort_desc";
+					model = model.OrderBy(с => с.Email).ToList();
+					break;
+				case "name_desc":
+					model = model.OrderByDescending(с => с.Name).ToList();
+					break;
+				case "name":
+					ViewBag.sortName = "name_desc";
+					model = model.OrderBy(с => с.Name).ToList();
+					break;
+				case "done_desc":
+					model = model.OrderByDescending(с => с.ClosedContractsCount).ToList();
+					break;
+				case "done":
+					ViewBag.sortDone = "done_desc";
+					model = model.OrderBy(с => с.ClosedContractsCount).ToList();
+					break;
+				case "in_progress_desc":
+					model = model.OrderByDescending(с => с.OpenContractsCount).ToList();
+					break;
+				case "in_progress":
+					ViewBag.sortInProgress = "in_progress_desc";
+					model = model.OrderBy(с => с.OpenContractsCount).ToList();
+					break;
+
+				default:
+					model = model.OrderBy(c => c.Name).ToList();
+					break;
+			}
+
+			ViewBag.sortOrder = sortOrder;
 
 			return View(model);
+		}
+
+		private EmployerViewModel getInfoAboutEmployer(String id)
+		{
+			var model = new EmployerViewModel();
+			ApplicationUser employer = db.Users.Find(id);
+			List<SmallContractInfoModel> contracts = db.ContractModels
+				.Where(
+					c => c.Problem.Employer.Id == id)
+				.Select(
+				c => new SmallContractInfoModel
+				{
+					Rate = c.Rate,
+					Status = c.Status
+				})
+				.ToList();
+			
+			model.Name = employer.FIO;
+			model.Email = employer.Email;
+			model.ClosedContractsCount = 0;
+			model.OpenContractsCount = 0;
+			model.Id = id;
+			int cancelByEmployer = 0;
+			foreach (var contract in contracts)
+			{
+				if (contract.Status == ContractStatus.Closed
+					|| contract.Status == ContractStatus.Failed
+					|| contract.Status == ContractStatus.СancelledByEmployer
+					|| contract.Status == ContractStatus.ClosedNotPaid)
+				{
+					model.ClosedContractsCount += 1;
+				}
+				else if (contract.Status == ContractStatus.InProgress ||
+				  contract.Status == ContractStatus.Opened)
+				{
+					model.OpenContractsCount += 1;
+				}
+				else if (contract.Status == ContractStatus.СancelledByEmployer)
+				{
+					cancelByEmployer += 1;
+				}
+			}
+			model.ClosedContractsCount += cancelByEmployer;
+
+			return model;
 		}
 
 		[HttpPost]
@@ -484,7 +614,6 @@ namespace FreeLance.Controllers
         }
 
 
-	    [HttpPost]
         [Authorize(Roles="Coordinator")]
 	    public ActionResult ToggleActiveLawContractTemplate(int templateId)
 	    {
@@ -493,7 +622,7 @@ namespace FreeLance.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 	        template.Active = !template.Active;
             db.SaveChanges();
-	        return Json(new {templateId = templateId, active = template.Active});
+	        return RedirectToAction("LawFaces");
 	    }
 		public ActionResult Settings()
 		{
