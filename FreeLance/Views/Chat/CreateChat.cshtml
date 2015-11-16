@@ -15,7 +15,18 @@
 		
 	</div>
 	-->
+	<style>
+		input {
+    border: none;
+    overflow: auto;
+    outline: none;
+	width: 200%;
 
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+}
+	</style>
 	
 	<div class="row">
 		<div class="col-md-12">
@@ -30,8 +41,10 @@
 		</div>
 		<div class='chat-message-right'>
 
-			<div class='chat-name'>Отправить сообщение</div>
-			<textarea class="form-control col-md-8 search-input" id='messageText' rows="3"></textarea>
+			<div class='chat-name'>@Model.UserName</div>
+			<div class="col-md-12">
+				<input class="chat-text" id='messageText' rows="3"/>
+			</div>
 		</div>
 	</div>
 	<div class="col-md-12">

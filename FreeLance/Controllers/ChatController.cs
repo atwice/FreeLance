@@ -23,19 +23,22 @@ namespace FreeLance.Controllers
 		public class ChatVR {
 			public string ObjectId { set; get; }
 			public ChatOwner Owner { get; set; }
+			public string UserName { get; set; }
 		} 
 
 		public ActionResult ProblemChat(int problemId) {
 			return PartialView("CreateChat", new ChatVR {
                 ObjectId = problemId.ToString(),
-				Owner = ChatOwner.Problem
+				Owner = ChatOwner.Problem,
+				UserName = db.Users.Find(User.Identity.GetUserId()).FIO
 			});
 		}
 
 		public ActionResult ContractChat(int contractId) {
 			return PartialView("CreateChat", new ChatVR {
                 ObjectId = contractId.ToString(),
-				Owner = ChatOwner.Contract
+				Owner = ChatOwner.Contract,
+				UserName = db.Users.Find(User.Identity.GetUserId()).FIO
 			});
 		}
 
