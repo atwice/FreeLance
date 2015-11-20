@@ -9,13 +9,15 @@
     <div class="panel-footer"> 
 
 
-        @using (Html.BeginForm("ApproveUserByCoordinator", "Coordinator", new { userId = Model.Id, value = false },FormMethod.Post, new  { style= "display:inline-block; padding: 20px; margin: 20px; "}))
+        @using (Html.BeginForm("ApproveUserByCoordinator", "Coordinator", new { userId = Model.Id, value = false },
+            FormMethod.Post, new  { style= "display:inline-block; padding: 20px; margin: 20px; "}))
         {
             <input type="submit" value="Заблокировать" class="btn btn-danger" />
         }
 
         <a class="pull-right">
-            @using (Html.BeginForm("ApproveUserByCoordinator", "Coordinator", new { userId = Model.Id, value = true }, FormMethod.Post, new { style = "display:inline-block; padding: 20px; margin: 20px;" }))
+            @using (Html.BeginForm("ApproveUserByCoordinator", "Coordinator", new { userId = Model.Id, value = true }, 
+                FormMethod.Post, new { style = "display:inline-block; padding: 20px; margin: 20px;" }))
                     
             {
                 <input type="submit" value="Допустить в систему" class="btn btn-success" />

@@ -38,18 +38,34 @@ else
     <div class="col-md-2">
         <img src="~/Files/profile_pic.jpg" class="img-thumbnail" style="margin-top: 20px;">
     </div>
-    <div class="col-md-10">
+    <div class="col-md-4">
         <h2><strong>@Model.Name</strong></h2>
         @if (Model.Phone != null)
         {
             <p>@Model.Phone</p>
         }
         <p>@Model.Email</p>
-        <div class="col-md-3">
-            <a href="#" class="btn btn-default left" style="margin-top: 5px; width: 100%">
-                Закрыть доступ
-            </a>
+        <div class="row">
+            @using (Html.BeginForm("ApproveUserByCoordinator", "Coordinator", new { userId = Model.Id, value = false },
+            FormMethod.Post, new { style = "display:inline-block; margin: 5px; " }))
+            {
+                <input type="submit" value="Заблокировать" class="btn btn-default" />
+            }
+            @if (!Model.isApproved)
+            {
+                using (Html.BeginForm("ApproveUserByCoordinator", "Coordinator", new { userId = Model.Id, value = true },
+                FormMethod.Post, new { style = "display:inline-block; margin: 5px;" }))
+                {
+                    <input type="submit" value="Допустить в систему" class="btn btn-info" />
+                }
+            }
+            
         </div>
+    </div>
+    <div class="col-md-3 pull-left">        
+        
+        </div>
+
     </div>
 </div>
 

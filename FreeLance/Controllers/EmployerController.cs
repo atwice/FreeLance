@@ -245,6 +245,7 @@ namespace FreeLance.Controllers
 			public String Phone { get; set; }
 			public String PhotoPath { get; set; }
 			public String Id { get; set; }
+			public bool isApproved { get; set; }
 
 			public List<ProblemInProgressViewModel> ProblemsInProgress { get; set; }
 			public List<ProblemOpenViewModel> ProblemsOpen { get; set; }
@@ -262,6 +263,7 @@ namespace FreeLance.Controllers
 				Email = employer.Email,
 				Phone = "+7(916)0001122", // TODO
 				Name = employer.FIO,
+				isApproved = employer.IsApprovedByCoordinator == true ? true : false,
 				PhotoPath = "/Files/profile_pic.jpg", //TODO
 				Id = id
 			};
