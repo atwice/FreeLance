@@ -225,6 +225,7 @@ namespace FreeLance.Controllers
 			public String FreelancerId { get; set; }
 			public String info;
 			public String lastSort;
+			public bool isApproved { get; set; }
 
 			public List<ContractInfoForEmployer> ClosedContracts { get; set; }
 			public DetailsProblemsView ProblemsView;
@@ -485,6 +486,7 @@ namespace FreeLance.Controllers
 				PhotoPath = "/Files/profile_pic.jpg", //TODO
 				FreelancerRate = countRating(id),
 				FreelancerId = id,
+				isApproved = freelancer.IsApprovedByCoordinator == true ? true : false,
 				ClosedContracts = new List<ContractInfoForEmployer>(),
 
 				ProfileView = new DetailsProfileView
