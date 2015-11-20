@@ -347,6 +347,7 @@ namespace FreeLance.Controllers
 			return model;
 		}
 
+		[Authorize(Roles = "Employer")]
 		public ActionResult Archive(String sortOrder, bool hideFailed=false)
 		{
 			ViewBag.hideFailed = hideFailed;
