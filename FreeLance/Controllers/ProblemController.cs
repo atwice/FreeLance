@@ -40,7 +40,6 @@ namespace FreeLance.Controllers
 			public List<ContractInfoModel> ContratsClosed { get; set; }
 			public List<SubscriberInfoModel> Subscribers { get; set; }
 
-
 			public bool IsSubscibed { get; set; }
 			public bool? IsApproved { get; set; }
 		}
@@ -94,7 +93,6 @@ namespace FreeLance.Controllers
 			return result;
 		}
 
-
 		public DetailsView getProblemDetails(ProblemModels p)
 		{
 			DetailsView details = new DetailsView
@@ -127,7 +125,6 @@ namespace FreeLance.Controllers
 
 			return details;
 		}
-
 
 		public ActionResult Details(int? id)
 		{

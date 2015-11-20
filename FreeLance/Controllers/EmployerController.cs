@@ -95,7 +95,6 @@ namespace FreeLance.Controllers
 			return RedirectToAction("Home");
 		}
 
-
 		public static String getStatusIcon(ContractStatus status)
 		{
 			String answer = "";
@@ -279,7 +278,6 @@ namespace FreeLance.Controllers
 
 			return model;
 		}
-
 
 		public static String getStatusMessage(ContractStatus status)
 		{

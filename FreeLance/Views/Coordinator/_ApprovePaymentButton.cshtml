@@ -1,7 +1,9 @@
 ﻿@using FreeLance.Controllers
 @model FreeLance.Models.ContractModels
 
-@using (Html.BeginForm("ApproveInContractByCoordinator", "Coordinator", new { contractId = Model.ContractId, approvable=CoordinatorController.Approvable.Payment}, FormMethod.Post, new { style = "display:inline-block;" }))
+@using (Html.BeginForm("ApproveInContractByCoordinator", "Coordinator", 
+    new { contractId = Model.ContractId, approvable=CoordinatorController.Approvable.Payment}, 
+    FormMethod.Post, new { style = "display:inline-block;" }))
 {
     <input type="submit" value="Выплата произведена" class="btn btn-success" />
 }

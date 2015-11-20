@@ -497,8 +497,6 @@ namespace FreeLance.Controllers
             return Redirect("/Coordinator/Home");
         }
 
-
-
         [HttpPost]
 		public ActionResult IncognitoToFreelancer(string usernameID, string redirect)
 		{
