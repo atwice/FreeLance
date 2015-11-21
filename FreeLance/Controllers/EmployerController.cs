@@ -221,7 +221,7 @@ namespace FreeLance.Controllers
 						SubscribersCount = p.Subscriptions.Count,
 						CreationDate = p.CreationDate,
 						EndingDate = DateTime.Now, // TODO
-						AmountOfWorkers = 10 // TODO
+						AmountOfWorkers = p.AmountOfWorkes
 					}
 				)
 				.ToList();

@@ -16,7 +16,7 @@
 						<b>Завершено: </b><span class="text-info-in-panel">@contract.EndingDate</span>
 						<span class="pull-right"><b>@contract.Cost</b><span class="flaticon-ruble"></span> </span>
 					</p>
-					<p><b>Работодатель:</b> <a class="text-info-in-panel" href="#">@contract.EmployerName</a></p>
+					<p><b>Работодатель:</b> <a class="text-info-in-panel" href="/Employer/Details/@contract.EmployerId">@contract.EmployerName</a></p>
 
 					<div>
 						<a href="/Problem/Details/@contract.ProblemId" class="btn btn-info pull-right to-problem-btn" role="button">К задаче</a>
@@ -43,7 +43,7 @@
 					@contract.CreationDate - @contract.DeadlineDate
 					<span class="pull-right"><b>@contract.Cost</b><span class="flaticon-ruble"></span> </span>
 				</p>
-				<p><b>Работодатель:</b><a class="text-info-in-panel" href="#">@contract.EmployerName</a></p>
+				<p><b>Работодатель:</b><a class="text-info-in-panel" href="/Employer/Details/@contract.EmployerId">@contract.EmployerName</a></p>
 
 				<div>
 					<a href="/Problem/Details/@contract.ProblemId" class="btn btn-info pull-right to-problem-btn" role="button">К задаче</a>
@@ -104,7 +104,7 @@
 								</a>
 							</td>
 							<td>
-								<a href="#">
+								<a href="/Employer/Details/@subscription.EmployerId">
 									@subscription.EmployerName
 								</a>
 							</td>

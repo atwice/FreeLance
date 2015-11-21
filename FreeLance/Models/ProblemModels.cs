@@ -32,6 +32,10 @@ namespace FreeLance.Models
 		[DataType(DataType.Currency)]
 		public decimal Cost { get; set; }
 
+		[Range(0, 1000000)]
+		[Required]
+		public int AmountOfWorkes { get; set; }
+
 		[Required]
 		public ProblemStatus Status { get; set; }
 		public virtual ICollection<ContractModels> Contracts { get; set; }
