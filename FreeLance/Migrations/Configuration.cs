@@ -114,8 +114,9 @@ namespace FreeLance.Migrations
                 Status = status,
                 Employer = employer,
                 CreationDate = DateTime.Now.AddDays(rnd.Next(1, 40)).AddHours(5),
-                Cost = (decimal)RandomNumberBetween(10.1, 5000.0)
-            };
+                Cost = (decimal)RandomNumberBetween(10.1, 5000.0),
+				AmountOfWorkes = rnd.Next(1, 13)
+		};
             context.ProblemModels.AddOrUpdate(p => p.Name, problem);
             return problem;
         }

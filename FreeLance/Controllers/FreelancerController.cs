@@ -195,7 +195,7 @@ namespace FreeLance.Controllers
 				CreationDate = problem.CreationDate,
 				DeadlineDate = DateTime.Now.AddDays(50), // TODO
 				Cost = problem.Cost,
-				AmountOfWorkers = 10, // TODO
+				AmountOfWorkers = problem.AmountOfWorkes,
 				ProblemId = problem.ProblemId,
 				IsSubscribed = problem.Subscriptions.Any(s => s.Freelancer.Id == User.Identity.GetUserId())
 			};
