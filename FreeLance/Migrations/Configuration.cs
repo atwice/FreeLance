@@ -139,9 +139,11 @@ namespace FreeLance.Migrations
         private ContractModels addContract(ApplicationDbContext context, string details, ContractStatus status, ProblemModels problem, ApplicationUser freelancer)
         {
             Random rnd = new Random();
-            var contract = new ContractModels
+			String additionalDescription = " Although moreover mistaken kindness me feelings do be marianne. Son over own nay with tell they cold upon are. Cordial village and settled she ability law herself. Finished why bringing but sir bachelor unpacked any thoughts. Unpleasing unsatiable particular inquietude did nor sir. Get his declared appetite distance his together now families. Friends am himself at on norland it viewing. Suspected elsewhere you belonging continued commanded she. Do commanded an shameless we disposing do.Indulgence ten remarkably nor are impression out. Power is lived means oh every in we quiet. Remainder provision an in intention.Saw supported too joy promotion engrossed propriety.Me till like it sure no sons. ";
+
+			var contract = new ContractModels
             {
-                Details = details,
+                Details = details + additionalDescription,
                 Problem = problem,
                 Status = status,
                 Freelancer = freelancer,

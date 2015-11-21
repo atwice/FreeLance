@@ -130,12 +130,21 @@
 						<span class="flaticon-ruble-big"></span>
 					</div>
 				</div>
-				<div class="row">
-					<div class="col-xs-12">
-						<hr />
-						@Model.Details
-					</div>
-				</div>
+
+				@if (Model.showMore)
+				{
+					<p>@Model.Details</p>
+					<a href="/Contract/Details/@Model.ContractId?showMore=false" class="btn btn-info" role="button">
+						Скрыть полное описание
+					</a>
+				}
+				else
+				{
+					<a href="/Contract/Details/@Model.ContractId?showMore=true" class="btn btn-info" role="button">
+						Показать полное описание
+					</a>
+				}
+
 				<div class="row">
 					<div class="col-xs-12">
 						<hr />

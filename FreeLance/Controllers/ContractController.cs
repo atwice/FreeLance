@@ -25,6 +25,7 @@ namespace FreeLance.Controllers
 
 		public class DetailsView
 		{
+			public bool showMore { get; set; }
 			public String Comment { get; set; }
 			public String EmployerId { get; set; }
 			public string EmployerName { get; set; }
@@ -86,7 +87,7 @@ namespace FreeLance.Controllers
 
 		// GET: Contract/Details/5
 		[Authorize(Roles = "Employer,Freelancer,Admin,Coordinator")]
-		public ActionResult Details(int? id)
+		public ActionResult Details(int? id, bool? showMore)
 		{
 			if (id == null)
 			{
@@ -104,7 +105,15 @@ namespace FreeLance.Controllers
 				return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
 			}
 
+			if (showMore == null)
+			{
+				showMore = false;
+			}
+
+		
 			DetailsView view = getContractDetails(contract);
+
+			view.showMore = (bool)showMore;
 
 			view.ChangeStatusButtons = new List<DetailsView.ChangeStatusButton>();
 
