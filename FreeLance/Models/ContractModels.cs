@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.ComponentModel.DataAnnotations;
 using FreeLance.Models;
+using System.Web.Mvc;
 
 namespace FreeLance.Models
 {
@@ -22,12 +23,15 @@ namespace FreeLance.Models
 		public DateTime EndingDate { get; set; }
 		[Required]
 		public virtual ApplicationUser Freelancer { get; set; }
-        [DataType(DataType.MultilineText)]
+		[DataType(DataType.MultilineText)]
+		[AllowHtml]
 		public string Details { get; set; }
 		[Required]
 		public virtual ProblemModels Problem { get; set; }
 		[Required]
 		public ContractStatus Status { get; set; }
+		[Range(0, 1000000)]
+		[DataType(DataType.Currency)]
 		public decimal Cost { get; set; }
 		public decimal Rate { get; set; }
 		public string Comment { get; set; }
