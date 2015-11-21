@@ -1,33 +1,8 @@
 ﻿@model FreeLance.Controllers.ChatController.ChatVR
 
-@{ string ownerClass = "owner-" + @Model.ObjectId + "-" + Model.Owner; }
+@{ string chatId = Model.ChatId.ToString(); };
 
-<div class="chat body @ownerClass">
-	<!--
-	<div id="comments-container-2"></div>
-	<div>
-		<div class="container">
-			<input type="text" id="message-2" />
-			<input type="button" id="sendmessage" value="Send" />
-			<input type="hidden" id="displayname" />
-			<ul id="discussion"></ul>
-		</div>
-		
-	</div>
-	-->
-	<style>
-		input {
-    border: none;
-    overflow: auto;
-    outline: none;
-	width: 200%;
-
-    -webkit-box-shadow: none;
-    -moz-box-shadow: none;
-    box-shadow: none;
-}
-	</style>
-	
+<div class="chat body">
 	<div class="row">
 		<div class="col-md-12">
 			<input type="hidden" id="lastCommentTime" value="0" />
@@ -43,37 +18,19 @@
 
 			<div class='chat-name'>@Model.UserName</div>
 			<div class="col-md-12">
-				<input class="chat-text" id='messageText' rows="3"/>
-			</div>
-		</div>
-	</div>
-	<div class="col-md-12">
-		<button id='sendMessage' class='btn btn-primary pull-right'>Send</button>
-	</div>
-	<!--
-	<div class="container">
-
-		<div class="row">
-			<div class="col-md-12">
-				<h4>Отправить сообщение</h4>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-12">
-				<textarea id="messageText" class="form-control"></textarea>
+				<textarea class="form-control" id='messageText' rows="3"></textarea>
 			</div>
 			<div class="col-md-12">
 				<button id='sendMessage' class='btn btn-primary pull-right'>Send</button>
 			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-12">
-				<input type="hidden" id="lastCommentTime" value="0" />
-				<div id="chat"></div>
-			</div>
+			
 		</div>
 	</div>
-		-->
+	<div class="row">
+		<div class="col-md-12">
+			
+		</div>
+	</div>
 </div>
 
 @Scripts.Render("~/bundles/jquery")
@@ -87,142 +44,10 @@
 @Scripts.Render("~/bundles/jquery-signalR")
 <script src="~/signalr/hubs"></script>
 
-<script>
 
-	$('#comments-container-2').comments({
-		timeFormatter: function(time) {
-			var date = new Date(time);
-			return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
-		},
-		profilePictureURL: '/Content/Avatars/default.png',
-		enableReplying: true,
-		enableEditing: true,
-		enableUpvoting: false,
-		enableDeleting: true,
-		enableDeletingCommentWithReplies: false,
-		fieldMappings: {
-			id: 'Id',
-			parent: 'ParentId',
-			created: 'Date',
-			modified: 'Modified',
-			content: 'Comment',
-			fullname: 'Author',
-			profilePictureURL: 'UserAvatar',
-			createdByAdmin: 'created_by_admin',
-			createdByCurrentUser: 'CreatedByCurrentUser',
-			upvoteCount: 'upvote_count',
-			userHasUpvoted: 'user_has_upvoted',
-		},
-		getComments: function (success, error) {
-    		$.ajax({
-    			url: '@Url.Action("GetChatMessages", "Chat")',
-    			type: 'POST',
-    			data: { "objectId": @Model.ObjectId, "owner": "@Model.Owner" },
-    			dataType: "json",
-    			success: function (result) {
-    				if (result.Status == "Ok") {
-    					success(result.Result);
-    				} else {
-    					error(result.Reason);
-    				}
-    			}
-    		});
-		},
-		postComment: function(commentJSON, success, error) {
-			$.ajax({
-				type: 'POST',
-				url: '@Url.Action("SendMessage", "Chat")',
-				data: {
-					'objectId' : @Model.ObjectId,
-					'owner' : '@Model.Owner',
-					'parentId' : commentJSON.ParentId,
-					'text' : commentJSON.Comment
-				},
-				dataType: "json",
-				success: function(comment) {
-					if (comment.Status == 'Ok') {
-						success(comment.Result);
-					} else {
-						error(comment.Reason);
-					}
-				},
-				error: error
-			});
-		},
-		deleteComment: function(commentJSON, success, error) {
-			$.ajax({
-				type: 'POST',
-				url: '@Url.Action("DeleteMessage", "Chat")',
-				data: {
-					'objectId' : @Model.ObjectId,
-					'owner' : '@Model.Owner',
-					'messageId' : commentJSON.Id
-				},
-				dataType: "json",
-				success: success,
-				error: error
-			});
-		}
-	});
-</script>
-
-<!--
-<div class="container">
-	<div class="row">
-		<div class="col-md-12">
-			<h4>Отправить сообщение</h4>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-md-12">
-			<textarea id="messageText" class="form-control"></textarea>
-		</div>
-		<!--<div>
-			<label>
-				<input type="checkbox" id="isStarred" />
-				Звездочка
-			</label>
-		</div>
-		<div class="col-md-12">
-			<button id='sendMessage' class='btn btn-primary pull-right'>Send</button>
-		</div>
-	</div>
-	
-	<div class="row">
-		<div class="col-md-12">
-			
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-md-12">
-			<h1>Text</h1>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-md-12">
-			<input id="textText" class="form-control" />
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-md-12">
-			<div>
-				<label>
-					<input type="checkbox" id="isError" />
-					Ошибка ли
-				</label>
-				<button id='sendText' class='btn btn-primary pull-right'>Send</button>
-			</div>
-		</div>
-	</div>
-	
-	<div class="row">
-		<div class="col-md-12">
-			<div id="chat"></div>
-		</div>
-	</div>
-</div>
--->
 <script type="text/javascript">
+	var CHAT_ID = @Model.ChatId;
+
 	function showChatMessage(data) {
 		$( "#chat" ).chat().addMessage({
 			name: data.Author,
@@ -231,87 +56,45 @@
 			isStarred: data.CreatedByCurrentUser
 		});
 	}
-	function updateChatMessages() {
+
+	function chatAddText(text, isError) {
 		var chat = $( "#chat" ).chat();
-		//chat.clear();
-		$.ajax({
-			url: '@Url.Action("GetChatMessages", "Chat")',
-			type: 'POST',
-			data: { "objectId": @Model.ObjectId, "owner": "@Model.Owner" },
-			dataType: "json",
-			success: function (result) {
-				if (result.Status == "Ok") {
-					var lastTime = +($("#lastCommentTime").val());
-					for (var i = 0; i < result.Result.length; i++) {
-						if (result.Result[i].Date > lastTime) {
-							showChatMessage(result.Result[i]);
-							lastTime = result.Result[i].Date;
-						}
-					}
-					$("#lastCommentTime").val(lastTime);
-				} else {
-					chat.addText( { style: "error", text: comment.Reason } );
+		var textObject = {};
+		textObject.text = text;
+		textObject.style = isError ? "error" : "default";
+		chat.addText( textObject );
+	};
+	$(function () {
+		// Declare a proxy to reference the hub.
+		var chat = $.connection.chatHub;
+
+		// Create a function that the hub can call to broadcast messages.
+		chat.client.hubMessage = function (string) {
+			chatAddText(string, false);
+		};
+		chat.client.newMessages = function (result) {
+			if (result.Status == 'Ok') {
+				for (var i = 0; i < result.Result.length; i++) {
+					showChatMessage(result.Result[i]);
 				}
+			} else {
+				chatAddText(result.Reason, true);
 			}
-		});
-	}
-	$( function() {
-		updateChatMessages();
-	});
-		$( function() {
-			var chat = $( "#chat" ).chat();
-
-			$("#sendText").click( function() {
-				var textObject = {};
-				textObject.text = $("#textText").val();
-				textObject.style = $("#isError").prop("checked") ? "error" : "default";
-
-				chat.addText( textObject );
+		};
+		chat.client.errorSendMessage = function (result) {
+			chatAddText(result.Reason, true);
+		};
+		$.connection.hub.start().done(function () {
+			chat.server.joinChat(CHAT_ID);
+			$("#sendMessage").click( function() {
+				text = $( "#messageText" ).val();
+				chat.server.sendMessage(CHAT_ID, null, text);
 			});
-
-			
+		}).fail(function (error) {
+			console.log('Invocation of start failed. Error: ' + error)
 		});
-</script>
-
-<script type="text/javascript">
-        $(function () {
-            // Declare a proxy to reference the hub.
-        	var chat = $.connection.chatHub;
-            // Create a function that the hub can call to broadcast messages.
-            chat.client.broadcastMessage = function (name, message) {
-            	updateChatMessages();
-            };
-            $.connection.hub.start().done(function () {
-                $('#sendmessage').click(function () {
-                    // Call the Send method on the hub.
-                    chat.server.send("a", "b");
-                    // Clear text box and reset focus for next comment.
-                    $('#message-2').val('').focus();
-                });
-
-                $("#sendMessage").click( function() {
-
-                	$.ajax({
-                		type: 'POST',
-                		url: '@Url.Action("SendMessage", "Chat")',
-                		data: {
-                			'objectId' : @Model.ObjectId,
-                			'owner' : '@Model.Owner',
-                			'parentId' : null,
-                			'text' : $("#messageText").val()
-                		},
-                		dataType: "json",
-                		success: function(comment) {
-                			if (comment.Status == 'Ok') {
-                				//showChatMessage(comment.Result);
-                			} else {
-                				$( "#chat" ).chat().addText( { style: "error", text: comment.Reason } );
-                			}
-                			chat.server.send("a", "b");
-                		}
-                	});
-                });
-
-            });
-        });
+		//$.connection.hub.stop(function () {
+		//	chat.server.leaveChat(CHAT_ID);
+		//});
+	});
 </script>

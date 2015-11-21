@@ -6,9 +6,16 @@ using System.ComponentModel.DataAnnotations;
 using System.EnterpriseServices;
 
 namespace FreeLance.Models {
+
+	public enum ChatOwner {
+		Problem, Contract
+	}
+
 	public class Chat {
 		[Key]
 		public int Id { get; set; }
+		[Required]
+		public ChatOwner Owner { get; set; }
 	}
 
 	public class ChatMessage {
@@ -17,7 +24,7 @@ namespace FreeLance.Models {
 		public int? ParentId { get; set; }
 		[Required]
 		public int ChatId { get; set; }
-		[Required]
+		[Required(AllowEmptyStrings = true)]
 		public string Content { get; set; }
 		[Required]
 		public virtual ApplicationUser User { get; set; }
@@ -32,7 +39,7 @@ namespace FreeLance.Models {
 		[Key]
 		public int Id { get; set; }
 		[Required]
-		public int ChatId { get; set; }
+		public Chat Chat { get; set; }
 		[Required]
 		public virtual ProblemModels Problem { get; set; }
 	}
@@ -41,7 +48,7 @@ namespace FreeLance.Models {
 		[Key]
 		public int Id { get; set; }
 		[Required]
-		public int ChatId { get; set; }
+		public Chat Chat { get; set; }
 		[Required]
 		public virtual ContractModels Contract { get; set; }
 	}

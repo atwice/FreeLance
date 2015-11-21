@@ -8,40 +8,110 @@ using Microsoft.AspNet.Identity;
 using System.Net;
 using System.Data;
 using System.Data.Entity;
+using Microsoft.AspNet.SignalR;
+using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace FreeLance.Controllers
 {
-	[Authorize]
+	[System.Web.Mvc.Authorize]
 	public class ChatController : Controller
     {
-		private ApplicationDbContext db = new ApplicationDbContext();
-
-		public enum ChatOwner {
-			Problem, Contract
-		}
+		private static ApplicationDbContext db = new ApplicationDbContext();
 
 		public class ChatVR {
-			public string ObjectId { set; get; }
-			public ChatOwner Owner { get; set; }
+			public int ChatId { get; set; }
 			public string UserName { get; set; }
 		} 
 
 		public ActionResult ProblemChat(int problemId) {
+			ProblemChat problemChat = db.ProblemChats.Where(x => x.Problem.ProblemId == problemId).SingleOrDefault();
+			if (problemChat == null) {
+				ProblemModels problem = db.ProblemModels.Find(problemId);
+				if (problem == null) {
+					return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+				}
+				try {
+					Chat chat = db.Chats.Add(new Chat { Owner = ChatOwner.Problem });
+					problemChat = new Models.ProblemChat { Chat = chat, Problem = problem };
+					db.ProblemChats.Add(problemChat);
+					db.SaveChanges();
+				} catch (Exception e) {
+					return new HttpStatusCodeResult(HttpStatusCode.BadRequest, e.Message);
+				}
+			}
 			return PartialView("CreateChat", new ChatVR {
-                ObjectId = problemId.ToString(),
-				Owner = ChatOwner.Problem,
+				ChatId = problemChat.Chat.Id,
 				UserName = db.Users.Find(User.Identity.GetUserId()).FIO
 			});
 		}
 
 		public ActionResult ContractChat(int contractId) {
+			ContractChat contractChat = db.ContractChats.Where(x => x.Contract.ContractId == contractId).SingleOrDefault();
+			if (contractChat == null) {
+				ContractModels contract = db.ContractModels.Find(contractId);
+				if (contract == null) {
+					return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+				}
+				try {
+					Chat chat = db.Chats.Add(new Chat { Owner = ChatOwner.Contract });
+					contractChat = new Models.ContractChat { Chat = chat, Contract = contract };
+					db.ContractChats.Add(contractChat);
+					db.SaveChanges();
+				} catch (Exception e) {
+					return new HttpStatusCodeResult(HttpStatusCode.BadRequest, e.Message);
+				}
+			}
 			return PartialView("CreateChat", new ChatVR {
-                ObjectId = contractId.ToString(),
-				Owner = ChatOwner.Contract,
+				ChatId = contractChat.Chat.Id,
 				UserName = db.Users.Find(User.Identity.GetUserId()).FIO
 			});
 		}
 
+		[NonAction]
+		public static bool HasAccess(string userId, int chatId) {
+			ApplicationUser user = db.Users.Find(userId);
+			Chat chat = db.Chats.Find(chatId);
+			if (user == null || chat == null) {
+				return false;
+			}
+			switch (chat.Owner) {
+				case ChatOwner.Problem:
+					return hasAccessToProblem(user, chatId);
+				case ChatOwner.Contract:
+					return hasAccessToContract(user, chatId);
+                default:
+					return false;
+			}
+		}
+
+		private static bool checkUserIsInRole(ApplicationUser user, string roleName) {
+			IdentityRole role = db.Roles.Where(r => r.Name == roleName).Single();
+			return user.Roles.Where(r => r.RoleId == role.Id).Any();
+		}
+
+		private static bool hasAccessToProblem(ApplicationUser user, int chatId) {
+			ProblemChat problemChat = db.ProblemChats.Where(x => x.Chat.Id == chatId).SingleOrDefault();
+			if (problemChat == null) {
+				return false;
+			}
+			if (checkUserIsInRole(user, "Freelancer") || problemChat.Problem.Employer.Id == user.Id) {
+				return true;
+			}
+			return false;
+		}
+
+		private static bool hasAccessToContract(ApplicationUser user, int chatId) {
+			ContractChat contrctChat = db.ContractChats.Where(x => x.Chat.Id == chatId).SingleOrDefault();
+			if (contrctChat == null) {
+				return false;
+			}
+			if (contrctChat.Contract.Freelancer.Id == user.Id || contrctChat.Contract.Problem.Employer.Id == user.Id) {
+				return true;
+			}
+			return false;
+		}
+
+		/*
 		[HttpPost]
 		public ActionResult GetChatMessages(string objectId, ChatOwner owner) {
 			try {
@@ -63,7 +133,7 @@ namespace FreeLance.Controllers
 			try {
 				switch (owner) {
 					case ChatOwner.Problem:
-						return sendProblemMessage(Int32.Parse(objectId), parentId, text);
+						return SendProblemMessage(Int32.Parse(objectId), parentId, text);
 					case ChatOwner.Contract:
 						return sendContractMessage(Int32.Parse(objectId), parentId, text);
 					default:
@@ -72,7 +142,7 @@ namespace FreeLance.Controllers
 			} catch (Exception e) {
 				return Json(new { Status = "Error", Reason = e.Message });
 			}
-		}
+		}*/
 		/*
 		[HttpPost]
 		public ActionResult DeleteMessage(string objectId, ChatOwner owner, int messageId) {
@@ -89,8 +159,8 @@ namespace FreeLance.Controllers
 				return Json(new { Status = "Error", Reason = e.Message });
 			}
 		}*/
-
-		private ActionResult sendProblemMessage(int problemId, int? parentId, string text) {
+		/*
+		public ActionResult SendProblemMessage(int problemId, int? parentId, string text) {
 			ProblemModels problem = db.ProblemModels.Find(problemId);
 			string userId = User.Identity.GetUserId();
 			if (problem == null || !(problem.Employer.Id == userId || User.IsInRole("Freelancer"))) {
@@ -103,6 +173,10 @@ namespace FreeLance.Controllers
 				db.ProblemChats.Add(problemChat);
 				db.SaveChanges();
 			}
+
+			var context = GlobalHost.ConnectionManager.GetHubContext<ChatHub>();
+			context.Clients.Group(problemId.ToString()).BroadcastMessage("123", "123");
+
 			return sendMessage(problemChat.ChatId, parentId, text);
 		}
 
@@ -149,6 +223,7 @@ namespace FreeLance.Controllers
 			}
 			return getChatMessages(chatId);
 		}
+		*/
 		/*
 		private ActionResult deleteProblemMessage(int problemId, int messageId) {
 			ProblemModels problem = db.ProblemModels.Find(problemId);
@@ -168,11 +243,17 @@ namespace FreeLance.Controllers
 			return deleteChatMessage(contract.ChatId, messageId);
 		}*/
 
-		private ActionResult sendMessage(int chatId, int? parentId, string text) {
+		public class ChatResponse {
+			public Object Body { get; set; }
+			public bool IsOk { get; set; }
+		}
+
+		[NonAction]
+		public static ChatResponse SendMessage(int chatId, int? parentId, string userId, string text) {
 			if (parentId != null) {
 				ChatMessage parentMessage = db.ChatMessages.Find(parentId);
 				if (parentMessage == null || parentMessage.ChatId != chatId) {
-					return Json(new { Status = "Error", Reason = "Invalid parent Id" });
+					return new ChatResponse { Body = new { Status = "Error", Reason = "Invalid parent Id" }, IsOk = false };
 				}
 			}
 			try {
@@ -180,29 +261,30 @@ namespace FreeLance.Controllers
 					ChatId = chatId,
 					ParentId = parentId,
 					Content = text,
-					User = db.Users.Find(User.Identity.GetUserId()),
+					User = db.Users.Find(userId),
 					CreationDate = DateTime.Now,
 					ModificationDate = null
 				});
 				db.SaveChanges();
-				return Json(new { Status = "Ok", Result = fillMessage(msg) });
+				return new ChatResponse { Body = new { Status = "Ok", Result = new[] { fillMessage(msg) } }, IsOk = true };
 			} catch (Exception e) {
-				return Json(new { Status = "Error", Reason = e.Message });
+				return new ChatResponse { Body = new { Status = "Error", Reason = e.Message }, IsOk = false };
 			}
 		}
 
-		private ActionResult getChatMessages(int? chatId) {
+		[NonAction]
+		public static ChatResponse GetChatMessages(int chatId) {
 			try {
-				return Json(new {
+				return new ChatResponse { IsOk = true, Body = new {
 					Status = "Ok",
 					Result = db.ChatMessages.Where(msg => msg.ChatId == chatId).OrderBy(msg => msg.CreationDate)
 							   .Include(msg => msg.User).Select(fillMessage).ToArray()
-				});
+				}};
 			} catch (Exception e) {
-				return Json(new { Status = "Error", Reason = e.Message });
+				return new ChatResponse { Body = new { Status = "Error", Reason = e.Message }, IsOk = false };
 			}
 		}
-
+		/*
 		private ActionResult deleteChatMessage(int? chatId, int? messageId) {
 			try {
 				ChatMessage message = db.ChatMessages.Find(messageId);
@@ -219,15 +301,15 @@ namespace FreeLance.Controllers
 				return Json(new { Status = "Error", Reason = e.Message });
 			}
 		}
-
-		private Object fillMessage(ChatMessage msg) {
+		*/
+		private static Object fillMessage(ChatMessage msg) {
 			return new {
 				Id = msg.Id,
 				Author = msg.User.FIO,
 				Comment = msg.Content,
 				ParentId = msg.ParentId,
 				UserAvatar = "/Content/Avatars/default.png",
-				CreatedByCurrentUser = msg.User.Id == User.Identity.GetUserId(),
+				CreatedByCurrentUser = msg.User.Id,
 				CanReply = true,
 				Date = (Int64) (msg.CreationDate.Subtract(new DateTime(1970, 1, 1, 0, 0, 0))).TotalMilliseconds,
 				//Modified = true,

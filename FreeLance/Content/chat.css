@@ -21,9 +21,9 @@
 
 	.chat-message-left .chat-star {
 		position: absolute;
-		top: -8px;
+		top: -12px;
 		left: -8px;
-		font-size: 2em;
+		font-size: 24px;
 		color: #2e6da4;
 	}
 
@@ -46,6 +46,7 @@
 	.chat-message-right .chat-text {
 		white-space: pre-wrap;
 		padding-top: 10px;
+		word-wrap: break-word;
 	}
 
 .chat-service-text {
@@ -56,3 +57,10 @@
 	.chat-service-text.chat-error {
 		color: #a94442;
 	}
+
+#messageText {
+	resize: none;
+	width: 100%;
+    min-width: 100%;
+	margin: 10px 0px;
+}
