@@ -39,70 +39,100 @@
 			margin: 5px;
 		}*/
 
-		.avatar-photo {
-			float: left;
+		.container-header {
+			display: flex; /* or inline-flex */
+			flex-direction: row;
+			align-items: stretch;
+			justify-content: space-between;
+		}
+
+		.container-problem-title {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+		}
+
+		.container-name-and-email {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: flex-start;
+		}
+
+		.container-avatar-info{
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			justify-content: flex-end;
+		}
+
+		.item-avatar {
+			padding: 2px;
 			border: 1px solid #dddddd;
 			border-radius: 2px;
-			padding: 1px;
-			margin: 1px;
-			width: 70px;
-			height: 70px;
+			margin-left: 8px;
+			width: 80px;
+			height: 80px;
 		}
-		.avatar-info {
-			margin-left: 85px;
-			height: 70px;
-			position: relative;
+
+		.item-problem-title {
+			margin-top: 10px;
 		}
-		.avatar-name {
-			position: absolute;
-			margin: 0;
-			top: 0;
+		.item-name {
+			margin-top: 0px;
 		}
-		.avatar-mail {
-			position: absolute;
-			bottom : 0;
+		.panel {
+			margin-top: 25px;
 		}
 	</style>
 }
 
 <div class="row">
 	<div class="col-sm-10">
-		<h2>Контракт</h2>
 		<div class="panel panel-default">
-			<div class="panel-heading clearfix">
-				<img src=@Model.PhotoPath class="avatar-photo">
-				<div class="avatar-info">
-					@if (User.IsInRole("Employer"))
-					{
-						<a href="/Freelancer/Details/@Model.FreelancerId">
-							<h3 class="avatar-name">@Model.FreelancerName</h3></a>
-						<i class="avatar-mail">@Model.FreelancerEmail</i>
-					}
-					else
-					{
-						<a href="/Employer/Details/@Model.EmployerId">
-							<h3 class="avatar-name">@Model.EmployerName</h3>
-						</a>
-							<i class="avatar-mail">@Model.EmployerEmail</i>
-					}
+			<div class="panel-heading">
+				<div class="container-header">
+					<div class="container-problem-title">
+						<h2 class="item-problem-title">@Model.ProblemName</h2>
+						@if (Model.Status == FreeLance.Models.ContractStatus.Closed
+							|| Model.Status == FreeLance.Models.ContractStatus.Failed
+							|| Model.Status == FreeLance.Models.ContractStatus.ClosedNotPaid
+							|| Model.Status == FreeLance.Models.ContractStatus.СancelledByEmployer
+							|| Model.Status == FreeLance.Models.ContractStatus.СancelledByFreelancer)
+						{
+							<span id="star" class="pull-right" data-score=@Model.Rate.ToString().Replace(",",".")></span>
+						}
+					</div>
+					<div class="container-avatar-info">
+						<div class="container-name-and-email">
+							@if (User.IsInRole("Employer"))
+							{
+								
+								<a href="/Freelancer/Details/@Model.FreelancerId">
+									<h3 class="item-name">@Model.FreelancerName</h3>
+								</a>
+								<div class="item-email">
+									<i>@Model.FreelancerEmail</i>
+								</div>
+							}
+							else
+							{
+								
+								<a href="/Employer/Details/@Model.EmployerId">
+									<h3 class="item-name">@Model.EmployerName</h3>
+								</a>
+								<div class="item-email">
+									<i>@Model.EmployerEmail</i>
+								</div>
+							}
+						</div>
+						<img src=@Model.PhotoPath class="item-avatar">
+					</div>
 				</div>
 			</div>
 			<div class="panel-body container-fluid">
 				<div class="row">
 					<div class="col-xs-12">
-						<h2>
-							@Model.ProblemName
-							@if (Model.Status == FreeLance.Models.ContractStatus.Closed 
-								|| Model.Status == FreeLance.Models.ContractStatus.Failed 
-								|| Model.Status == FreeLance.Models.ContractStatus.ClosedNotPaid
-								|| Model.Status == FreeLance.Models.ContractStatus.СancelledByEmployer 
-								|| Model.Status == FreeLance.Models.ContractStatus.СancelledByFreelancer)
-							{
-								<span id="star" class="pull-right" data-score=@Model.Rate.ToString().Replace(",",".")></span>
-							}
-						</h2>
-
-						<hr />
 						@if ((User.IsInRole("Employer") || User.IsInRole("Coordinator")) 
 							&& (Model.Status == FreeLance.Models.ContractStatus.Closed 
 							|| Model.Status == FreeLance.Models.ContractStatus.Failed 

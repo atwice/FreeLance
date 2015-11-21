@@ -26,28 +26,51 @@
 		.form-send {
 			text-align: right;
 		}
-		.avatar-photo {
-			float: left;
+		
+		.container-header {
+			display: flex; /* or inline-flex */
+			flex-direction: row;
+			align-items: stretch;
+			justify-content: space-between;
+		}
+
+		.container-problem-title {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+		}
+
+		.container-name-and-email {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: flex-start;
+		}
+
+		.container-avatar-info{
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			justify-content: flex-end;
+		}
+
+		.item-avatar {
+			padding: 2px;
 			border: 1px solid #dddddd;
 			border-radius: 2px;
-			padding: 1px;
-			margin: 1px;
-			width: 70px;
-			height: 70px;
+			margin-left: 8px;
+			width: 80px;
+			height: 80px;
 		}
-		.avatar-info {
-			margin-left: 85px;
-			height: 70px;
-			position: relative;
+
+		.item-problem-title {
+			margin-top: 10px;
 		}
-		.avatar-name {
-			position: absolute;
-			margin: 0;
-			top: 0;
+		.item-name {
+			margin-top: 0px;
 		}
-		.avatar-mail {
-			position: absolute;
-			bottom : 0;
+		.panel {
+			margin-top: 25px;
 		}
 	</style>
 }
@@ -55,20 +78,26 @@
 
 <div class="row">
 	<div class="col-sm-10">
-		<h2>Задача</h2>
 		<div class="panel panel-default">
 			<div class="panel-heading clearfix">
-					<img src=@Model.PhotoPath class="avatar-photo">
-				<div class="avatar-info">
-					<a href="/Employer/Details/@Model.EmployerId">
-						<h3 class="avatar-name">@Model.EmployerName</h3>
-					</a>
-					
-					<i class="avatar-mail">@Model.EmployerEmail</i>
+				<div class="container-header">
+					<div class="container-problem-title">
+						<h2 class="item-problem-title">@Model.ProblemName</h2>
+					</div>
+					<div class="container-avatar-info">
+						<div class="container-name-and-email">
+							<a href="/Employer/Details/@Model.EmployerId">
+								<h3 class="item-name">@Model.EmployerName</h3>
+							</a>
+							<div class="item-email">
+								<i>@Model.EmployerEmail</i>
+							</div>
+						</div>
+						<img src=@Model.PhotoPath class="item-avatar">
+					</div>
 				</div>
 			</div>
 			<div class="panel-body">
-				<h2>@Model.ProblemName</h2>
 				<p>@Model.ProblemShortDescription</p>
 				<div class="info-wrapper">
 					<div class="container info-container">
