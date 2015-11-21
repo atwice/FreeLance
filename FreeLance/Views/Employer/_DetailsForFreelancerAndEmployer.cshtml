@@ -1,0 +1,118 @@
+﻿@model FreeLance.Controllers.EmployerController.DetailsForFreelancerView
+@{
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	ViewBag.Title = Model.Name;
+}
+
+@helper Truncate(string input, int length)
+{
+if (input.Length <= length)
+{
+		@input
+}
+else
+{
+		@input.Substring(0, length)<text>...</text>
+}
+}
+
+@section css {
+	<link rel="stylesheet" type="text/css" href="~/Content/flaticon.css">
+	<style>
+		.text-info-in-panel {
+			margin-left: 5px;
+		}
+
+		th, td {
+			text-align: center;
+		}
+
+		.head-info {
+			font-size: large;
+		}
+
+		.flaticon-ruble-big:before {
+			font-size: 15px;
+		}
+	</style>
+}
+
+@section PageScripts{
+	<!-- Include Raty JS file -->
+	<script type="text/javascript" src="~/Scripts/jquery-2.1.4.min.js"></script>
+	<script type="text/javascript" src="~/Scripts/jquery.raty.js"></script>
+}
+
+<div class="row">
+	<div class="col-md-2">
+		<img src="~/Files/profile_pic.jpg" class="img-thumbnail" style="margin-top: 20px;">
+	</div>
+	<div class="col-md-4">
+		<h2><strong>@Model.Name</strong></h2>
+		@if (Model.Phone != null)
+		{
+			<p>@Model.Phone</p>
+		}
+		<p>@Model.Email</p>
+		
+	</div>
+
+</div>
+
+
+<div class="row">
+	<div class="col-md-9">
+		<h3>Поиск исполнителей:</h3>
+		@if (Model.ProblemsOpen.Count() == 0)
+		{
+			<h5>Все исполнители найдены!</h5>
+		}
+		else
+		{
+			foreach (var problem in Model.ProblemsOpen)
+			{
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<span class="head-info">
+							@problem.Name
+							<span class="pull-right">
+								@problem.Cost
+								<span class="flaticon-ruble-big"></span> на @problem.AmountOfWorkers исполнителей
+							</span>
+						</span>
+					</div>
+					<div class="panel-body">
+						<p>
+							<b>Подписчиков: </b>@problem.SubscribersCount
+							
+						</p>
+						<p>
+							<b>До: </b>@problem.EndingDate.ToShortDateString()
+						</p>
+						<p>
+							<b>Создана: </b>@problem.CreationDate.ToShortDateString()
+						</p>
+						<p><i> @Truncate(problem.ShortDescription, 200)</i></p>
+						<div>
+							<a href="/Problem/Details/@problem.Id" class="btn btn-info pull-right" role="button">К задаче</a>
+						</div>
+					</div>
+				</div>
+			}
+		}
+	</div>
+</div>
+
+<script>
+		$(function () {
+			$(".stars").each(function () {
+				$(this).raty({
+					path: "../../Content/images",
+					readOnly: true,
+					score: function () {
+						return $(this).attr('data-score');
+					}
+				});
+			});
+		});
+</script>
