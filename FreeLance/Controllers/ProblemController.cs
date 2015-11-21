@@ -56,6 +56,7 @@ namespace FreeLance.Controllers
 		{
 			public String FreelancerName { get; set; }
 			public String FreelancerId { get; set; }
+			public decimal FreelancerRate { get; set; }
 		}
 
 		public List<ContractInfoModel> getContractsWithStatus(ICollection<ContractModels> contracts,
@@ -84,10 +85,13 @@ namespace FreeLance.Controllers
 
 			foreach (var s in subscribers)
 			{
+				List<ContractModels> contracts = db.ContractModels
+					.Where(c => c.Freelancer.Id == s.Freelancer.Id).ToList(); 
 				result.Add(new SubscriberInfoModel
 				{
 					FreelancerId = s.Freelancer.Id,
-					FreelancerName = s.Freelancer.FIO
+					FreelancerName = s.Freelancer.FIO,
+					FreelancerRate = FreelancerController.getFreelancerRate(contracts)
 				});
 			}
 
