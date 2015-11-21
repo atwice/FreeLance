@@ -261,7 +261,7 @@ namespace FreeLance.Controllers
 			public ApplicationUser.EmailNotificationPolicyModel emailNotifications { get; set; }
 		}
 
-		public bool checkIfContractRated(ContractStatus status)
+		public static bool checkIfContractRated(ContractStatus status)
 		{
 			return status == ContractStatus.Closed
 				|| status == ContractStatus.ClosedNotPaid
@@ -278,7 +278,7 @@ namespace FreeLance.Controllers
 				|| status == ContractStatus.СancelledByFreelancer;
 		}
 
-		public decimal getFreelancerRate(List<ContractModels> contracts)
+		public static decimal getFreelancerRate(List<ContractModels> contracts)
 		{
 			decimal rate = 0;
 			int ratedContrats = 0;
