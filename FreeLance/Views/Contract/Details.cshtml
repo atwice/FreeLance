@@ -9,6 +9,17 @@
 	<link rel="stylesheet" href="~/Content/jquery.raty.css">
 	<link rel="stylesheet" type="text/css" href="~/Content/flaticon.css">
 	<style>
+		.btn-status {
+			width:100%;
+			max-width: 200px;
+			margin-left: 20px;
+		}
+
+		.container-buttons {
+			display: flex;
+			justify-content: flex-end;
+		}
+
 		.form-wrapper {
 			position: relative;
 		}
@@ -24,16 +35,8 @@
 			margin: 15px 0;
 		}
 
-        .btn-details {
-            text-align: right;
-            float: right;
-            margin-right: 5px;
-		}
-
 		.form-change-status {
-			position: absolute; 
-			right: 0; 
-			bottom: 0;
+			margin-right: 20px;
 		}
 		/*input[type="submit"] {
 			margin: 5px;
@@ -180,23 +183,9 @@
 						<hr />
 						<a href="#">Приложение 1</a>
 					</div>
-                    <div class="col">
-                        @foreach (var button in Model.ChangeStatusButtons)
-                        {
-                            <div class="col-md-3 btn-details">
-                                @using (Html.BeginForm("ChangeStatus", "Contract", FormMethod.Post, new { @class = "form-change-status" }))
-                                {
-                                    <input name="id" type="hidden" value="@Model.ContractId" />
-                                    <input name="status" type="hidden" value="@button.Status" />
-                                    <input name="redirect" type="hidden" value="@button.Redirect" />
-                                    <input type="submit" class="btn @button.Classes" value="@button.Text" />
-                                }
-                            </div>
-                        }
-                    </div>
 				</div>
 			</div>
-			<div class="panel-footer">
+			<div class="panel-footer clearfix">
 				<div class="form-wrapper">
 					@if (User.IsInRole("Employer") &&
 									(Model.Status == FreeLance.Models.ContractStatus.Done
@@ -216,11 +205,22 @@
 											<div>
 												<textarea name="comment" class="form-comment" placeholder="Почему именно такая оценка?" required></textarea>
 											</div>
-											<input id="closeContractBtn" class="btn @Model.finishButton.Classes" type="submit"
+											<input id="closeContractBtn" class="btn btn-status pull-right @Model.finishButton.Classes" type="submit"
 												   value="@Model.finishButton.Text" disabled />
 						}
 					}
-					
+					<div class="container-buttons">
+						@foreach (var button in Model.ChangeStatusButtons)
+						{
+							using (Html.BeginForm("ChangeStatus", "Contract", FormMethod.Post, new { @class = "form-change-status" }))
+							{
+								<input name="id" type="hidden" value="@Model.ContractId" />
+								<input name="status" type="hidden" value="@button.Status" />
+								<input name="redirect" type="hidden" value="@button.Redirect" />
+								<input type="submit" class="btn @button.Classes btn-status" value="@button.Text" />
+							}
+						}
+					</div>
 				</div>
 			</div>
 		</div>
