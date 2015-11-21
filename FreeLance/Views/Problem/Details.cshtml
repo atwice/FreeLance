@@ -52,6 +52,7 @@
 	</style>
 }
 
+
 <div class="row">
 	<div class="col-sm-10">
 		<h2>Задача</h2>
@@ -94,101 +95,108 @@
 							</div>
 						</div>
 					</div>
-					@if (Context.User.IsInRole("Employer") && Model.EmployerId == User.Identity.GetUserId())
-					{
-						<div class="container info-container">
-							<div class="row">
-								<div class="col-md-4 info-block">
-									<h4>Контракты в работе</h4>
-									<table class="table table-bordered" style="text-align:center">
-										@foreach (var contract in @Model.ContractsInProgress)
-										{
-								<tr>
-									<td>
-										<a href="/Freelancer/Details/@contract.FreelancerId">
-											@contract.FreelancerName
-										</a>
-									</td>
-									<td>
-										<a href="/Contract/Details/@contract.ContractId">
-											К контракту
-										</a>
-									</td>
-								</tr>
-										}
-										@if (@Model.ContractsInProgress.Count == 0)
-										{
-								<tr>
-									<td>
-										Пока что их нет.
-									</td>
-								</tr>
-										}
-									</table>
-								</div>
-								<div class="col-md-4 info-block">
-									<h4>Завершенные контракты</h4>
-									<table class="table table-bordered" style="text-align:center; ">
-										@foreach (var contract in @Model.ContratsClosed)
-							{
-								<tr>
-									<td>
-										<a href="/Freelancer/Details/@contract.FreelancerId">
-											@contract.FreelancerName
-										</a>
-									</td>
-									<td>
-										<a href="/Contract/Details/@contract.ContractId">
-											К контракту
-										</a>
-									</td>
-								</tr>
-							}
-										@if (@Model.ContratsClosed.Count == 0)
-							{
-								<tr>
-									<td>
-										Пока что их нет.
-									</td>
-								</tr>
-							}
-									</table>
-								</div>
-								<div class="col-md-4 info-block">
-									<h4>Подписчики</h4>
-									<table class="table table-bordered" style="text-align:center; ">
-										@foreach (var subscriber in @Model.Subscribers)
-										{
-								<tr>
-									<td>
-										<a href="/Freelancer/Details/@subscriber.FreelancerId">
-											@subscriber.FreelancerName
-										</a>
-									</td>
-									<td>
-										@Html.ActionLink("Подписать контракт", "Create", "Contract", new
-													   {
-														   problemID = Model.ProblemId,
-														   freelancerId = subscriber.FreelancerId
-													   }, null)
-									</td>
-								</tr>
-										}
-										@if (@Model.Subscribers.Count == 0)
-										{
-								<tr>
-									<td>
-										Пока что их нет.
-									</td>
-								</tr>
-										}
-									</table>
-								</div>
-							</div>
-						</div>
-					}
 				</div>
-				<p>@Html.Raw(Model.ProblemFullDescription)</p>
+
+				
+				<h4>Контракты в работе</h4>
+				<table class="table table-bordered" style="text-align:center">
+					@foreach (var contract in @Model.ContractsInProgress)
+					{
+						<tr>
+							<td>
+								<a href="/Freelancer/Details/@contract.FreelancerId">
+									@contract.FreelancerName
+								</a>
+							</td>
+							<td>
+								<a href="/Contract/Details/@contract.ContractId">
+									К контракту
+								</a>
+							</td>
+						</tr>
+					}
+					@if (@Model.ContractsInProgress.Count == 0)
+					{
+						<tr>
+							<td>
+								Пока что их нет.
+							</td>
+						</tr>
+					}
+				</table>
+					
+
+				<h4>Завершенные контракты</h4>
+				<table class="table table-bordered" style="text-align:center; ">
+					@foreach (var contract in @Model.ContratsClosed)
+					{
+						<tr>
+							<td>
+								<a href="/Freelancer/Details/@contract.FreelancerId">
+									@contract.FreelancerName
+								</a>
+							</td>
+							<td>
+								<a href="/Contract/Details/@contract.ContractId">
+									К контракту
+								</a>
+							</td>
+						</tr>
+					}
+					@if (@Model.ContratsClosed.Count == 0)
+					{
+						<tr>
+							<td>
+								Пока что их нет.
+							</td>
+						</tr>
+					}
+				</table>
+
+				<h4>Подписчики</h4>
+				<table class="table table-bordered" style="text-align:center; ">
+					@foreach (var subscriber in @Model.Subscribers)
+					{
+						<tr>
+							<td>
+								<a href="/Freelancer/Details/@subscriber.FreelancerId">
+									@subscriber.FreelancerName
+								</a>
+							</td>
+							<td>
+								@Html.ActionLink("Подписать контракт", "Create", "Contract", new
+								   {
+									   problemID = Model.ProblemId,
+									   freelancerId = subscriber.FreelancerId
+								   }, null)
+							</td>
+						</tr>
+					}
+					@if (@Model.Subscribers.Count == 0)
+					{
+						<tr>
+							<td>
+								Пока что их нет.
+							</td>
+						</tr>
+					}
+				</table>
+
+				
+				
+				@if (Model.showMore)
+				{
+					<p>@Html.Raw(Model.ProblemFullDescription)</p>
+					<a href="/Problem/Details/@Model.ProblemId?showMore=false" class="btn btn-info" role="button" >
+						Скрыть полное описание
+					</a>
+				}
+				else
+				{
+					<a href="/Problem/Details/@Model.ProblemId?showMore=true" class="btn btn-info" role="button">
+						Показать полное описание
+					</a>
+				}
 			</div>
 			<div class="panel-footer">
 				@if (Context.User.IsInRole("Freelancer") && Model.IsApproved == true)
@@ -234,6 +242,7 @@
 		}
 	</div>
 </div>
+
 
 
 
