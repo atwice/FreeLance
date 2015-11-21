@@ -23,6 +23,7 @@ namespace FreeLance.Controllers
 
 		public class DetailsView
 		{
+			public bool showMore { get; set; }
 			public String EmployerId { get; set; }
 			public int ProblemId { get; set; }
 			public ProblemStatus Status { get; set; }
@@ -126,7 +127,7 @@ namespace FreeLance.Controllers
 			return details;
 		}
 
-		public ActionResult Details(int? id)
+		public ActionResult Details(int? id, bool? showMore)
 		{
 			string userId = User.Identity.GetUserId();
 			if (User.IsInRole("Freelancer"))
@@ -144,6 +145,11 @@ namespace FreeLance.Controllers
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
 
+			if(showMore == null)
+			{
+				showMore = false;
+			}
+
 			ProblemModels problem = db.ProblemModels.Find(id);
 			if (problem == null)
 			{
@@ -158,6 +164,8 @@ namespace FreeLance.Controllers
 			SubscriptionModels subscription = subscriptions.Length > 0 ? subscriptions[0] : null;
 			view.IsSubscibed = subscription != null;
 			view.IsApproved = db.Users.Find(userId).IsApprovedByCoordinator == true;
+
+			view.showMore = (bool)showMore;
 
 			return View(view);
 		}
