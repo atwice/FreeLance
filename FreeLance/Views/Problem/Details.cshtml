@@ -4,7 +4,9 @@
 	ViewBag.Title = "Задача";
 }
 
+
 @section css {
+	<link rel="stylesheet" href="~/Content/jquery.raty.css">
 	<link rel="stylesheet" type="text/css" href="~/Content/flaticon.css">
 	<style>
 		.info-container {
@@ -58,7 +60,7 @@
 			padding: 2px;
 			border: 1px solid #dddddd;
 			border-radius: 2px;
-			margin-left: 8px;
+			margin-left: 20px;
 			width: 80px;
 			height: 80px;
 		}
@@ -193,6 +195,9 @@
 								</a>
 							</td>
 							<td>
+								<span class="stars" data-score=@subscriber.FreelancerRate.ToString().Replace(",",".")></span>
+							</td>
+							<td>
 								@Html.ActionLink("Подписать контракт", "Create", "Contract", new
 								   {
 									   problemID = Model.ProblemId,
@@ -270,7 +275,22 @@
 			@Html.Action("ProblemChat", "Chat", new { problemId = Model.ProblemId });
 		}
 	</div>
-</div>
+</div>]
+
+<script type="text/javascript" src="~/Scripts/jquery.raty.js"></script>
+<script>
+		$(function () {
+			$(".stars").each(function () {
+				$(this).raty({
+					path: "../../Content/images",
+					readOnly: true,
+					score: function () {
+						return $(this).attr('data-score');
+					}
+				});
+			});
+		});
+</script>
 
 
 
