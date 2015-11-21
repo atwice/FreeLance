@@ -175,6 +175,7 @@ namespace FreeLance.Controllers
 			public String ProblemName { get; set; }
 			public String ProblemShortDescription { get; set; }
 			public String EmployerName { get; set; }
+			public String EmployerId { get; set; }
 			public DateTime CreationDate { get; set; }
 			public DateTime DeadlineDate { get; set; }
 			public decimal Cost { get; set; }
@@ -190,6 +191,7 @@ namespace FreeLance.Controllers
 				ProblemName = problem.Name,
 				ProblemShortDescription = problem.SmallDescription,
 				EmployerName = problem.Employer.FIO,
+				EmployerId = problem.Employer.Id,
 				CreationDate = problem.CreationDate,
 				DeadlineDate = DateTime.Now.AddDays(50), // TODO
 				Cost = problem.Cost,
@@ -796,7 +798,7 @@ namespace FreeLance.Controllers
 				ContractId = c.ContractId,
 				EmployerName = c.Problem.Employer.FIO,
 				Details = c.Details,
-				EmployerId = c.Freelancer.Id,
+				EmployerId = c.Problem.Employer.Id,
 				Cost = c.Cost,
 				Status = c.Status,
 				Rate = c.Rate,
