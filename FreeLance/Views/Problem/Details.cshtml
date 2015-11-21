@@ -59,7 +59,10 @@
 			<div class="panel-heading clearfix">
 					<img src=@Model.PhotoPath class="avatar-photo">
 				<div class="avatar-info">
-					<h3 class="avatar-name">@Model.EmployerName</h3>
+					<a href="/Employer/Details/@Model.EmployerId">
+						<h3 class="avatar-name">@Model.EmployerName</h3>
+					</a>
+					
 					<i class="avatar-mail">@Model.EmployerEmail</i>
 				</div>
 			</div>

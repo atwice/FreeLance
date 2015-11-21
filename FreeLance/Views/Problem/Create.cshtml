@@ -1,6 +1,6 @@
 ﻿@model FreeLance.Models.ProblemModels
 @{
-	ViewBag.Title = "New Problem";
+	ViewBag.Title = "Новая задча";
 }
 
 <h2>Создание новой задачи</h2>
@@ -36,6 +36,13 @@
 			<div class="col-md-10">
 				@Html.EditorFor(model => model.Cost, new { htmlAttributes = new { @class = "form-control" } })
 				@Html.ValidationMessageFor(model => model.Cost, "", new { @class = "text-danger" })
+			</div>
+		</div>
+		<div class="form-group">
+			@Html.LabelFor(model => model.AmountOfWorkes, "Число работников", htmlAttributes: new { @class = "control-label col-md-2" })
+			<div class="col-md-10">
+				@Html.EditorFor(model => model.AmountOfWorkes, new { htmlAttributes = new { @class = "form-control" } })
+				@Html.ValidationMessageFor(model => model.AmountOfWorkes, "", new { @class = "text-danger" })
 			</div>
 		</div>
 		<div class="form-group">

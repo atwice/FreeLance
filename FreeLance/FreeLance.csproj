@@ -362,6 +362,7 @@
     <Content Include="Views\_FreelancersView.cshtml" />
     <Content Include="Views\Employer\Details.cshtml" />
     <Content Include="Views\Employer\Archive.cshtml" />
+    <Content Include="Views\Employer\_DetailsForFreelancerAndEmployer.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

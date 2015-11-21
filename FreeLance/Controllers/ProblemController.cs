@@ -109,7 +109,7 @@ namespace FreeLance.Controllers
 				CreatingDate = p.CreationDate.ToShortDateString(),
 				DeadlineDate = DateTime.Now.AddDays(100).ToShortDateString(), //TODO
 				Cost = p.Cost,
-				AmountOfWorkers = 10 //TODO
+				AmountOfWorkers = p.AmountOfWorkes
 			};
 
 			details.ContractsInProgress = getContractsWithStatus(p.Contracts,

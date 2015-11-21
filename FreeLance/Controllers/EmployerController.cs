@@ -9,7 +9,7 @@ using Microsoft.AspNet.Identity;
 
 namespace FreeLance.Controllers
 {
-	[Authorize(Roles = "Admin, Employer, Coordinator")]
+	[Authorize(Roles = "Admin, Employer, Coordinator, Freelancer")]
 	public class EmployerController : Controller
 	{
 		private ApplicationDbContext db = new ApplicationDbContext();
@@ -31,7 +31,8 @@ namespace FreeLance.Controllers
 			public int Id { get; set; }
 			public int NewMsgCount { get; set; }
 			public String StatusIcon { get; set; }
-		}
+			public int AmountOfWorkers { get; set; }
+        }
 
 		public class ProblemInProgressViewModel
 		{
@@ -203,6 +204,30 @@ namespace FreeLance.Controllers
 			return openProblems;
         }
 
+		private List<ProblemOpenViewModel> getOpenProblemsForFreelancer(String userId)
+		{
+			List<ProblemOpenViewModel> openProblems = db.ProblemModels
+				.Where(
+					p => p.Employer.Id == userId
+						&& (p.Status == ProblemStatus.Opened)
+				)
+				.Select(
+					p => new ProblemOpenViewModel
+					{
+						Name = p.Name,
+						Id = p.ProblemId,
+						ShortDescription = p.SmallDescription,
+						Cost = p.Cost,
+						SubscribersCount = p.Subscriptions.Count,
+						CreationDate = p.CreationDate,
+						EndingDate = DateTime.Now, // TODO
+						AmountOfWorkers = p.AmountOfWorkes
+					}
+				)
+				.ToList();
+			return openProblems;
+		}
+
 		// GET: Employer
 		public ActionResult Home()
 		{
@@ -221,7 +246,7 @@ namespace FreeLance.Controllers
 			return View( model );
 		}
 
-		[Authorize(Roles = "Coordinator")]
+		[Authorize(Roles = "Coordinator, Freelancer, Employer")]
 		public ActionResult Details(string id, String sortOrder, String lastSort)
 		{
 			if (id == null)
@@ -233,7 +258,12 @@ namespace FreeLance.Controllers
 			{
 				return HttpNotFound();
 			}
-			
+
+			if (User.IsInRole("Freelancer") || User.IsInRole("Employer"))
+			{
+				return PartialView("_DetailsForFreelancerAndEmployer", getDetailsForFreelancer(employer, sortOrder, lastSort));
+			}
+
 			return View(getDetailsForCoordinator(employer, sortOrder, lastSort));
 		}
 
@@ -249,6 +279,17 @@ namespace FreeLance.Controllers
 			public List<ProblemInProgressViewModel> ProblemsInProgress { get; set; }
 			public List<ProblemOpenViewModel> ProblemsOpen { get; set; }
 			public List<ArchivedContractViewModel> ArchievedContracts { get; set; }
+		}
+
+		public class DetailsForFreelancerView
+		{
+			public String Name { get; set; }
+			public String Email { get; set; }
+			public String Phone { get; set; }
+			public String PhotoPath { get; set; }
+			public String Id { get; set; }
+			
+			public List<ProblemOpenViewModel> ProblemsOpen { get; set; }
 		}
 
 		public DetailsForCoordinatorView getDetailsForCoordinator(ApplicationUser employer, String sortOrder, String lastSort)
@@ -275,6 +316,25 @@ namespace FreeLance.Controllers
 			}
 
 			model.ProblemsOpen = getOpenProblems( id );
+
+			return model;
+		}
+
+		public DetailsForFreelancerView getDetailsForFreelancer(ApplicationUser employer, String sortOrder, String lastSort)
+		{
+			List<ContractModels> contracts = db.ContractModels
+				.Where(c => c.Freelancer.Id == employer.Id).ToList();
+
+			DetailsForFreelancerView model = new DetailsForFreelancerView
+			{
+				Email = employer.Email,
+				Phone = "+7(916)0001122", // TODO
+				Name = employer.FIO,
+				PhotoPath = "/Files/profile_pic.jpg", //TODO
+				Id = employer.Id
+			};
+
+			model.ProblemsOpen = getOpenProblemsForFreelancer(employer.Id);
 
 			return model;
 		}
