@@ -568,7 +568,7 @@ namespace FreeLance.Controllers
 			return View(new FillLawContractTemplateVR { LawFaces = lawFaces, Freelancers = freelancers });
 		}
 
-		[HttpPost]
+		[HttpPost] 
 		public ActionResult FillLawContractTemplate(string employerId, int? lawContractTemplateId) {
 			ApplicationUser employer = db.Users.Find(employerId);
 			LawContractTemplate lawContractTemplate = db.LawContractTemplates.Find(lawContractTemplateId);
@@ -582,7 +582,25 @@ namespace FreeLance.Controllers
 		    return ViewFile(pathToContract);
 		}
 
-	    public ActionResult ViewFile(string path)
+		// TODO: lawFaceId is assosiated with Problem or Employer
+		// TODO: improve ugly url
+		public ActionResult FillLawContractTemplateAndDownload(string freelancerId, int? lawFaceId=0)
+		{
+			ApplicationUser freelancer = db.Users.Find(freelancerId);
+			// заглушка, TODO
+			LawContractTemplate lawContractTemplate = db.LawContractTemplates.Where(t => /*t.LawFace.Id == lawFaceId &&*/ t.Active).First();
+			var freelancerRole = db.Roles.Where(role => role.Name == "Freelancer").ToArray()[0];
+			if (freelancer == null || lawContractTemplate == null
+				|| freelancer.Roles.Where(x => x.RoleId != freelancerRole.Id).Any())
+			{
+				return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
+			}
+
+			string pathToContract = Code.DocumentManager.fillContractTemplate(freelancer, lawContractTemplate);
+			return ViewFile(pathToContract);
+		}
+
+		public ActionResult ViewFile(string path)
 	    {
             byte[] filedata = System.IO.File.ReadAllBytes(path);
             string contentType = MimeMapping.GetMimeMapping(path);

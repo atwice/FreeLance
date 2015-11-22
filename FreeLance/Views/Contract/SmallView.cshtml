@@ -30,10 +30,13 @@
     </div>
     <div class="panel-footer">
         <a class="btn btn-default" href="/Contract/Details/@Model.ContractId" style="display: inline-block">К контракту</a>
-        @using (Html.BeginForm("FillLawContractTemplate", "Coordinator", new { freelancerId = Model.Freelancer.Id }, FormMethod.Post, new { style = "display:inline-block;" }))
-        {
-            <input type="button" value="Шаблон ГПХ" class=" btn btn-danger"  />
-        }
+        
+        <a href="@Url.Action("FillLawContractTemplateAndDownload", "Coordinator", new { freelancerId = Model.Freelancer.Id })"
+           class="btn btn-info pull-right"
+           style="display:inline-block; margin-left: 5px;">
+            Заполнить ГПХ
+        </a>
+
         <div class="pull-right">
             @if (Model.Status != ContractStatus.ClosedNotPaid)
             {
