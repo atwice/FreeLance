@@ -85,10 +85,27 @@
 			<div class="panel-heading">
 				<h2 class="panel-title">Учетная запись</h2>
 			</div>
-			<div class="panel-body">
-				<p>Email: @Model.FreelancerEmail</p>
-				<a href="/Manage/ChangePassword" class="btn btn-info">Сменить пароль</a>
-			</div>
+		    <div class="panel-body">
+		        <div>
+		            <p>
+		                <img src="@Model.FreelancerPhoto" alt="User photo" height="100" width="100">
+		            </p>
+		        </div>
+		        <div>
+		            @using (Html.BeginForm("UploadPhoto", "Freelancer", FormMethod.Post, new {enctype = "multipart/form-data", runat = "server"}))
+		            {
+		                <span class="btn btn-default btn-file"> Загрузить фото <input type="file" accept=".jpg,.png" name="file" id="file"> </span>
+		                <input type="submit" value="Отправить" class="btn btn-primary"/>
+		            }
+		        </div>
+		        <br/>
+		        <div>
+		            <p>Email: @Model.FreelancerEmail</p>
+		            <p>
+		                <a href="/Manage/ChangePassword" class="btn btn-info">Сменить пароль</a>
+		            </p>
+		        </div>
+		    </div>
 		</div>
 
 		<div class="panel panel-default">

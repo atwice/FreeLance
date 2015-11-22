@@ -252,6 +252,7 @@ namespace FreeLance.Controllers
 		public class ProfileView
 		{
 			public String FreelancerEmail { get; set; }
+            public String FreelancerPhoto { get; set; }
 			public decimal Rate { get; set; }
 			public decimal TotalMoney { get; set; }
 			public List<GPHInfo> GpHList { get; set; }
@@ -439,7 +440,7 @@ namespace FreeLance.Controllers
 				FreelancerEmail = freelancer.Email,
 				FreelancerPhone = "+7(916)0001122", // TODO
 				FreelancerName = freelancer.FIO,
-				PhotoPath = "/Content/placeholder_avatar.png", //TODO
+				PhotoPath = freelancer.PhotoPath, //TODO
 				FreelancerRate = getFreelancerRate(contracts),
 				FreelancerId = freelancer.Id,
 				ClosedContracts = new List<ContractInfoForEmployer>(),
@@ -487,7 +488,7 @@ namespace FreeLance.Controllers
 				FreelancerEmail = freelancer.Email,
 				FreelancerPhone = "+7(916)0001122", // TODO
 				FreelancerName = freelancer.FIO,
-				PhotoPath = "/Files/profile_pic.jpg", //TODO
+				PhotoPath = freelancer.PhotoPath, //TODO
 				FreelancerRate = countRating(id),
 				FreelancerId = id,
 				isApproved = freelancer.IsApprovedByCoordinator == true ? true : false,
@@ -496,6 +497,7 @@ namespace FreeLance.Controllers
 				ProfileView = new DetailsProfileView
 				{
 					freelancer = freelancer,
+                   
 					LawContracts = db.LawContracts
 						.Where(
 							c => c.User.Id == id)
@@ -1024,6 +1026,7 @@ namespace FreeLance.Controllers
 			ProfileView model = new ProfileView
 			{
 				FreelancerEmail = freelancer.Email,
+                FreelancerPhoto = freelancer.PhotoPath,
 				OpenContractsCount = db.ContractModels.Where(
 					c => c.Freelancer.Id == id && (c.Status == ContractStatus.Done
 					|| c.Status == ContractStatus.InProgress || c.Status == ContractStatus.ClosedNotPaid
@@ -1142,13 +1145,13 @@ namespace FreeLance.Controllers
 			db.SaveChanges();
 		}
 
-		private string saveDocumentOnDisc(HttpPostedFileBase file, string dir)
+		private string saveDocumentOnDisc(HttpPostedFileBase file, string dir, string location= "/App_Data/")
 		{
 			var ext = Path.GetExtension(file.FileName);
 			var fileName = User.Identity.GetUserId() + "_" + DateTime.Now.Ticks.ToString() + ext;
-			var path = Path.Combine(Server.MapPath("~/App_Data/" + dir + "/"), fileName);
+			var path = Path.Combine(Server.MapPath("~" + location + dir + "/"), fileName);
 			file.SaveAs(path);
-			return "/App_Data/" + dir + "/" + fileName;
+			return location + dir + "/" + fileName;
 		}
 
 		private DocumentPackageModels getDocuments()
@@ -1181,6 +1184,28 @@ namespace FreeLance.Controllers
 			db.SaveChanges();
 			return RedirectToAction("Profile");
 		}
+
+
+
+
+        [HttpPost]
+	    public ActionResult UploadPhoto()
+	    {
+            ApplicationUser user = db.Users.Find(User.Identity.GetUserId());
+            if (Request.Files.Count > 0)
+            {
+                var file = Request.Files[0];
+                if (file != null && file.ContentLength > 0)
+                {
+                    user.PhotoPath = saveDocumentOnDisc(file, "photo", "/Files/");
+                    db.SaveChanges();
+                }
+            }
+            return RedirectToAction("Profile");
+        }
+
+
+
 
 	}
 }

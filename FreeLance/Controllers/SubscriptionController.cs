@@ -51,6 +51,7 @@ namespace FreeLance.Controllers
 			string userId = User.Identity.GetUserId();
 			ApplicationUser freelancer = db.Users.Find(userId);
 			ProblemModels problem = db.ProblemModels.Find(id);
+            
 			SubscriptionModels[] subscriptions = db.SubscriptionModels.Where(sub => sub.Freelancer.Id == userId
 													&& sub.Problem.ProblemId == id).Distinct().ToArray();
 			SubscriptionModels subscription = subscriptions.Length > 0 ? subscriptions[0] : null;

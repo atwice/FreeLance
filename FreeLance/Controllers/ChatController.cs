@@ -24,7 +24,8 @@ namespace FreeLance.Controllers
 		} 
 
 		public ActionResult ProblemChat(int problemId) {
-			ProblemChat problemChat = db.ProblemChats.Where(x => x.Problem.ProblemId == problemId).SingleOrDefault();
+			ProblemChat problemChat = db.ProblemChats.Where(x => x.Problem.ProblemId == problemId).
+                Include(x => x.Chat).SingleOrDefault();
 			if (problemChat == null) {
 				ProblemModels problem = db.ProblemModels.Find(problemId);
 				if (problem == null) {
@@ -46,7 +47,8 @@ namespace FreeLance.Controllers
 		}
 
 		public ActionResult ContractChat(int contractId) {
-			ContractChat contractChat = db.ContractChats.Where(x => x.Contract.ContractId == contractId).SingleOrDefault();
+			ContractChat contractChat = db.ContractChats.Where(x => x.Contract.ContractId == contractId)
+                .Include(x => x.Chat).SingleOrDefault();
 			if (contractChat == null) {
 				ContractModels contract = db.ContractModels.Find(contractId);
 				if (contract == null) {
