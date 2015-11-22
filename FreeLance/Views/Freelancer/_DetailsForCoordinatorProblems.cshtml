@@ -25,8 +25,11 @@
                                 <i><b>Юр лицо:</b></i> <a style="padding-left:5px">ООО "Аби продакшн"</a>
                                 <a>(сменить)</a>
                             </p>
-                            <p>
-                                <i><b>Завершен: @contract.EndingDate</b></i>
+                        <p>
+                            <i><b>Завершен:</b></i> @contract.EndingDate.ToShortDateString()
+                        </p>
+                        <p>
+                                <i><b>Дедлайн:</b></i> @contract.DeadlineDate.ToShortDateString() 
                             </p>
 
                             <div>
@@ -67,7 +70,10 @@
                                 <i><b>Юр лицо:</b></i> <span>ООО "Аби продакшн"</span>
                                 <a>(сменить)</a>
                             </p>
-                            <p><i><b>Создан:</b></i> <span>@contract.StartDate</span></p>
+                        <p><i><b>Создан:</b></i> <span>@contract.StartDate.ToShortDateString()</span> </p>
+                        <p>
+                                <i><b>Дедлайн:</b></i> @contract.DeadlineDate.ToShortDateString() 
+                            </p>
                             <div>
                                 <a href="/Contract/Details/@contract.ContractId" class="btn btn-default pull-left" role="button">К контракту</a>
                                 <a class="btn btn-info pull-right">Шаблон ГПХ</a>

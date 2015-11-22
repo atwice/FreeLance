@@ -50,7 +50,8 @@ namespace FreeLance.Controllers
 			public String EmployerId { get; set; }
 			public String Comment { get; set; }
 			public decimal Rate { get; set; }
-			public DateTime EndingDate { get; set; }
+            public DateTime DeadlineDate { get; set; }
+            public DateTime EndingDate { get; set; }
 			public DateTime StartDate { get; set; }
 			public decimal Cost { get; set; }
 		}
@@ -84,7 +85,8 @@ namespace FreeLance.Controllers
 			public decimal Money { get; set; }
 			public string ShortDescription { get; set; }
 			public int CommentNumber { get; set; }
-			public int Others { get; set; }
+            public DateTime DeadlineDate { get; set; }
+            public int Others { get; set; }
 		}
 
 		public class HomeViewModel
@@ -136,7 +138,7 @@ namespace FreeLance.Controllers
 				Comment = contract.Comment,
 				WorkMessage = EmployerController.getStatusMessage(contract.Status),
 				ProblemId = contract.Problem.ProblemId,
-				DeadlineDate = DateTime.Now.AddDays(100).ToShortDateString(), // TODO
+				DeadlineDate = contract.DeadlineDate.ToShortDateString(), // TODO
 				CreationDate = contract.CreationDate.ToShortDateString(),
 				EndingDate = contract.EndingDate.ToShortDateString(),
 				Cost = contract.Cost,
@@ -155,7 +157,7 @@ namespace FreeLance.Controllers
 			{
 				ProblemName = subscription.Problem.Name,
 				ProblemId = subscription.Problem.ProblemId,
-				DeadlineDate = DateTime.Now.AddDays(100), // TODO
+				DeadlineDate = subscription.Problem.DeadlineDate,
 				Cost = subscription.Problem.Cost,
 				EmployerName = subscription.Problem.Employer.FIO,
 				EmployerId = subscription.Problem.Employer.Id
@@ -193,7 +195,7 @@ namespace FreeLance.Controllers
 				EmployerName = problem.Employer.FIO,
 				EmployerId = problem.Employer.Id,
 				CreationDate = problem.CreationDate,
-				DeadlineDate = DateTime.Now.AddDays(50), // TODO
+				DeadlineDate = problem.DeadlineDate,
 				Cost = problem.Cost,
 				AmountOfWorkers = problem.AmountOfWorkes,
 				ProblemId = problem.ProblemId,
@@ -578,6 +580,7 @@ namespace FreeLance.Controllers
 					Money = problem.Cost,
 					Name = problem.Name,
 					ProblemId = problem.ProblemId,
+                    DeadlineDate = problem.DeadlineDate,
 					ShortDescription = problem.SmallDescription,
 					Others = problem.Subscriptions.Count
 				});
@@ -719,6 +722,7 @@ namespace FreeLance.Controllers
 						Comment = c.Comment,
 						Rate = c.Rate,
 						EndingDate = c.EndingDate,
+                        DeadlineDate = c.DeadlineDate,
 						Cost = c.Cost
 					})
 				.ToList();
@@ -741,6 +745,7 @@ namespace FreeLance.Controllers
 						Rate = c.Rate,
 						EndingDate = c.EndingDate,
 						StartDate = c.CreationDate,
+                        DeadlineDate = c.DeadlineDate,
 						Cost = c.Cost
 					})
 				.ToList();
@@ -759,7 +764,7 @@ namespace FreeLance.Controllers
 						EmployerName = c.Problem.Employer.FIO,
 						EmployerId = c.Problem.Employer.Id,
 						Name = c.Problem.Name,
-						EndingDate = c.Problem.CreationDate,
+						EndingDate = c.Problem.DeadlineDate,
 						Cost = c.Problem.Cost
 					})
 				.ToList();
@@ -804,7 +809,7 @@ namespace FreeLance.Controllers
 				Rate = c.Rate,
 				CreationDate = c.CreationDate,
 				EndingDate = c.EndingDate,
-				DeadlineDate = DateTime.Now.AddDays(30), // TODO
+				DeadlineDate = c.DeadlineDate,
 				StatusMessage = getStatusMessage(c.Status)
 			};
 

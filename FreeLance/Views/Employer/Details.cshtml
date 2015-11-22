@@ -99,7 +99,7 @@ else
                         <div class="panel-body">
                             <p>
                                 <i>До</i>
-                                @problem.EndingDate
+                                @problem.EndingDate.ToShortDateString()
                                 <span class="pull-right"><b>@problem.Cost</b><span class="flaticon-ruble"></span> </span>
                             </p>
                             <p>
@@ -114,7 +114,7 @@ else
                                 <b>Юрлицо:</b><a class="text-info-in-panel" href="#">Аби Продакшн</a>
                                 <a>(сменить)</a>
                             </p>
-                            <p><b>Создан:</b><a class="text-info-in-panel">@problem.CreationDate</a></p>
+                            <p><b>Создан:</b><span class="text-info-in-panel">@problem.CreationDate.ToShortDateString()</span></p>
                             <div>
                                 <i class="flaticon-comments16"></i> <span class="badge">@problem.NewMsgCount</span>
                                 <a href="/Problem/Details/@problem.Id" class="btn btn-info pull-right" role="button">К задаче</a>
@@ -141,7 +141,7 @@ else
                         <div class="panel-body">
                             <p>
                                 <i>До</i>
-                                @problem.EndingDate
+                                @problem.EndingDate.ToShortDateString()
                                 <b>@problem.SubscribersCount исполнителей</b>
                                 <span class="pull-right"><b>@problem.Cost</b><span class="flaticon-ruble"></span> </span>
                             </p>
@@ -150,7 +150,7 @@ else
                                 <b>Юрлицо:</b><a class="text-info-in-panel" href="#">Аби Продакшн</a>
                                 <a>(сменить)</a>
                             </p>
-                            <p><b>Создан:</b><a class="text-info-in-panel">@problem.CreationDate</a></p>
+                            <p><b>Создан:</b><span class="text-info-in-panel">@problem.CreationDate.ToShortDateString()</span></p>
                             <div>
                                 <i class="flaticon-comments16"></i> <span class="badge">@problem.NewMsgCount</span>
                                 <a href="/Problem/Details/@problem.Id" class="btn btn-info pull-right" role="button">К задаче</a>

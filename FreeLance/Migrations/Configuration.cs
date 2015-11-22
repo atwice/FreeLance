@@ -114,6 +114,7 @@ namespace FreeLance.Migrations
                 Status = status,
                 Employer = employer,
                 CreationDate = DateTime.Now.AddDays(rnd.Next(1, 40)).AddHours(5),
+                DeadlineDate = DateTime.Now.AddDays(rnd.Next(8, 40)).AddHours(5),
                 Cost = (decimal)RandomNumberBetween(10.1, 5000.0),
 				AmountOfWorkes = rnd.Next(1, 13)
 		};
@@ -149,6 +150,7 @@ namespace FreeLance.Migrations
                 Freelancer = freelancer,
                 CreationDate = DateTime.Now.AddDays(rnd.Next(1, 40)).AddHours(5),
                 EndingDate = DateTime.Now.AddDays(rnd.Next(50, 100)).AddHours(5),
+                DeadlineDate = DateTime.Now.AddDays(rnd.Next(5, 15)).AddHours(5),
                 Comment = "Comment about freelancer's work",
                 Rate = rnd.Next(1, 6),
                 Cost = (decimal)RandomNumberBetween(10.1, 5000.0)

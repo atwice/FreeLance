@@ -112,7 +112,7 @@ namespace FreeLance.Controllers
 				ProblemShortDescription = p.SmallDescription,
 				ProblemFullDescription = p.Description,
 				CreatingDate = p.CreationDate.ToShortDateString(),
-				DeadlineDate = DateTime.Now.AddDays(100).ToShortDateString(), //TODO
+				DeadlineDate = p.DeadlineDate.ToShortDateString(), 
 				Cost = p.Cost,
 				AmountOfWorkers = p.AmountOfWorkes
 			};
