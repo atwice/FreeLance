@@ -30,19 +30,19 @@ textarea {
 
 
 .left-category {
-    font-family: cursive;
-    color: green;
+    font-family: Consolas;
+    color: cadetblue;
 }
 
 
 .right-category {
-    font-family: cursive;  
+    font-family: Consolas;  
     color: black;
 }
 
 .right-category a {
-    font-family: cursive;  
-    color: darkmagenta
+    font-family: Consolas;  
+    color: royalblue;
 }
 
 
