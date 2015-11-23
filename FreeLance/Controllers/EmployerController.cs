@@ -321,7 +321,7 @@ namespace FreeLance.Controllers
 				Phone = "+7(916)0001122", // TODO
 				Name = employer.FIO,
 				isApproved = employer.IsApprovedByCoordinator == true ? true : false,
-				PhotoPath = "/Files/profile_pic.jpg", //TODO
+				PhotoPath = employer.PhotoPath, 
 				Id = id
                 
 			};
@@ -348,7 +348,7 @@ namespace FreeLance.Controllers
 				Email = employer.Email,
 				Phone = "+7(916)0001122", // TODO
 				Name = employer.FIO,
-				PhotoPath = "/Files/profile_pic.jpg", //TODO
+				PhotoPath = employer.PhotoPath, 
 				Id = employer.Id
 			};
 
