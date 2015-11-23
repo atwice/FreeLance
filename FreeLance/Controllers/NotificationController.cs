@@ -68,7 +68,7 @@ namespace FreeLance.Controllers
 			List<Notification> selectedNotifications = new List<Notification>();
 			if (ViewBag.ErrorMessage != null) {
 				selectedNotifications.Add(new ErrorNotification(x => true, (string) ViewBag.ErrorMessage));
-            }
+			}
 			return PartialView("GetPageNotifications", selectedNotifications);
 		}
 

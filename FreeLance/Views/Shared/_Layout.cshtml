@@ -23,15 +23,15 @@
 		new MenuButton("Личный кабинет", "Home", "Freelancer"),
 		new MenuButton("Биржа", "OpenProblems", "Freelancer" ),
 		new MenuButton("Архив", "Archive", "Freelancer"),
-		new MenuButton("Документы", "Documents", "Freelancer"),
-        //new MenuButton("Настройки", "Settings", "Freelancer")
+		//new MenuButton("Документы", "Documents", "Freelancer"),
+		//new MenuButton("Настройки", "Settings", "Freelancer")
 	};
 	static List<MenuButton> menuEmployer = new List<MenuButton> {
 		new MenuButton("Личный кабинет", "Home", "Employer"),
 		new MenuButton("Биржа", "OpenProblems", "Freelancer"),
 		new MenuButton("Архив контрактов", "Archive", "Employer"),
 		new MenuButton("Исполнители", "Freelancers", "Employer"),
-        new MenuButton("Профиль", "Profile", "Employer")
+		new MenuButton("Профиль", "Profile", "Employer")
 	};
 	static List<MenuButton> menuCoordinator = new List<MenuButton> {
 		new MenuButton("Личный кабинет", "Home", "Coordinator"),
@@ -41,7 +41,7 @@
 		new MenuButton("Юрлица", "LawFaces", "Coordinator")//,
 		//new MenuButton("Загрузить ГПХ", "Upload", "Coordinator"),
 		//new MenuButton("Заполнить шаблон ГПХ", "FillLawContractTemplate", "Coordinator", true),
-        //new MenuButton("Настройки", "Settings", "Coordinator")
+		//new MenuButton("Настройки", "Settings", "Coordinator")
 	};
 
 	Dictionary<string, List<MenuButton>> menuDict = new Dictionary<string, List<MenuButton>> {
@@ -63,7 +63,7 @@
 	<title>FreeLance - @ViewBag.Title</title>
 	<script src="//tinymce.cachefly.net/4.2/tinymce.min.js"></script>
 	<script>tinymce.init({ selector: "#Description" });</script>
-    <script>tinymce.init({ selector: "#Details" });</script>
+	<script>tinymce.init({ selector: "#Details" });</script>
 	@Styles.Render("~/Content/css")
 	@Scripts.Render("~/bundles/modernizr")
 

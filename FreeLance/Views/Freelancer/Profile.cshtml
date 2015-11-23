@@ -63,10 +63,18 @@
 				<h2 class="panel-title">Документы</h2>
 			</div>
 			<div class="panel-body">
-				<p>Паспорт: @Model.Passport.Number</p>
+				<p>Паспорт: @Model.Passport.SerialNumber</p>
 				<p>Дата выдачи: @Model.Passport.Date</p>
 				<p>Выдан: @Model.Passport.OfficeName</p>
-				<p>Адрес прописки: @Model.Passport.Adress</p>
+				<p>Код подразделения: @Model.Passport.OfficeCode</p>
+				<p>Адрес прописки: @Model.Passport.Address</p>
+				<p>Дата рождения: @Model.Passport.BirthDate</p>
+				<p>Место рождения: @Model.Passport.BirthPlace</p>
+				<p>Банковские реквизиты</p>
+				<p>Счет: @Model.Bank.Account</p>
+				<p>БИК: @Model.Bank.BIC</p>
+				<p>Корсчет: @Model.Bank.CorrespondentAccount</p>
+				<p>Р/С: @Model.Bank.PC</p>
 				<p>
 					<a href="#">Фото первой страницы</a>
 				</p>
@@ -85,27 +93,27 @@
 			<div class="panel-heading">
 				<h2 class="panel-title">Учетная запись</h2>
 			</div>
-		    <div class="panel-body">
-		        <div>
-		            <p>
-		                <img src="@Model.FreelancerPhoto" alt="User photo" height="100" width="100">
-		            </p>
-		        </div>
-		        <div>
-		            @using (Html.BeginForm("UploadPhoto", "Freelancer", FormMethod.Post, new {enctype = "multipart/form-data", runat = "server"}))
-		            {
-		                <span class="btn btn-default btn-file"> Загрузить фото <input type="file" accept=".jpg,.png" name="file" id="file"> </span>
-		                <input type="submit" value="Отправить" class="btn btn-primary"/>
-		            }
-		        </div>
-		        <br/>
-		        <div>
-		            <p>Email: @Model.FreelancerEmail</p>
-		            <p>
-		                <a href="/Manage/ChangePassword" class="btn btn-info">Сменить пароль</a>
-		            </p>
-		        </div>
-		    </div>
+			<div class="panel-body">
+				<div>
+					<p>
+						<img src="@Model.FreelancerPhoto" alt="User photo" height="100" width="100">
+					</p>
+				</div>
+				<div>
+					@using (Html.BeginForm("UploadPhoto", "Freelancer", FormMethod.Post, new {enctype = "multipart/form-data", runat = "server"}))
+					{
+						<span class="btn btn-default btn-file"> Загрузить фото <input type="file" accept=".jpg,.png" name="file" id="file"> </span>
+						<input type="submit" value="Отправить" class="btn btn-primary"/>
+					}
+				</div>
+				<br/>
+				<div>
+					<p>Email: @Model.FreelancerEmail</p>
+					<p>
+						<a href="/Manage/ChangePassword" class="btn btn-info">Сменить пароль</a>
+					</p>
+				</div>
+			</div>
 		</div>
 
 		<div class="panel panel-default">

@@ -50,8 +50,8 @@ namespace FreeLance.Controllers
 			public String EmployerId { get; set; }
 			public String Comment { get; set; }
 			public decimal Rate { get; set; }
-            public DateTime DeadlineDate { get; set; }
-            public DateTime EndingDate { get; set; }
+			public DateTime DeadlineDate { get; set; }
+			public DateTime EndingDate { get; set; }
 			public DateTime StartDate { get; set; }
 			public decimal Cost { get; set; }
 		}
@@ -85,8 +85,8 @@ namespace FreeLance.Controllers
 			public decimal Money { get; set; }
 			public string ShortDescription { get; set; }
 			public int CommentNumber { get; set; }
-            public DateTime DeadlineDate { get; set; }
-            public int Others { get; set; }
+			public DateTime DeadlineDate { get; set; }
+			public int Others { get; set; }
 		}
 
 		public class HomeViewModel
@@ -167,6 +167,7 @@ namespace FreeLance.Controllers
 
 		public class OpenProblemsInfo
 		{
+			public bool isApproved { get; set; }
 			public String lastSort { get; set; }
 			public string showSubscriptions { get; set; }
 			public List<OpenProblemInfo> openProblems { get; set; }
@@ -221,14 +222,15 @@ namespace FreeLance.Controllers
 
 		public class DetailsForCoordinatorView
 		{
-			public String FreelancerName { get; set; }
-			public String FreelancerEmail { get; set; }
-			public String FreelancerPhone { get; set; }
+			public GeneralInfo General { get; set; }
+			public PassportInfo Passport { get; set; }
+			public BankInfo Bank { get; set; }
+
 			public decimal FreelancerRate { get; set; }
-			public String PhotoPath { get; set; }
-			public String FreelancerId { get; set; }
-			public String info;
-			public String lastSort;
+			public string PhotoPath { get; set; }
+			public string FreelancerId { get; set; }
+			public string info;
+			public string lastSort;
 			public bool isApproved { get; set; }
 
 			public List<ContractInfoForEmployer> ClosedContracts { get; set; }
@@ -241,26 +243,22 @@ namespace FreeLance.Controllers
 			public String Name { get; set; }
 		}
 
-		public class PassportInfo
-		{
-			public String Number { get; set; }
-			public String Date { get; set; }
-			public String Adress { get; set; }
-			public String OfficeName { get; set; }
-		}
-
 		public class ProfileView
 		{
-			public String FreelancerEmail { get; set; }
-            public String FreelancerPhoto { get; set; }
+			public string FreelancerEmail { get; set; }
+			public string FreelancerPhoto { get; set; }
 			public decimal Rate { get; set; }
 			public decimal TotalMoney { get; set; }
 			public List<GPHInfo> GpHList { get; set; }
+
 			public PassportInfo Passport { get; set; }
+			public BankInfo Bank { get; set; }
+			public GeneralInfo GeneralInfo { get; set; }
+
 			public int OpenContractsCount { get; set; }
 			public int ClosedContractsCount { get; set; }
-			public String PhotoFirstPage { get; set; }
-			public String PhotoAdress { get; set; }
+			public string PhotoFirstPage { get; set; }
+			public string PhotoAdress { get; set; }
 			public ApplicationUser.EmailNotificationPolicyModel emailNotifications { get; set; }
 		}
 
@@ -482,12 +480,14 @@ namespace FreeLance.Controllers
 			List<ContractModels> contracts = db.ContractModels
 				.Where(c => c.Freelancer.Id == freelancer.Id).ToList();
 
+			DocumentPackageModels documents = getDocumentsForUser(freelancer);
+
 			DetailsForCoordinatorView model = new DetailsForCoordinatorView
 			{
 				info = _info,
-				FreelancerEmail = freelancer.Email,
-				FreelancerPhone = "+7(916)0001122", // TODO
-				FreelancerName = freelancer.FIO,
+				General = documents.General,
+				Passport = documents.Passport,
+				Bank = documents.Bank,
 				PhotoPath = freelancer.PhotoPath, //TODO
 				FreelancerRate = countRating(id),
 				FreelancerId = id,
@@ -497,7 +497,7 @@ namespace FreeLance.Controllers
 				ProfileView = new DetailsProfileView
 				{
 					freelancer = freelancer,
-                   
+
 					LawContracts = db.LawContracts
 						.Where(
 							c => c.User.Id == id)
@@ -582,7 +582,7 @@ namespace FreeLance.Controllers
 					Money = problem.Cost,
 					Name = problem.Name,
 					ProblemId = problem.ProblemId,
-                    DeadlineDate = problem.DeadlineDate,
+					DeadlineDate = problem.DeadlineDate,
 					ShortDescription = problem.SmallDescription,
 					Others = problem.Subscriptions.Count
 				});
@@ -604,7 +604,11 @@ namespace FreeLance.Controllers
 			model.ContractsPending = getContractsInState(userId, ContractStatus.Opened);
 			model.ContractsWaitingMoney = getContractsInState(userId, ContractStatus.ClosedNotPaid);
 			model.Problems = getProblemInState(userId, ProblemStatus.Opened);
-
+			if (model.ContractsInWork.Count + model.ContractsPending.Count + model.ContractsWaitingMoney.Count +
+				model.Problems.Count == 0)
+			{
+				return RedirectToAction("OpenProblems");
+			}
 			return View(model);
 		}
 
@@ -661,7 +665,7 @@ namespace FreeLance.Controllers
 			List<ContractModels> contracts = db.ContractModels
 				.Where(
 					c => c.Freelancer.Id == id
-					&& (c.Status == ContractStatus.Closed 
+					&& (c.Status == ContractStatus.Closed
 					|| c.Status == ContractStatus.ClosedNotPaid
 					|| c.Status == ContractStatus.Failed
 					|| c.Status == ContractStatus.СancelledByEmployer))
@@ -724,7 +728,7 @@ namespace FreeLance.Controllers
 						Comment = c.Comment,
 						Rate = c.Rate,
 						EndingDate = c.EndingDate,
-                        DeadlineDate = c.DeadlineDate,
+						DeadlineDate = c.DeadlineDate,
 						Cost = c.Cost
 					})
 				.ToList();
@@ -747,7 +751,7 @@ namespace FreeLance.Controllers
 						Rate = c.Rate,
 						EndingDate = c.EndingDate,
 						StartDate = c.CreationDate,
-                        DeadlineDate = c.DeadlineDate,
+						DeadlineDate = c.DeadlineDate,
 						Cost = c.Cost
 					})
 				.ToList();
@@ -984,7 +988,8 @@ namespace FreeLance.Controllers
 			OpenProblemsInfo model = new OpenProblemsInfo
 			{
 				openProblems = new List<OpenProblemInfo>(),
-				showSubscriptions = showSubscriptionsParam
+				showSubscriptions = showSubscriptionsParam,
+				isApproved = getDocuments().IsApproved == null ? false : getDocuments().IsApproved.Value
 			};
 
 			foreach (var p in problems)
@@ -1023,10 +1028,11 @@ namespace FreeLance.Controllers
 			String id = User.Identity.GetUserId();
 			ApplicationUser freelancer = db.Users.Find(id);
 
+			DocumentPackageModels documents = getDocuments();
 			ProfileView model = new ProfileView
 			{
 				FreelancerEmail = freelancer.Email,
-                FreelancerPhoto = freelancer.PhotoPath,
+				FreelancerPhoto = freelancer.PhotoPath,
 				OpenContractsCount = db.ContractModels.Where(
 					c => c.Freelancer.Id == id && (c.Status == ContractStatus.Done
 					|| c.Status == ContractStatus.InProgress || c.Status == ContractStatus.ClosedNotPaid
@@ -1036,11 +1042,11 @@ namespace FreeLance.Controllers
 					|| c.Status == ContractStatus.Failed || c.Status == ContractStatus.СancelledByEmployer
 					|| c.Status == ContractStatus.СancelledByFreelancer)).Count(),
 				emailNotifications = freelancer.EmailNotificationPolicy,
-				TotalMoney = db.ContractModels.Where(
-					c => c.Freelancer.Id == id && (c.Status == ContractStatus.Closed))
-					.Select(c => c.Cost).Sum(),
+				TotalMoney = getTotalMoney(),
 				GpHList = new List<GPHInfo>(), // TODO
-				Passport = new PassportInfo {}, // TODO
+				Passport = documents.Passport,
+				GeneralInfo = documents.General,
+				Bank = documents.Bank,
 				PhotoAdress = "", // TODO
 				PhotoFirstPage = "", // TODO
 				Rate = countRating(id)
@@ -1048,30 +1054,40 @@ namespace FreeLance.Controllers
 			return View(model);
 		}
 
+		private decimal getTotalMoney()
+		{
+			decimal result = 0;
+			try
+			{
+				result =
+					db.ContractModels.Where(c => c.Freelancer.Id == User.Identity.GetUserId() && (c.Status == ContractStatus.Closed))
+						.Select(c => c.Cost).Sum();
+			}
+			catch (Exception e)
+			{
+			}
+			return 0;
+		}
+
 		public ActionResult Documents()
 		{
 			string userId = User.Identity.GetUserId();
 			ApplicationUser freelancer = db.Users.Find(userId);
 			DocumentPackageViewModel model = new DocumentPackageViewModel();
-			if (freelancer.DocumentPackage != null)
-			{
-				DocumentPackageModels documents = freelancer.DocumentPackage;
-				model.Phone = documents.Phone;
-				model.PaymentDetails = documents.PaymentDetails;
-				model.Adress = documents.Adress;
-				model.PassportFace = documents.FilePassportFace != null;
-				model.PassportRegistration = documents.FilePassportRegistration != null;
-			}
+			DocumentPackageModels documents = getDocuments();
+			model.General = documents.General;
+			model.Passport = documents.Passport;
+			model.Bank = documents.Bank;
+			model.Photos = documents.Photos;
 			return View(model);
 		}
 
 		public class DocumentPackageViewModel
 		{
-			public string Adress { get; set; }
-			public string Phone { get; set; }
-			public string PaymentDetails { get; set; }
-			public bool PassportFace { get; set; }
-			public bool PassportRegistration { get; set; }
+			public PassportInfo Passport { get; set; }
+			public BankInfo Bank { get; set; }
+			public GeneralInfo General { get; set; }
+			public Photos Photos { get; set; }
 		}
 
 		[HttpPost]
@@ -1080,9 +1096,9 @@ namespace FreeLance.Controllers
 			if (documentFromView != null)
 			{
 				DocumentPackageModels documents = getDocuments();
-				documents.Adress = documentFromView.Adress;
-				documents.Phone = documentFromView.Phone;
-				documents.PaymentDetails = documentFromView.PaymentDetails;
+				documents.General = documentFromView.General;
+				documents.Passport = documentFromView.Passport;
+				documents.Bank = documentFromView.Bank;
 				db.SaveChanges();
 			}
 			return RedirectToAction("Documents");
@@ -1096,7 +1112,7 @@ namespace FreeLance.Controllers
 				var file = Request.Files[0];
 				if (file != null && file.ContentLength > 0)
 				{
-					getDocuments().FilePassportFace = saveDocumentOnDisc(file, "passports");
+					getDocuments().Photos.PassportFace = saveDocumentOnDisc(file, "passports");
 					db.SaveChanges();
 				}
 
@@ -1112,7 +1128,7 @@ namespace FreeLance.Controllers
 				var file = Request.Files[0];
 				if (file != null && file.ContentLength > 0)
 				{
-					getDocuments().FilePassportRegistration = saveDocumentOnDisc(file, "registrations");
+					getDocuments().Photos.PassportRegistration = saveDocumentOnDisc(file, "registrations");
 					db.SaveChanges();
 				}
 			}
@@ -1145,7 +1161,7 @@ namespace FreeLance.Controllers
 			db.SaveChanges();
 		}
 
-		private string saveDocumentOnDisc(HttpPostedFileBase file, string dir, string location= "/App_Data/")
+		private string saveDocumentOnDisc(HttpPostedFileBase file, string dir, string location = "/App_Data/")
 		{
 			var ext = Path.GetExtension(file.FileName);
 			var fileName = User.Identity.GetUserId() + "_" + DateTime.Now.Ticks.ToString() + ext;
@@ -1156,11 +1172,15 @@ namespace FreeLance.Controllers
 
 		private DocumentPackageModels getDocuments()
 		{
-			ApplicationUser user = db.Users.Find(User.Identity.GetUserId());
+			return getDocumentsForUser(db.Users.Find(User.Identity.GetUserId()));
+		}
+
+		private DocumentPackageModels getDocumentsForUser(ApplicationUser user)
+		{
 			DocumentPackageModels documents = user.DocumentPackage;
 			if (documents == null)
 			{
-				documents = new DocumentPackageModels { IsApproved = user.IsApprovedByCoordinator };
+				documents = new DocumentPackageModels { IsApproved = user.IsApprovedByCoordinator, Bank = new BankInfo(), General = new GeneralInfo(), Passport = new PassportInfo(), Photos = new Photos() };
 				documents.Freelancer = user;
 				db.DocumentPackageModels.Add(documents);
 				db.SaveChanges();
@@ -1188,21 +1208,21 @@ namespace FreeLance.Controllers
 
 
 
-        [HttpPost]
-	    public ActionResult UploadPhoto()
-	    {
-            ApplicationUser user = db.Users.Find(User.Identity.GetUserId());
-            if (Request.Files.Count > 0)
-            {
-                var file = Request.Files[0];
-                if (file != null && file.ContentLength > 0)
-                {
-                    user.PhotoPath = saveDocumentOnDisc(file, "photo", "/Files/");
-                    db.SaveChanges();
-                }
-            }
-            return RedirectToAction("Profile");
-        }
+		[HttpPost]
+		public ActionResult UploadPhoto()
+		{
+			ApplicationUser user = db.Users.Find(User.Identity.GetUserId());
+			if (Request.Files.Count > 0)
+			{
+				var file = Request.Files[0];
+				if (file != null && file.ContentLength > 0)
+				{
+					user.PhotoPath = saveDocumentOnDisc(file, "photo", "/Files/");
+					db.SaveChanges();
+				}
+			}
+			return RedirectToAction("Profile");
+		}
 
 
 

@@ -1,7 +1,7 @@
 ﻿@model FreeLance.Controllers.FreelancerController.DetailsForCoordinatorView
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
-    ViewBag.Title = Model.FreelancerName;
+    ViewBag.Title = Model.General.Surname + " " + Model.General.Name;
 }
 
 @functions{
@@ -30,12 +30,12 @@
         <img src="@Model.PhotoPath" class="img-thumbnail" style="margin-top: 20px;">
     </div>
     <div class="col-md-10">
-        <h2><strong>@Model.FreelancerName</strong></h2>
-        @if (Model.FreelancerPhone != null)
+        <h2><strong>@Model.General.Surname @Model.General.Name</strong></h2>
+        @if (Model.General.Phone != null)
         {
-            <p>@Model.FreelancerPhone</p>
+            <p>@Model.General.Phone</p>
         }
-        <p>@Model.FreelancerEmail</p>
+        <p>@Model.General.Email</p>
 
         <div class="stars" data-score=@Model.FreelancerRate.ToString().Replace(",", ".")></div>
         <div class="row">
