@@ -6,19 +6,43 @@
             <a href="#" class="btn btn-default" style="margin-top: 5px; width: 100%">Сменить документы</a>
             <a href="#" class="btn btn-default" style="margin-top: 5px; width: 100%">Сменить фото</a>
             <a href="/Manage/ChangePassword" class="btn btn-default" style="margin-top: 5px; width: 100%">Задать пароль</a>
-            
-            <h3>Документы:</h3>
+
+            <h3>Паспортные данные:</h3>
+
             <p>
-                <i><b>Паспорт:</b></i> <span>4321 727110</span>
+                <i><b>Номер паспорта:</b></i> <span> @Model.Passport.SerialNumber</span>
             </p>
             <p>
-                <i><b>Дата выдачи:</b></i> <span>14/01/2008</span>
+                <i><b>Дата выдачи:</b></i> <span>@Model.Passport.Date</span>
             </p>
             <p>
-                <i><b>Выдан:</b></i> <span>Районным отделением УВД в городском поселении Мытищи</span>
+                <i><b>Выдан:</b></i> <span>@Model.Passport.OfficeName</span>
             </p>
             <p>
-                <i><b>Прописка:</b></i> <span>г.Невинномыск, просп.Ленина д.15 кв.3</span>
+                <i><b>Код подразделения:</b></i> <span>@Model.Passport.OfficeCode</span>
+            </p>
+            <p>
+                <i><b>Дата рождения:</b></i> <span>@Model.Passport.BirthDate</span>
+            </p>
+            <p>
+                <i><b>Место рождения:</b></i> <span>@Model.Passport.BirthPlace</span>
+            </p>
+            <p>
+                <i><b>Зарегистрирован:</b></i> <span>@Model.Passport.Address</span>
+            </p>
+
+            <h3>Банковские реквизиты:</h3>
+            <p>
+                <i><b>Лицевой счет:</b></i> <span>@Model.Bank.Account</span>
+            </p>
+            <p>
+                <i><b>БИК:</b></i> <span>@Model.Bank.BIC</span>
+            </p>
+            <p>
+                <i><b>Корсчет:</b></i> <span>@Model.Bank.CorrespondentAccount</span>
+            </p>
+            <p>
+                <i><b>Расчетный счет:</b></i> <span>@Model.Bank.PC</span>
             </p>
 
             <a href="~/Files/profile_pic.jpg" 

@@ -40,7 +40,7 @@ namespace FreeLance.Controllers
 			public int Id { get; set; }
 			public DateTime EndingDate { get; set; }
 			public DateTime CreationDate { get; set; }
-			public decimal Cost { get; set; }
+            public decimal Cost { get; set; }
 			public String StatusIcon { get; set; }
 			public int NewMsgCount { get; set; }
 			public List<ContractInProgressViewModel> Contracts { get; set; }
@@ -56,7 +56,8 @@ namespace FreeLance.Controllers
 			public decimal Cost { get; set; }
 			public DateTime EndingDate { get; set; }
 			public String CreationDate { get; set; }
-			public String StatusIcon { get; set; }
+            public DateTime DeadlineDate { get; set; }
+            public String StatusIcon { get; set; }
 		}
 
 		public class ProblemView
@@ -146,7 +147,8 @@ namespace FreeLance.Controllers
 							id = contract.ContractId,
 							status = contract.Status,
 							newMsgCount = 0, // TODO
-							EndingDate = DateTime.Now, // TODO
+							EndingDate = contract.EndingDate,
+                            DeadlineDate = contract.DeadlineDate,
 							Cost = contract.Cost,
 							CreationDate = contract.CreationDate.ToString("dd/MM/yyyy"),
 							StatusIcon = getStatusIcon(contract.Status)
@@ -169,8 +171,8 @@ namespace FreeLance.Controllers
 					p => new ProblemInProgressViewModel
 					{
 						Name = p.Name,
-						EndingDate = DateTime.Now, //TODO: add end date in ProblemModel
-						CreationDate = DateTime.Now,
+						EndingDate = p.DeadlineDate,
+						CreationDate = p.CreationDate,
 						NewMsgCount = 1, // TODO
                         Cost = p.Cost,
 						Id = p.ProblemId
@@ -196,7 +198,7 @@ namespace FreeLance.Controllers
 						Cost = p.Cost,
 						SubscribersCount = p.Subscriptions.Count,
 						CreationDate = p.CreationDate,
-						//EndingDate = "30/11/2016",
+						EndingDate = p.DeadlineDate,
 						NewMsgCount = 0 // TODO
 					}
 				)
@@ -220,7 +222,7 @@ namespace FreeLance.Controllers
 						Cost = p.Cost,
 						SubscribersCount = p.Subscriptions.Count,
 						CreationDate = p.CreationDate,
-						EndingDate = DateTime.Now, // TODO
+						EndingDate = p.DeadlineDate,
 						AmountOfWorkers = p.AmountOfWorkes
 					}
 				)
@@ -306,6 +308,7 @@ namespace FreeLance.Controllers
 				isApproved = employer.IsApprovedByCoordinator == true ? true : false,
 				PhotoPath = "/Files/profile_pic.jpg", //TODO
 				Id = id
+                
 			};
 
 			model.ProblemsInProgress = getProblemsInProgress( id );
@@ -378,7 +381,7 @@ namespace FreeLance.Controllers
 				Rate = c.Rate,
 				CreationDate = c.CreationDate,
 				EndingDate = c.EndingDate,
-				DeadlineDate = DateTime.Now, // TODO
+				DeadlineDate = c.DeadlineDate,
 				StatusMessage = getStatusMessage(c.Status)
 			};
 

@@ -30,34 +30,38 @@ else
 		<div class="col-md-6">
 			<h3>В работе:</h3>
 
-			@foreach (var problem in Model.ProblemsInProgress)
+			@foreach (var problem in Model.ProblemsInProgress.OrderBy(x => x.EndingDate))
 			{
-				foreach (var contract in problem.Contracts)
+				foreach (var contract in problem.Contracts.OrderBy(x => x.DeadlineDate))
 				{
 					<div class="panel panel-default">
 						<div class="panel-heading">
 							<b>@problem.Name<span class="@contract.StatusIcon pull-right"></span></b>
 						</div>
-						<div class="panel-body">
-							<p>
-								<i class="flaticon-calendar68"></i>
-								@contract.CreationDate - @contract.EndingDate
-								<span class="pull-right"><b>@contract.Cost</b><span class="flaticon-ruble"></span> </span>
-							</p>
-							<p><b>Исполнитель:</b><a class="text-info-in-panel" href="/Freelancer/Details/@contract.freelancerId">@contract.FIO</a></p>
+					    <div class="panel-body">
+					        <p><b>Исполнитель:</b><a class="text-info-in-panel" href="/Freelancer/Details/@contract.freelancerId">@contract.FIO</a>
+                                <span class="pull-right"><b>@contract.Cost</b><span class="flaticon-ruble"></span> </span>
+                            </p>
+					       
+                             <p>
+					            <i class="flaticon-calendar68"></i>
+					            @contract.CreationDate - @contract.DeadlineDate.ToShortDateString()
+					           
+					        </p>
 
-							<div>
-								<i class="flaticon-comments16"></i> <span class="badge">@contract.newMsgCount</span>
-								<a href="/Contract/Details/@contract.id" class="btn btn-info pull-right" role="button">К контракту</a>
-							</div>
-						</div>
+
+					        <div>
+					            <i class="flaticon-comments16"></i> <span class="badge">@contract.newMsgCount</span>
+					            <a href="/Contract/Details/@contract.id" class="btn btn-info pull-right" role="button">К контракту</a>
+					        </div>
+					    </div>
 					</div>
 				}
 			}
 		</div>
 		<div class="col-md-6">
 			<h3>Поиск исполнителей:</h3>
-			@foreach (var problem in Model.ProblemsOpen)
+			@foreach (var problem in Model.ProblemsOpen.OrderBy(x => x.CreationDate))
 			{
 				<div class="panel panel-default">
 					<div class="panel-heading">
@@ -68,9 +72,16 @@ else
 							<b>@problem.SubscribersCount подписчиков</b>
 							<span class="pull-right"><b>@problem.Cost</b><span class="flaticon-ruble"></span> </span>
 						</p>
-						<p><i> @Truncate(problem.ShortDescription, 200)</i></p>
+					    <p><i> @Truncate(problem.ShortDescription, 200)</i>
+					    </p>
+					    <div>
+                            <span>
+                                <i class="flaticon-calendar68"></i>
+                                @problem.CreationDate.ToShortDateString() - @problem.EndingDate.ToShortDateString()
+                            </span>
+					    </div>
 						<div>
-							<i class="flaticon-comments16"></i> <span class="badge">@problem.NewMsgCount</span>
+						    <i class="flaticon-comments16"></i> <span class="badge">@problem.NewMsgCount</span>
 							<a href="/Problem/Details/@problem.Id" class="btn btn-info pull-right" role="button">К задаче</a>
 						</div>
 					</div>

@@ -31,8 +31,8 @@ else
 
 		.btn-details {
 			text-align: right;
-            float: right;
-            margin-right: 5px;
+			float: right;
+			margin-right: 5px;
 		}
 
 		.panel-footer {
@@ -107,25 +107,33 @@ else
 							<div class="col-md-3 info-block">
 								Срок: @problem.DeadlineDate.ToString("dd/MM/yyyy")
 							</div>
-                            <div class="btn-details">
-                                <a href="/Problem/Details/@problem.ProblemId" class="btn btn-info" role="button">Подробнее</a>
-                            </div>
-                            <div class="btn-details">
-                                @if (problem.IsSubscribed)
-                                {
-                                    <div class="text-success">
-                                        Подписан
-                                    </div>
-                                }
-                                else
-                                {
-                                    using (Html.BeginForm("Subscribe", "Subscription", FormMethod.Post))
-                                    {
-                                        <input name="id" type="hidden" value="@problem.ProblemId" />
-                                        <input type="submit" class="btn btn-success pull-right" value="Подписаться" />
-                                    }
-                                }
-                            </div>
+							<div class="btn-details">
+								<a href="/Problem/Details/@problem.ProblemId" class="btn btn-info" role="button">Подробнее</a>
+							</div>
+							<div class="btn-details">
+								@if (Model.isApproved)
+								{
+									if (problem.IsSubscribed)
+									 {
+										 <div class="text-success">
+											 Подписан
+										 </div>
+									 }
+									 else
+									 {
+										 using (Html.BeginForm("Subscribe", "Subscription", FormMethod.Post))
+										 {
+											 <input name="id" type="hidden" value="@problem.ProblemId"/>
+											 <input type="submit" class="btn btn-success pull-right" value="Подписаться"/>}
+									}
+								}
+								else
+								{
+									<div class="text-danger">
+										Заполните документы!
+									</div>
+}
+							</div>
 						</div>
 					</div>
 				</div>

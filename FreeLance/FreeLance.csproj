@@ -367,6 +367,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Files\LawContracts\" />
+    <Folder Include="Files\photo\" />
     <Folder Include="Views\StaticContent\" />
     <Folder Include="Views\Subscription\" />
   </ItemGroup>

@@ -223,7 +223,7 @@ namespace FreeLance.Controllers
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Authorize(Roles = "Employer")]
-		public ActionResult Create([Bind(Include = "Details,Cost")] ContractModels contract,
+		public ActionResult Create([Bind(Include = "Details,Cost,DeadlineDate")] ContractModels contract,
 			int problemId, string freelancerId, string redirect)
 		{
 			string userId = User.Identity.GetUserId();
@@ -240,7 +240,8 @@ namespace FreeLance.Controllers
 			contract.Status = ContractStatus.Opened;
 			contract.Freelancer = freelancer;
 			contract.CreationDate = DateTime.Now;
-			contract.EndingDate = DateTime.Now.AddDays(13).AddHours(3);
+		    contract.EndingDate = DateTime.Now;
+           
 
 			db.ContractModels.Add(contract);
 			db.SubscriptionModels.Remove(subscription);
@@ -260,7 +261,9 @@ namespace FreeLance.Controllers
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
 			contract.Status = status;
-			if (status == ContractStatus.Closed)
+            //  Failed, СancelledByFreelancer, СancelledByEmployer, ClosedNotPaid
+            if (status == ContractStatus.ClosedNotPaid || status == ContractStatus.СancelledByEmployer
+                || status == ContractStatus.СancelledByFreelancer || status == ContractStatus.Failed)
 			{
 				contract.EndingDate = DateTime.Now;
 			}

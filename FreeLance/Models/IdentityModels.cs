@@ -24,6 +24,7 @@ namespace FreeLance.Models
 		public string FIO { get; set; }
 		public virtual DocumentPackageModels DocumentPackage { get; set; }
 		public EmailNotificationPolicyModel EmailNotificationPolicy { get; set; }
+        public string PhotoPath { get; set; }
 
 		public class EmailNotificationPolicyModel
 		{

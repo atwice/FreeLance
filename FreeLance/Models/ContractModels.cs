@@ -19,7 +19,9 @@ namespace FreeLance.Models
 		public int ContractId { get; set; }
 		[DataType(DataType.Date)]
 		public DateTime CreationDate { get; set; }
-		[DataType(DataType.Date)]
+        [DataType(DataType.Date)]
+        public DateTime DeadlineDate { get; set; }
+        [DataType(DataType.Date)]
 		public DateTime EndingDate { get; set; }
 		[Required]
 		public virtual ApplicationUser Freelancer { get; set; }
