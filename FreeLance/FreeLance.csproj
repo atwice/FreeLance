@@ -261,6 +261,9 @@
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\tinymce\jquery.tinymce.min.js" />
+    <Content Include="Scripts\tinymce\themes\modern\theme.min.js" />
+    <Content Include="Scripts\tinymce\tinymce.min.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -363,6 +366,7 @@
     <Content Include="Views\Employer\Details.cshtml" />
     <Content Include="Views\Employer\Archive.cshtml" />
     <Content Include="Views\Employer\_DetailsForFreelancerAndEmployer.cshtml" />
+    <Content Include="Scripts\tinymce.init.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
