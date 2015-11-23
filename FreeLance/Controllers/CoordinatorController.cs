@@ -42,22 +42,7 @@ namespace FreeLance.Controllers
 			public int ClosedContractsCount { get; set; }
 			public int OpenContractsCount { get; set; }
 		}
-
-		public class UploadViewModel
-		{
-			public List<ApplicationUser> Freelancers { get; set; }
-			public List<LawContractTemplate> LawContractTemplates { get; set; }
-			public UploadPostModel PostModel { get; set; }
-		}
-
-		public class UploadPostModel
-		{
-			public HttpPostedFileBase File { get; set; }
-			public string UserId { get; set; }
-			public int LawContractTemplateId { get; set; }
-			public DateTime EndDate { get; set; }
-		}
-
+		
 		public class LawFaceView
 		{
 		    public LawFace LawFace { get; set; }
@@ -85,42 +70,63 @@ namespace FreeLance.Controllers
 			return RedirectToAction("Home");
 		}
 
-		public ActionResult Upload()
+		public class UploadPostModel
 		{
-			var model = new UploadViewModel();
+			public HttpPostedFileBase File { get; set; }
+			public string UserId { get; set; }
+			public int LawContractTemplateId { get; set; }
+			//public int LawFaceId { get; set; }
+			public DateTime StartDate { get; set; }
+			public DateTime EndDate { get; set; }
+		}
+
+		public class UploadSignedLawContractModel
+		{
+			public List<ApplicationUser> Freelancers { get; set; }
+			public List<LawContractTemplate> LawContractTemplates { get; set; }
+			//public List<LawFace> LawFaces { get; set; }
+			public UploadPostModel PostModel { get; set; }
+		}
+
+		// Координатор загружает подписанный ГПХ
+		public ActionResult UploadSignedLawContract()
+		{
+			var model = new UploadSignedLawContractModel();
 			model.LawContractTemplates = db.LawContractTemplates.ToList();
 			model.Freelancers = getApplicationUsersInRole("Freelancer").OrderBy(f => f.FIO).ToList();
+			//model.LawFaces = db.LawFaces.ToList();
 			model.PostModel = new UploadPostModel();
 			return View(model);
 		}
 
 		[HttpPost]
-		public ActionResult Upload([Bind(Prefix = "UploadPostModel")]UploadPostModel model)
+		public ActionResult UploadSignedLawContract([Bind(Prefix = "UploadPostModel")]UploadPostModel model)
 		{
 			if (ModelState.IsValid)
 			{
 				if (model.File.ContentLength > 0)
 				{
-					string path = SaveLawContract(model.File);
-					AddLawContractInDb(path, model.UserId, model.LawContractTemplateId, model.EndDate);
+					string path = saveLawContract(model.File);
+					addLawContractInDb(path, model.UserId, model.LawContractTemplateId, model.StartDate, model.EndDate);
 
 				}
 			}
-			return RedirectToAction("Index");
+			return RedirectToAction("Home");
 		}
 
-		private void AddLawContractInDb(string Path, string UserId, int LawContractTemplateId, DateTime EndDate)
+		private void addLawContractInDb(string Path, string UserId, int LawContractTemplateId, DateTime startDate, DateTime EndDate)
 		{
 			LawContract contract = new LawContract();
 			contract.Path = Path;
-			contract.EndData = EndDate;
+			contract.StartDate = startDate;
+			contract.EndDate = EndDate;
 			contract.User = db.Users.Find(UserId);
 			contract.LawContractTemplate = db.LawContractTemplates.Find(LawContractTemplateId);
 			db.LawContracts.Add(contract);
 			db.SaveChanges();
 		}
 
-		private string SaveLawContract(HttpPostedFileBase file)
+		private string saveLawContract(HttpPostedFileBase file)
 		{
 			string path = null;
 			var fileName = Path.GetFileName(file.FileName);
@@ -252,7 +258,7 @@ namespace FreeLance.Controllers
 	        {
 	            LawFace = lawContractTemplateView.LawFace,
 	            Name = lawContractTemplateView.Name,
-	            Path = SaveLawContractTemplate(lawContractTemplateView)
+	            Path = saveLawContractTemplate(lawContractTemplateView)
 	        };
             
 	        db.LawContractTemplates.Add(lawContractTemplate);
@@ -260,7 +266,7 @@ namespace FreeLance.Controllers
 	        return RedirectToAction("LawFaces");
 	    }
 
-        private string SaveLawContractTemplate(LawContractTemplateView lawContractTemplateView)
+        private string saveLawContractTemplate(LawContractTemplateView lawContractTemplateView)
         {
             string path = null;
             var fileName = lawContractTemplateView.LawFace.Name + "_" + lawContractTemplateView.Name + ".docx";
@@ -543,6 +549,7 @@ namespace FreeLance.Controllers
 			public IEnumerable<FreelancerVR> Freelancers;
 		}
 
+		/* seems to be unuseful
 		public ActionResult FillLawContractTemplate(string freelancerId) {
 			List<FillLawContractTemplateVR.LawFaceVR> lawFaces = new List<FillLawContractTemplateVR.LawFaceVR>();
 			foreach (var lawFace in db.LawFaces.ToList()) {
@@ -581,6 +588,7 @@ namespace FreeLance.Controllers
 			string pathToContract = Code.DocumentManager.fillContractTemplate(employer, lawContractTemplate);
 		    return ViewFile(pathToContract);
 		}
+		*/
 
 		// TODO: lawFaceId is assosiated with Problem or Employer
 		// TODO: improve ugly url
@@ -600,6 +608,12 @@ namespace FreeLance.Controllers
 			return ViewFile(pathToContract);
 		}
 
+		// Координатор скачивает загруженный им же заполненный и подписанный ГПХ.
+		public ActionResult DownloadSignedLawContract(string lawContractPath)
+		{
+			return ViewFile(lawContractPath);
+		}
+
 		public ActionResult ViewFile(string path)
 	    {
             byte[] filedata = System.IO.File.ReadAllBytes(path);
@@ -612,7 +626,6 @@ namespace FreeLance.Controllers
             Response.AppendHeader("Content-Disposition", cd.ToString());
             return File(filedata, contentType);
         }
-
 
         [HttpGet]
 	    public ActionResult LawFace()
@@ -629,7 +642,6 @@ namespace FreeLance.Controllers
             return RedirectToAction("LawFaces");
         }
 
-
         [Authorize(Roles="Coordinator")]
 	    public ActionResult ToggleActiveLawContractTemplate(int templateId)
 	    {
@@ -640,6 +652,7 @@ namespace FreeLance.Controllers
             db.SaveChanges();
 	        return RedirectToAction("LawFaces");
 	    }
+
 		public ActionResult Settings()
 		{
 			ApplicationUser user = db.Users.Find(User.Identity.GetUserId());

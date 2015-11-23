@@ -321,7 +321,7 @@
     <Content Include="Views\Coordinator\Employers.cshtml" />
     <Content Include="Views\DocumentPackage\Details.cshtml" />
     <Content Include="Views\Coordinator\LawFaces.cshtml" />
-    <Content Include="Views\Coordinator\Upload.cshtml" />
+    <Content Include="Views\Coordinator\UploadSignedLawContract.cshtml" />
     <Content Include="Views\Coordinator\ViewFreelancerDocuments.cshtml" />
     <Content Include="Views\Coordinator\AddLawContractTemplate.cshtml" />
     <Content Include="Views\Coordinator\FillLawContractTemplate.cshtml" />

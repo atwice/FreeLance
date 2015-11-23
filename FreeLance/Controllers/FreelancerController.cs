@@ -57,6 +57,7 @@ namespace FreeLance.Controllers
 
 		public class FreelancerLawContractViewModel
 		{
+			public String LawFacePath { get; set; }
 			public String LawFace { get; set; }
 			public DateTime StartingDate { get; set; }
 			public DateTime EndingDate { get; set; }
@@ -501,8 +502,9 @@ namespace FreeLance.Controllers
 							c => new FreelancerLawContractViewModel
 							{
 								LawFace = c.LawContractTemplate.LawFace.Name,
-								StartingDate = c.EndData,
-								EndingDate = c.EndData
+								LawFacePath = c.Path,
+								StartingDate = c.EndDate,
+								EndingDate = c.EndDate
 							})
 						.ToList()
 				},

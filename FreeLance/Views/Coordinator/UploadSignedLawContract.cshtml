@@ -1,11 +1,11 @@
-﻿@model FreeLance.Controllers.CoordinatorController.UploadViewModel
+﻿@model FreeLance.Controllers.CoordinatorController.UploadSignedLawContractModel
 @{
 	ViewBag.Title = "Загрузить ГПХ";
 	ViewBag.MenuPick = "Upload";
 }
 
-<h2>Загрузка ГПХ</h2>
-@using (Html.BeginForm("Upload", "Coordinator", FormMethod.Post, new { enctype = "multipart/form-data" }))
+<h2>Загрузка заполненного ГПХ</h2>
+@using (Html.BeginForm("UploadSignedLawContract", "Coordinator", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
     <div class="form-horizontal">
@@ -19,7 +19,7 @@
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(m => m.PostModel.UserId, "Фрилансер", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(m => m.PostModel.UserId, "С кем заключен", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.DropDownList("UploadPostModel.UserId", 
                     new SelectList(Model.Freelancers, "Id", "Email"), 
@@ -27,7 +27,7 @@
             </div>
         </div>
         <div class="form-group">
-            @Html.LabelFor(m => m.PostModel.LawContractTemplateId, "Шаблон", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(m => m.PostModel.LawContractTemplateId, "Шаблон ГПХ", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.DropDownList("UploadPostModel.LawContractTemplateId", 
                     new SelectList(Model.LawContractTemplates, "Id", "Id"), 
@@ -35,7 +35,13 @@
             </div>
         </div>
         <div class="form-group">
-            @Html.LabelFor(m => m.PostModel.EndDate, "Дата истечения договора", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(m => m.PostModel.StartDate, "Дата заключения", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <input type="date" name="UploadPostModel.StartDate" />
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.PostModel.EndDate, "Дата истечения", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">                
                 <input type="date" name="UploadPostModel.EndDate"/>
                 </div>

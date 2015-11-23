@@ -44,6 +44,8 @@ namespace FreeLance.Models
         [Required]
         public virtual ApplicationUser User { get; set; }
 		[Required]
-		public DateTime EndData { get; set; }
+		public DateTime StartDate { get; set; }
+		[Required]
+		public DateTime EndDate { get; set; }
 	}
 }

@@ -46,7 +46,8 @@
         </div>
 
         <div class="col-xs-6">
-            <a class="btn btn-info pull-right"
+            <a href="@Url.Action("UploadSignedLawContract", "Coordinator")"
+               class="btn btn-info pull-right"
                style="margin-top: 5px;">
                 <span class="glyphicon glyphicon-ok"></span>
                 Загрузить ГПХ
@@ -76,7 +77,10 @@
                             </p>
                             
                             <a href="#" class="btn btn-default pull-left" role="button">Аннулировать</a>
-                            <a class="btn btn-info pull-right">Скачать</a>
+                            <a href="@Url.Action("DownloadSignedLawContract", "Coordinator", new { LawContractPath = lawcontract.LawFacePath })" 
+                                class="btn btn-info pull-right">
+                                Скачать
+                            </a>
                         </div>
                     </div>
                 }
