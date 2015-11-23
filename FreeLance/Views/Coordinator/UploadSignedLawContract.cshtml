@@ -12,43 +12,44 @@
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         <div class="form-group">
-            @Html.LabelFor(m => m.PostModel.File, "Путь к файлу", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(m => m.PostModel.File, "Путь к файлу", new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                <input type="file" accept=".doc,.docx" name="UploadPostModel.File"/>
+                <input type="file" accept=".doc,.docx" class="form-control" name="UploadPostModel.File"/>
             </div>
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(m => m.PostModel.UserId, "С кем заключен", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(m => m.PostModel.UserId, "С кем заключен", new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.DropDownList("UploadPostModel.UserId", 
                     new SelectList(Model.Freelancers, "Id", "Email"), 
-                        new { htmlAttributes = new { @class = "form-control" } });
+                        new { @class = "form-control" } )
             </div>
         </div>
+
         <div class="form-group">
-            @Html.LabelFor(m => m.PostModel.LawContractTemplateId, "Шаблон ГПХ", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(m => m.PostModel.LawContractTemplateId, "Шаблон ГПХ", new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.DropDownList("UploadPostModel.LawContractTemplateId", 
                     new SelectList(Model.LawContractTemplates, "Id", "Id"), 
-                        new { htmlAttributes = new { @class = "form-control" } });
+                        new { @class = "form-control" })
             </div>
         </div>
         <div class="form-group">
-            @Html.LabelFor(m => m.PostModel.StartDate, "Дата заключения", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(m => m.PostModel.StartDate, "Дата заключения", new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                <input type="date" name="UploadPostModel.StartDate" />
+                <input type="date" class="form-control" name="UploadPostModel.StartDate" />
             </div>
         </div>
         <div class="form-group">
-            @Html.LabelFor(m => m.PostModel.EndDate, "Дата истечения", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(m => m.PostModel.EndDate, "Дата истечения", new { @class = "control-label col-md-2" })
             <div class="col-md-10">                
-                <input type="date" name="UploadPostModel.EndDate"/>
+                <input type="date" class="form-control" name="UploadPostModel.EndDate"/>
                 </div>
         </div>
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Upload" class="btn btn-success" />                
+                <input type="submit" value="Загрузить" class="btn btn-info" />                
             </div>
         </div>
     </div>

@@ -1,7 +1,7 @@
 ﻿@using FreeLance.Controllers
 @model FreeLance.Controllers.CoordinatorController.LawContractTemplateView
 
-<h2>Добавить ГПХ</h2>
+<h2>Добавить ГПХ</h2><h4>для юрлица @Html.DisplayTextFor(model => model.LawFace.Name)</h4>
 
 @using (Html.BeginForm("AddLawContractTemplate", "Coordinator", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
@@ -10,17 +10,10 @@
         <hr/>
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         <div class="form-group">
-            @Html.LabelFor(model => model.LawFace.Name, "Юрлицо", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DisplayTextFor(model => model.LawFace.Name)
-            </div>
-        </div>
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        <div class="form-group">
             @Html.LabelFor(m => m.File, "Файл Шаблона", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.ValidationMessage("LawContractTemplateView.File", "", new { @class = "text-danger" })
-                <input type="file" accept=".doc,.docx" name="LawContractTemplateView.File" data-val-required="Требуется файл"/>
+                <input type="file" accept=".doc,.docx" class="form-control" name="LawContractTemplateView.File" data-val-required="Требуется файл"/>
             </div>
         </div>
 
@@ -28,7 +21,7 @@
             @Html.LabelFor(model => model.Name, "Название Шаблона", htmlAttributes: new {@class = "control-label col-md-2"})
             <div class="col-md-10">
                 @Html.ValidationMessage("LawContractTemplateView.Name", "", new { @class = "text-danger" })
-                @Html.Editor("LawContractTemplateView.Name")
+                @Html.Editor("LawContractTemplateView.Name", "", new { @class = "form-control" })
             </div>
         </div>
         @Html.Hidden("LawContractTemplateView.LawFaceId", Model.LawFace.Id)

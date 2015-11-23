@@ -75,7 +75,7 @@ namespace FreeLance.Controllers
 			public HttpPostedFileBase File { get; set; }
 			public string UserId { get; set; }
 			public int LawContractTemplateId { get; set; }
-			//public int LawFaceId { get; set; }
+			public string LawFaceId { get; set; }
 			public DateTime StartDate { get; set; }
 			public DateTime EndDate { get; set; }
 		}
