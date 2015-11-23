@@ -6,6 +6,20 @@ using System.Net;
 using System.Web.Mvc;
 using FreeLance.Models;
 using Microsoft.AspNet.Identity;
+using FreeLance.Models;
+using System;
+using System.Collections.Generic;
+using System.Data.Entity.Migrations;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Web;
+using System.Web.DynamicData;
+using System.Web.Mvc;
+using Antlr.Runtime.Misc;
+using FreeLance.Code;
+using Microsoft.AspNet.Identity;
+using Novacode;
 
 namespace FreeLance.Controllers
 {
@@ -69,6 +83,7 @@ namespace FreeLance.Controllers
 		public class ProfileView
 		{
 			public String EmployerEmail { get; set; }
+            public String EmployerPhoto { get; set; }
 			public int OpenProblemsCount { get; set; }
 			public int OpenContractsCount { get; set; }
 			public int ClosedProblemsCount { get; set; }
@@ -306,7 +321,7 @@ namespace FreeLance.Controllers
 				Phone = "+7(916)0001122", // TODO
 				Name = employer.FIO,
 				isApproved = employer.IsApprovedByCoordinator == true ? true : false,
-				PhotoPath = "/Files/profile_pic.jpg", //TODO
+				PhotoPath = employer.PhotoPath, 
 				Id = id
                 
 			};
@@ -333,7 +348,7 @@ namespace FreeLance.Controllers
 				Email = employer.Email,
 				Phone = "+7(916)0001122", // TODO
 				Name = employer.FIO,
-				PhotoPath = "/Files/profile_pic.jpg", //TODO
+				PhotoPath = employer.PhotoPath, 
 				Id = employer.Id
 			};
 
@@ -564,6 +579,7 @@ namespace FreeLance.Controllers
 			ProfileView model = new ProfileView
 			{
 				EmployerEmail = employer.Email,
+                EmployerPhoto = employer.PhotoPath,
 				OpenContractsCount = db.ContractModels.Where(
 					c => c.Problem.Employer.Id == id && (c.Status == ContractStatus.Done 
 					|| c.Status == ContractStatus.InProgress || c.Status == ContractStatus.ClosedNotPaid
@@ -597,5 +613,31 @@ namespace FreeLance.Controllers
 			db.SaveChanges();
 			return View(user.EmailNotificationPolicy);
 		}
-	}
+
+        private string saveDocumentOnDisc(HttpPostedFileBase file, string dir, string location = "/App_Data/")
+        {
+            var ext = Path.GetExtension(file.FileName);
+            var fileName = User.Identity.GetUserId() + "_" + DateTime.Now.Ticks.ToString() + ext;
+            var path = Path.Combine(Server.MapPath("~" + location + dir + "/"), fileName);
+            file.SaveAs(path);
+            return location + dir + "/" + fileName;
+        }
+
+
+        [HttpPost]
+        public ActionResult UploadPhoto()
+        {
+            ApplicationUser user = db.Users.Find(User.Identity.GetUserId());
+            if (Request.Files.Count > 0)
+            {
+                var file = Request.Files[0];
+                if (file != null && file.ContentLength > 0)
+                {
+                    user.PhotoPath = saveDocumentOnDisc(file, "photo", "/Files/");
+                    db.SaveChanges();
+                }
+            }
+            return RedirectToAction("Profile");
+        }
+    }
 }
