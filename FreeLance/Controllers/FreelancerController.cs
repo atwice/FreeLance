@@ -984,7 +984,8 @@ namespace FreeLance.Controllers
 		public OpenProblemsInfo getOpenProblemsInfo(String sortOrder, string lastSort, string showSubscriptionsParam)
 		{
 			List<ProblemModels> problems = db.ProblemModels
-				.Where(p => p.Status == ProblemStatus.InProgress || p.Status == ProblemStatus.Opened)
+				.Where(p => (p.Status == ProblemStatus.InProgress || p.Status == ProblemStatus.Opened) 
+									&& p.Employer.IsApprovedByCoordinator == true)
 				.ToList();
 
 			OpenProblemsInfo model = new OpenProblemsInfo
