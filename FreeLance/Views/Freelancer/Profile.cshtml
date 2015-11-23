@@ -157,8 +157,15 @@
 			<div class="panel-body clearfix">
 				<div class="account-info-container">
 					<div class="photo-container">
-						<img class="image-item" src="@Model.FreelancerPhoto" alt="User photo">
-						@using (Html.BeginForm("UploadPhoto", "Freelancer", FormMethod.Post, new { enctype = "multipart/form-data", runat = "server", @class="form-container" }))
+                        @{
+                            var imgSrc = Model.FreelancerPhoto;
+                            if (imgSrc.IsEmpty())
+                            {
+                                imgSrc = "/Files/avatar.jpg";
+                            }
+
+                        }
+                        <img src="@imgSrc" class="img-thumbnail" style="margin-top: 20px;" height="200" width="200">
 						{
 							<input class="inputfile" type="file" accept=".jpg,.png" name="file" id="file" data-multiple-caption="{count} files selected">
 							<label for="file">
@@ -174,6 +181,24 @@
 							<a href="/Manage/ChangePassword" class="btn btn-info">Сменить пароль</a>
 						</p>
 					</div>
+				</div>
+			</div>
+		</div>
+					</p>
+				</div>
+				<div>
+					@using (Html.BeginForm("UploadPhoto", "Freelancer", FormMethod.Post, new {enctype = "multipart/form-data", runat = "server"}))
+					{
+						<span class="btn btn-default btn-file"> Загрузить фото <input type="file" accept=".jpg,.png" name="file" id="file"> </span>
+						<input type="submit" value="Отправить" class="btn btn-primary"/>
+					}
+				</div>
+				<br/>
+				<div>
+					<p>Email: @Model.FreelancerEmail</p>
+					<p>
+						<a href="/Manage/ChangePassword" class="btn btn-info">Сменить пароль</a>
+					</p>
 				</div>
 			</div>
 		</div>
