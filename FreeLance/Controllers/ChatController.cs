@@ -275,6 +275,19 @@ namespace FreeLance.Controllers
 			public bool IsOk { get; set; }
 		}
 
+		private static void updateLastVisitDate(int chatId, string userId) {
+			ApplicationUser user = db.Users.Find(userId);
+			ChatUserStatistic statistic = db.ChatUserStatistics
+				.Where(x => x.ChatId == chatId && x.User.Id == userId).SingleOrDefault();
+			if (statistic == null) {
+				statistic = new ChatUserStatistic { ChatId = chatId, User = user, LastVisit = DateTime.Now };
+				db.ChatUserStatistics.Add(statistic);
+			} else {
+				statistic.LastVisit = DateTime.Now;
+			}
+			db.SaveChanges();
+		}
+
 		[NonAction]
 		public static ChatResponse SendMessage(int chatId, int? parentId, string userId, string text) {
 			if (parentId != null) {
@@ -294,6 +307,7 @@ namespace FreeLance.Controllers
 					IsHidden = false
 				});
 				db.SaveChanges();
+				updateLastVisitDate(chatId, userId);
 				return new ChatResponse { Body = new { Status = "Ok", Result = new[] { fillMessage(msg) } }, IsOk = true };
 			} catch (Exception e) {
 				return new ChatResponse { Body = new { Status = "Error", Reason = e.Message }, IsOk = false };
@@ -303,16 +317,7 @@ namespace FreeLance.Controllers
 		[NonAction]
 		public static ChatResponse GetChatMessages(int chatId, string userId) {
 			try {
-				ApplicationUser user = db.Users.Find(userId);
-				ChatUserStatistic statistic = db.ChatUserStatistics
-					.Where(x => x.ChatId == chatId && x.User.Id == userId).SingleOrDefault();
-				if (statistic == null) {
-					statistic = new ChatUserStatistic { ChatId = chatId, User = user, LastVisit = DateTime.Now };
-					db.ChatUserStatistics.Add(statistic);
-				} else {
-					statistic.LastVisit = DateTime.Now;
-				}
-				db.SaveChanges();
+				updateLastVisitDate(chatId, userId);
 				return new ChatResponse { IsOk = true, Body = new {
 					Status = "Ok",
 					Result = db.ChatMessages.Where(msg => msg.ChatId == chatId).OrderBy(msg => msg.CreationDate)

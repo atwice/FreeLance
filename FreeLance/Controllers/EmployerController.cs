@@ -154,14 +154,16 @@ namespace FreeLance.Controllers
 					contract.Status == ContractStatus.InProgress ||
 					contract.Status == ContractStatus.Opened)
 				{
-					contractsData.Add(
+					int chatId = ChatController.FindContractChatId(contract.ContractId);
+                    int newMsgCount = ChatController.CalcUserInfo(User.Identity.GetUserId(), chatId).UnreadMessagesCount;
+                    contractsData.Add(
 					new ContractInProgressViewModel
 						{
 							FIO = contract.Freelancer.FIO,
 							freelancerId = contract.Freelancer.Id,
 							id = contract.ContractId,
 							status = contract.Status,
-							newMsgCount = 0, // TODO
+							newMsgCount = newMsgCount,
 							EndingDate = contract.EndingDate,
                             DeadlineDate = contract.DeadlineDate,
 							Cost = contract.Cost,
@@ -188,12 +190,16 @@ namespace FreeLance.Controllers
 						Name = p.Name,
 						EndingDate = p.DeadlineDate,
 						CreationDate = p.CreationDate,
-						NewMsgCount = 1, // TODO
+						NewMsgCount = 0,
                         Cost = p.Cost,
 						Id = p.ProblemId
 					}
 				)
 				.ToList();
+			foreach (ProblemInProgressViewModel problem in problemsInProgress) {
+				problem.NewMsgCount = ChatController.CalcUserInfo(User.Identity.GetUserId(),
+							ChatController.FindProblemChatId(problem.Id)).UnreadMessagesCount;
+            }
 			return problemsInProgress;
         }
 
@@ -214,10 +220,14 @@ namespace FreeLance.Controllers
 						SubscribersCount = p.Subscriptions.Count,
 						CreationDate = p.CreationDate,
 						EndingDate = p.DeadlineDate,
-						NewMsgCount = 0 // TODO
+						NewMsgCount = 0 
 					}
 				)
 				.ToList();
+			foreach (ProblemOpenViewModel problem in openProblems) {
+				problem.NewMsgCount = ChatController.CalcUserInfo(User.Identity.GetUserId(),
+							ChatController.FindProblemChatId(problem.Id)).UnreadMessagesCount;
+			}
 			return openProblems;
         }
 
