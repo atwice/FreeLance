@@ -33,6 +33,8 @@ namespace FreeLance.Models {
 		public DateTime CreationDate { get; set; }
 		[DataType(DataType.DateTime)]
 		public DateTime? ModificationDate { get; set; }
+		[Required]
+		public bool IsHidden { get; set; }
 	}
 
 	public class ProblemChat {

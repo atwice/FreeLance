@@ -63,7 +63,7 @@ namespace FreeLance {
 			if (!ChatController.HasAccess(userId, chatId)) {
 				throw new UnauthorizedAccessException();
 			}
-			ChatController.ChatResponse response = ChatController.GetChatMessages(chatId);
+			ChatController.ChatResponse response = ChatController.GetChatMessages(chatId, userId);
 			if (response.IsOk) {
 				Clients.Client(Context.ConnectionId).newMessages(response.Body);
 			} else {

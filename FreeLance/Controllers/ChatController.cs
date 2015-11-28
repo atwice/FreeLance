@@ -21,52 +21,77 @@ namespace FreeLance.Controllers
 		public class ChatVR {
 			public int ChatId { get; set; }
 			public string UserName { get; set; }
+		}
+
+		public class ChatUserInfo {
+			public int UnreadMessagesCount;
+		}
+
+		[NonAction]
+		public static ChatUserInfo CalcUserInfo(string userId, int chatId) {
+			if (!db.Chats.Where(x => x.Id == chatId).Any()) {
+				return null;
+			}
+			ChatUserStatistic statistic = db.ChatUserStatistics
+				.Where(x => x.ChatId == chatId && x.User.Id == userId).SingleOrDefault();
+			DateTime lastVisit = DateTime.MinValue;
+			if (statistic != null) {
+				lastVisit = statistic.LastVisit;
+			}
+			return new ChatUserInfo {
+				UnreadMessagesCount = db.ChatMessages.Where(x => x.ChatId == chatId && x.CreationDate > lastVisit).Count()
+			};
 		} 
 
-		public ActionResult ProblemChat(int problemId) {
+		[NonAction]
+		public static int FindProblemChatId(int problemId) {
 			ProblemChat problemChat = db.ProblemChats.Where(x => x.Problem.ProblemId == problemId).
                 Include(x => x.Chat).SingleOrDefault();
 			if (problemChat == null) {
 				ProblemModels problem = db.ProblemModels.Find(problemId);
-				if (problem == null) {
-					return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-				}
-				try {
-					Chat chat = db.Chats.Add(new Chat { Owner = ChatOwner.Problem });
-					problemChat = new Models.ProblemChat { Chat = chat, Problem = problem };
-					db.ProblemChats.Add(problemChat);
-					db.SaveChanges();
-				} catch (Exception e) {
-					return new HttpStatusCodeResult(HttpStatusCode.BadRequest, e.Message);
-				}
+				
+				Chat chat = db.Chats.Add(new Chat { Owner = ChatOwner.Problem });
+				problemChat = new Models.ProblemChat { Chat = chat, Problem = problem };
+				db.ProblemChats.Add(problemChat);
+				db.SaveChanges();
 			}
-			return PartialView("CreateChat", new ChatVR {
-				ChatId = problemChat.Chat.Id,
-				UserName = db.Users.Find(User.Identity.GetUserId()).FIO
-			});
+			return problemChat.Chat.Id;
+		}
+
+		[NonAction]
+		public static int FindContractChatId(int contractId) {
+			ContractChat contractChat = db.ContractChats.Where(x => x.Contract.ContractId == contractId)
+				.Include(x => x.Chat).SingleOrDefault();
+			if (contractChat == null) {
+				ContractModels contract = db.ContractModels.Find(contractId);
+				Chat chat = db.Chats.Add(new Chat { Owner = ChatOwner.Contract });
+				contractChat = new Models.ContractChat { Chat = chat, Contract = contract };
+				db.ContractChats.Add(contractChat);
+				db.SaveChanges();
+			}
+			return contractChat.Chat.Id;
+		}
+
+		public ActionResult ProblemChat(int problemId) {
+			try {
+				return PartialView("CreateChat", new ChatVR {
+					ChatId = FindProblemChatId(problemId),
+					UserName = db.Users.Find(User.Identity.GetUserId()).FIO
+				});
+			} catch (Exception e) {
+				return new HttpStatusCodeResult(HttpStatusCode.BadRequest, e.Message);
+			}
 		}
 
 		public ActionResult ContractChat(int contractId) {
-			ContractChat contractChat = db.ContractChats.Where(x => x.Contract.ContractId == contractId)
-                .Include(x => x.Chat).SingleOrDefault();
-			if (contractChat == null) {
-				ContractModels contract = db.ContractModels.Find(contractId);
-				if (contract == null) {
-					return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-				}
-				try {
-					Chat chat = db.Chats.Add(new Chat { Owner = ChatOwner.Contract });
-					contractChat = new Models.ContractChat { Chat = chat, Contract = contract };
-					db.ContractChats.Add(contractChat);
-					db.SaveChanges();
-				} catch (Exception e) {
-					return new HttpStatusCodeResult(HttpStatusCode.BadRequest, e.Message);
-				}
+			try {
+				return PartialView("CreateChat", new ChatVR {
+					ChatId = FindContractChatId(contractId),
+					UserName = db.Users.Find(User.Identity.GetUserId()).FIO
+				});
+			} catch (Exception e) {
+				return new HttpStatusCodeResult(HttpStatusCode.BadRequest, e.Message);
 			}
-			return PartialView("CreateChat", new ChatVR {
-				ChatId = contractChat.Chat.Id,
-				UserName = db.Users.Find(User.Identity.GetUserId()).FIO
-			});
 		}
 
 		[NonAction]
@@ -265,7 +290,8 @@ namespace FreeLance.Controllers
 					Content = text,
 					User = db.Users.Find(userId),
 					CreationDate = DateTime.Now,
-					ModificationDate = null
+					ModificationDate = null,
+					IsHidden = false
 				});
 				db.SaveChanges();
 				return new ChatResponse { Body = new { Status = "Ok", Result = new[] { fillMessage(msg) } }, IsOk = true };
@@ -275,8 +301,18 @@ namespace FreeLance.Controllers
 		}
 
 		[NonAction]
-		public static ChatResponse GetChatMessages(int chatId) {
+		public static ChatResponse GetChatMessages(int chatId, string userId) {
 			try {
+				ApplicationUser user = db.Users.Find(userId);
+				ChatUserStatistic statistic = db.ChatUserStatistics
+					.Where(x => x.ChatId == chatId && x.User.Id == userId).SingleOrDefault();
+				if (statistic == null) {
+					statistic = new ChatUserStatistic { ChatId = chatId, User = user, LastVisit = DateTime.Now };
+					db.ChatUserStatistics.Add(statistic);
+				} else {
+					statistic.LastVisit = DateTime.Now;
+				}
+				db.SaveChanges();
 				return new ChatResponse { IsOk = true, Body = new {
 					Status = "Ok",
 					Result = db.ChatMessages.Where(msg => msg.ChatId == chatId).OrderBy(msg => msg.CreationDate)
@@ -313,7 +349,7 @@ namespace FreeLance.Controllers
 				UserAvatar = "/Content/Avatars/default.png",
 				CreatedByCurrentUser = msg.User.Id,
 				CanReply = true,
-				Date = (Int64) (msg.CreationDate.Subtract(new DateTime(1970, 1, 1, 0, 0, 0))).TotalMilliseconds,
+				Date = (Int64) (msg.CreationDate.Subtract(new DateTime(1970, 1, 1, 0, 0, 0))).TotalMilliseconds
 				//Modified = true,
 			};
 		}

@@ -535,16 +535,22 @@ namespace FreeLance.Controllers
 			return model;
 		}
 
-		private int getContractCommentsNumber(long contractId)
+		private int getContractCommentsNumber(int contractId, string userId)
 		{
-			// todo get right new messages number
-			return 6;
+			int number = 0;
+			try {
+				number = ChatController.FindContractChatId(contractId);
+			} catch (Exception) {}
+			return ChatController.CalcUserInfo(userId, number).UnreadMessagesCount;
 		}
 
-		private int getProblemCommentsNumber(long problemId)
+		private int getProblemCommentsNumber(int problemId, string userId) 
 		{
-			// todo get right new messages number
-			return 5;
+			int number = 0;
+			try {
+				number = ChatController.FindProblemChatId(problemId);
+			} catch (Exception) {}
+			return ChatController.CalcUserInfo(userId, number).UnreadMessagesCount;
 		}
 
 		private List<ContractHomeViewModel> getContractsInState(string userId, ContractStatus status)
@@ -557,7 +563,7 @@ namespace FreeLance.Controllers
 				result.Add(new ContractHomeViewModel()
 				{
 					Author = contract.Problem.Employer.FIO,
-					CommentNumber = getContractCommentsNumber(contract.ContractId),
+					CommentNumber = getContractCommentsNumber(contract.ContractId, userId),
 					ContractId = contract.ContractId,
 					Deadline = contract.EndingDate,
 					Name = contract.Problem.Name
@@ -580,7 +586,7 @@ namespace FreeLance.Controllers
 
 				result.Add(new ProblemHomeViewModel()
 				{
-					CommentNumber = getProblemCommentsNumber(problem.ProblemId),
+					CommentNumber = getProblemCommentsNumber(problem.ProblemId, userId),
 					Money = problem.Cost,
 					Name = problem.Name,
 					ProblemId = problem.ProblemId,

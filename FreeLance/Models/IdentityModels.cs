@@ -64,6 +64,7 @@ namespace FreeLance.Models
 		public System.Data.Entity.DbSet<FreeLance.Models.ContractChat> ContractChats { get; set; }
 		public System.Data.Entity.DbSet<FreeLance.Models.ProblemChat> ProblemChats { get; set; }
 		public System.Data.Entity.DbSet<FreeLance.Models.ChatMessage> ChatMessages { get; set; }
+		public System.Data.Entity.DbSet<FreeLance.Models.ChatUserStatistic> ChatUserStatistics { get; set; }
 
 	}
 }
