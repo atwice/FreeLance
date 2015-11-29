@@ -34,12 +34,15 @@
 
                             <div>
                                 <a href="/Contract/Details/@contract.ContractId" class="btn btn-default pull-left" role="button">К контракту</a>
-                                @using (Html.BeginForm("ApproveInContractByCoordinator", "Coordinator", 
-                                    new { contractId = contract.ContractId,
-                                            approvable = CoordinatorController.Approvable.Payment }))
+                                @using (Html.BeginForm("ApproveInContractByCoordinator", "Coordinator",
+            new
+            {
+                contractId = contract.ContractId,
+                approvable = CoordinatorController.Approvable.Payment
+            }))
                                 {
                                     <input type="submit" value="Выплата произведена" class="btn btn-info pull-right" />
-                                }
+}
                             </div>
                         </div>
                     </div>
@@ -80,7 +83,7 @@
                             </div>
                         </div>
                     </div>
-                }
+}
             }
         </div>
     </div>
@@ -93,67 +96,95 @@
             <thead>
                 <tr>
                     <th>
-                        <a href=@Url.Action("Details", "Freelancer", new {
+                        <a href=@Url.Action("Details", "Freelancer", new
+                           {
                                sortOrder = ViewBag.sortName,
                                info = Model.info,
                                id = Model.FreelancerId,
-                               lastSort = Model.lastSort })>
+                               lastSort = Model.lastSort
+                           })>
                             Задача
                         </a>
                     </th>
                     <th>
-                        <a href=@Url.Action("Details", "Freelancer", new {
+                        <a href=@Url.Action("Details", "Freelancer", new
+                           {
                                sortOrder = ViewBag.sortEmployer,
                                info = Model.info,
                                id = Model.FreelancerId,
-                               lastSort = Model.lastSort })>
+                               lastSort = Model.lastSort
+                           })>
                             Работодатель
                         </a>
                     </th>
                     <th>
-                        <a href=@Url.Action("Details", "Freelancer", new {
+                        <a href=@Url.Action("Details", "Freelancer", new
+                           {
                                sortOrder = ViewBag.sortCost,
                                info = Model.info,
                                id = Model.FreelancerId,
-                               lastSort = Model.lastSort })>
+                               lastSort = Model.lastSort
+                           })>
                             Цена
                         </a>
                     </th>
                     <th>
-                        <a href=@Url.Action("Details", "Freelancer", new {
+                        <a href=@Url.Action("Details", "Freelancer", new
+                           {
                                sortOrder = ViewBag.sortEndDate,
                                info = Model.info,
                                id = Model.FreelancerId,
-                               lastSort = Model.lastSort })>
+                               lastSort = Model.lastSort
+                           })>
                             Срок
                         </a>
                     </th>
+                    @* if (ViewBag.hideFailed)
+                            {
+                        <input id="hideFailed" type="checkbox" checked>}
+                    else
+                    {
+                        <input id="hideFailed" type="checkbox">}
+                    Скрыть расторгнутые*@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var problem in @Model.ProblemsView.SubscribedProblems)
+                @foreach (var contract in @Model.ProblemsView.archieve)
                 {
                     <tr>
                         <td>
-                            <a href="/Problem/Details/@problem.ProblemId">
-                                @problem.Name
+                            <a href="/Contract/Details/@contract.ContractId">
+                                @contract.ProblemName
                             </a>
                         </td>
                         <td>
-                            <a href="/Employer/Details/@problem.EmployerId">
-                                @problem.EmployerName
+                            <a href="/Employer/Details/@contract.EmployerId">
+                                @contract.EmployerName
                             </a>
                         </td>
                         <td>
-                            @problem.Cost
+                            @contract.Cost
                         </td>
                         <td>
-                            @problem.EndingDate
+                            @contract.EndingDate
                         </td>
                     </tr>}
             </tbody>
         </table>
     }
 </div>
+
+@{ 
+<script>
+    $('#hideFailed').click(function () {
+        var $this = $(this);
+        if ($this.is(':checked')) {
+            window.location.search = 'info=problems&hideFailed=true';
+        } else {
+            window.location.search = 'info=problems&hideFailed=false';
+        }
+    });
+</script>
+    }
 
 

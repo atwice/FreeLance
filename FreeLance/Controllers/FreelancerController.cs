@@ -234,7 +234,6 @@ namespace FreeLance.Controllers
 			public string lastSort;
 			public bool isApproved { get; set; }
 
-			public List<ContractInfoForEmployer> ClosedContracts { get; set; }
 			public DetailsProblemsView ProblemsView;
 			public DetailsProfileView ProfileView;
 		}
@@ -470,7 +469,7 @@ namespace FreeLance.Controllers
 			return model;
 		}
 
-		public DetailsForCoordinatorView getDetailsForCoordinator(ApplicationUser freelancer, String _info, String sortOrder, String lastSort)
+		public DetailsForCoordinatorView getDetailsForCoordinator(ApplicationUser freelancer, String _info, String sortOrder, String lastSort, bool hideFailed)
 		{
 			if (_info == null)
 			{
@@ -493,7 +492,6 @@ namespace FreeLance.Controllers
 				FreelancerRate = countRating(id),
 				FreelancerId = id,
 				isApproved = freelancer.IsApprovedByCoordinator == true ? true : false,
-				ClosedContracts = new List<ContractInfoForEmployer>(),
 
 				ProfileView = new DetailsProfileView
 				{
@@ -518,17 +516,10 @@ namespace FreeLance.Controllers
 					freelancer = freelancer,
 					UnpaidContracts = extractUnpaidContracts(id),
 					OpenContracts = extractOpenContracts(id),
+					archieve = getArchievedContracts(id, hideFailed),
 					SubscribedProblems = extractSubscribedProblems(id)
 				}
 			};
-
-			foreach (var contract in contracts)
-			{
-				if (checkIfContractClosed(contract.Status))
-				{
-					model.ClosedContracts.Add(getContractInfoForEmployer(contract));
-				}
-			}
 
 			model.ProblemsView.SubscribedProblems = sortProblemsForCoordinator(sortOrder, model.ProblemsView.SubscribedProblems, lastSort);
 			model.lastSort = sortOrder;
@@ -621,12 +612,13 @@ namespace FreeLance.Controllers
 		}
 
 		/// <param name="info">Профиль -> profile, Задачи -> problems, Отзывы -> comments</param>
-		public ActionResult Details(string id, String sortOrder, String info, String lastSort)
+		public ActionResult Details(string id, String sortOrder, String info, String lastSort, bool hideFailed = false)
 		{
 			if (id == null)
 			{
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
+			ViewBag.hideFailed = hideFailed;
 			ApplicationUser freelancerModel = db.Users.Find(id);
 			if (freelancerModel == null)
 			{
@@ -640,27 +632,9 @@ namespace FreeLance.Controllers
 
 			if (User.IsInRole("Coordinator"))
 			{
-				return PartialView("_DetailsForCoordinator", getDetailsForCoordinator(freelancerModel, info, sortOrder, lastSort));
+				return PartialView("_DetailsForCoordinator", getDetailsForCoordinator(freelancerModel, info, sortOrder, lastSort, hideFailed));
 			}
-			/*
-			DetailsView view = new DetailsView
-			{
-				freelancer = freelancerModel,
-				LawContracts = db.LawContracts
-				.Where(
-					c => c.User.Id == id)
-				.Select(
-					c => new FreelancerLawContractViewModel
-					{
-						LawFace = c.LawContractTemplate.LawFace.Name,
-						StartingDate = c.EndData,
-						EndingDate = c.EndData
-					})
-				.ToList(),
-				Rate = countRating(id)
-			};
-			return View(view);
-			*/
+			
 			return View();
 		}
 
@@ -708,6 +682,7 @@ namespace FreeLance.Controllers
 		public class DetailsProblemsView
 		{
 			public ApplicationUser freelancer { get; set; }
+			public List<ArchivedContractViewModel> archieve { get; set; }
 			public List<FreelancerContractViewModel> OpenContracts { get; set; }
 			public List<FreelancerContractViewModel> UnpaidContracts { get; set; }
 			public List<FreelancerProblemViewModel> SubscribedProblems { get; set; }
@@ -830,12 +805,8 @@ namespace FreeLance.Controllers
 			return contract;
 		}
 
-
-		public ActionResult Archive(String sortOrder, bool hideFailed = false)
+		private List<ArchivedContractViewModel> getArchievedContracts(String userId, bool hideFailed)
 		{
-			ViewBag.hideFailed = hideFailed;
-
-			string userId = User.Identity.GetUserId();
 			ICollection<ContractModels> contracts = db.ContractModels
 				.Where(
 					c => c.Freelancer.Id == userId
@@ -853,6 +824,15 @@ namespace FreeLance.Controllers
 					model.Add(getClosedContractData(contract));
 				}
 			}
+			return model;
+		}
+
+		public ActionResult Archive(String sortOrder, bool hideFailed = false)
+		{
+			ViewBag.hideFailed = hideFailed;
+
+			string userId = User.Identity.GetUserId();
+			List<ArchivedContractViewModel> model = getArchievedContracts(userId, hideFailed);
 
 			ViewBag.sortCost = "cost";
 			ViewBag.sortName = "name";
@@ -1214,9 +1194,6 @@ namespace FreeLance.Controllers
 			return RedirectToAction("Profile");
 		}
 
-
-
-
 		[HttpPost]
 		public ActionResult UploadPhoto()
 		{
@@ -1232,9 +1209,6 @@ namespace FreeLance.Controllers
 			}
 			return RedirectToAction("Profile");
 		}
-
-
-
 
 	}
 }
