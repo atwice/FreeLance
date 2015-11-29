@@ -256,6 +256,7 @@ namespace FreeLance.Controllers
 		}
 
 		// GET: Employer
+		[Authorize(Roles = "Employer")]
 		public ActionResult Home()
 		{
 			string userId = User.Identity.GetUserId();
@@ -511,6 +512,7 @@ namespace FreeLance.Controllers
 			return View(viewModel);
 		}
 
+		[Authorize(Roles = "Employer")]
 		public ActionResult Freelancers(String searchString, String sortOrder)
 		{
 			List<string> Ids = AccountController.GetApplicationUsersInRole(db, "Freelancer").Select(
