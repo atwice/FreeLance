@@ -226,7 +226,7 @@
 		</div>
 
 		@{ string userId = User.Identity.GetUserId(); }
-		@if (Model.FreelancerId == userId || Model.EmployerId == userId)
+		@if (Model.FreelancerId == userId || Model.EmployerId == userId || User.IsInRole("Coordinator"))
 		{
 			@Html.Action("ContractChat", "Chat", new { contractId = Model.ContractId });
 		}
