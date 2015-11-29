@@ -21,6 +21,7 @@ namespace FreeLance.Controllers
 		public class ChatVR {
 			public int ChatId { get; set; }
 			public string UserName { get; set; }
+			public bool CanHide { get; set; }
 		}
 
 		public class ChatUserInfo {
@@ -73,10 +74,12 @@ namespace FreeLance.Controllers
 		}
 
 		public ActionResult ProblemChat(int problemId) {
+			ApplicationUser user = db.Users.Find(User.Identity.GetUserId());
 			try {
 				return PartialView("CreateChat", new ChatVR {
 					ChatId = FindProblemChatId(problemId),
-					UserName = db.Users.Find(User.Identity.GetUserId()).FIO
+					UserName = user.FIO,
+					CanHide = checkUserIsInRole(user, "Coordinator")
 				});
 			} catch (Exception e) {
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest, e.Message);
@@ -84,10 +87,12 @@ namespace FreeLance.Controllers
 		}
 
 		public ActionResult ContractChat(int contractId) {
-			try {
+			ApplicationUser user = db.Users.Find(User.Identity.GetUserId());
+            try {
 				return PartialView("CreateChat", new ChatVR {
 					ChatId = FindContractChatId(contractId),
-					UserName = db.Users.Find(User.Identity.GetUserId()).FIO
+					UserName = user.FIO,
+					CanHide = checkUserIsInRole(user, "Coordinator")
 				});
 			} catch (Exception e) {
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest, e.Message);
@@ -111,6 +116,16 @@ namespace FreeLance.Controllers
 			}
 		}
 
+		[NonAction]
+		public static bool CanHideMessages(string userId, int chatId) {
+			ApplicationUser user = db.Users.Find(userId);
+			Chat chat = db.Chats.Find(chatId);
+			if (user == null || chat == null) {
+				return false;
+			}
+			return checkUserIsInRole(user, "Coordinator");
+		}
+
 		private static bool checkUserIsInRole(ApplicationUser user, string roleName) {
 			IdentityRole role = db.Roles.Where(r => r.Name == roleName).Single();
 			return user.Roles.Where(r => r.RoleId == role.Id).Any();
@@ -121,7 +136,8 @@ namespace FreeLance.Controllers
 			if (problemChat == null) {
 				return false;
 			}
-			if (checkUserIsInRole(user, "Freelancer") || problemChat.Problem.Employer.Id == user.Id) {
+			if (checkUserIsInRole(user, "Freelancer") || checkUserIsInRole(user, "Coordinator") 
+					|| problemChat.Problem.Employer.Id == user.Id) {
 				return true;
 			}
 			return false;
@@ -132,7 +148,8 @@ namespace FreeLance.Controllers
 			if (contrctChat == null) {
 				return false;
 			}
-			if (contrctChat.Contract.Freelancer.Id == user.Id || contrctChat.Contract.Problem.Employer.Id == user.Id) {
+			if (checkUserIsInRole(user, "Coordinator") || 
+					contrctChat.Contract.Freelancer.Id == user.Id || contrctChat.Contract.Problem.Employer.Id == user.Id) {
 				return true;
 			}
 			return false;
@@ -275,10 +292,9 @@ namespace FreeLance.Controllers
 			public bool IsOk { get; set; }
 		}
 
-		private static void updateLastVisitDate(int chatId, string userId) {
-			ApplicationUser user = db.Users.Find(userId);
+		private static void updateLastVisitDate(int chatId, ApplicationUser user) {
 			ChatUserStatistic statistic = db.ChatUserStatistics
-				.Where(x => x.ChatId == chatId && x.User.Id == userId).SingleOrDefault();
+				.Where(x => x.ChatId == chatId && x.User.Id == user.Id).SingleOrDefault();
 			if (statistic == null) {
 				statistic = new ChatUserStatistic { ChatId = chatId, User = user, LastVisit = DateTime.Now };
 				db.ChatUserStatistics.Add(statistic);
@@ -307,7 +323,8 @@ namespace FreeLance.Controllers
 					IsHidden = false
 				});
 				db.SaveChanges();
-				updateLastVisitDate(chatId, userId);
+				ApplicationUser user = db.Users.Find(userId);
+				updateLastVisitDate(chatId, user);
 				return new ChatResponse { Body = new { Status = "Ok", Result = new[] { fillMessage(msg) } }, IsOk = true };
 			} catch (Exception e) {
 				return new ChatResponse { Body = new { Status = "Error", Reason = e.Message }, IsOk = false };
@@ -317,34 +334,44 @@ namespace FreeLance.Controllers
 		[NonAction]
 		public static ChatResponse GetChatMessages(int chatId, string userId) {
 			try {
-				updateLastVisitDate(chatId, userId);
+				ApplicationUser user = db.Users.Find(userId);
+				bool showHidden = checkUserIsInRole(user, "Coordinator");
+				updateLastVisitDate(chatId, user);
 				return new ChatResponse { IsOk = true, Body = new {
 					Status = "Ok",
-					Result = db.ChatMessages.Where(msg => msg.ChatId == chatId).OrderBy(msg => msg.CreationDate)
-							   .Include(msg => msg.User).Select(fillMessage).ToArray()
+					Result = db.ChatMessages.Where(msg => msg.ChatId == chatId && (!msg.IsHidden || showHidden))
+											.OrderBy(msg => msg.CreationDate)
+											.Include(msg => msg.User).Select(fillMessage).ToArray()
 				}};
 			} catch (Exception e) {
 				return new ChatResponse { Body = new { Status = "Error", Reason = e.Message }, IsOk = false };
 			}
 		}
-		/*
-		private ActionResult deleteChatMessage(int? chatId, int? messageId) {
+		
+		[NonAction]
+		public static ChatResponse HideChatMessage(int chatId, int messageId, bool hide) {
 			try {
 				ChatMessage message = db.ChatMessages.Find(messageId);
 				if (message.ChatId != chatId) {
-					return Json(new { Status = "Error", Reason = "Invalid Chat Id for ChatMessage" });
+					return new ChatResponse {
+						IsOk = false,
+						Body = new { Status = "Error", Reason = "Invalid Chat Id for ChatMessage" }
+					};
 				}
-				db.ChatMessages.Remove(message);
+				message.IsHidden = hide;
 				db.SaveChanges();
-				return Json(new {
-					Status = "Ok",
-					Result = "Deleted"
-				});
+				return new ChatResponse {
+					IsOk = true,
+					Body = new { Status = "Ok", Hide = hide, MessageId = messageId }
+				};
 			} catch (Exception e) {
-				return Json(new { Status = "Error", Reason = e.Message });
+				return new ChatResponse {
+					IsOk = false,
+					Body = new { Status = "Error", Reason = e.Message }
+				};
 			}
 		}
-		*/
+		
 		private static Object fillMessage(ChatMessage msg) {
 			return new {
 				Id = msg.Id,
@@ -354,8 +381,8 @@ namespace FreeLance.Controllers
 				UserAvatar = "/Content/Avatars/default.png",
 				CreatedByCurrentUser = msg.User.Id,
 				CanReply = true,
-				Date = (Int64) (msg.CreationDate.Subtract(new DateTime(1970, 1, 1, 0, 0, 0))).TotalMilliseconds
-				//Modified = true,
+				Date = (Int64)(msg.CreationDate.Subtract(new DateTime(1970, 1, 1, 0, 0, 0))).TotalMilliseconds,
+				Hidden = msg.IsHidden
 			};
 		}
 	}

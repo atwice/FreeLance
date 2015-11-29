@@ -57,6 +57,18 @@ namespace FreeLance {
 			}
 		}
 
+		public void HideMessage(int chatId, int messageId, bool hide) {
+			string userId = Context.User.Identity.GetUserId();
+			if (!ChatController.CanHideMessages(userId, chatId)) {
+				throw new UnauthorizedAccessException();
+			}
+			ChatController.ChatResponse response = ChatController.HideChatMessage(chatId, messageId, hide);
+			if (response.IsOk) {
+				Clients.Group(chatId.ToString()).hideMessage(response.Body);
+			} else {
+				Clients.Client(Context.ConnectionId).errorSendMessage(response.Body);
+			}
+		}
 
 		public void JoinChat(int chatId) {
 			string userId = Context.User.Identity.GetUserId();

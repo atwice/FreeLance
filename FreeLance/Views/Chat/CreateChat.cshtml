@@ -49,12 +49,24 @@
 	var CHAT_ID = @Model.ChatId;
 
 	function showChatMessage(data) {
-		$( "#chat" ).chat().addMessage({
+		var chat = $( "#chat" ).chat();
+		chat.addMessage({
 			name: data.Author,
 			text: data.Comment,
 			photoUrl: data.UserAvatar,
-			isStarred: data.CreatedByCurrentUser
+			isStarred: data.CreatedByCurrentUser,
+			canHide: @Model.CanHide.ToString().ToLower() ,
+			hide: data.Hidden,
+			id: data.Id,
+			hideFunction: function(id, isHide) { 
+				$.connection.chatHub.server.hideMessage(CHAT_ID, id, isHide); 
+			}
 		});
+	}
+
+	function hideChatMessage(messageId, hide) {
+		var chat = $( "#chat" ).chat();
+		chat.hideMessage(messageId, hide, @Model.CanHide.ToString().ToLower()); 
 	}
 
 	function chatAddText(text, isError) {
@@ -77,6 +89,13 @@
 				for (var i = 0; i < result.Result.length; i++) {
 					showChatMessage(result.Result[i]);
 				}
+			} else {
+				chatAddText(result.Reason, true);
+			}
+		};
+		chat.client.hideMessage = function (result) {
+			if (result.Status == 'Ok') {
+				hideChatMessage(result.MessageId, result.Hide);
 			} else {
 				chatAddText(result.Reason, true);
 			}

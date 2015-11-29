@@ -13,7 +13,7 @@
 // Конфиг, с функциями построения дома для сообщений
 var DEFAULT_CONFIG = {
 	formMessageDom: function( messageObject ) {
-		var dom = $("<div class='chat-message-container row'></div>");
+		var dom = $("<div val='" + messageObject.id + "' class='chat-message-container row'></div>");
 
 		// Собираем левую часть
 		var messageLeft = $("<div class='chat-message-left'><img src='" + messageObject.photoUrl +"'></img></div>");
@@ -28,10 +28,23 @@ var DEFAULT_CONFIG = {
 		name.text( messageObject.name );
 		// Текст сообщения
 		var text = $("<div class='chat-text'></div>");
-		text.text( messageObject.text );
+		text.text(messageObject.text);
+
 		// Собираем правую часть
-		messageRight.append( name );
-		messageRight.append( text );
+		messageRight.append(name);
+		messageRight.append(text);
+
+		// Удаление
+		if (messageObject.canHide) {
+			var buttonText = messageObject.hide ? 'Show' : 'Hide';
+			var buttonId = messageObject.id;
+			var hideButton = $("<div class='col-md-12'><button val='" + buttonId + "' class='btn btn-primary pull-right'>" +
+				buttonText + "</button></div>");
+			hideButton.click(function () {
+				messageObject.hideFunction(buttonId, $(this).text() == 'Hide');
+			});
+			messageRight.append(hideButton);
+		}
 		dom.append( messageRight );
 		return dom;
 	},
@@ -63,6 +76,15 @@ function Chat( $selector, config ) {
 
 	self.addText = function( textObject ) {
 		self.$selector.append( self.config.formTextDom( textObject ));
+	};
+
+	self.hideMessage = function (messageId, hide, show) {
+		var buttonText = hide ? 'Show' : 'Hide';
+		self.$selector.find("button[val='" + messageId + "']").text(buttonText);
+		if (!show) {
+			var vis = hide ? 'hidden' : 'visible';
+			$selector.find(".chat-message-container[val='" + messageId + "']").css('visibility', vis);
+		}
 	};
 
 	self.clear = function () {

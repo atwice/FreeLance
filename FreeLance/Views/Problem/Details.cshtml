@@ -270,7 +270,7 @@
 			</div>
 		</div>
 
-		@if (User.IsInRole("Freelancer") || Model.EmployerId == User.Identity.GetUserId())
+		@if (User.IsInRole("Freelancer") || User.IsInRole("Coordinator") || Model.EmployerId == User.Identity.GetUserId())
 		{
 			@Html.Action("ProblemChat", "Chat", new { problemId = Model.ProblemId });
 		}
