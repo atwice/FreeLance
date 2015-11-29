@@ -175,10 +175,12 @@ namespace FreeLance.Controllers
 		}
 
 		// GET: Problem
+		[Authorize(Roles = "Employer")]
 		public ActionResult Index()
 		{
 			return View(db.ProblemModels.ToList());
 		}
+
 
 		[Authorize(Roles = "Employer")]
 		public ActionResult Create()
@@ -229,6 +231,7 @@ namespace FreeLance.Controllers
 		}
 
 		// GET: Problem/Edit/5
+		[Authorize(Roles = "Employer")]
 		public ActionResult Edit(int? id)
 		{
 			if (id == null)
@@ -248,6 +251,7 @@ namespace FreeLance.Controllers
 		// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
 		[HttpPost]
 		[ValidateAntiForgeryToken]
+		[Authorize(Roles = "Employer")]
 		public ActionResult Edit([Bind(Include = "ProblemId,Name,Description,Status")] ProblemModels problemModels)
 		{
 			if (ModelState.IsValid)
@@ -260,6 +264,7 @@ namespace FreeLance.Controllers
 		}
 
 		// GET: Problem/Delete/5
+		[Authorize(Roles = "Admin")]
 		public ActionResult Delete(int? id)
 		{
 			if (id == null)
@@ -277,6 +282,7 @@ namespace FreeLance.Controllers
 		// POST: Problem/Delete/5
 		[HttpPost, ActionName("Delete")]
 		[ValidateAntiForgeryToken]
+		[Authorize(Roles = "Admin")]
 		public ActionResult DeleteConfirmed(int id)
 		{
 			ProblemModels problemModels = db.ProblemModels.Find(id);
