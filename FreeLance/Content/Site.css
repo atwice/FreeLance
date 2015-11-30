@@ -45,7 +45,7 @@ textarea {
     color: royalblue;
 }
 
-input[type="file"] {
+.inputfile {
 	width: 0.1px;
 	height: 0.1px;
 	opacity: 0;
@@ -54,7 +54,7 @@ input[type="file"] {
 	z-index: -1;
 }
 
-input[type="file"] + label {
+.inputfile + label {
 	align-self: center;
 	border: solid;
 	border-color: #428bca;
@@ -69,8 +69,8 @@ input[type="file"] + label {
 	text-overflow: ellipsis;
 }
 
-input[type="file"]:focus + label,
-input[type="file"] + label:hover {
+.inputfile:focus + label,
+.inputfile + label:hover {
 	background-color: #F8F8FF;
 }
 
