@@ -4,7 +4,7 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Web;
+using FreeLance.Code;
 using System.Web.Mvc;
 using FreeLance.Models;
 using Microsoft.AspNet.Identity;
@@ -35,7 +35,8 @@ namespace FreeLance.Controllers
 			public String ProblemName { get; set; }
 			public String FreelancerName { get; set; }
 			public String FreelancerId { get; set; }
-			public String PhotoPath { get; set; }
+			public String FreelancerPhotoPath { get; set; }
+			public String EmployerPhotoPath { get; set; }
 			public String FreelancerEmail { get; set; }
 			public String Details { get; set; }
 			public String CreatingDate { get; set; }
@@ -78,7 +79,8 @@ namespace FreeLance.Controllers
 				ProblemId = c.Problem.ProblemId,
 				Status = c.Status,
 				Details = c.Details,
-				PhotoPath = "/Content/placeholder_avatar.png", //TODO
+				EmployerPhotoPath = Utils.GetPhotoUrl(c.Problem.Employer.PhotoPath),
+				FreelancerPhotoPath = Utils.GetPhotoUrl(c.Freelancer.PhotoPath),
 				ContractId = c.ContractId
 			};
 

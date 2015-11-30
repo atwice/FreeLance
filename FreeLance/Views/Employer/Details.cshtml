@@ -1,4 +1,5 @@
 ﻿@model FreeLance.Controllers.EmployerController.DetailsForCoordinatorView
+@using FreeLance.Code;
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewBag.Title = Model.Employer.FIO;
@@ -36,15 +37,7 @@ else
 
 <div class="row">
     <div class="col-md-2">
-        @{
-            var imgSrc = Model.Employer.PhotoPath;
-            if (imgSrc.IsEmpty())
-            {
-                imgSrc = "/Files/avatar.jpg";
-            }
-
-        }
-        <img src="@imgSrc" class="img-thumbnail" style="margin-top: 20px;" height="200" width="200">
+        <img src="@Utils.GetPhotoUrl(Model.Employer.PhotoPath)" class="img-thumbnail" style="margin-top: 20px;" height="200" width="200">
     </div>
     <div class="col-md-4">
         <h2><strong>@Model.Employer.FIO</strong></h2>

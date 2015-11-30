@@ -110,7 +110,6 @@
 						<div class="container-name-and-email">
 							@if (User.IsInRole("Employer"))
 							{
-								
 								<a href="/Freelancer/Details/@Model.FreelancerId">
 									<h3 class="item-name">@Model.FreelancerName</h3>
 								</a>
@@ -120,7 +119,6 @@
 							}
 							else
 							{
-								
 								<a href="/Employer/Details/@Model.EmployerId">
 									<h3 class="item-name">@Model.EmployerName</h3>
 								</a>
@@ -129,7 +127,14 @@
 								</div>
 							}
 						</div>
-						<img src=@Model.PhotoPath class="item-avatar">
+						@if (User.IsInRole("Employer"))
+						{
+							<img src=@Model.FreelancerPhotoPath class="item-avatar">
+						}
+						else
+						{
+							<img src=@Model.EmployerPhotoPath class="item-avatar">
+						}
 					</div>
 				</div>
 			</div>
