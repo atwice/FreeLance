@@ -128,15 +128,7 @@
 			<div class="panel-body clearfix">
 				<div class="account-info-container">
 					<div class="photo-container">
-						@{
-							var imgSrc = Model.FreelancerPhoto;
-							if (imgSrc.IsEmpty())
-							{
-								imgSrc = "/Files/avatar.jpg";
-							}
-
-						}
-						<img class="image-item" src="@imgSrc" alt="User photo">
+						<img class="image-item" src="@Model.FreelancerPhoto" alt="User photo">
 						@using (Html.BeginForm("UploadPhoto", "Freelancer", FormMethod.Post, new { enctype = "multipart/form-data", runat = "server", @class = "form-container" }))
 						{
 							<input class="inputfile" type="file" accept=".jpg,.png" name="file" id="file" data-multiple-caption="{count} files selected">

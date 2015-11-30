@@ -1021,7 +1021,7 @@ namespace FreeLance.Controllers
 			ProfileView model = new ProfileView
 			{
 				FreelancerEmail = freelancer.Email,
-				FreelancerPhoto = freelancer.PhotoPath,
+				FreelancerPhoto = Utils.GetPhotoUrl(freelancer.PhotoPath),
 				OpenContractsCount = db.ContractModels.Where(
 					c => c.Freelancer.Id == id && (c.Status == ContractStatus.Done
 					|| c.Status == ContractStatus.InProgress || c.Status == ContractStatus.ClosedNotPaid

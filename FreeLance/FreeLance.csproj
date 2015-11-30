@@ -192,6 +192,7 @@
     <Compile Include="Code\EmailManager.cs" />
     <Compile Include="Code\DocumentManager.cs" />
     <Compile Include="Code\LawModelsManager.cs" />
+    <Compile Include="Code\Utils.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\ChatController.cs" />
     <Compile Include="Controllers\CommonViews.cs" />
