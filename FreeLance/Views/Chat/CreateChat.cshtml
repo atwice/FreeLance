@@ -76,6 +76,10 @@
 		textObject.style = isError ? "error" : "default";
 		chat.addText( textObject );
 	};
+
+	function clearInputText() {
+		$( "#messageText" ).val("");
+	}
 	$(function () {
 		// Declare a proxy to reference the hub.
 		var chat = $.connection.chatHub;
@@ -88,6 +92,7 @@
 			if (result.Status == 'Ok') {
 				for (var i = 0; i < result.Result.length; i++) {
 					showChatMessage(result.Result[i]);
+					clearInputText();
 				}
 			} else {
 				chatAddText(result.Reason, true);
