@@ -127,7 +127,7 @@ namespace FreeLance.Controllers
 		}
 
 		private static bool checkUserIsInRole(ApplicationUser user, string roleName) {
-			IdentityRole role = db.Roles.Where(r => r.Name == roleName).Single();
+			IdentityRole role = new ApplicationDbContext().Roles.Where(r => r.Name == roleName).Single();
 			return user.Roles.Where(r => r.RoleId == role.Id).Any();
 		}
 
@@ -373,13 +373,14 @@ namespace FreeLance.Controllers
 		}
 		
 		private static Object fillMessage(ChatMessage msg) {
+			ApplicationUser user = db.Users.Find(msg.User.Id); // в msg из бд юзер заполняется не полностью
 			return new {
 				Id = msg.Id,
 				Author = msg.User.FIO,
 				Comment = msg.Content,
 				ParentId = msg.ParentId,
 				UserAvatar = "/Content/Avatars/default.png",
-				CreatedByCurrentUser = msg.User.Id,
+				IsStarred = checkUserIsInRole(user, "Employer") || checkUserIsInRole(user, "Coordinator"),
 				CanReply = true,
 				Date = (Int64)(msg.CreationDate.Subtract(new DateTime(1970, 1, 1, 0, 0, 0))).TotalMilliseconds,
 				Hidden = msg.IsHidden
