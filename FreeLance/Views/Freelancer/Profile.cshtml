@@ -157,22 +157,23 @@
 			<div class="panel-body clearfix">
 				<div class="account-info-container">
 					<div class="photo-container">
-                        @{
-                            var imgSrc = Model.FreelancerPhoto;
-                            if (imgSrc.IsEmpty())
-                            {
-                                imgSrc = "/Files/avatar.jpg";
-                            }
+						@{
+							var imgSrc = Model.FreelancerPhoto;
+							if (imgSrc.IsEmpty())
+							{
+								imgSrc = "/Files/avatar.jpg";
+							}
 
-                        }
-                        <img src="@imgSrc" class="img-thumbnail" style="margin-top: 20px;" height="200" width="200">
+						}
+						<img class="image-item" src="@imgSrc" alt="User photo">
+						@using (Html.BeginForm("UploadPhoto", "Freelancer", FormMethod.Post, new { enctype = "multipart/form-data", runat = "server", @class = "form-container" }))
 						{
 							<input class="inputfile" type="file" accept=".jpg,.png" name="file" id="file" data-multiple-caption="{count} files selected">
 							<label for="file">
 								<span class="filename">Выберите файл…</span>
 							</label>
 							<input type="submit" value="Загрузить фото" class="btn btn-primary" />
-							
+
 						}
 					</div>
 					<div class="another-info-container">
@@ -184,24 +185,7 @@
 				</div>
 			</div>
 		</div>
-					</p>
-				</div>
-				<div>
-					@using (Html.BeginForm("UploadPhoto", "Freelancer", FormMethod.Post, new {enctype = "multipart/form-data", runat = "server"}))
-					{
-						<span class="btn btn-default btn-file"> Загрузить фото <input type="file" accept=".jpg,.png" name="file" id="file"> </span>
-						<input type="submit" value="Отправить" class="btn btn-primary"/>
-					}
-				</div>
-				<br/>
-				<div>
-					<p>Email: @Model.FreelancerEmail</p>
-					<p>
-						<a href="/Manage/ChangePassword" class="btn btn-info">Сменить пароль</a>
-					</p>
-				</div>
-			</div>
-		</div>
+
 
 		<div class="panel panel-default">
 			<div class="panel-heading">
