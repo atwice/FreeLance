@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
+using FreeLance.Code;
 using System.Web.Mvc;
 using FreeLance.Models;
 using Microsoft.AspNet.Identity;
 using System.Net;
 using System.Data;
 using System.Data.Entity;
-using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace FreeLance.Controllers
@@ -22,6 +20,7 @@ namespace FreeLance.Controllers
 			public int ChatId { get; set; }
 			public string UserName { get; set; }
 			public bool CanHide { get; set; }
+			public string PhotoPath { get; set; }
 		}
 
 		public class ChatUserInfo {
@@ -76,10 +75,12 @@ namespace FreeLance.Controllers
 		public ActionResult ProblemChat(int problemId) {
 			ApplicationUser user = db.Users.Find(User.Identity.GetUserId());
 			try {
-				return PartialView("CreateChat", new ChatVR {
+				return PartialView("CreateChat", new ChatVR
+				{
 					ChatId = FindProblemChatId(problemId),
 					UserName = user.FIO,
-					CanHide = checkUserIsInRole(user, "Coordinator")
+					CanHide = checkUserIsInRole(user, "Coordinator"),
+					PhotoPath = Utils.GetPhotoUrl(user.PhotoPath)
 				});
 			} catch (Exception e) {
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest, e.Message);
@@ -92,7 +93,8 @@ namespace FreeLance.Controllers
 				return PartialView("CreateChat", new ChatVR {
 					ChatId = FindContractChatId(contractId),
 					UserName = user.FIO,
-					CanHide = checkUserIsInRole(user, "Coordinator")
+					CanHide = checkUserIsInRole(user, "Coordinator"),
+					PhotoPath = Utils.GetPhotoUrl(user.PhotoPath)
 				});
 			} catch (Exception e) {
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest, e.Message);

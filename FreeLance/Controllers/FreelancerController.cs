@@ -438,7 +438,7 @@ namespace FreeLance.Controllers
 				FreelancerEmail = freelancer.Email,
 				FreelancerPhone = "+7(916)0001122", // TODO
 				FreelancerName = freelancer.FIO,
-				PhotoPath = freelancer.PhotoPath, //TODO
+				PhotoPath = Utils.GetPhotoUrl(freelancer.PhotoPath),
 				FreelancerRate = getFreelancerRate(contracts),
 				FreelancerId = freelancer.Id,
 				ClosedContracts = new List<ContractInfoForEmployer>(),
@@ -488,7 +488,7 @@ namespace FreeLance.Controllers
 				General = documents.General,
 				Passport = documents.Passport,
 				Bank = documents.Bank,
-				PhotoPath = freelancer.PhotoPath, //TODO
+				PhotoPath = Utils.GetPhotoUrl(freelancer.PhotoPath),
 				FreelancerRate = countRating(id),
 				FreelancerId = id,
 				isApproved = freelancer.IsApprovedByCoordinator == true ? true : false,

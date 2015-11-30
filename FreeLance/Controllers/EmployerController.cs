@@ -361,7 +361,7 @@ namespace FreeLance.Controllers
 				Email = employer.Email,
 				Phone = "+7(916)0001122", // TODO
 				Name = employer.FIO,
-				PhotoPath = employer.PhotoPath, 
+				PhotoPath = Utils.GetPhotoUrl(employer.PhotoPath), 
 				Id = employer.Id
 			};
 
@@ -593,7 +593,7 @@ namespace FreeLance.Controllers
 			ProfileView model = new ProfileView
 			{
 				EmployerEmail = employer.Email,
-                EmployerPhoto = employer.PhotoPath,
+                EmployerPhoto = Utils.GetPhotoUrl(employer.PhotoPath),
 				OpenContractsCount = db.ContractModels.Where(
 					c => c.Problem.Employer.Id == id && (c.Status == ContractStatus.Done 
 					|| c.Status == ContractStatus.InProgress || c.Status == ContractStatus.ClosedNotPaid

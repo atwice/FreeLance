@@ -4,15 +4,12 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Web;
+using FreeLance.Code;
 using System.Web.Mvc;
 using FreeLance.Models;
-using FreeLance.Controllers;
 using Microsoft.AspNet.Identity;
 
 
-using System.Data.Entity.Validation;
-using System.Diagnostics;
 
 namespace FreeLance.Controllers
 {
@@ -105,7 +102,7 @@ namespace FreeLance.Controllers
 				ProblemId = p.ProblemId,
 				Status = p.Status,
 				EmployerId = p.Employer.Id,
-				PhotoPath = "/Content/placeholder_avatar.png", //TODO
+				PhotoPath = Utils.GetPhotoUrl(p.Employer.PhotoPath), 
 				EmployerName = p.Employer.FIO,
 				EmployerEmail = p.Employer.Email,
 				ProblemName = p.Name,
