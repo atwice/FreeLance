@@ -45,7 +45,34 @@ textarea {
     color: royalblue;
 }
 
+input[type="file"] {
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}
 
+input[type="file"] + label {
+	align-self: center;
+	border: solid;
+	border-color: #428bca;
+	border-radius: 8px;
+	font-size: 14px;
+	font-weight: 700;
+	color: #428bca;
+	background-color: white;
+	display: inline-block;
+	padding: 0.625rem 1.25rem;
+	margin: 10px 0 10px 0;
+	text-overflow: ellipsis;
+}
+
+input[type="file"]:focus + label,
+input[type="file"] + label:hover {
+	background-color: #F8F8FF;
+}
 
 
 

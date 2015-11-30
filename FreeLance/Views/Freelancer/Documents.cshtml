@@ -3,35 +3,77 @@
     ViewBag.Title = "Documents";
 }
 
+@section css {
+	<style>
+		.success-text {
+			align-self: center;
+			font-size: 14px;
+			font-weight: 700;
+			color: #428bca;
+			margin-right: 20px;
+			border: solid;
+			border-color: #428bca;
+			border-radius: 8px;
+			padding: 0.625rem 1.25rem;
+		}
+
+		.form-container {
+			display: flex;
+			flex-direction: column;
+			margin-right: 20px;
+			justify-content: center;
+		}
+
+		.container-documents {
+			display: flex;
+			flex-direction: row;
+			justify-content: flex-start
+		}
+	</style>
+}
+
+
+
 <h2>Документы</h2>
+<div class="row">
+	<div class="col-md-6">
+		<div class="container-documents">
+			@if (Model.Photos.PassportFace != null)
+			{
+				<span class="success-text">Паспорт загружен</span>
+			}
+			else
+			{
+				using (Html.BeginForm("UploadPassportFace", "Freelancer", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-container" }))
+				{
 
-@using (Html.BeginForm("UploadPassportFace", "Freelancer", FormMethod.Post, new { enctype = "multipart/form-data" }))
-{
-    if (Model.Photos.PassportFace != null)
-    {
-        <span class="btn btn-default btn-file"> Паспорт загружен <input type="file" name="file" id="file"> </span>
-            <input type="submit" value="Отправить" class="btn btn-success" />
-    }
-    else
-    {
-        <span class="btn btn-default btn-file"> Отправить паспорт <input type="file" name="file" id="file"> </span>
-            <input type="submit" value="Отправить" class="btn btn-primary" />
-    }
-}
+					<input class="inputfile" type="file" accept=".jpg,.png" name="file" id="file-1" data-multiple-caption="{count} files selected">
+					<label for="file-1">
+						<span class="filename">Выберите файл…</span>
+					</label>
+					<input type="submit" value="Отправить паспорт" class="btn btn-primary" />
+				}
+			}
+			@if (Model.Photos.PassportRegistration != null)
+			{
+				<span class="success-text"> Регистрация загружена </span>
+			}
+			else
+			{
+				using (Html.BeginForm("UploadPassportRegistration", "Freelancer", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-container" }))
+				{
+					<input class="inputfile" type="file" accept=".jpg,.png" name="file" id="file-2" data-multiple-caption="{count} files selected">
+					<label for="file-2">
+						<span class="filename">Выберите файл…</span>
+					</label>
+					<input type="submit" value="Отправить регистрацию" class="btn btn-primary" />
+				}
+			}
 
-@using (Html.BeginForm("UploadPassportRegistration", "Freelancer", FormMethod.Post, new { enctype = "multipart/form-data" }))
-{
-    if (Model.Photos.PassportRegistration != null)
-    {
-        <span class="btn btn-default btn-file"> Регистрация загружена <input type="file" name="file" id="file"> </span>
-            <input type="submit" value="Отправить" class="btn btn-success" />
-    }
-    else
-    {
-        <span class="btn btn-default btn-file"> Отправить регистрацию <input type="file" name="file" id="file"> </span>
-            <input type="submit" value="Отправить" class="btn btn-primary" />
-    }
-}
+		</div>
+	</div>
+</div>
+
 
 @using (Html.BeginForm("CreateDocumentTextFields", "Freelancer"))
 {
@@ -174,3 +216,4 @@
         </div>
     </div>
 }
+
