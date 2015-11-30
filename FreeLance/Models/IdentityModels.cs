@@ -25,6 +25,7 @@ namespace FreeLance.Models
 		public virtual DocumentPackageModels DocumentPackage { get; set; }
 		public EmailNotificationPolicyModel EmailNotificationPolicy { get; set; }
         public string PhotoPath { get; set; }
+        public virtual LawFace LawFace { get; set; }
 
 		public class EmailNotificationPolicyModel
 		{
@@ -33,6 +34,7 @@ namespace FreeLance.Models
 			public bool IsNewApplicantsEnabled { get; set; }
 			public bool IsContractStatusEnabled { get; set; }
 		}
+
 	}
 
 	public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
@@ -42,12 +44,9 @@ namespace FreeLance.Models
         {
         }
 
-        public static ApplicationDbContext Create()
-        {
-			return new ApplicationDbContext();
-        }
+        public static ApplicationDbContext Create() => new ApplicationDbContext();
 
-		protected override void OnModelCreating(DbModelBuilder modelBuilder)
+	    protected override void OnModelCreating(DbModelBuilder modelBuilder)
 		{
 			modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>();
 			base.OnModelCreating(modelBuilder);

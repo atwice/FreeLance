@@ -1,0 +1,10 @@
+﻿@model FreeLance.Models.ApplicationUser
+
+@{ var i = Model.LawFace == null ? -1 : Model.LawFace.Id; }
+
+@Html.DropDownList("EmployerLawFace", new SelectList(ViewBag.LawFaceChooseView.LawFaces, "Id", "Name", @i),
+                        new
+                        {
+                            @onchange = "onDropdownChangeEmployerLawFace(\"" + @Model.Id + "\");",
+                            @id = "dropDownListEmployer" + @Model.Id
+                        }); 

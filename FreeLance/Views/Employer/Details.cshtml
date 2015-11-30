@@ -1,7 +1,7 @@
 ﻿@model FreeLance.Controllers.EmployerController.DetailsForCoordinatorView
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
-    ViewBag.Title = Model.Name;
+    ViewBag.Title = Model.Employer.FIO;
 }
 
 @helper Truncate(string input, int length)
@@ -37,7 +37,7 @@ else
 <div class="row">
     <div class="col-md-2">
         @{
-            var imgSrc = Model.PhotoPath;
+            var imgSrc = Model.Employer.PhotoPath;
             if (imgSrc.IsEmpty())
             {
                 imgSrc = "/Files/avatar.jpg";
@@ -47,205 +47,220 @@ else
         <img src="@imgSrc" class="img-thumbnail" style="margin-top: 20px;" height="200" width="200">
     </div>
     <div class="col-md-4">
-        <h2><strong>@Model.Name</strong></h2>
-        @if (Model.Phone != null)
-        {
-            <p>@Model.Phone</p>
-        }
-        <p>@Model.Email</p>
-        <div class="row">
-            @using (Html.BeginForm("ApproveUserByCoordinator", "Coordinator", new { userId = Model.Id, value = false },
-            FormMethod.Post, new { style = "display:inline-block; margin: 5px; " }))
-            {
-                <input type="submit" value="Заблокировать" class="btn btn-default" />
-            }
-            @if (!Model.isApproved)
-            {
-                using (Html.BeginForm("ApproveUserByCoordinator", "Coordinator", new { userId = Model.Id, value = true },
-                FormMethod.Post, new { style = "display:inline-block; margin: 5px;" }))
+        <h2><strong>@Model.Employer.FIO</strong></h2>
+@*             T0DO
+                <p>@Model.Employer.Phone</p>*@
+
+            <p>@Model.Employer.Email</p>
+            <div class="row">
+                @using (Html.BeginForm("ApproveUserByCoordinator", "Coordinator", new { userId = Model.Employer.Id, value = false },
+                FormMethod.Post, new { style = "display:inline-block; margin: 5px; " }))
                 {
-                    <input type="submit" value="Допустить в систему" class="btn btn-info" />
+                    <input type="submit" value="Заблокировать" class="btn btn-default" />
                 }
-            }
-            
-        </div>
-    </div>
-    <div class="col-md-3 pull-left">        
-        
-        </div>
-
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-md-6">
-        <h3><strong>Профиль:</strong></h3>
-        <p>
-            <b>Юр лицо:</b><a style="padding-left:5px">ООО "Аби продакшн"</a>
-            <a>(сменить)</a>
-        </p>
-        <a href="/Manage/ChangePassword" class="btn btn-default" style="margin-top: 5px; width: 100%">Сбросить пароль</a>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-md-9">
-        <div class="col-md-6">
-            <h3>Активные задачи:</h3>
-            @if (Model.ProblemsInProgress.Count() == 0)
-            {
-                <h5>Нет задач.</h5>
-            }
-            else
-            {
-                foreach (var problem in Model.ProblemsInProgress)
+                @if (Model.Employer.IsApprovedByCoordinator == null)
                 {
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <b>@problem.Name<span></span></b>
-                        </div>
-                        <div class="panel-body">
-                            <p>
-                                <b>До:</b>
-                                @problem.EndingDate.ToShortDateString()
-                                <span class="pull-right"><b>@problem.Cost</b><span class="flaticon-ruble"></span> </span>
-                            </p>
-                            <p>
-                                <b>Исполнители:</b>
-                                @foreach (var contract in problem.Contracts)
-                                {
-                                    <a class="text-info-in-panel" href="/Freelancer/Details/@contract.freelancerId">@contract.FIO</a>
-                                    <a class="text-info-in-panel" href="/Contract/Details/@contract.id">контракт</a>
-}
-                            </p>
-                            <p>
-                                <b>Юрлицо:</b><a class="text-info-in-panel" href="#">Аби Продакшн</a>
-                                <a>(сменить)</a>
-                            </p>
-                            <p><b>Создан:</b><span class="text-info-in-panel">@problem.CreationDate.ToShortDateString()</span></p>
-                            <div>
-                                <i class="flaticon-comments16"></i> <span class="badge">@problem.NewMsgCount</span>
-                                <a href="/Problem/Details/@problem.Id" class="btn btn-info pull-right" role="button">К задаче</a>
+                    using (Html.BeginForm("ApproveUserByCoordinator", "Coordinator", new { userId = Model.Employer.Id, value = true },
+                    FormMethod.Post, new { style = "display:inline-block; margin: 5px;" }))
+                    {
+                        <input type="submit" value="Допустить в систему" class="btn btn-info" />
+                    }
+                }
+
+            </div>
+        </div>
+        <div class="col-md-3 pull-left">
+
+            </div>
+
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h3><strong>Профиль:</strong></h3>
+            <p>
+                <i><b>Юр лицо:</b></i>
+                @{Html.RenderPartial("~/Views/LawFace/_LawFaceChangeEmployer.cshtml", Model.Employer); }
+            </p>
+            <a href="/Manage/ChangePassword" class="btn btn-default" style="margin-top: 5px; width: 100%">Сбросить пароль</a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-9">
+            <div class="col-md-6">
+                <h3>Активные задачи:</h3>
+                @if (Model.ProblemsInProgress.Count() == 0)
+                {
+                    <h5>Нет задач.</h5>
+                }
+                else
+                {
+                    foreach (var problem in Model.ProblemsInProgress)
+                    {
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <b>@problem.Name<span></span></b>
+                            </div>
+                            <div class="panel-body">
+                                <p>
+                                    <i>До</i>
+                                    @problem.EndingDate.ToShortDateString()
+                                    <span class="pull-right"><b>@problem.Cost</b><span class="flaticon-ruble"></span> </span>
+                                </p>
+                                <p>
+                                    <b>Исполнители:</b>
+                                    @foreach (var contract in problem.Contracts)
+                                    {
+                                        <a class="text-info-in-panel" href="/Freelancer/Details/@contract.freelancerId">@contract.FIO</a>
+                                        <a class="text-info-in-panel" href="/Contract/Details/@contract.id">контракт</a>
+    }
+                                </p>
+                                <p>
+                                    <b>Юрлицо:</b><a class="text-info-in-panel" href="#">Аби Продакшн</a>
+                                    <a>(сменить)</a>
+                                </p>
+                                <p><b>Создан:</b><span class="text-info-in-panel">@problem.CreationDate.ToShortDateString()</span></p>
+                                <div>
+                                    <i class="flaticon-comments16"></i> <span class="badge">@problem.NewMsgCount</span>
+                                    <a href="/Problem/Details/@problem.Id" class="btn btn-info pull-right" role="button">К задаче</a>
+                                </div>
                             </div>
                         </div>
-                    </div>
-}
-            }
-        </div>
-        <div class="col-md-6">
-            <h3>Поиск исполнителей:</h3>
-            @if (Model.ProblemsOpen.Count() == 0)
-            {
-                <h5>Все исполнители найдены!</h5>
-            }
-            else
-            {
-                foreach (var problem in Model.ProblemsOpen)
+    }
+                }
+            </div>
+            <div class="col-md-6">
+                <h3>Поиск исполнителей:</h3>
+                @if (Model.ProblemsOpen.Count() == 0)
                 {
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <b>@problem.Name</b>
-                        </div>
-                        <div class="panel-body">
-                            <p>
-                                <b>До:</b>
-                                @problem.EndingDate.ToShortDateString()                                
-                                <span class="pull-right"><b>@problem.Cost</b><span class="flaticon-ruble"></span> </span>
-                            </p>
+                    <h5>Все исполнители найдены!</h5>
+                }
+                else
+                {
+                    foreach (var problem in Model.ProblemsOpen)
+                    {
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <b>@problem.Name</b>
+                            </div>
+                            <div class="panel-body">
+                                <p>
+                                    <i>До</i>
+                                    @problem.EndingDate.ToShortDateString()
+                                    <b>@problem.SubscribersCount исполнителей</b>
+                                    <span class="pull-right"><b>@problem.Cost</b><span class="flaticon-ruble"></span> </span>
+                                </p>
                             <p>
                                 <b>Подписчиков: @problem.SubscribersCount </b>
                             </p>
-                            <p><i> @Truncate(problem.ShortDescription, 200)</i></p>
-                            <p>
-                                <b>Юрлицо:</b><a class="text-info-in-panel" href="#">Аби Продакшн</a>
-                                <a>(сменить)</a>
-                            </p>
-                            <p>
-                                <b>Создан:</b><span class="text-info-in-panel">@problem.CreationDate.ToShortDateString()</span>
-                                <a href="/Problem/Details/@problem.Id" class="btn btn-info pull-right" role="button">К задаче</a>
-                            </p>                            
+                                <p><i> @Truncate(problem.ShortDescription, 200)</i></p>
+                                <p>
+                                    <b>Юрлицо:</b><a class="text-info-in-panel" href="#">Аби Продакшн</a>
+                                    <a>(сменить)</a>
+                                </p>
+                                <p><b>Создан:</b><span class="text-info-in-panel">@problem.CreationDate.ToShortDateString()</span></p>
+                                <div>
+                                    <i class="flaticon-comments16"></i> <span class="badge">@problem.NewMsgCount</span>
+                                    <a href="/Problem/Details/@problem.Id" class="btn btn-info pull-right" role="button">К задаче</a>
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                    }
                 }
-            }
+            </div>
+        </div>
+        <div class="col-md-9">
+            @if (Model.ArchievedContracts.Count() != 0)
+            {
+                <h2>Архив контрактов:</h2>
+                <p>
+                    <a href=@Url.Action("Archive", "Employer",
+                    new { sortOrder = ViewBag.sortCost }) class="btn btn-info">
+                        <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+                        По стоимости
+                    </a>
+                    <a href=@Url.Action("Archive", "Employer",
+                    new { sortOrder = ViewBag.sortName }) class="btn btn-info">
+                        <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+                        По имени
+                    </a>
+                    <a href=@Url.Action("Archive", "Employer",
+                    new { sortOrder = ViewBag.sortCreationDate }) class="btn btn-info">
+                        <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+                        По дате создания
+                    </a>
+                    <a href=@Url.Action("Archive", "Employer",
+                    new { sortOrder = ViewBag.sortEndingDate }) class="btn btn-info">
+                        <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+                        По дате сдачи
+                    </a>
+                </p>
+                <div>
+                    @foreach (var contract in Model.ArchievedContracts)
+                    {
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <b>
+                                    @contract.ProblemName
+                                    <span class="stars pull-right" data-score=@contract.Rate.ToString().Replace(",",".")></span>
+                                </b>
+                            </div>
+                            <div class="panel-body">
+                                <p>@Truncate(contract.Details, 200)</p>
+                            </div>
+                            <table class="table">
+                                <tr>
+                                    <td>
+                                        Исполнитель:
+                                        <a href="/Freelancer/Details/@contract.FreelancerId">@contract.FreelancerName</a>
+                                    </td>
+                                    <td>
+                                        Стоимость: @contract.Cost <span class="flaticon-ruble"></span>
+                                    </td>
+                                    <td>Работа: @contract.StatusMessage</td>
+                                </tr>
+                                <tr>
+                                    <td>Начата: @contract.CreationDate.ToString("dd/MM/yyyy")</td>
+                                    <td>Завершена: @contract.EndingDate.ToString("dd/MM/yyyy")</td>
+                                    <td>Срок: @contract.DeadlineDate.ToString("dd/MM/yyyy")</td>
+                                </tr>
+                            </table>
+                            <div class="panel-body">
+                                <a href="/Contract/Details/@contract.ContractId" class="btn btn-info pull-right" role="button">Подробнее</a>
+                            </div>
+                        </div>
+                    }
+                </div>
+                }
         </div>
     </div>
-    <div class="col-md-9">
-        @if (Model.ArchievedContracts.Count() != 0)
-        { 
-            <h2>Архив контрактов:</h2>
-            <p>
-                <a href=@Url.Action("Archive", "Employer",
-			    new { sortOrder = ViewBag.sortCost }) class="btn btn-info">
-                    <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
-                    По стоимости
-                </a>
-                <a href=@Url.Action("Archive", "Employer",
-			    new { sortOrder = ViewBag.sortName }) class="btn btn-info">
-                    <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
-                    По имени
-                </a>
-                <a href=@Url.Action("Archive", "Employer",
-			    new { sortOrder = ViewBag.sortCreationDate }) class="btn btn-info">
-                    <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
-                    По дате создания
-                </a>
-                <a href=@Url.Action("Archive", "Employer",
-			    new { sortOrder = ViewBag.sortEndingDate }) class="btn btn-info">
-                    <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
-                    По дате сдачи
-                </a>
-            </p>
-            <div>
-                @foreach (var contract in Model.ArchievedContracts)
-			    {
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <b>
-                                @contract.ProblemName
-                                <span class="stars pull-right" data-score=@contract.Rate.ToString().Replace(",",".")></span>
-                            </b>
-                        </div>
-                        <div class="panel-body">
-                            <p>@Truncate(contract.Details, 200)</p>
-                        </div>
-                        <table class="table">
-                            <tr>
-                                <td>
-                                    Исполнитель:
-                                    <a href="/Freelancer/Details/@contract.FreelancerId">@contract.FreelancerName</a>
-                                </td>
-                                <td>
-                                    Стоимость: @contract.Cost <span class="flaticon-ruble"></span>
-                                </td>
-                                <td>Работа: @contract.StatusMessage</td>
-                            </tr>
-                            <tr>
-                                <td>Начата: @contract.CreationDate.ToString("dd/MM/yyyy")</td>
-                                <td>Завершена: @contract.EndingDate.ToString("dd/MM/yyyy")</td>
-                                <td>Срок: @contract.DeadlineDate.ToString("dd/MM/yyyy")</td>
-                            </tr>
-                        </table>
-                        <div class="panel-body">
-                            <a href="/Contract/Details/@contract.ContractId" class="btn btn-info pull-right" role="button">Подробнее</a>
-                        </div>
-                    </div>
-			    }
-            </div>
-            } 
-    </div>
-</div>
 
 <script>
-		$(function () {
-			$(".stars").each(function () {
-				$(this).raty({
-					path: "../../Content/images",
-					readOnly: true,
-					score: function () {
-						return $(this).attr('data-score');
-					}
-				});
-			});
-		});
+    $(function() {
+        $(".stars").each(function() {
+            $(this).raty({
+                path: "../../Content/images",
+                readOnly: true,
+                score: function() {
+                    return $(this).attr('data-score');
+                }
+            });
+        });
+    });
 </script>
+<script type="text/javascript">
+    function onDropdownChangeEmployerLawFace(employerId) {
+        var dropDownList = document.getElementById("dropDownListEmployer" + employerId);
+        var lawFaceId = dropDownList.options[dropDownList.selectedIndex].value;
+        if (+lawFaceId == -1)
+            return;
+        $.ajax({
+            url: '@Url.Action("ChangeLawFaceEmployer", "Coordinator")',
+            type: 'POST',
+            data: { "employerId": employerId, "lawFaceId": lawFaceId }
+        });
+    }
+</script>
+

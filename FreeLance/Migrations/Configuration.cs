@@ -70,36 +70,40 @@ namespace FreeLance.Migrations
 
 		private void SeedLawContractTemplates(FreeLance.Models.ApplicationDbContext context)
 		{
-			LawFace lawFace1 = new LawFace { Name = "Abbyy Production" };
-			LawFace lawFace2 = new LawFace { Name = "Abbyy Lingvo" };
 			var rootPath = Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.FullName + "\\App_Data\\LawContractTemplates\\";
 			LawContractTemplate template1 = new LawContractTemplate
 			{
-				LawFace = lawFace1,
 				Name = "Basic Document",
-				Path = rootPath + "template1.docx",
-				Active = true
+				Path = rootPath + "template1.docx"
 			};
 			LawContractTemplate template2 = new LawContractTemplate
 			{
-				LawFace = lawFace1,
 				Name = "Old Document",
 				Path = rootPath + "template2.docx",
-				Active = true
 			};
-			LawContractTemplate template3 = new LawContractTemplate
-			{
-				LawFace = lawFace2,
-				Name = "Actual Document",
-				Path = rootPath + "template3.docx",
-				Active = true
-			};
+            LawContractTemplate template3 = new LawContractTemplate
+            {
+                Name = "Actual Document",
+                Path = rootPath + "template3.docx",
+            };
+            context.LawContractTemplates.AddOrUpdate(p => p.Path, template1);
+            context.LawContractTemplates.AddOrUpdate(p => p.Path, template2);
+            context.LawContractTemplates.AddOrUpdate(p => p.Path, template3);
+		    context.SaveChanges();
 
+            LawFace lawFace1 = new LawFace { Name = "Abbyy Production" };
+            LawFace lawFace2 = new LawFace { Name = "Abbyy Lingvo" };
+            lawFace1.LawContractTemplates = new List<LawContractTemplate>();
+            lawFace1.LawContractTemplates.Add(template1);
+            lawFace1.LawContractTemplates.Add(template2);
+		    lawFace1.ActiveLawContractTemplate = template1;
+
+            lawFace2.LawContractTemplates = new List<LawContractTemplate>();
+            lawFace2.LawContractTemplates.Add(template3);
+		    lawFace2.ActiveLawContractTemplate = template3;
 			context.LawFaces.AddOrUpdate(p => p.Name, lawFace1);
 			context.LawFaces.AddOrUpdate(p => p.Name, lawFace2);
-			context.LawContractTemplates.AddOrUpdate(p => p.Path, template1);
-			context.LawContractTemplates.AddOrUpdate(p => p.Path, template2);
-			context.LawContractTemplates.AddOrUpdate(p => p.Path, template3);
+		    context.SaveChanges();
 		}
 
 		private ProblemModels addProblem(ApplicationDbContext context, string name, string desc, ProblemStatus status, ApplicationUser employer)

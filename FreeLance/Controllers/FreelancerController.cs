@@ -503,7 +503,7 @@ namespace FreeLance.Controllers
 						.Select(
 							c => new FreelancerLawContractViewModel
 							{
-								LawFace = c.LawContractTemplate.LawFace.Name,
+								LawFace = c.LawFace.Name,
 								LawFacePath = c.Path,
 								StartingDate = c.EndDate,
 								EndingDate = c.EndDate

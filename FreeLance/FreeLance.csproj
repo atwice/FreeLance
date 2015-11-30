@@ -191,6 +191,7 @@
     <Compile Include="Code\EmailBuilder.cs" />
     <Compile Include="Code\EmailManager.cs" />
     <Compile Include="Code\DocumentManager.cs" />
+    <Compile Include="Code\LawModelsManager.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\ChatController.cs" />
     <Compile Include="Controllers\CommonViews.cs" />
@@ -258,6 +259,7 @@
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\lawFace.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
@@ -367,6 +369,8 @@
     <Content Include="Views\Employer\Archive.cshtml" />
     <Content Include="Views\Employer\_DetailsForFreelancerAndEmployer.cshtml" />
     <Content Include="Scripts\tinymce.init.js" />
+    <Content Include="Views\LawFace\_LawFaceChangeContract.cshtml" />
+    <Content Include="Views\LawFace\_LawFaceChangeEmployer.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
