@@ -1,0 +1,266 @@
+﻿@model FreeLance.Controllers.FreelancerController.ProfileView
+@{
+	ViewBag.Title = "Profile";
+}
+
+@section css {
+	<link rel="stylesheet" href="~/Content/jquery.raty.css">
+	<link rel="stylesheet" type="text/css" href="~/Content/flaticon.css">
+	<style>
+		td {
+			text-align: center;
+		}
+
+		.account-info-container{
+			display: flex;
+			flex-direction: row;
+			justify-content: space-around;
+		}
+
+		.photo-container {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
+		
+		.another-info-container {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
+
+		.inputfile {
+			width: 0.1px;
+			height: 0.1px;
+			opacity: 0;
+			overflow: hidden;
+			position: absolute;
+			z-index: -1;
+		}
+
+		.inputfile + label {
+			align-self: center;
+			border: solid;
+			border-color: #428bca;
+			border-radius: 8px;
+			font-size: 14px;
+			font-weight: 700;
+			color: #428bca;
+			background-color: white;
+			display: inline-block;
+			padding: 0.625rem 1.25rem;
+			margin: 10px 0 10px 0;
+			text-overflow: ellipsis;
+		}
+
+		.inputfile:focus + label,
+		.inputfile + label:hover {
+			background-color: #F8F8FF;
+		}
+
+		.image-item {
+			border: 1px solid #dddddd;
+			border-radius: 2px;
+			padding: 2px;
+			height: 100px; 
+			width: 100px;
+		}
+
+		.form-container {
+			display:flex;
+			flex-direction: column;
+		}
+
+	</style>
+}
+
+@section PageScripts{
+	<!-- Include Raty JS file -->
+	<script type="text/javascript" src="~/Scripts/jquery-2.1.4.min.js"></script>
+	<script type="text/javascript" src="~/Scripts/jquery.raty.js"></script>
+}
+
+<div class="row">
+	<div class="col-md-12">
+		<h2>Профиль</h2>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-5">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h2 class="panel-title">Моя статистика</h2>
+			</div>
+			<table class="table" align="center">
+				<tr>
+					<td><span class="stars" data-score=@Model.Rate.ToString().Replace(",",".")></span></td>
+					<td>@Model.Rate.ToString().Replace(",", ".")/5.00</td>
+				</tr>
+				<tr>
+					<td>Заработано</td>
+					<td>@Model.TotalMoney<span class="flaticon-ruble"></span></td>
+				</tr>
+				<tr>
+					<td>Контрактов в процессе</td>
+					<td>@Model.OpenContractsCount</td>
+				</tr>
+				<tr>
+					<td>Контрактов в процессе</td>
+					<td>@Model.OpenContractsCount</td>
+				</tr>
+			</table>
+		</div>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h2 class="panel-title">Мои ГПХ</h2>
+			</div>
+			<div class="panel-body">
+				
+			</div>
+		</div>
+
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h2 class="panel-title">Документы</h2>
+			</div>
+			<div class="panel-body">
+				<p>Паспорт: @Model.Passport.SerialNumber</p>
+				<p>Дата выдачи: @Model.Passport.Date</p>
+				<p>Выдан: @Model.Passport.OfficeName</p>
+				<p>Код подразделения: @Model.Passport.OfficeCode</p>
+				<p>Адрес прописки: @Model.Passport.Address</p>
+				<p>Дата рождения: @Model.Passport.BirthDate</p>
+				<p>Место рождения: @Model.Passport.BirthPlace</p>
+				<p>Банковские реквизиты</p>
+				<p>Счет: @Model.Bank.Account</p>
+				<p>БИК: @Model.Bank.BIC</p>
+				<p>Корсчет: @Model.Bank.CorrespondentAccount</p>
+				<p>Р/С: @Model.Bank.PC</p>
+				<p>
+					<a href="#">Фото первой страницы</a>
+				</p>
+				<p>
+					<a href="#">Фото прописки</a>
+				</p>
+				<p>
+					<a href="/Freelancer/Documents" class="btn btn-info">Изменить документы</a>
+				</p>
+			</div>
+		</div>
+		
+	</div>
+	<div class="col-md-5 ">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h2 class="panel-title">Учетная запись</h2>
+			</div>
+<<<<<<< HEAD
+			<div class="panel-body clearfix">
+				<div class="account-info-container">
+					<div class="photo-container">
+						<img class="image-item" src="@Model.FreelancerPhoto" alt="User photo">
+						@using (Html.BeginForm("UploadPhoto", "Freelancer", FormMethod.Post, new { enctype = "multipart/form-data", runat = "server", @class="form-container" }))
+						{
+							<input class="inputfile" type="file" accept=".jpg,.png" name="file" id="file" data-multiple-caption="{count} files selected">
+							<label for="file">
+								<span class="filename">Выберите файл…</span>
+							</label>
+							<input type="submit" value="Загрузить фото" class="btn btn-primary" />
+							
+						}
+					</div>
+					<div class="another-info-container">
+						<p>Email: @Model.FreelancerEmail</p>
+						<p>
+							<a href="/Manage/ChangePassword" class="btn btn-info">Сменить пароль</a>
+						</p>
+					</div>
+=======
+			<div class="panel-body">
+				<div>
+					<p>
+                        @{
+                            var imgSrc = Model.FreelancerPhoto;
+                            if (imgSrc.IsEmpty())
+                            {
+                                imgSrc = "/Files/avatar.jpg";
+                            }
+
+                        }
+                        <img src="@imgSrc" class="img-thumbnail" style="margin-top: 20px;" height="200" width="200">
+					</p>
+				</div>
+				<div>
+					@using (Html.BeginForm("UploadPhoto", "Freelancer", FormMethod.Post, new {enctype = "multipart/form-data", runat = "server"}))
+					{
+						<span class="btn btn-default btn-file"> Загрузить фото <input type="file" accept=".jpg,.png" name="file" id="file"> </span>
+						<input type="submit" value="Отправить" class="btn btn-primary"/>
+					}
+				</div>
+				<br/>
+				<div>
+					<p>Email: @Model.FreelancerEmail</p>
+					<p>
+						<a href="/Manage/ChangePassword" class="btn btn-info">Сменить пароль</a>
+					</p>
+>>>>>>> avatar standard
+				</div>
+			</div>
+		</div>
+
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h2 class="panel-title">Уведомления</h2>
+			</div>
+			<div class="panel-body">
+				@using (Html.BeginForm("Settings", "Freelancer", FormMethod.Post))
+			{
+					<div class="checkbox">
+						@Html.CheckBoxFor(m => m.emailNotifications.IsCommentsEnabled)
+						@Html.Label("Получать уведомления о новых комментариях")
+					</div>
+					<div class="checkbox">
+						@Html.CheckBoxFor(m => m.emailNotifications.IsContractStatusEnabled)
+						@Html.Label("Получать уведомления об изменениях контракта")
+					</div>
+					<input type="submit" value="Сохранить" class="btn btn-success" />
+			}
+			</div>
+		</div>
+
+	</div>
+</div>
+
+
+<script>
+	$(function () {
+		$(".stars").each(function () {
+			$(this).raty({
+				path: "../../Content/images",
+				readOnly: true,
+				score: function () {
+					return $(this).attr('data-score');
+				}
+			});
+		});
+	});
+
+	var inputs = document.querySelectorAll('.inputfile');
+	Array.prototype.forEach.call(inputs, function (input) {
+		var label = input.nextElementSibling,
+			labelVal = label.innerHTML;
+
+		input.addEventListener('change', function (e) {
+			var fileName = '';
+			if (this.files && this.files.length > 1)
+				fileName = (this.getAttribute('data-multiple-caption') || '').replace('{count}', this.files.length);
+			else
+				fileName = e.target.value.split('\\').pop();
+
+			if (fileName)
+				label.querySelector('.filename').innerHTML = fileName;
+			else
+				label.innerHTML = labelVal;
+		});
+	});
+</script>
