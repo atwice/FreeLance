@@ -9,6 +9,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using FreeLance.Models;
+using FreeLance.Code;
 using System.Collections.Generic;
 
 namespace FreeLance.Controllers
@@ -16,7 +17,9 @@ namespace FreeLance.Controllers
     [Authorize]
     public class AccountController : Controller
     {
-        private ApplicationSignInManager _signInManager;
+		private ApplicationDbContext db = new ApplicationDbContext();
+
+		private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
 
 		public static IEnumerable<ApplicationUser> GetApplicationUsersInRole(ApplicationDbContext db, string roleName) {
@@ -166,14 +169,18 @@ namespace FreeLance.Controllers
                 {
 					UserManager.AddToRole(user.Id, "Incognito");
 					await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
-                    // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
-                    // Send an email with this link
-                    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
 
-                    return RedirectToAction("Index", "Home");
+					// For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
+					// Send an email with this link
+					// string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+					// var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+					// await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+
+					string coordinatorId = AccountController.GetApplicationUsersInRole(db, "Coordinator").Select(
+						u => u.Id).ToList().Last();
+					EmailManager.Send(new OnNewApplicationBuilder(coordinatorId, "freelancerNew", "/Coordinator/Home"));
+
+					return RedirectToAction("Index", "Home");
                 }
                 AddErrors(result);
             }

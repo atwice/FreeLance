@@ -228,7 +228,7 @@ namespace FreeLance.Migrations
 				return user;
 			}
 			user = new ApplicationUser { UserName = email, Email = email, FIO = FIO }; //, IsApprovedByCoordinator = isApprovedByCoordinator };
-			user.EmailNotificationPolicy = new ApplicationUser.EmailNotificationPolicyModel { IsCommentsEnabled = true, IsContractStatusEnabled = true, IsDocumentsEnabled = true, IsNewApplicantsEnabled = true };
+			user.EmailNotificationPolicy = new ApplicationUser.EmailNotificationPolicyModel { IsCommentsEnabled = false, IsContractStatusEnabled = false, IsNewApplicantsEnabled = false };
 			manager.Create(user, password);
 			manager.AddToRole(user.Id, role);
 			return user;

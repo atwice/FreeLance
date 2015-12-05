@@ -253,7 +253,8 @@ namespace FreeLance.Controllers
 
 		[HttpPost]
 		[Authorize(Roles = "Employer, Freelancer")]
-		public ActionResult ChangeStatus(int id, ContractStatus status, string redirect)
+		public ActionResult ChangeStatus(int id, ContractStatus status, string redirect, 
+			string freelancerId, string employerId, string contractName)
 		{
 			ContractModels contract = db.ContractModels.Include(c => c.Problem).Single(c => c.ContractId == id);
 			if (contract == null || contract.Freelancer == null
@@ -262,6 +263,7 @@ namespace FreeLance.Controllers
 			{
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
+			ContractStatus previousStatus = contract.Status;
 			contract.Status = status;
             //  Failed, СancelledByFreelancer, СancelledByEmployer, ClosedNotPaid
             if (status == ContractStatus.ClosedNotPaid || status == ContractStatus.СancelledByEmployer
@@ -270,12 +272,17 @@ namespace FreeLance.Controllers
 				contract.EndingDate = DateTime.Now;
 			}
 			db.SaveChanges();
+
+			EmailManager.Send(new OnStatusChangeBuilder(freelancerId, contractName, "/Contract/Details/" + id.ToString(), previousStatus, status));
+			EmailManager.Send(new OnStatusChangeBuilder(employerId, contractName, "/Contract/Details/" + id.ToString(), previousStatus, status));
+
 			return Redirect(redirect == null ? "/Contract/Details/" + id.ToString() : redirect);
 		}
 
 		[HttpPost]
-		[Authorize(Roles = "Employer")]
-		public ActionResult Close(int id, string comment, int rate, ContractStatus newStatus)
+		[Authorize(Roles = "Employer, Freelancer")]
+		public ActionResult Close(int id, string comment, int rate, ContractStatus newStatus, 
+			string freelancerId, string employerId, string contractName)
 		{
 			ContractModels contract = db.ContractModels.Include(c => c.Problem).Single(c => c.ContractId == id);
 			if (contract == null || contract.Freelancer == null || contract.Problem.Employer.Id != User.Identity.GetUserId())
@@ -284,9 +291,16 @@ namespace FreeLance.Controllers
 			}
 			contract.Rate = rate;
 			contract.Comment = comment;
+
+			ContractStatus previousStatus = contract.Status;
 			contract.Status = newStatus;
+
 			contract.EndingDate = DateTime.Now;
 			db.SaveChanges();
+
+			EmailManager.Send(new OnStatusChangeBuilder(freelancerId, contractName, "/Contract/Details/" + id.ToString(), previousStatus, newStatus));
+			EmailManager.Send(new OnStatusChangeBuilder(employerId, contractName, "/Contract/Details/" + id.ToString(), previousStatus, newStatus));
+
 			return Redirect("/Contract/Details/" + id.ToString());
 		}
 

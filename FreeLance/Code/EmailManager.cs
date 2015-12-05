@@ -6,8 +6,11 @@ namespace FreeLance.Code
 	{
 		public static void Send(EmailBuilder builder)
 		{
-			Email email = builder.PrepareEmail();
-			email.Send();
+			if(builder.SendingCondition())
+			{
+				Email email = builder.PrepareEmail();
+				email.Send();
+			}
 		}
 	}
 	

@@ -8,6 +8,7 @@ using System.Net;
 using System.Data;
 using System.Data.Entity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using System.Collections.Generic;
 
 namespace FreeLance.Controllers
 {
@@ -307,6 +308,49 @@ namespace FreeLance.Controllers
 			db.SaveChanges();
 		}
 
+
+		private static void SendEmailNotification(int chatId, string userId)
+		{
+			ContractChat contractChat = db.ContractChats.Where(x => x.Chat.Id == chatId).SingleOrDefault();
+			ProblemChat problemChat = db.ProblemChats.Where(x => x.Chat.Id == chatId).SingleOrDefault();
+
+			if (contractChat != null)
+			{
+				string employerId = contractChat.Contract.Problem.Employer.Id;
+				string freelancerId = contractChat.Contract.Freelancer.Id;
+				string userNotifyId = (employerId != userId) ? employerId : freelancerId;
+
+				string problemName = contractChat.Contract.Problem.Name;
+				int contractId = contractChat.Contract.ContractId;
+
+				EmailManager.Send(new OnNewCommentBuilder(userNotifyId, "contract", problemName, "/Contract/Details/" + contractId.ToString()));
+			}
+
+			if (problemChat != null)
+			{
+				string employerId = problemChat.Problem.Employer.Id;
+				List<SubscriptionModels> subscribers = problemChat.Problem.Subscriptions.ToList();
+
+				string problemName = problemChat.Problem.Name;
+				int problemId = problemChat.Problem.ProblemId;
+
+				if (employerId != userId)
+				{
+					EmailManager.Send(new OnNewCommentBuilder(employerId, "problem", problemName, "/Problem/Details/" + problemId.ToString()));
+				}
+
+				foreach (var subcriber in subscribers)
+				{
+					string subscriberId = subcriber.Freelancer.Id;
+					if (subscriberId != userId)
+					{
+						EmailManager.Send(new OnNewCommentBuilder(subscriberId, "problem", problemName, "/Problem/Details/" + problemId.ToString()));
+					}
+				}
+			}
+		}
+
+
 		[NonAction]
 		public static ChatResponse SendMessage(int chatId, int? parentId, string userId, string text) {
 			if (parentId != null) {
@@ -326,6 +370,9 @@ namespace FreeLance.Controllers
 					IsHidden = false
 				});
 				db.SaveChanges();
+
+				SendEmailNotification(chatId, userId);
+
 				ApplicationUser user = db.Users.Find(userId);
 				updateLastVisitDate(chatId, user);
 				return new ChatResponse { Body = new { Status = "Ok", Result = new[] { fillMessage(msg) } }, IsOk = true };
