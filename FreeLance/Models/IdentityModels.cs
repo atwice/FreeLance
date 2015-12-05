@@ -30,7 +30,6 @@ namespace FreeLance.Models
 		public class EmailNotificationPolicyModel
 		{
 			public bool IsCommentsEnabled { get; set; }
-			public bool IsDocumentsEnabled { get; set; }
 			public bool IsNewApplicantsEnabled { get; set; }
 			public bool IsContractStatusEnabled { get; set; }
 		}

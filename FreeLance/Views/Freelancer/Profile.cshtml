@@ -156,7 +156,7 @@
 			</div>
 			<div class="panel-body">
 				@using (Html.BeginForm("Settings", "Freelancer", FormMethod.Post))
-			{
+				{
 					<div class="checkbox">
 						@Html.CheckBoxFor(m => m.emailNotifications.IsCommentsEnabled)
 						@Html.Label("Получать уведомления о новых комментариях")
@@ -166,7 +166,7 @@
 						@Html.Label("Получать уведомления об изменениях контракта")
 					</div>
 					<input type="submit" value="Сохранить" class="btn btn-success" />
-			}
+				}
 			</div>
 		</div>
 

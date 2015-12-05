@@ -1188,10 +1188,10 @@ namespace FreeLance.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult Settings(ApplicationUser.EmailNotificationPolicyModel policy)
+		public ActionResult Settings(ProfileView model)
 		{
 			ApplicationUser user = db.Users.Find(User.Identity.GetUserId());
-			user.EmailNotificationPolicy = policy;
+			user.EmailNotificationPolicy = model.emailNotifications;
 			db.SaveChanges();
 			return RedirectToAction("Profile");
 		}
