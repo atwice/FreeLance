@@ -1013,7 +1013,7 @@ namespace FreeLance.Controllers
 			return Redirect("index");
 		}
 
-		[Authorize(Roles = "Freelancer")]
+		[Authorize(Roles = "Freelancer,Incognito")]
 		public ActionResult Profile()
 		{
 			String id = User.Identity.GetUserId();
