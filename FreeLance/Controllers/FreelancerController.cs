@@ -971,7 +971,9 @@ namespace FreeLance.Controllers
 		{
 			List<ProblemModels> problems = db.ProblemModels
 				.Where(p => (p.Status == ProblemStatus.InProgress || p.Status == ProblemStatus.Opened) 
-									&& p.Employer.IsApprovedByCoordinator == true)
+									) //&& p.Employer.IsApprovedByCoordinator == true)
+									  //  IsApprovedByCoordinator - про пакет документов
+									  // биржу должны видеть все, кроме incognito
 				.ToList();
 
 			OpenProblemsInfo model = new OpenProblemsInfo
