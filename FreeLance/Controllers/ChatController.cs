@@ -50,11 +50,13 @@ namespace FreeLance.Controllers
                 Include(x => x.Chat).SingleOrDefault();
 			if (problemChat == null) {
 				ProblemModels problem = db.ProblemModels.Find(problemId);
-				
-				Chat chat = db.Chats.Add(new Chat { Owner = ChatOwner.Problem });
-				problemChat = new Models.ProblemChat { Chat = chat, Problem = problem };
-				db.ProblemChats.Add(problemChat);
-				db.SaveChanges();
+				if (!problem.IsHidden)
+				{
+					Chat chat = db.Chats.Add(new Chat { Owner = ChatOwner.Problem });
+					problemChat = new Models.ProblemChat { Chat = chat, Problem = problem };
+					db.ProblemChats.Add(problemChat);
+					db.SaveChanges();
+				}				
 			}
 			return problemChat.Chat.Id;
 		}

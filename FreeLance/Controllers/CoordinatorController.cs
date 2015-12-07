@@ -14,6 +14,7 @@ using Microsoft.AspNet.Identity;
 using System.IO;
 using FreeLance.Code;
 using Microsoft.Ajax.Utilities;
+using System.Data.Entity.Validation;
 
 namespace FreeLance.Controllers
 {
@@ -45,14 +46,10 @@ namespace FreeLance.Controllers
 			public virtual ApplicationUser Employer { get; set; }
 		}
 
-
-
 		public ActionResult Index()
 		{
 			return RedirectToAction("Home");
 		}
-
-
 
 		public ActionResult Home()
 		{
@@ -136,8 +133,6 @@ namespace FreeLance.Controllers
 			return PartialView("~/Views/_FreelancersView.cshtml", model);
 		}
 
-
-
 		private IEnumerable<ApplicationUser> getApplicationUsersApproved(bool? approved, string roleName)
 		{
 			return getApplicationUsersInRole(roleName)
@@ -150,7 +145,7 @@ namespace FreeLance.Controllers
 				   where role.Name == roleName
 				   from userRoles in role.Users
 				   join user in db.Users
-				   on userRoles.UserId equals user.Id
+					   on userRoles.UserId equals user.Id
 				   select user;
 		}
 
@@ -182,6 +177,23 @@ namespace FreeLance.Controllers
 			freelancer.IsApprovedByCoordinator = !freelancer.IsApprovedByCoordinator;
 			db.SaveChanges();
 			return RedirectToAction("ViewFreelancerDocuments", new { userId = freelancerId });
+		}
+
+		public ActionResult ChangeProblemVisibility(int problemId)
+		{
+			ProblemModels problem = db.ProblemModels.Include(p => p.Employer).Single(p => p.ProblemId == problemId);
+			problem.IsHidden = !problem.IsHidden;
+			db.SaveChanges();
+			return Redirect("\\Problem\\Details\\" + problemId);
+		}
+
+		public ActionResult ChangeContractVisibility(int contractId)
+		{
+			ContractModels contract =
+				db.ContractModels.Include(c => c.Freelancer).Include(c => c.Problem).Single(c => c.ContractId == contractId);
+			contract.IsHidden = !contract.IsHidden;
+			db.SaveChanges();
+			return Redirect("\\Contract\\Details\\" + contractId);
 		}
 
 		public ActionResult Employers(String searchString, String sortOrder)
@@ -254,11 +266,11 @@ namespace FreeLance.Controllers
 				.Where(
 					c => c.Problem.Employer.Id == id)
 				.Select(
-				c => new SmallContractInfoModel
-				{
-					Rate = c.Rate,
-					Status = c.Status
-				})
+					c => new SmallContractInfoModel
+					{
+						Rate = c.Rate,
+						Status = c.Status
+					})
 				.ToList();
 
 			model.Name = employer.FIO;
@@ -278,7 +290,7 @@ namespace FreeLance.Controllers
 					model.ClosedContractsCount += 1;
 				}
 				else if (contract.Status == ContractStatus.InProgress ||
-				  contract.Status == ContractStatus.Opened)
+						 contract.Status == ContractStatus.Opened)
 				{
 					model.OpenContractsCount += 1;
 				}
@@ -344,7 +356,11 @@ namespace FreeLance.Controllers
 		public ActionResult ApproveInContractByCoordinator(string contractId, Approvable approvable)
 		{
 			int contractIdNum = Int32.Parse(contractId);
-			ContractModels contract = db.ContractModels.Include(t => t.LawFace).Include(t => t.Problem).Include(t => t.Freelancer).Single(t => t.ContractId == contractIdNum);
+			ContractModels contract =
+				db.ContractModels.Include(t => t.LawFace)
+					.Include(t => t.Problem)
+					.Include(t => t.Freelancer)
+					.Single(t => t.ContractId == contractIdNum);
 			if (contract == null)
 			{
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -442,7 +458,7 @@ namespace FreeLance.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult UploadSignedLawContract([Bind(Prefix = "UploadPostModel")]UploadPostModel model)
+		public ActionResult UploadSignedLawContract([Bind(Prefix = "UploadPostModel")] UploadPostModel model)
 		{
 			if (ModelState.IsValid)
 			{
@@ -485,7 +501,8 @@ namespace FreeLance.Controllers
 		[HttpPost]
 		public void ChangeLawFaceInContract(int contractId, int lawFaceId)
 		{
-			FreeLance.Models.ContractModels contract = db.ContractModels.Include(c => c.LawFace).Single(c => c.ContractId == contractId);
+			FreeLance.Models.ContractModels contract =
+				db.ContractModels.Include(c => c.LawFace).Single(c => c.ContractId == contractId);
 			LawFace lawFace = db.LawFaces.Single(l => l.Id == lawFaceId);
 			contract.LawFace = lawFace;
 			db.SaveChanges();
@@ -516,3 +533,4 @@ namespace FreeLance.Controllers
 		}
 	}
 }
+

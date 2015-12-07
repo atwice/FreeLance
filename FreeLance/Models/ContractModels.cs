@@ -40,5 +40,6 @@ namespace FreeLance.Models
         public virtual LawFace LawFace { get; set; }
         public bool IsApprovedByCoordinator { get; set; }
         public bool IsPayed { get; set; }
+		public bool IsHidden { get; set; } = false;
 	}
 }
