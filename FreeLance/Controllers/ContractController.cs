@@ -20,7 +20,7 @@ namespace FreeLance.Controllers
 		[Authorize(Roles = "Admin")]
 		public ActionResult Index()
 		{
-			return View(db.ContractModels.ToList());
+			return View(db.ContractModels.Where(c => !c.IsHidden).ToList());
 		}
 
 		public class DetailsView
@@ -44,6 +44,7 @@ namespace FreeLance.Controllers
 			public decimal Cost { get; set; }
 			public int ContractId { get; set; }
 			public decimal Rate { get; set; }
+			public bool IsHidden { get; set; }
 
 
 			public class ChangeStatusButton
@@ -71,6 +72,7 @@ namespace FreeLance.Controllers
 				FreelancerEmail = c.Freelancer.Email,
 				FreelancerId = c.Freelancer.Id,
 				ProblemName = c.Problem.Name,
+				IsHidden = c.IsHidden,
 				CreatingDate = c.CreationDate.ToShortDateString(),
 				EndingDate = c.EndingDate.ToShortDateString(),
 				DeadlineDate = DateTime.Now.AddDays(100).ToShortDateString(), //TODO
@@ -94,8 +96,9 @@ namespace FreeLance.Controllers
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
 
-			ContractModels contract = db.ContractModels.Find(id);
-			if (contract == null)
+			ContractModels contract = db.ContractModels.Include(c => c.Problem).Single(c => c.ContractId == id);
+			// only coordinator can view hidden contracts
+			if (contract == null || (contract.IsHidden && !User.IsInRole("Coordinator")))
 			{
 				return HttpNotFound();
 			}
@@ -109,8 +112,7 @@ namespace FreeLance.Controllers
 			{
 				showMore = false;
 			}
-
-		
+			
 			DetailsView view = getContractDetails(contract);
 
 			view.showMore = (bool)showMore;
@@ -232,7 +234,7 @@ namespace FreeLance.Controllers
 			SubscriptionModels[] subscriptions = db.SubscriptionModels.Where(sub => sub.Freelancer.Id == freelancerId
 													&& sub.Problem.ProblemId == problemId).Distinct().ToArray();
 			SubscriptionModels subscription = subscriptions.Length > 0 ? subscriptions[0] : null;
-			if (subscription == null || problem == null || freelancer == null || problem.Employer.Id != userId) // || problem.Status == Opened
+			if (subscription == null || problem == null || freelancer == null || problem.Employer.Id != userId || problem.IsHidden) // || problem.Status == Opened
 			{
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
@@ -240,8 +242,8 @@ namespace FreeLance.Controllers
 			contract.Status = ContractStatus.Opened;
 			contract.Freelancer = freelancer;
 			contract.CreationDate = DateTime.Now;
-		    contract.EndingDate = DateTime.Now;
-           
+			contract.EndingDate = DateTime.Now;
+
 
 			db.ContractModels.Add(contract);
 			db.SubscriptionModels.Remove(subscription);
@@ -254,7 +256,7 @@ namespace FreeLance.Controllers
 		public ActionResult ChangeStatus(int id, ContractStatus status, string redirect)
 		{
 			ContractModels contract = db.ContractModels.Include(c => c.Problem).Single(c => c.ContractId == id);
-			if (contract == null || contract.Freelancer == null
+			if (contract == null || contract.Freelancer == null || contract.IsHidden
 				|| (User.IsInRole("Employer") && contract.Problem.Employer.Id != User.Identity.GetUserId())
 				|| (User.IsInRole("Freelancer") && contract.Freelancer.Id != User.Identity.GetUserId()))
 			{
@@ -276,7 +278,8 @@ namespace FreeLance.Controllers
 		public ActionResult Close(int id, string comment, int rate, ContractStatus newStatus)
 		{
 			ContractModels contract = db.ContractModels.Include(c => c.Problem).Single(c => c.ContractId == id);
-			if (contract == null || contract.Freelancer == null || contract.Problem.Employer.Id != User.Identity.GetUserId())
+			if (contract == null || contract.Freelancer == null || contract.IsHidden
+				|| contract.Problem.Employer.Id != User.Identity.GetUserId())
 			{
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
@@ -298,7 +301,7 @@ namespace FreeLance.Controllers
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
 			ContractModels contractModels = db.ContractModels.Find(id);
-			if (contractModels == null)
+			if (contractModels == null || contractModels.IsHidden)
 			{
 				return HttpNotFound();
 			}
@@ -331,7 +334,7 @@ namespace FreeLance.Controllers
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
 			ContractModels contractModels = db.ContractModels.Find(id);
-			if (contractModels == null)
+			if (contractModels == null || contractModels.IsHidden)
 			{
 				return HttpNotFound();
 			}

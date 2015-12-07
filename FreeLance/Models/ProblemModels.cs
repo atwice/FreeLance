@@ -42,5 +42,6 @@ namespace FreeLance.Models
 		public ProblemStatus Status { get; set; }
 		public virtual ICollection<ContractModels> Contracts { get; set; }
 		public virtual ICollection<SubscriptionModels> Subscriptions { get; set; }
+		public bool IsHidden { get; set; } = false;
 	}
 }

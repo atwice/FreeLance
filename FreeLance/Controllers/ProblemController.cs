@@ -43,6 +43,7 @@ namespace FreeLance.Controllers
 
 			public bool IsSubscibed { get; set; }
 			public bool? IsApproved { get; set; }
+			public bool? IsHidden { get; set; }
 		}
 
 		public class ContractInfoModel
@@ -86,7 +87,7 @@ namespace FreeLance.Controllers
 			foreach (var s in subscribers)
 			{
 				List<ContractModels> contracts = db.ContractModels
-					.Where(c => c.Freelancer.Id == s.Freelancer.Id).ToList(); 
+					.Where(c => c.Freelancer.Id == s.Freelancer.Id && !c.IsHidden).ToList(); 
 				result.Add(new SubscriberInfoModel
 				{
 					FreelancerId = s.Freelancer.Id,
@@ -114,6 +115,7 @@ namespace FreeLance.Controllers
 				CreatingDate = p.CreationDate.ToShortDateString(),
 				DeadlineDate = p.DeadlineDate.ToShortDateString(), 
 				Cost = p.Cost,
+				IsHidden = p.IsHidden,
 				AmountOfWorkers = p.AmountOfWorkes
 			};
 
@@ -149,13 +151,13 @@ namespace FreeLance.Controllers
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
 
-			if(showMore == null)
+			if (showMore == null)
 			{
 				showMore = false;
 			}
 
 			ProblemModels problem = db.ProblemModels.Find(id);
-			if (problem == null)
+			if (problem == null || (problem.IsHidden && !User.IsInRole("Coordinator")))
 			{
 				return HttpNotFound();
 			}
@@ -178,7 +180,7 @@ namespace FreeLance.Controllers
 		[Authorize(Roles = "Employer")]
 		public ActionResult Index()
 		{
-			return View(db.ProblemModels.ToList());
+			return View(db.ProblemModels.Where(p => !p.IsHidden).ToList());
 		}
 
 
@@ -221,7 +223,7 @@ namespace FreeLance.Controllers
 		public ActionResult ChangeStatus(int id, ProblemStatus status, string redirect)
 		{
 			ProblemModels problem = db.ProblemModels.Include(c => c.Employer).Single(c => c.ProblemId == id);
-			if (problem == null)
+			if (problem == null || problem.IsHidden)
 			{
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
@@ -239,7 +241,7 @@ namespace FreeLance.Controllers
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
 			ProblemModels problemModels = db.ProblemModels.Find(id);
-			if (problemModels == null)
+			if (problemModels == null || problemModels.IsHidden)
 			{
 				return HttpNotFound();
 			}
@@ -272,7 +274,7 @@ namespace FreeLance.Controllers
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
 			ProblemModels problemModels = db.ProblemModels.Find(id);
-			if (problemModels == null)
+			if (problemModels == null || problemModels.IsHidden)
 			{
 				return HttpNotFound();
 			}

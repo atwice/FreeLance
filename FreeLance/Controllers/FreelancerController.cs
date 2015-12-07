@@ -422,7 +422,7 @@ namespace FreeLance.Controllers
 		public DetailsForEmployerView getDetailsForEmployer(ApplicationUser freelancer, String _info, String sortOrder, String lastSort)
 		{
 			List<ContractModels> contracts = db.ContractModels
-				.Where(c => c.Freelancer.Id == freelancer.Id).ToList();
+				.Where(c => c.Freelancer.Id == freelancer.Id && !c.IsHidden).ToList();
 
 			List<SubscriptionModels> subscriptions = db.SubscriptionModels
 				.Where(s => s.Freelancer.Id == freelancer.Id).ToList();
@@ -566,7 +566,7 @@ namespace FreeLance.Controllers
 		private List<ProblemHomeViewModel> getProblemInState(string userId, ProblemStatus status)
 		{
 			List<ProblemModels> problems = db.ProblemModels.Where(
-				problem => (problem.Status == status)).ToList();
+				problem => (problem.Status == status && !problem.IsHidden)).ToList();
 			List<ProblemHomeViewModel> result = new List<ProblemHomeViewModel>();
 			foreach (var problem in problems)
 			{
@@ -646,7 +646,7 @@ namespace FreeLance.Controllers
 			decimal rating = 0;
 			List<ContractModels> contracts = db.ContractModels
 				.Where(
-					c => c.Freelancer.Id == id
+					c => c.Freelancer.Id == id && !c.IsHidden
 					&& (c.Status == ContractStatus.Closed
 					|| c.Status == ContractStatus.ClosedNotPaid
 					|| c.Status == ContractStatus.Failed
@@ -694,7 +694,6 @@ namespace FreeLance.Controllers
 			Auxiliary methods return view models for page
 			Координатор. Фрилансер. Вкладка Задачи
 		*/
-
 		private List<FreelancerContractViewModel> extractUnpaidContracts(string freelancerId)
 		{
 			return db.ContractModels
@@ -883,7 +882,12 @@ namespace FreeLance.Controllers
 		[Authorize(Roles = "Admin, Freelancer, Coordinator, WithoutDocuments")]
 		public ActionResult Contract(int id)
 		{
-			return View(db.ContractModels.Find(id));
+			ContractModels contract = db.ContractModels.Find(id);
+			if (contract == null || (contract.IsHidden && !User.IsInRole("Coordinator")))
+			{
+				return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+			}
+			return View(contract);
 		}
 
 		public class ProblemView
@@ -901,12 +905,14 @@ namespace FreeLance.Controllers
 			}
 
 			ProblemModels problemModels = db.ProblemModels.Find(id);
-			if (problemModels == null)
+			if (problemModels == null || (problemModels.IsHidden && !User.IsInRole("Coordinator")))
 			{
 				return HttpNotFound();
 			}
 			string userId = User.Identity.GetUserId();
-			var contracts = db.ContractModels.Where(t => t.Freelancer.Id.Equals(userId)).ToList();
+			var contracts = User.IsInRole("Coordinator") 
+				? db.ContractModels.Where(t => t.Freelancer.Id.Equals(userId)).ToList()
+				: db.ContractModels.Where(t => t.Freelancer.Id.Equals(userId) && !t.IsHidden).ToList();
 			var subscriptions = db.SubscriptionModels.Where(t => t.Freelancer.Id.Equals(userId)).ToList();
 			ViewBag.contractsSize = contracts.LongCount();
 			ViewBag.subscriptionsSize = subscriptions.LongCount();
@@ -971,7 +977,8 @@ namespace FreeLance.Controllers
 		{
 			List<ProblemModels> problems = db.ProblemModels
 				.Where(p => (p.Status == ProblemStatus.InProgress || p.Status == ProblemStatus.Opened) 
-									&& p.Employer.IsApprovedByCoordinator == true)
+									&& p.Employer.IsApprovedByCoordinator == true
+									&& !p.IsHidden)
 				.ToList();
 
 			OpenProblemsInfo model = new OpenProblemsInfo
@@ -1023,11 +1030,11 @@ namespace FreeLance.Controllers
 				FreelancerEmail = freelancer.Email,
 				FreelancerPhoto = freelancer.PhotoPath,
 				OpenContractsCount = db.ContractModels.Where(
-					c => c.Freelancer.Id == id && (c.Status == ContractStatus.Done
+					c => c.Freelancer.Id == id && !c.IsHidden && (c.Status == ContractStatus.Done
 					|| c.Status == ContractStatus.InProgress || c.Status == ContractStatus.ClosedNotPaid
 					|| c.Status == ContractStatus.Opened)).Count(),
 				ClosedContractsCount = db.ContractModels.Where(
-					c => c.Freelancer.Id == id && (c.Status == ContractStatus.Closed
+					c => c.Freelancer.Id == id && !c.IsHidden && (c.Status == ContractStatus.Closed
 					|| c.Status == ContractStatus.Failed || c.Status == ContractStatus.СancelledByEmployer
 					|| c.Status == ContractStatus.СancelledByFreelancer)).Count(),
 				emailNotifications = freelancer.EmailNotificationPolicy,
@@ -1048,9 +1055,10 @@ namespace FreeLance.Controllers
 			decimal result = 0;
 			try
 			{
-				result =
-					db.ContractModels.Where(c => c.Freelancer.Id == User.Identity.GetUserId() && (c.Status == ContractStatus.Closed))
-						.Select(c => c.Cost).Sum();
+				result = db.ContractModels
+					.Where(c => c.Freelancer.Id == User.Identity.GetUserId() && (c.Status == ContractStatus.Closed) && !c.IsHidden)
+					.Select(c => c.Cost)
+					.Sum();
 			}
 			catch (Exception e)
 			{

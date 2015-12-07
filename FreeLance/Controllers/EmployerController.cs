@@ -141,10 +141,10 @@ namespace FreeLance.Controllers
 			List<ContractInProgressViewModel> contractsData = new List<ContractInProgressViewModel>();
 			ICollection<ContractModels> contrats = db.ProblemModels
 				.Where(
-					p => p.ProblemId == problemId
+					p => p.ProblemId == problemId && !p.IsHidden
 				)
 				.Select(
-					p => p.Contracts
+					p => p.Contracts.Where(c => !c.IsHidden).ToList()
 				)
 				.ToList()[0];
 			foreach(var contract in contrats)
@@ -182,7 +182,7 @@ namespace FreeLance.Controllers
 				.Where(
 					p => p.Employer.Id == userId &&
 						(p.Status == ProblemStatus.Opened || p.Status == ProblemStatus.InProgress)
-						&& p.Contracts.Count != 0
+						&& p.Contracts.Count != 0 && !p.IsHidden
 				)
 				.Select(
 					p => new ProblemInProgressViewModel
@@ -208,7 +208,7 @@ namespace FreeLance.Controllers
 			List<ProblemOpenViewModel> openProblems = db.ProblemModels
 				.Where(
 					p => p.Employer.Id == userId
-						&& p.Status == ProblemStatus.Opened
+						&& p.Status == ProblemStatus.Opened && !p.IsHidden
 				)
 				.Select(
 					p => new ProblemOpenViewModel
@@ -236,7 +236,7 @@ namespace FreeLance.Controllers
 			List<ProblemOpenViewModel> openProblems = db.ProblemModels
 				.Where(
 					p => p.Employer.Id == userId
-						&& (p.Status == ProblemStatus.Opened)
+						&& (p.Status == ProblemStatus.Opened) && !p.IsHidden
 				)
 				.Select(
 					p => new ProblemOpenViewModel
@@ -324,7 +324,7 @@ namespace FreeLance.Controllers
 		{
 			string id = employer.Id;
 			List<ContractModels> contracts = db.ContractModels
-				.Where(c => c.Freelancer.Id == employer.Id).ToList();
+				.Where(c => c.Freelancer.Id == employer.Id && !c.IsHidden).ToList();
 
 			DetailsForCoordinatorView model = new DetailsForCoordinatorView
 			{
@@ -352,7 +352,7 @@ namespace FreeLance.Controllers
 		public DetailsForFreelancerView getDetailsForFreelancer(ApplicationUser employer, String sortOrder, String lastSort)
 		{
 			List<ContractModels> contracts = db.ContractModels
-				.Where(c => c.Freelancer.Id == employer.Id).ToList();
+				.Where(c => c.Freelancer.Id == employer.Id && !c.IsHidden).ToList();
 
 			DetailsForFreelancerView model = new DetailsForFreelancerView
 			{
@@ -418,7 +418,7 @@ namespace FreeLance.Controllers
 		{
 			ICollection<ContractModels> contracts = db.ContractModels
 				.Where(
-					c => c.Problem.Employer.Id == userId
+					c => c.Problem.Employer.Id == userId && !c.IsHidden
 						&& (c.Status == ContractStatus.Closed
 							|| c.Status == ContractStatus.Failed
 							|| c.Status == ContractStatus.СancelledByEmployer
@@ -499,7 +499,7 @@ namespace FreeLance.Controllers
 			}
 			ProblemModels problemModels = db.ProblemModels.Find(id);
 			
-			if (problemModels == null)
+			if (problemModels == null || problemModels.IsHidden)
 			{
 				return HttpNotFound();
 			}
@@ -593,18 +593,18 @@ namespace FreeLance.Controllers
 				EmployerEmail = employer.Email,
                 EmployerPhoto = employer.PhotoPath,
 				OpenContractsCount = db.ContractModels.Where(
-					c => c.Problem.Employer.Id == id && (c.Status == ContractStatus.Done 
+					c => c.Problem.Employer.Id == id && !c.IsHidden && (c.Status == ContractStatus.Done 
 					|| c.Status == ContractStatus.InProgress || c.Status == ContractStatus.ClosedNotPaid
 					|| c.Status == ContractStatus.Opened)).Count(),
 				ClosedContractsCount = db.ContractModels.Where(
-					c => c.Problem.Employer.Id == id && (c.Status == ContractStatus.Closed
+					c => c.Problem.Employer.Id == id && !c.IsHidden && (c.Status == ContractStatus.Closed
 					|| c.Status == ContractStatus.Failed || c.Status == ContractStatus.СancelledByEmployer
 					|| c.Status == ContractStatus.СancelledByFreelancer)).Count(),
 				OpenProblemsCount = db.ProblemModels.Where(
-					p => p.Employer.Id == id 
+					p => p.Employer.Id == id && !p.IsHidden
 					&& (p.Status == ProblemStatus.InProgress || p.Status == ProblemStatus.InProgress)).Count(),
 				ClosedProblemsCount = db.ProblemModels.Where(
-					p => p.Employer.Id == id
+					p => p.Employer.Id == id && !p.IsHidden
 					&& p.Status == ProblemStatus.Closed).Count(),
 				emailNotifications = employer.EmailNotificationPolicy
 			};
