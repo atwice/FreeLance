@@ -185,22 +185,47 @@
 				@if (Model.showMore)
 				{
 					<p>@Model.Details</p>
-					<a href="/Contract/Details/@Model.ContractId?showMore=false" class="btn btn-info" role="button">
+					<a href="/Contract/Details/@Model.ContractId?showMore=false" class="btn btn-default" role="button">
 						Скрыть полное описание
 					</a>
 				}
 				else
 				{
-					<a href="/Contract/Details/@Model.ContractId?showMore=true" class="btn btn-info" role="button">
+					<a href="/Contract/Details/@Model.ContractId?showMore=true" class="btn btn-default" role="button">
 						Показать полное описание
 					</a>
 				}
 
 				<div class="row">
-					<div class="col-xs-12">
-						<hr />
-						<a href="#">Приложение 1</a>
+					<div class="col-xs-6">
+                        <hr />
+                        @if (Model.TaskAttachmentModels.Count() == 0)
+                        {
+                            <a href="#">Уточнения к задаче</a>
+                        }
+                        else
+                        {
+                            foreach (var taskAttachment in Model.TaskAttachmentModels)
+                            {
+                                <a href="@taskAttachment.AttachmentPath">taskAttachment.Name</a>
+                            }
+                        }
+						
 					</div>
+                    <div class="col-xs-6 text-right">
+                        <hr />
+                        @if (Model.ResultAttachmentModels.Count() == 0)
+                        {
+                            <a href="#">Результаты</a>
+                        }
+                        else
+                        {
+                            foreach (var resultAttachment in Model.ResultAttachmentModels)
+                            {
+                                <a href="@resultAttachment.AttachmentPath">resultAttachment.Name</a>
+                            }
+                        }
+                    </div>
 				</div>
 			</div>
 			<div class="panel-footer clearfix">

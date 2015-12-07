@@ -26,11 +26,11 @@ namespace FreeLance.Models
 		public virtual ContractModels Contract { get; set; }
 	};
 
-	public class ResultAttachment : Attachment 
+	public class ResultAttachmentModel : Attachment 
 	{
 	};
 
-	public class TaskAttachment : Attachment
+	public class TaskAttachmentModel : Attachment
 	{
 	};
 
@@ -72,7 +72,7 @@ namespace FreeLance.Models
         public bool IsPayed { get; set; }
 		public bool IsHidden { get; set; } = false; // If coordinator hides 
 
-		public List<TaskAttachment> TaskAttachments { get; set; }
-		public List<ResultAttachment> ResultAttachments { get; set; }
+		public List<TaskAttachmentModel> TaskAttachmentModels { get; set; } = new List<TaskAttachmentModel>();
+		public List<ResultAttachmentModel> ResultAttachmentModels { get; set; } = new List<ResultAttachmentModel>();
 	}
 }

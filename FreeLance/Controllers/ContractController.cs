@@ -56,6 +56,9 @@ namespace FreeLance.Controllers
 				public Models.ContractStatus Status { get; set; }
 			}
 
+			public List<TaskAttachmentModel> TaskAttachmentModels { get; set; }
+			public List<ResultAttachmentModel> ResultAttachmentModels { get; set; }
+
 			public List<ChangeStatusButton> ChangeStatusButtons;
 			public ChangeStatusButton finishButton;
 		}
@@ -83,6 +86,8 @@ namespace FreeLance.Controllers
 				Details = c.Details,
 				EmployerPhotoPath = Utils.GetPhotoUrl(c.Problem.Employer.PhotoPath),
 				FreelancerPhotoPath = Utils.GetPhotoUrl(c.Freelancer.PhotoPath),
+				TaskAttachmentModels = c.TaskAttachmentModels,
+				ResultAttachmentModels = c.ResultAttachmentModels,
 				ContractId = c.ContractId
 			};
 
