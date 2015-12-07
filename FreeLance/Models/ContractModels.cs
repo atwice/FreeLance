@@ -60,14 +60,19 @@ namespace FreeLance.Models
 
 		[Required]
 		public ContractStatus Status { get; set; }
+
 		[Range(0, 1000000)]
 		[DataType(DataType.Currency)]
 		public decimal Cost { get; set; }
+
 		public decimal Rate { get; set; }
 		public string Comment { get; set; }
         public virtual LawFace LawFace { get; set; }
         public bool IsApprovedByCoordinator { get; set; }
         public bool IsPayed { get; set; }
 		public bool IsHidden { get; set; } = false; // If coordinator hides 
+
+		public List<TaskAttachment> TaskAttachments { get; set; }
+		public List<ResultAttachment> ResultAttachments { get; set; }
 	}
 }
