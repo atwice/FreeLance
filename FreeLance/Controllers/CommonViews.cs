@@ -16,10 +16,11 @@ namespace FreeLance.Controllers
 		public int ClosedContractsCount { get; set; }
 		public int OpenContractsCount { get; set; }
 		public decimal Rate { get; set; }
+		public ApplicationUser Freelancer;
 
 		public FreelancerViewModel(string id)
 		{
-			ApplicationUser freelancer = db.Users.Find(id);
+			Freelancer = db.Users.Find(id);
 			List<SmallContractInfoModel> contracts = db.ContractModels
 				.Where(
 					c => c.Freelancer.Id == id)
@@ -32,8 +33,8 @@ namespace FreeLance.Controllers
 				.ToList();
 
 			Rate = 0;
-			Name = freelancer.FIO;
-			Email = freelancer.Email;
+			Name = Freelancer.FIO;
+			Email = Freelancer.Email;
 			ClosedContractsCount = 0;
 			OpenContractsCount = 0;
 			Id = id;
@@ -65,7 +66,7 @@ namespace FreeLance.Controllers
 			}
 			ClosedContractsCount += cancelByFreelancer;
 		}
-    }
+	}
 
 	public class SmallContractInfoModel
 	{
@@ -73,5 +74,5 @@ namespace FreeLance.Controllers
 		public decimal Rate { get; set; }
 	}
 
-	
+
 }

@@ -529,18 +529,22 @@ namespace FreeLance.Controllers
 		private int getContractCommentsNumber(int contractId, string userId)
 		{
 			int number = 0;
-			try {
+			try
+			{
 				number = ChatController.FindContractChatId(contractId);
-			} catch (Exception) {}
+			}
+			catch (Exception) { }
 			return ChatController.CalcUserInfo(userId, number).UnreadMessagesCount;
 		}
 
-		private int getProblemCommentsNumber(int problemId, string userId) 
+		private int getProblemCommentsNumber(int problemId, string userId)
 		{
 			int number = 0;
-			try {
+			try
+			{
 				number = ChatController.FindProblemChatId(problemId);
-			} catch (Exception) {}
+			}
+			catch (Exception) { }
 			return ChatController.CalcUserInfo(userId, number).UnreadMessagesCount;
 		}
 
@@ -634,7 +638,7 @@ namespace FreeLance.Controllers
 			{
 				return PartialView("_DetailsForCoordinator", getDetailsForCoordinator(freelancerModel, info, sortOrder, lastSort, hideFailed));
 			}
-			
+
 			return View();
 		}
 
@@ -970,7 +974,7 @@ namespace FreeLance.Controllers
 		public OpenProblemsInfo getOpenProblemsInfo(String sortOrder, string lastSort, string showSubscriptionsParam)
 		{
 			List<ProblemModels> problems = db.ProblemModels
-				.Where(p => (p.Status == ProblemStatus.InProgress || p.Status == ProblemStatus.Opened) 
+				.Where(p => (p.Status == ProblemStatus.Opened)
 									) //&& p.Employer.IsApprovedByCoordinator == true)
 									  //  IsApprovedByCoordinator - про пакет документов
 									  // биржу должны видеть все, кроме incognito

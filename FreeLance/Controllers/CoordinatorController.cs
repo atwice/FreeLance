@@ -27,12 +27,12 @@ namespace FreeLance.Controllers
 			public List<ApplicationUser> IncognitosSmallList { get; set; }
 			public List<ApplicationUser> WithoutDocumentsSmallList { get; set; }
 
-            public List<ContractModels> ContractsList { get; set; }
-            public List<ContractModels> ContractsToPay { get; set; }
-            public List<ApplicationUser> NewEmployers { get; set; }
-            public List<ApplicationUser> NewFreelancers { get; set; }
-            public List<ContractModels> ContractWithComments { get; set; }
-            public List<DocumentPackageModels> DocumetsUnapproved { get; set; }
+			public List<ContractModels> ContractsList { get; set; }
+			public List<ContractModels> ContractsToPay { get; set; }
+			public List<ApplicationUser> NewEmployers { get; set; }
+			public List<ApplicationUser> NewFreelancers { get; set; }
+			public List<ContractModels> ContractWithComments { get; set; }
+			public List<DocumentPackageModels> DocumetsUnapproved { get; set; }
 		}
 
 		public class EmployerViewModel
@@ -42,7 +42,7 @@ namespace FreeLance.Controllers
 			public string Email { get; set; }
 			public int ClosedContractsCount { get; set; }
 			public int OpenContractsCount { get; set; }
-            public virtual ApplicationUser Employer { get; set; }
+			public virtual ApplicationUser Employer { get; set; }
 		}
 
 
@@ -57,14 +57,14 @@ namespace FreeLance.Controllers
 		public ActionResult Home()
 		{
 			var model = new HomeViewModel();
-		    model.ContractsList = db.ContractModels.Where(x => x.IsApprovedByCoordinator == false).ToList();
-		    model.ContractsToPay = db.ContractModels.Where(x => x.Status == ContractStatus.ClosedNotPaid).ToList();
-		    model.NewEmployers = getApplicationUsersApproved(null, "Employer").ToList();
-		    model.NewFreelancers = getApplicationUsersApproved(null, "Freelancer").ToList();
-		    model.ContractWithComments = db.ContractModels.Where(x => x.Comment != null).ToList();
-		    model.DocumetsUnapproved = db.DocumentPackageModels.Where(x => x.IsApproved == null).ToList();
-		    ViewBag.LawFaceChooseView = new LawModelsManager.LawFaceChooseView();
-            return View(model);
+			model.ContractsList = db.ContractModels.Where(x => x.IsApprovedByCoordinator == false).ToList();
+			model.ContractsToPay = db.ContractModels.Where(x => x.Status == ContractStatus.ClosedNotPaid).ToList();
+			model.NewEmployers = getApplicationUsersApproved(null, "Employer").ToList();
+			model.NewFreelancers = getApplicationUsersApproved(null, "Freelancer").ToList();
+			model.ContractWithComments = db.ContractModels.Where(x => x.Comment != null).ToList();
+			model.DocumetsUnapproved = db.DocumentPackageModels.Where(x => x.IsApproved == null).ToList();
+			ViewBag.LawFaceChooseView = new LawModelsManager.LawFaceChooseView();
+			return View(model);
 		}
 
 		public ActionResult Freelancers(String searchString, String sortOrder)
@@ -141,7 +141,7 @@ namespace FreeLance.Controllers
 		private IEnumerable<ApplicationUser> getApplicationUsersApproved(bool? approved, string roleName)
 		{
 			return getApplicationUsersInRole(roleName)
-				.Where(user => user.IsApprovedByCoordinator == approved);  
+				.Where(user => user.IsApprovedByCoordinator == approved);
 		}
 
 		private IEnumerable<ApplicationUser> getApplicationUsersInRole(string roleName)
@@ -155,18 +155,18 @@ namespace FreeLance.Controllers
 		}
 
 		public class FreelancerDocuments
-	    {
-		    public DocumentPackageModels Document;
+		{
+			public DocumentPackageModels Document;
 			// other info;
-	    }
+		}
 
-	    public ActionResult ViewFreelancerDocuments(String userId)
-	    {
-		    ApplicationUser freelancer = db.Users.Find(userId);
+		public ActionResult ViewFreelancerDocuments(String userId)
+		{
+			ApplicationUser freelancer = db.Users.Find(userId);
 			FreelancerDocuments documents = new FreelancerDocuments();
-		    documents.Document = freelancer.DocumentPackage;
+			documents.Document = freelancer.DocumentPackage;
 			return View(documents);
-	    }
+		}
 
 		public ActionResult DownloadDoumentImage(string documentPath)
 		{
@@ -176,18 +176,18 @@ namespace FreeLance.Controllers
 			return File(filedata, contentType);
 		}
 
-	    public ActionResult ApproveFreelancer(string freelancerId)
-	    {
+		public ActionResult ApproveFreelancer(string freelancerId)
+		{
 			ApplicationUser freelancer = db.Users.Find(freelancerId);
-		    freelancer.IsApprovedByCoordinator = !freelancer.IsApprovedByCoordinator;
-		    db.SaveChanges();
+			freelancer.IsApprovedByCoordinator = !freelancer.IsApprovedByCoordinator;
+			db.SaveChanges();
 			return RedirectToAction("ViewFreelancerDocuments", new { userId = freelancerId });
-	    }
+		}
 
 		public ActionResult Employers(String searchString, String sortOrder)
 		{
 			List<string> Ids = AccountController.GetApplicationUsersInRole(db, "Employer")
-				.Select( u => u.Id )
+				.Select(u => u.Id)
 				.ToList();
 			List<EmployerViewModel> model = new List<EmployerViewModel>();
 			foreach (var id in Ids)
@@ -260,13 +260,13 @@ namespace FreeLance.Controllers
 					Status = c.Status
 				})
 				.ToList();
-			
+
 			model.Name = employer.FIO;
 			model.Email = employer.Email;
 			model.ClosedContractsCount = 0;
 			model.OpenContractsCount = 0;
 			model.Id = id;
-		    model.Employer = employer;
+			model.Employer = employer;
 			int cancelByEmployer = 0;
 			foreach (var contract in contracts)
 			{
@@ -307,66 +307,66 @@ namespace FreeLance.Controllers
 			return Redirect(redirect == null ? "/Coordinator/Home" : redirect);
 		}
 
-	    [HttpPost]
-	    public ActionResult ApproveUserByCoordinator(string userId, bool value)
-	    {
-	        ApplicationUser user = db.Users.Find(userId);
-	        if (user == null)
-	        {
-	            return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-	        }
-	        user.IsApprovedByCoordinator = value;
-	        db.SaveChanges();
-	        return Redirect("/Coordinator/Home");
-	    }
+		[HttpPost]
+		public ActionResult ApproveUserByCoordinator(string userId, bool value)
+		{
+			ApplicationUser user = db.Users.Find(userId);
+			if (user == null)
+			{
+				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+			}
+			user.IsApprovedByCoordinator = value;
+			db.SaveChanges();
+			return Redirect("/Coordinator/Home");
+		}
 
-        [HttpPost]
-        public ActionResult ApproveDocuments(string docId, bool value)
-        {
-            int id = Int32.Parse(docId);
-            DocumentPackageModels doc = db.DocumentPackageModels.Include(x => x.Freelancer).Single(x => x.Id == id);
-            if (doc == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            doc.IsApproved = value;
-            db.SaveChanges();
-            return Redirect("/Coordinator/Home");
-        }
+		[HttpPost]
+		public ActionResult ApproveDocuments(string docId, bool value)
+		{
+			int id = Int32.Parse(docId);
+			DocumentPackageModels doc = db.DocumentPackageModels.Include(x => x.Freelancer).Single(x => x.Id == id);
+			if (doc == null)
+			{
+				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+			}
+			doc.IsApproved = value;
+			db.SaveChanges();
+			return Redirect("/Coordinator/Home");
+		}
 
-        public enum Approvable
-	    {
-	        Contract,
-	        Payment, 
-	    };
+		public enum Approvable
+		{
+			Contract,
+			Payment,
+		};
 
-        [HttpPost]
-        public ActionResult ApproveInContractByCoordinator(string contractId, Approvable approvable)
-        {
-            int contractIdNum = Int32.Parse(contractId);
-            ContractModels contract = db.ContractModels.Include(t => t.LawFace).Include(t => t.Problem).Include(t => t.Freelancer).Single(t => t.ContractId == contractIdNum);
-            if (contract == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            switch (approvable)
-            {
-                case Approvable.Contract:
-                {
-                    contract.IsApprovedByCoordinator = true;
-                    break;
-                }
-                case Approvable.Payment:
-                {
-                    contract.Status = ContractStatus.Closed;
-                    break;
-                }
-            }       
-            db.SaveChanges();
-            return Redirect("/Coordinator/Home");
-        }
+		[HttpPost]
+		public ActionResult ApproveInContractByCoordinator(string contractId, Approvable approvable)
+		{
+			int contractIdNum = Int32.Parse(contractId);
+			ContractModels contract = db.ContractModels.Include(t => t.LawFace).Include(t => t.Problem).Include(t => t.Freelancer).Single(t => t.ContractId == contractIdNum);
+			if (contract == null)
+			{
+				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+			}
+			switch (approvable)
+			{
+				case Approvable.Contract:
+					{
+						contract.IsApprovedByCoordinator = true;
+						break;
+					}
+				case Approvable.Payment:
+					{
+						contract.Status = ContractStatus.Closed;
+						break;
+					}
+			}
+			db.SaveChanges();
+			return Redirect("/Coordinator/Home");
+		}
 
-        [HttpPost]
+		[HttpPost]
 		public ActionResult IncognitoToFreelancer(string usernameID, string redirect)
 		{
 			ApplicationUser freelancer = db.Users.Find(usernameID);
@@ -413,91 +413,106 @@ namespace FreeLance.Controllers
 			return View(user.EmailNotificationPolicy);
 		}
 
-        		public class UploadPostModel
-        		{
-        			public HttpPostedFileBase File { get; set; }
-        			public string UserId { get; set; }
-        			public string LawFaceId { get; set; }
-        			public DateTime StartDate { get; set; }
-        			public DateTime EndDate { get; set; }
-        		}
+		public class UploadPostModel
+		{
+			public HttpPostedFileBase File { get; set; }
+			public string UserId { get; set; }
+			public string LawFaceId { get; set; }
+			public DateTime StartDate { get; set; }
+			public DateTime EndDate { get; set; }
+		}
 
-        		public class UploadSignedLawContractModel
-        		{
-        			public List<ApplicationUser> Freelancers { get; set; }
-        			public List<LawContractTemplate> LawContractTemplates { get; set; }
-        			public List<LawFace> LawFaces { get; set; }
-        			public UploadPostModel PostModel { get; set; }
-        		}
+		public class UploadSignedLawContractModel
+		{
+			public List<ApplicationUser> Freelancers { get; set; }
+			public List<LawContractTemplate> LawContractTemplates { get; set; }
+			public List<LawFace> LawFaces { get; set; }
+			public UploadPostModel PostModel { get; set; }
+		}
 
-        		// Координатор загружает подписанный ГПХ
-        		public ActionResult UploadSignedLawContract()
-        		{
-        			var model = new UploadSignedLawContractModel();
-        			model.LawContractTemplates = db.LawContractTemplates.ToList();
-        			model.Freelancers = getApplicationUsersInRole("Freelancer").OrderBy(f => f.FIO).ToList();
-        			model.LawFaces = db.LawFaces.ToList();
-        			model.PostModel = new UploadPostModel();
-        			return View(model);
-        		}
+		// Координатор загружает подписанный ГПХ
+		public ActionResult UploadSignedLawContract()
+		{
+			var model = new UploadSignedLawContractModel();
+			model.LawContractTemplates = db.LawContractTemplates.ToList();
+			model.Freelancers = getApplicationUsersInRole("Freelancer").OrderBy(f => f.FIO).ToList();
+			model.LawFaces = db.LawFaces.ToList();
+			model.PostModel = new UploadPostModel();
+			return View(model);
+		}
 
-        		[HttpPost]
-        		public ActionResult UploadSignedLawContract([Bind(Prefix = "UploadPostModel")]UploadPostModel model)
-        		{
-        			if (ModelState.IsValid)
-        			{
-        				if (model.File.ContentLength > 0)
-        				{
-        					string path = saveLawContract(model.File);
-        					addLawContractInDb(path, model.UserId, model.LawFaceId, model.StartDate, model.EndDate);
-        
-        				}
-        			}
-        			return RedirectToAction("Home");
-        		}
+		[HttpPost]
+		public ActionResult UploadSignedLawContract([Bind(Prefix = "UploadPostModel")]UploadPostModel model)
+		{
+			if (ModelState.IsValid)
+			{
+				if (model.File.ContentLength > 0)
+				{
+					string path = saveLawContract(model.File);
+					addLawContractInDb(path, model.UserId, model.LawFaceId, model.StartDate, model.EndDate);
 
-        		private void addLawContractInDb(string Path, string UserId, string lawFaceId, DateTime startDate, DateTime EndDate)
-        		{
-                    int lawFaceId_ = Int32.Parse(lawFaceId);
-        		    LawFace lawFace = db.LawFaces.Include(c => c.ActiveLawContractTemplate).Single(c => c.Id == lawFaceId_);
-        			LawContract contract = new LawContract();
-        			contract.Path = Path;
-        			contract.StartDate = startDate;
-        			contract.EndDate = EndDate;
-        			contract.User = db.Users.Find(UserId);
-        		    contract.LawFace = lawFace;
-        		    contract.LawContractTemplate = lawFace.ActiveLawContractTemplate;
-        			db.LawContracts.Add(contract);
-        			db.SaveChanges();
-        		}
+				}
+			}
+			return RedirectToAction("Home");
+		}
 
-        
-        		private string saveLawContract(HttpPostedFileBase file)
-        		{
-        			string path = null;
-        			var fileName = Path.GetFileName(file.FileName);
-        			path = AppDomain.CurrentDomain.BaseDirectory + "App_Data\\LawContracts\\" + fileName;
-        			Response.Write(path.ToString());
-        			file.SaveAs(path);
-        			return path;
-        		}
+		private void addLawContractInDb(string Path, string UserId, string lawFaceId, DateTime startDate, DateTime EndDate)
+		{
+			int lawFaceId_ = Int32.Parse(lawFaceId);
+			LawFace lawFace = db.LawFaces.Include(c => c.ActiveLawContractTemplate).Single(c => c.Id == lawFaceId_);
+			LawContract contract = new LawContract();
+			contract.Path = Path;
+			contract.StartDate = startDate;
+			contract.EndDate = EndDate;
+			contract.User = db.Users.Find(UserId);
+			contract.LawFace = lawFace;
+			contract.LawContractTemplate = lawFace.ActiveLawContractTemplate;
+			db.LawContracts.Add(contract);
+			db.SaveChanges();
+		}
 
-        [HttpPost]
-	    public void ChangeLawFaceInContract(int contractId, int lawFaceId)
-	    {
-	        FreeLance.Models.ContractModels contract = db.ContractModels.Include(c => c.LawFace).Single(c => c.ContractId == contractId);
-	        LawFace lawFace = db.LawFaces.Single(l => l.Id == lawFaceId);
-	        contract.LawFace = lawFace;
-	        db.SaveChanges();
-	    }
 
-        [HttpPost]
-        public void ChangeLawFaceEmployer(string employerId, int lawFaceId)
-        {
-            ApplicationUser employer = getApplicationUsersInRole("Employer").Single(x => x.Id == employerId);
-            LawFace lawFace = db.LawFaces.Single(l => l.Id == lawFaceId);
-            employer.LawFace = lawFace;
-            db.SaveChanges();
-        }
-    }
+		private string saveLawContract(HttpPostedFileBase file)
+		{
+			string path = null;
+			var fileName = Path.GetFileName(file.FileName);
+			path = AppDomain.CurrentDomain.BaseDirectory + "App_Data\\LawContracts\\" + fileName;
+			Response.Write(path.ToString());
+			file.SaveAs(path);
+			return path;
+		}
+
+		[HttpPost]
+		public void ChangeLawFaceInContract(int contractId, int lawFaceId)
+		{
+			FreeLance.Models.ContractModels contract = db.ContractModels.Include(c => c.LawFace).Single(c => c.ContractId == contractId);
+			LawFace lawFace = db.LawFaces.Single(l => l.Id == lawFaceId);
+			contract.LawFace = lawFace;
+			db.SaveChanges();
+		}
+
+		[HttpPost]
+		public void ChangeLawFaceEmployer(string employerId, int lawFaceId)
+		{
+			ApplicationUser employer = getApplicationUsersInRole("Employer").Single(x => x.Id == employerId);
+			LawFace lawFace = db.LawFaces.Single(l => l.Id == lawFaceId);
+			employer.LawFace = lawFace;
+			db.SaveChanges();
+		}
+
+		public ActionResult ToggleApprove(string id, string nextAction)
+		{
+			ApplicationUser user = db.Users.Where(u => u.Id == id).ToList()[0];
+			if (user.IsApprovedByCoordinator.HasValue)
+			{
+				user.IsApprovedByCoordinator = !user.IsApprovedByCoordinator;
+			}
+			else
+			{
+				user.IsApprovedByCoordinator = true;
+			}
+			db.SaveChanges();
+			return RedirectToAction(nextAction);
+		}
+	}
 }
