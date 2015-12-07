@@ -248,7 +248,8 @@ namespace FreeLance.Controllers
 						SubscribersCount = p.Subscriptions.Count,
 						CreationDate = p.CreationDate,
 						EndingDate = p.DeadlineDate,
-						AmountOfWorkers = p.AmountOfWorkes
+						AmountOfWorkers = p.Contracts.Where(c => c.Status == ContractStatus.InProgress || c.Status == ContractStatus.Opened 
+											|| c.Status == ContractStatus.Done || c.Status == ContractStatus.ClosedNotPaid).Count()
 					}
 				)
 				.ToList();

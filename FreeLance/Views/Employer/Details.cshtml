@@ -140,13 +140,16 @@ else
                             </div>
                             <div class="panel-body">
                                 <p>
-                                    <i>До</i>
-                                    @problem.EndingDate.ToShortDateString()
-                                    <b>@problem.SubscribersCount исполнителей</b>
+                                    До @problem.EndingDate.ToShortDateString()
                                     <span class="pull-right"><b>@problem.Cost</b><span class="flaticon-ruble"></span> </span>
                                 </p>
                             <p>
-                                <b>Подписчиков: @problem.SubscribersCount </b>
+                                <span>
+                                    <b>Подписчиков: @problem.SubscribersCount </b>
+                                </span>
+                                <span class="pull-right">
+                                    <b>Исполнителей: @problem.AmountOfWorkers </b>
+                                </span>
                             </p>
                                 <p><i> @Truncate(problem.ShortDescription, 200)</i></p>
                                 <p>

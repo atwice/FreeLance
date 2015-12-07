@@ -103,17 +103,18 @@ namespace FreeLance.Controllers
 				ProblemId = p.ProblemId,
 				Status = p.Status,
 				EmployerId = p.Employer.Id,
-				PhotoPath = Utils.GetPhotoUrl(p.Employer.PhotoPath), 
+				PhotoPath = Utils.GetPhotoUrl(p.Employer.PhotoPath),
 				EmployerName = p.Employer.FIO,
 				EmployerEmail = p.Employer.Email,
 				ProblemName = p.Name,
 				ProblemShortDescription = p.SmallDescription,
 				ProblemFullDescription = p.Description,
 				CreatingDate = p.CreationDate.ToShortDateString(),
-				DeadlineDate = p.DeadlineDate.ToShortDateString(), 
+				DeadlineDate = p.DeadlineDate.ToShortDateString(),
 				Cost = p.Cost,
 				IsHidden = p.IsHidden,
-				AmountOfWorkers = p.AmountOfWorkes
+				AmountOfWorkers = p.Contracts.Where(c => c.Status == ContractStatus.InProgress || c.Status == ContractStatus.Opened
+											|| c.Status == ContractStatus.Done || c.Status == ContractStatus.ClosedNotPaid).Count()
 			};
 
 			details.ContractsInProgress = getContractsWithStatus(p.Contracts,

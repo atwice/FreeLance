@@ -199,7 +199,8 @@ namespace FreeLance.Controllers
 				CreationDate = problem.CreationDate,
 				DeadlineDate = problem.DeadlineDate,
 				Cost = problem.Cost,
-				AmountOfWorkers = problem.AmountOfWorkes,
+				AmountOfWorkers = problem.Contracts.Where(c => c.Status == ContractStatus.InProgress || c.Status == ContractStatus.Opened
+											|| c.Status == ContractStatus.Done || c.Status == ContractStatus.ClosedNotPaid).Count(),
 				ProblemId = problem.ProblemId,
 				IsSubscribed = problem.Subscriptions.Any(s => s.Freelancer.Id == User.Identity.GetUserId())
 			};
