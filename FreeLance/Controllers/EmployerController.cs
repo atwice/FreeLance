@@ -45,7 +45,8 @@ namespace FreeLance.Controllers
 			public int Id { get; set; }
 			public int NewMsgCount { get; set; }
 			public String StatusIcon { get; set; }
-			public int AmountOfWorkers { get; set; }
+			public int AmountOfWorkers { get; set; } // число рабочих мест
+			public int FreelancersCount { get; set;  } // число исполнителей
 		}
 
 		public class ProblemInProgressViewModel
@@ -221,7 +222,10 @@ namespace FreeLance.Controllers
 						SubscribersCount = p.Subscriptions.Count,
 						CreationDate = p.CreationDate,
 						EndingDate = p.DeadlineDate,
-						NewMsgCount = 0
+						AmountOfWorkers = p.AmountOfWorkes,
+						FreelancersCount = p.Contracts.Where(c => c.Status == ContractStatus.InProgress || c.Status == ContractStatus.Opened
+											|| c.Status == ContractStatus.Done || c.Status == ContractStatus.ClosedNotPaid).Count(),
+                        NewMsgCount = 0
 					}
 				)
 				.ToList();
@@ -250,8 +254,7 @@ namespace FreeLance.Controllers
 						SubscribersCount = p.Subscriptions.Count,
 						CreationDate = p.CreationDate,
 						EndingDate = p.DeadlineDate,
-						AmountOfWorkers = p.Contracts.Where(c => c.Status == ContractStatus.InProgress || c.Status == ContractStatus.Opened 
-											|| c.Status == ContractStatus.Done || c.Status == ContractStatus.ClosedNotPaid).Count()
+						AmountOfWorkers = p.AmountOfWorkes
 					}
 				)
 				.ToList();

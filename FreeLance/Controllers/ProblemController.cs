@@ -113,8 +113,7 @@ namespace FreeLance.Controllers
 				DeadlineDate = p.DeadlineDate.ToShortDateString(),
 				Cost = p.Cost,
 				IsHidden = p.IsHidden,
-				AmountOfWorkers = p.Contracts.Where(c => c.Status == ContractStatus.InProgress || c.Status == ContractStatus.Opened
-											|| c.Status == ContractStatus.Done || c.Status == ContractStatus.ClosedNotPaid).Count()
+				AmountOfWorkers = p.AmountOfWorkes
 			};
 
 			details.ContractsInProgress = getContractsWithStatus(p.Contracts,

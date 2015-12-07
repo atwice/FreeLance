@@ -120,7 +120,7 @@ namespace FreeLance.Migrations
 				CreationDate = DateTime.Now.AddDays(rnd.Next(1, 40)).AddHours(5),
 				DeadlineDate = DateTime.Now.AddDays(rnd.Next(8, 40)).AddHours(5),
 				Cost = (decimal)RandomNumberBetween(10.1, 5000.0),
-				AmountOfWorkes = 0
+				AmountOfWorkes = rnd.Next(1, 6)
 			};
 			context.ProblemModels.AddOrUpdate(p => p.Name, problem);
 			return problem;
