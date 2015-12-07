@@ -13,23 +13,51 @@ namespace FreeLance.Models
 		Opened, InProgress, Done, Failed, СancelledByFreelancer, СancelledByEmployer, Closed, ClosedNotPaid
 	}
 
+	public abstract class Attachment
+	{
+		public string Name { get; set; } = "Приложение";
+		[Key]
+		public int AttachmentId { get; set; }
+
+		[Required]
+		public string AttachmentPath { get; set; }
+
+		[Required]
+		public virtual ContractModels Contract { get; set; }
+	};
+
+	public class ResultAttachment : Attachment 
+	{
+	};
+
+	public class TaskAttachment : Attachment
+	{
+	};
+
 	public class ContractModels
 	{
 		[Key]
 		public int ContractId { get; set; }
+
 		[DataType(DataType.Date)]
 		public DateTime CreationDate { get; set; }
+
         [DataType(DataType.Date)]
         public DateTime DeadlineDate { get; set; }
+
         [DataType(DataType.Date)]
 		public DateTime EndingDate { get; set; }
+
 		[Required]
 		public virtual ApplicationUser Freelancer { get; set; }
+
 		[DataType(DataType.MultilineText)]
 		[AllowHtml]
 		public string Details { get; set; }
+
 		[Required]
 		public virtual ProblemModels Problem { get; set; }
+
 		[Required]
 		public ContractStatus Status { get; set; }
 		[Range(0, 1000000)]
@@ -40,6 +68,6 @@ namespace FreeLance.Models
         public virtual LawFace LawFace { get; set; }
         public bool IsApprovedByCoordinator { get; set; }
         public bool IsPayed { get; set; }
-		public bool IsHidden { get; set; } = false;
+		public bool IsHidden { get; set; } = false; // If coordinator hides 
 	}
 }
