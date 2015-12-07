@@ -9,7 +9,7 @@ namespace FreeLance.Models
 {
 	public enum ProblemStatus
 	{
-		Opened, InProgress, Closed
+		Opened, Closed
 	}
 
 	public class ProblemModels
@@ -18,9 +18,9 @@ namespace FreeLance.Models
 		public int ProblemId { get; set; }
 		[DataType(DataType.Date)]
 		public DateTime CreationDate { get; set; }
-        [DataType(DataType.Date)]
-        public DateTime DeadlineDate { get; set; }
-        [Required]
+		[DataType(DataType.Date)]
+		public DateTime DeadlineDate { get; set; }
+		[Required]
 		public virtual ApplicationUser Employer { get; set; }
 		[Required]
 		public string Name { get; set; }

@@ -43,25 +43,25 @@ namespace FreeLance.Controllers
 			public string Email { get; set; }
 			public int ClosedContractsCount { get; set; }
 			public int OpenContractsCount { get; set; }
-            public virtual ApplicationUser Employer { get; set; }
+			public virtual ApplicationUser Employer { get; set; }
 		}
 
 		public ActionResult Index()
 		{
 			return RedirectToAction("Home");
-		}		
+		}
 
 		public ActionResult Home()
 		{
 			var model = new HomeViewModel();
-		    model.ContractsList = db.ContractModels.Where(x => x.IsApprovedByCoordinator == false).ToList();
-		    model.ContractsToPay = db.ContractModels.Where(x => x.Status == ContractStatus.ClosedNotPaid).ToList();
-		    model.NewEmployers = getApplicationUsersApproved(null, "Employer").ToList();
-		    model.NewFreelancers = getApplicationUsersApproved(null, "Freelancer").ToList();
-		    model.ContractWithComments = db.ContractModels.Where(x => x.Comment != null).ToList();
-		    model.DocumetsUnapproved = db.DocumentPackageModels.Where(x => x.IsApproved == null).ToList();
-		    ViewBag.LawFaceChooseView = new LawModelsManager.LawFaceChooseView();
-            return View(model);
+			model.ContractsList = db.ContractModels.Where(x => x.IsApprovedByCoordinator == false).ToList();
+			model.ContractsToPay = db.ContractModels.Where(x => x.Status == ContractStatus.ClosedNotPaid).ToList();
+			model.NewEmployers = getApplicationUsersApproved(null, "Employer").ToList();
+			model.NewFreelancers = getApplicationUsersApproved(null, "Freelancer").ToList();
+			model.ContractWithComments = db.ContractModels.Where(x => x.Comment != null).ToList();
+			model.DocumetsUnapproved = db.DocumentPackageModels.Where(x => x.IsApproved == null).ToList();
+			ViewBag.LawFaceChooseView = new LawModelsManager.LawFaceChooseView();
+			return View(model);
 		}
 
 		public ActionResult Freelancers(String searchString, String sortOrder)
@@ -131,7 +131,7 @@ namespace FreeLance.Controllers
 			ViewBag.sortOrder = sortOrder;
 
 			return PartialView("~/Views/_FreelancersView.cshtml", model);
-		}		
+		}
 
 		private IEnumerable<ApplicationUser> getApplicationUsersApproved(bool? approved, string roleName)
 		{
@@ -145,7 +145,7 @@ namespace FreeLance.Controllers
 				   where role.Name == roleName
 				   from userRoles in role.Users
 				   join user in db.Users
-				   on userRoles.UserId equals user.Id
+					   on userRoles.UserId equals user.Id
 				   select user;
 		}
 
@@ -181,7 +181,7 @@ namespace FreeLance.Controllers
 
 		public ActionResult ChangeProblemVisibility(int problemId)
 		{
-			ProblemModels problem = db.ProblemModels.Include( p => p.Employer ).Single( p => p.ProblemId == problemId );
+			ProblemModels problem = db.ProblemModels.Include(p => p.Employer).Single(p => p.ProblemId == problemId);
 			problem.IsHidden = !problem.IsHidden;
 			db.SaveChanges();
 			return Redirect("\\Problem\\Details\\" + problemId);
@@ -189,9 +189,10 @@ namespace FreeLance.Controllers
 
 		public ActionResult ChangeContractVisibility(int contractId)
 		{
-			ContractModels contract = db.ContractModels.Include(c => c.Freelancer).Include(c => c.Problem).Single(c => c.ContractId == contractId);
+			ContractModels contract =
+				db.ContractModels.Include(c => c.Freelancer).Include(c => c.Problem).Single(c => c.ContractId == contractId);
 			contract.IsHidden = !contract.IsHidden;
-			db.SaveChanges();			
+			db.SaveChanges();
 			return Redirect("\\Contract\\Details\\" + contractId);
 		}
 
@@ -265,11 +266,11 @@ namespace FreeLance.Controllers
 				.Where(
 					c => c.Problem.Employer.Id == id)
 				.Select(
-				c => new SmallContractInfoModel
-				{
-					Rate = c.Rate,
-					Status = c.Status
-				})
+					c => new SmallContractInfoModel
+					{
+						Rate = c.Rate,
+						Status = c.Status
+					})
 				.ToList();
 
 			model.Name = employer.FIO;
@@ -277,6 +278,7 @@ namespace FreeLance.Controllers
 			model.ClosedContractsCount = 0;
 			model.OpenContractsCount = 0;
 			model.Id = id;
+			model.Employer = employer;
 			int cancelByEmployer = 0;
 			foreach (var contract in contracts)
 			{
@@ -288,7 +290,7 @@ namespace FreeLance.Controllers
 					model.ClosedContractsCount += 1;
 				}
 				else if (contract.Status == ContractStatus.InProgress ||
-				  contract.Status == ContractStatus.Opened)
+						 contract.Status == ContractStatus.Opened)
 				{
 					model.OpenContractsCount += 1;
 				}
@@ -354,7 +356,11 @@ namespace FreeLance.Controllers
 		public ActionResult ApproveInContractByCoordinator(string contractId, Approvable approvable)
 		{
 			int contractIdNum = Int32.Parse(contractId);
-			ContractModels contract = db.ContractModels.Include(t => t.LawFace).Include(t => t.Problem).Include(t => t.Freelancer).Single(t => t.ContractId == contractIdNum);
+			ContractModels contract =
+				db.ContractModels.Include(t => t.LawFace)
+					.Include(t => t.Problem)
+					.Include(t => t.Freelancer)
+					.Single(t => t.ContractId == contractIdNum);
 			if (contract == null)
 			{
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -422,23 +428,109 @@ namespace FreeLance.Controllers
 			db.SaveChanges();
 			return View(user.EmailNotificationPolicy);
 		}
-		
-        [HttpPost]
-	    public void ChangeLawFaceInContract(int contractId, int lawFaceId)
-	    {
-	        FreeLance.Models.ContractModels contract = db.ContractModels.Include(c => c.LawFace).Single(c => c.ContractId == contractId);
-	        LawFace lawFace = db.LawFaces.Single(l => l.Id == lawFaceId);
-	        contract.LawFace = lawFace;
-	        db.SaveChanges();
-	    }
 
-        [HttpPost]
-        public void ChangeLawFaceEmployer(string employerId, int lawFaceId)
-        {
-            ApplicationUser employer = getApplicationUsersInRole("Employer").Single(x => x.Id == employerId);
-            LawFace lawFace = db.LawFaces.Single(l => l.Id == lawFaceId);
-            employer.LawFace = lawFace;
-            db.SaveChanges();
-        }
-    }
+		public class UploadPostModel
+		{
+			public HttpPostedFileBase File { get; set; }
+			public string UserId { get; set; }
+			public string LawFaceId { get; set; }
+			public DateTime StartDate { get; set; }
+			public DateTime EndDate { get; set; }
+		}
+
+		public class UploadSignedLawContractModel
+		{
+			public List<ApplicationUser> Freelancers { get; set; }
+			public List<LawContractTemplate> LawContractTemplates { get; set; }
+			public List<LawFace> LawFaces { get; set; }
+			public UploadPostModel PostModel { get; set; }
+		}
+
+		// Координатор загружает подписанный ГПХ
+		public ActionResult UploadSignedLawContract()
+		{
+			var model = new UploadSignedLawContractModel();
+			model.LawContractTemplates = db.LawContractTemplates.ToList();
+			model.Freelancers = getApplicationUsersInRole("Freelancer").OrderBy(f => f.FIO).ToList();
+			model.LawFaces = db.LawFaces.ToList();
+			model.PostModel = new UploadPostModel();
+			return View(model);
+		}
+
+		[HttpPost]
+		public ActionResult UploadSignedLawContract([Bind(Prefix = "UploadPostModel")] UploadPostModel model)
+		{
+			if (ModelState.IsValid)
+			{
+				if (model.File.ContentLength > 0)
+				{
+					string path = saveLawContract(model.File);
+					addLawContractInDb(path, model.UserId, model.LawFaceId, model.StartDate, model.EndDate);
+
+				}
+			}
+			return RedirectToAction("Home");
+		}
+
+		private void addLawContractInDb(string Path, string UserId, string lawFaceId, DateTime startDate, DateTime EndDate)
+		{
+			int lawFaceId_ = Int32.Parse(lawFaceId);
+			LawFace lawFace = db.LawFaces.Include(c => c.ActiveLawContractTemplate).Single(c => c.Id == lawFaceId_);
+			LawContract contract = new LawContract();
+			contract.Path = Path;
+			contract.StartDate = startDate;
+			contract.EndDate = EndDate;
+			contract.User = db.Users.Find(UserId);
+			contract.LawFace = lawFace;
+			contract.LawContractTemplate = lawFace.ActiveLawContractTemplate;
+			db.LawContracts.Add(contract);
+			db.SaveChanges();
+		}
+
+
+		private string saveLawContract(HttpPostedFileBase file)
+		{
+			string path = null;
+			var fileName = Path.GetFileName(file.FileName);
+			path = AppDomain.CurrentDomain.BaseDirectory + "App_Data\\LawContracts\\" + fileName;
+			Response.Write(path.ToString());
+			file.SaveAs(path);
+			return path;
+		}
+
+		[HttpPost]
+		public void ChangeLawFaceInContract(int contractId, int lawFaceId)
+		{
+			FreeLance.Models.ContractModels contract =
+				db.ContractModels.Include(c => c.LawFace).Single(c => c.ContractId == contractId);
+			LawFace lawFace = db.LawFaces.Single(l => l.Id == lawFaceId);
+			contract.LawFace = lawFace;
+			db.SaveChanges();
+		}
+
+		[HttpPost]
+		public void ChangeLawFaceEmployer(string employerId, int lawFaceId)
+		{
+			ApplicationUser employer = getApplicationUsersInRole("Employer").Single(x => x.Id == employerId);
+			LawFace lawFace = db.LawFaces.Single(l => l.Id == lawFaceId);
+			employer.LawFace = lawFace;
+			db.SaveChanges();
+		}
+
+		public ActionResult ToggleApprove(string id, string nextAction)
+		{
+			ApplicationUser user = db.Users.Where(u => u.Id == id).ToList()[0];
+			if (user.IsApprovedByCoordinator.HasValue)
+			{
+				user.IsApprovedByCoordinator = !user.IsApprovedByCoordinator;
+			}
+			else
+			{
+				user.IsApprovedByCoordinator = true;
+			}
+			db.SaveChanges();
+			return RedirectToAction(nextAction);
+		}
+	}
 }
+

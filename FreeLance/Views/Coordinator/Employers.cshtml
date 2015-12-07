@@ -1,82 +1,95 @@
 ﻿@model IEnumerable<FreeLance.Controllers.CoordinatorController.EmployerViewModel>
 @{
-    Layout = "~/Views/Shared/_Layout.cshtml";
-    ViewBag.Title = "Работодатели";
-    ViewBag.MenuPick = "Employers";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	ViewBag.Title = "Работодатели";
+	ViewBag.MenuPick = "Employers";
 }
 
 @section css {
-    <style>
-        td, th {
-            text-align: center;
-        }
-    </style>
+	<style>
+		td, th {
+			text-align: center;
+		}
+	</style>
 }
 
 <div class="row">
-    <div class="col-md-10">
-        <h2>@ViewBag.Title</h2>
-        @using (Html.BeginForm())
-        {
-            <p>
-                @Html.TextBox("searchString")
-                <input class="btn btn-info" type="submit" value="Поиск" />
-            </p>
-        }
-        <table class="table table-striped table-bordered">
-            <thead>
-                <tr>
-                    <th>
-                        <a href=@Url.Action("Employers", "Coordinator",
+	<div class="col-md-10">
+		<h2>@ViewBag.Title</h2>
+		@using (Html.BeginForm())
+		{
+			<p>
+				@Html.TextBox("searchString")
+				<input class="btn btn-info" type="submit" value="Поиск" />
+			</p>
+		}
+		<table class="table table-striped table-bordered">
+			<thead>
+				<tr>
+					<th>
+						<a href=@Url.Action("Employers", "Coordinator",
 							new { sortOrder = ViewBag.sortName })>
-                            <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
-                            ФИО
-                        </a>
-                    </th>
-                    <th>
-                        <a href=@Url.Action("Employers", "Coordinator",
+							<span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+							ФИО
+						</a>
+					</th>
+					<th>
+						<a href=@Url.Action("Employers", "Coordinator",
 							new { sortOrder = ViewBag.sortEmail })>
-                            <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
-                            Email
-                        </a>
-                    </th>
-                    <th>
-                        <a href=@Url.Action("Employers", "Coordinator",
+							<span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+							Email
+						</a>
+					</th>
+					<th>
+						<a href=@Url.Action("Employers", "Coordinator",
 							new { sortOrder = ViewBag.sortDone })>
-                            <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
-                            Закрытых<br />контрактов
-                        </a>
-                    </th>
-                    <th>
-                        <a href=@Url.Action("Employers", "Coordinator",
-							new { sortOrder = ViewBag.sortInProgress })>
-                            <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
-                            Контрактов<br />в работе
-                        </a>
-                    </th>                    
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var employer in @Model)
-			    {
-                    <tr>
-                        <td>
-                            <a href="/Employer/Details/@employer.Id">
-                                @employer.Name
-                            </a>
-                        </td>
-                        <td>
-                            @employer.Email
-                        </td>
-                        <td>
-                            @employer.ClosedContractsCount
-                        </td>
-                        <td>
-                            @employer.OpenContractsCount
-                        </td>
-                    </tr>
-			    }
-            </tbody>
-        </table>
-    </div>
+							<span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+							Закрытых<br />контрактов
+						</a>
+					</th>
+					<th>
+						<a href=@Url.Action("Employers", "Coordinator",
+									new {sortOrder = ViewBag.sortInProgress})>
+							<span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+							Контрактов<br/>в работе
+						</a>
+					</th>
+					<th>
+						Подтвержден
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var employer in @Model)
+				{
+					<tr>
+						<td>
+							<a href="/Employer/Details/@employer.Id">
+								@employer.Name
+							</a>
+						</td>
+						<td>
+							@employer.Email
+						</td>
+						<td>
+							@employer.ClosedContractsCount
+						</td>
+						<td>
+							@employer.OpenContractsCount
+						</td>
+						<td>
+							@if (employer.Employer.IsApprovedByCoordinator.HasValue && employer.Employer.IsApprovedByCoordinator.Value)
+							{
+								<p>Да <a href=@Url.Action("ToggleApprove", "Coordinator", new { id = employer.Employer.Id, nextAction = "Employers" })>(Отменить) </a></p>
+							}
+							else
+							{
+								<p>Нет <a href=@Url.Action("ToggleApprove", "Coordinator", new { id = employer.Employer.Id, nextAction = "Employers" })>(Подтвердить) </a></p>
+							}
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
 </div>

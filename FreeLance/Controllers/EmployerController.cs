@@ -46,7 +46,7 @@ namespace FreeLance.Controllers
 			public int NewMsgCount { get; set; }
 			public String StatusIcon { get; set; }
 			public int AmountOfWorkers { get; set; }
-        }
+		}
 
 		public class ProblemInProgressViewModel
 		{
@@ -54,7 +54,7 @@ namespace FreeLance.Controllers
 			public int Id { get; set; }
 			public DateTime EndingDate { get; set; }
 			public DateTime CreationDate { get; set; }
-            public decimal Cost { get; set; }
+			public decimal Cost { get; set; }
 			public String StatusIcon { get; set; }
 			public int NewMsgCount { get; set; }
 			public List<ContractInProgressViewModel> Contracts { get; set; }
@@ -70,8 +70,8 @@ namespace FreeLance.Controllers
 			public decimal Cost { get; set; }
 			public DateTime EndingDate { get; set; }
 			public String CreationDate { get; set; }
-            public DateTime DeadlineDate { get; set; }
-            public String StatusIcon { get; set; }
+			public DateTime DeadlineDate { get; set; }
+			public String StatusIcon { get; set; }
 		}
 
 		public class ProblemView
@@ -83,7 +83,7 @@ namespace FreeLance.Controllers
 		public class ProfileView
 		{
 			public String EmployerEmail { get; set; }
-            public String EmployerPhoto { get; set; }
+			public String EmployerPhoto { get; set; }
 			public int OpenProblemsCount { get; set; }
 			public int OpenContractsCount { get; set; }
 			public int ClosedProblemsCount { get; set; }
@@ -91,7 +91,7 @@ namespace FreeLance.Controllers
 			public ApplicationUser.EmailNotificationPolicyModel emailNotifications { get; set; }
 		}
 
-        public class ArchivedContractViewModel
+		public class ArchivedContractViewModel
 		{
 			public String ProblemName { get; set; }
 			public int ContractId { get; set; }
@@ -115,7 +115,7 @@ namespace FreeLance.Controllers
 		public static String getStatusIcon(ContractStatus status)
 		{
 			String answer = "";
-			switch(status)
+			switch (status)
 			{
 				case ContractStatus.Opened:
 					answer = "flaticon-question41";
@@ -147,42 +147,42 @@ namespace FreeLance.Controllers
 					p => p.Contracts.Where(c => !c.IsHidden).ToList()
 				)
 				.ToList()[0];
-			foreach(var contract in contrats)
+			foreach (var contract in contrats)
 			{
-				if(contract.Status == ContractStatus.ClosedNotPaid ||
+				if (contract.Status == ContractStatus.ClosedNotPaid ||
 					contract.Status == ContractStatus.Done ||
 					contract.Status == ContractStatus.InProgress ||
 					contract.Status == ContractStatus.Opened)
 				{
 					int chatId = ChatController.FindContractChatId(contract.ContractId);
-                    int newMsgCount = ChatController.CalcUserInfo(User.Identity.GetUserId(), chatId).UnreadMessagesCount;
-                    contractsData.Add(
+					int newMsgCount = ChatController.CalcUserInfo(User.Identity.GetUserId(), chatId).UnreadMessagesCount;
+					contractsData.Add(
 					new ContractInProgressViewModel
-						{
-							FIO = contract.Freelancer.FIO,
-							freelancerId = contract.Freelancer.Id,
-							id = contract.ContractId,
-							status = contract.Status,
-							newMsgCount = newMsgCount,
-							EndingDate = contract.EndingDate,
-                            DeadlineDate = contract.DeadlineDate,
-							Cost = contract.Cost,
-							CreationDate = contract.CreationDate.ToString("dd/MM/yyyy"),
-							StatusIcon = getStatusIcon(contract.Status)
-						}
+					{
+						FIO = contract.Freelancer.FIO,
+						freelancerId = contract.Freelancer.Id,
+						id = contract.ContractId,
+						status = contract.Status,
+						newMsgCount = newMsgCount,
+						EndingDate = contract.EndingDate,
+						DeadlineDate = contract.DeadlineDate,
+						Cost = contract.Cost,
+						CreationDate = contract.CreationDate.ToString("dd/MM/yyyy"),
+						StatusIcon = getStatusIcon(contract.Status)
+					}
 					);
 				}
 			}
 			return contractsData;
 		}
 
-		private List<ProblemInProgressViewModel> getProblemsInProgress( String userId )
+		private List<ProblemInProgressViewModel> getProblemsInProgress(String userId)
 		{
 			List<ProblemInProgressViewModel> problemsInProgress = db.ProblemModels
 				.Where(
 					p => p.Employer.Id == userId &&
-						(p.Status == ProblemStatus.Opened || p.Status == ProblemStatus.InProgress)
-						&& p.Contracts.Count != 0 && !p.IsHidden
+						(p.Status == ProblemStatus.Opened)
+						&& p.Contracts.Count != 0
 				)
 				.Select(
 					p => new ProblemInProgressViewModel
@@ -191,19 +191,20 @@ namespace FreeLance.Controllers
 						EndingDate = p.DeadlineDate,
 						CreationDate = p.CreationDate,
 						NewMsgCount = 0,
-                        Cost = p.Cost,
+						Cost = p.Cost,
 						Id = p.ProblemId
 					}
 				)
 				.ToList();
-			foreach (ProblemInProgressViewModel problem in problemsInProgress) {
+			foreach (ProblemInProgressViewModel problem in problemsInProgress)
+			{
 				problem.NewMsgCount = ChatController.CalcUserInfo(User.Identity.GetUserId(),
 							ChatController.FindProblemChatId(problem.Id)).UnreadMessagesCount;
-            }
+			}
 			return problemsInProgress;
-        }
+		}
 
-		private List<ProblemOpenViewModel> getOpenProblems( String userId )
+		private List<ProblemOpenViewModel> getOpenProblems(String userId)
 		{
 			List<ProblemOpenViewModel> openProblems = db.ProblemModels
 				.Where(
@@ -220,16 +221,17 @@ namespace FreeLance.Controllers
 						SubscribersCount = p.Subscriptions.Count,
 						CreationDate = p.CreationDate,
 						EndingDate = p.DeadlineDate,
-						NewMsgCount = 0 
+						NewMsgCount = 0
 					}
 				)
 				.ToList();
-			foreach (ProblemOpenViewModel problem in openProblems) {
+			foreach (ProblemOpenViewModel problem in openProblems)
+			{
 				problem.NewMsgCount = ChatController.CalcUserInfo(User.Identity.GetUserId(),
 							ChatController.FindProblemChatId(problem.Id)).UnreadMessagesCount;
 			}
 			return openProblems;
-        }
+		}
 
 		private List<ProblemOpenViewModel> getOpenProblemsForFreelancer(String userId)
 		{
@@ -263,16 +265,16 @@ namespace FreeLance.Controllers
 			string userId = User.Identity.GetUserId();
 			var model = new HomeViewModel();
 
-			model.ProblemsInProgress = getProblemsInProgress( userId );
+			model.ProblemsInProgress = getProblemsInProgress(userId);
 
-			foreach(var problem in model.ProblemsInProgress)
+			foreach (var problem in model.ProblemsInProgress)
 			{
 				problem.Contracts = getProblemContract(problem.Id);
 			}
 
-			model.ProblemsOpen = getOpenProblems( userId );
+			model.ProblemsOpen = getOpenProblems(userId);
 
-			return View( model );
+			return View(model);
 		}
 
 		[Authorize(Roles = "Coordinator, Freelancer, Employer")]
@@ -298,13 +300,13 @@ namespace FreeLance.Controllers
 
 		public class DetailsForCoordinatorView
 		{
-//			public String Name { get; set; }
-//			public String Email { get; set; }
-//			public String Phone { get; set; }
-//			public String PhotoPath { get; set; }
-//			public String Id { get; set; }
-//			public bool isApproved { get; set; }
-            public ApplicationUser Employer { get; set; }
+			//			public String Name { get; set; }
+			//			public String Email { get; set; }
+			//			public String Phone { get; set; }
+			//			public String PhotoPath { get; set; }
+			//			public String Id { get; set; }
+			//			public bool isApproved { get; set; }
+			public ApplicationUser Employer { get; set; }
 
 			public List<ProblemInProgressViewModel> ProblemsInProgress { get; set; }
 			public List<ProblemOpenViewModel> ProblemsOpen { get; set; }
@@ -318,7 +320,7 @@ namespace FreeLance.Controllers
 			public String Phone { get; set; }
 			public String PhotoPath { get; set; }
 			public String Id { get; set; }
-			
+
 			public List<ProblemOpenViewModel> ProblemsOpen { get; set; }
 		}
 
@@ -330,25 +332,25 @@ namespace FreeLance.Controllers
 
 			DetailsForCoordinatorView model = new DetailsForCoordinatorView
 			{
-//				Email = employer.Email,
-//				Phone = "+7(916)0001122", // TODO
-//				Name = employer.FIO,
-//				isApproved = employer.IsApprovedByCoordinator == true ? true : false,
-//				PhotoPath = employer.PhotoPath, 
-//				Id = id
-                Employer = employer
-                
+				//				Email = employer.Email,
+				//				Phone = "+7(916)0001122", // TODO
+				//				Name = employer.FIO,
+				//				isApproved = employer.IsApprovedByCoordinator == true ? true : false,
+				//				PhotoPath = employer.PhotoPath, 
+				//				Id = id
+				Employer = employer
+
 			};
 
-			model.ProblemsInProgress = getProblemsInProgress( id );
-			model.ArchievedContracts = getArchievedContracts( id );
+			model.ProblemsInProgress = getProblemsInProgress(id);
+			model.ArchievedContracts = getArchievedContracts(id);
 			foreach (var problem in model.ProblemsInProgress)
 			{
 				problem.Contracts = getProblemContract(problem.Id);
 			}
 
-			model.ProblemsOpen = getOpenProblems( id );
-		    ViewBag.LawFaceChooseView = new LawModelsManager.LawFaceChooseView();
+			model.ProblemsOpen = getOpenProblems(id);
+			ViewBag.LawFaceChooseView = new LawModelsManager.LawFaceChooseView();
 			return model;
 		}
 
@@ -362,7 +364,7 @@ namespace FreeLance.Controllers
 				Email = employer.Email,
 				Phone = "+7(916)0001122", // TODO
 				Name = employer.FIO,
-				PhotoPath = Utils.GetPhotoUrl(employer.PhotoPath), 
+				PhotoPath = Utils.GetPhotoUrl(employer.PhotoPath),
 				Id = employer.Id
 			};
 
@@ -374,7 +376,7 @@ namespace FreeLance.Controllers
 		public static String getStatusMessage(ContractStatus status)
 		{
 			String result = "";
-			switch(status)
+			switch (status)
 			{
 				case ContractStatus.Closed:
 					result = "Выполнена полностью";
@@ -440,7 +442,7 @@ namespace FreeLance.Controllers
 		}
 
 		[Authorize(Roles = "Employer")]
-		public ActionResult Archive(String sortOrder, bool hideFailed=false)
+		public ActionResult Archive(String sortOrder, bool hideFailed = false)
 		{
 			ViewBag.hideFailed = hideFailed;
 
@@ -501,7 +503,7 @@ namespace FreeLance.Controllers
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
 			ProblemModels problemModels = db.ProblemModels.Find(id);
-			
+
 			if (problemModels == null || problemModels.IsHidden)
 			{
 				return HttpNotFound();
@@ -519,16 +521,16 @@ namespace FreeLance.Controllers
 		public ActionResult Freelancers(String searchString, String sortOrder)
 		{
 			List<string> Ids = AccountController.GetApplicationUsersInRole(db, "Freelancer").Select(
-				u => u.Id ).ToList();
+				u => u.Id).ToList();
 			List<FreelancerViewModel> model = new List<FreelancerViewModel>();
-			foreach(var id in Ids)
+			foreach (var id in Ids)
 			{
 				model.Add(new FreelancerViewModel(id));
 			}
 
 			if (!String.IsNullOrEmpty(searchString))
 			{
-				model = model.Where(c => c.Name.Contains(searchString) || c.Email.Contains(searchString) ).ToList();
+				model = model.Where(c => c.Name.Contains(searchString) || c.Email.Contains(searchString)).ToList();
 			}
 
 			ViewBag.sortEmail = "email";
@@ -589,14 +591,14 @@ namespace FreeLance.Controllers
 		public ActionResult Profile()
 		{
 			String id = User.Identity.GetUserId();
-            ApplicationUser employer = db.Users.Find(id);
+			ApplicationUser employer = db.Users.Find(id);
 
 			ProfileView model = new ProfileView
 			{
 				EmployerEmail = employer.Email,
-                EmployerPhoto = Utils.GetPhotoUrl(employer.PhotoPath),
+				EmployerPhoto = Utils.GetPhotoUrl(employer.PhotoPath),
 				OpenContractsCount = db.ContractModels.Where(
-					c => c.Problem.Employer.Id == id && !c.IsHidden && (c.Status == ContractStatus.Done 
+					c => c.Problem.Employer.Id == id && !c.IsHidden && (c.Status == ContractStatus.Done
 					|| c.Status == ContractStatus.InProgress || c.Status == ContractStatus.ClosedNotPaid
 					|| c.Status == ContractStatus.Opened)).Count(),
 				ClosedContractsCount = db.ContractModels.Where(
@@ -605,7 +607,7 @@ namespace FreeLance.Controllers
 					|| c.Status == ContractStatus.СancelledByFreelancer)).Count(),
 				OpenProblemsCount = db.ProblemModels.Where(
 					p => p.Employer.Id == id && !p.IsHidden
-					&& (p.Status == ProblemStatus.InProgress || p.Status == ProblemStatus.InProgress)).Count(),
+					&& (p.Status == ProblemStatus.Opened)).Count(),
 				ClosedProblemsCount = db.ProblemModels.Where(
 					p => p.Employer.Id == id && !p.IsHidden
 					&& p.Status == ProblemStatus.Closed).Count(),
@@ -629,30 +631,30 @@ namespace FreeLance.Controllers
 			return View(user.EmailNotificationPolicy);
 		}
 
-        private string saveDocumentOnDisc(HttpPostedFileBase file, string dir, string location = "/App_Data/")
-        {
-            var ext = Path.GetExtension(file.FileName);
-            var fileName = User.Identity.GetUserId() + "_" + DateTime.Now.Ticks.ToString() + ext;
-            var path = Path.Combine(Server.MapPath("~" + location + dir + "/"), fileName);
-            file.SaveAs(path);
-            return location + dir + "/" + fileName;
-        }
+		private string saveDocumentOnDisc(HttpPostedFileBase file, string dir, string location = "/App_Data/")
+		{
+			var ext = Path.GetExtension(file.FileName);
+			var fileName = User.Identity.GetUserId() + "_" + DateTime.Now.Ticks.ToString() + ext;
+			var path = Path.Combine(Server.MapPath("~" + location + dir + "/"), fileName);
+			file.SaveAs(path);
+			return location + dir + "/" + fileName;
+		}
 
 
-        [HttpPost]
-        public ActionResult UploadPhoto()
-        {
-            ApplicationUser user = db.Users.Find(User.Identity.GetUserId());
-            if (Request.Files.Count > 0)
-            {
-                var file = Request.Files[0];
-                if (file != null && file.ContentLength > 0)
-                {
-                    user.PhotoPath = saveDocumentOnDisc(file, "photo", "/Files/");
-                    db.SaveChanges();
-                }
-            }
-            return RedirectToAction("Profile");
-        }
-    }
+		[HttpPost]
+		public ActionResult UploadPhoto()
+		{
+			ApplicationUser user = db.Users.Find(User.Identity.GetUserId());
+			if (Request.Files.Count > 0)
+			{
+				var file = Request.Files[0];
+				if (file != null && file.ContentLength > 0)
+				{
+					user.PhotoPath = saveDocumentOnDisc(file, "photo", "/Files/");
+					db.SaveChanges();
+				}
+			}
+			return RedirectToAction("Profile");
+		}
+	}
 }
