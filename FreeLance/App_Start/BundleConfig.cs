@@ -49,6 +49,8 @@ namespace FreeLance
 				Include("~/Scripts/tinymce.init.js").
 				IncludeDirectory("~/Scripts/tinymce/", "*.js")
 			);
+
+            bundles.Add(new ScriptBundle("~/bundles/lawFace").Include("~/Scripts/lawFace.js"));
 		}
 	}
 }

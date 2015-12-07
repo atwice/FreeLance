@@ -4,7 +4,7 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Web;
+using FreeLance.Code;
 using System.Web.Mvc;
 using FreeLance.Models;
 using Microsoft.AspNet.Identity;
@@ -35,7 +35,8 @@ namespace FreeLance.Controllers
 			public String ProblemName { get; set; }
 			public String FreelancerName { get; set; }
 			public String FreelancerId { get; set; }
-			public String PhotoPath { get; set; }
+			public String FreelancerPhotoPath { get; set; }
+			public String EmployerPhotoPath { get; set; }
 			public String FreelancerEmail { get; set; }
 			public String Details { get; set; }
 			public String CreatingDate { get; set; }
@@ -80,7 +81,8 @@ namespace FreeLance.Controllers
 				ProblemId = c.Problem.ProblemId,
 				Status = c.Status,
 				Details = c.Details,
-				PhotoPath = "/Content/placeholder_avatar.png", //TODO
+				EmployerPhotoPath = Utils.GetPhotoUrl(c.Problem.Employer.PhotoPath),
+				FreelancerPhotoPath = Utils.GetPhotoUrl(c.Freelancer.PhotoPath),
 				ContractId = c.ContractId
 			};
 
@@ -253,7 +255,8 @@ namespace FreeLance.Controllers
 
 		[HttpPost]
 		[Authorize(Roles = "Employer, Freelancer")]
-		public ActionResult ChangeStatus(int id, ContractStatus status, string redirect)
+		public ActionResult ChangeStatus(int id, ContractStatus status, string redirect, 
+			string freelancerId, string employerId, string contractName)
 		{
 			ContractModels contract = db.ContractModels.Include(c => c.Problem).Single(c => c.ContractId == id);
 			if (contract == null || contract.Freelancer == null || contract.IsHidden
@@ -262,6 +265,7 @@ namespace FreeLance.Controllers
 			{
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
+			ContractStatus previousStatus = contract.Status;
 			contract.Status = status;
             //  Failed, СancelledByFreelancer, СancelledByEmployer, ClosedNotPaid
             if (status == ContractStatus.ClosedNotPaid || status == ContractStatus.СancelledByEmployer
@@ -270,12 +274,17 @@ namespace FreeLance.Controllers
 				contract.EndingDate = DateTime.Now;
 			}
 			db.SaveChanges();
+
+			EmailManager.Send(new OnStatusChangeBuilder(freelancerId, contractName, "/Contract/Details/" + id.ToString(), previousStatus, status));
+			EmailManager.Send(new OnStatusChangeBuilder(employerId, contractName, "/Contract/Details/" + id.ToString(), previousStatus, status));
+
 			return Redirect(redirect == null ? "/Contract/Details/" + id.ToString() : redirect);
 		}
 
 		[HttpPost]
-		[Authorize(Roles = "Employer")]
-		public ActionResult Close(int id, string comment, int rate, ContractStatus newStatus)
+		[Authorize(Roles = "Employer, Freelancer")]
+		public ActionResult Close(int id, string comment, int rate, ContractStatus newStatus, 
+			string freelancerId, string employerId, string contractName)
 		{
 			ContractModels contract = db.ContractModels.Include(c => c.Problem).Single(c => c.ContractId == id);
 			if (contract == null || contract.Freelancer == null || contract.IsHidden
@@ -285,9 +294,16 @@ namespace FreeLance.Controllers
 			}
 			contract.Rate = rate;
 			contract.Comment = comment;
+
+			ContractStatus previousStatus = contract.Status;
 			contract.Status = newStatus;
+
 			contract.EndingDate = DateTime.Now;
 			db.SaveChanges();
+
+			EmailManager.Send(new OnStatusChangeBuilder(freelancerId, contractName, "/Contract/Details/" + id.ToString(), previousStatus, newStatus));
+			EmailManager.Send(new OnStatusChangeBuilder(employerId, contractName, "/Contract/Details/" + id.ToString(), previousStatus, newStatus));
+
 			return Redirect("/Contract/Details/" + id.ToString());
 		}
 

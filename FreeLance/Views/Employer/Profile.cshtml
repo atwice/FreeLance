@@ -23,35 +23,6 @@
 			align-items: center;
 		}
 
-		.inputfile {
-			width: 0.1px;
-			height: 0.1px;
-			opacity: 0;
-			overflow: hidden;
-			position: absolute;
-			z-index: -1;
-		}
-
-			.inputfile + label {
-				align-self: center;
-				border: solid;
-				border-color: #428bca;
-				border-radius: 8px;
-				font-size: 14px;
-				font-weight: 700;
-				color: #428bca;
-				background-color: white;
-				display: inline-block;
-				padding: 0.625rem 1.25rem;
-				margin: 10px 0 10px 0;
-				text-overflow: ellipsis;
-			}
-
-				.inputfile:focus + label,
-				.inputfile + label:hover {
-					background-color: #F8F8FF;
-				}
-
 		.image-item {
 			border: 1px solid #dddddd;
 			border-radius: 2px;
@@ -106,7 +77,7 @@
 			<div class="panel-heading">
 				<h2 class="panel-title">Учетная запись</h2>
 			</div>
-		    <div class="panel-body">
+			<div class="panel-body">
 				<div class="account-info-container">
 					<div class="photo-container">
 						<img class="image-item" src="@Model.EmployerPhoto" alt="User photo">
@@ -127,7 +98,7 @@
 						</p>
 					</div>
 				</div>
-		    </div>
+			</div>
 		</div>
 
 		<div class="panel panel-default">
@@ -152,24 +123,3 @@
 		
 	</div>
 </div>
-
-<script>
-	var inputs = document.querySelectorAll('.inputfile');
-	Array.prototype.forEach.call(inputs, function (input) {
-		var label = input.nextElementSibling,
-			labelVal = label.innerHTML;
-
-		input.addEventListener('change', function (e) {
-			var fileName = '';
-			if (this.files && this.files.length > 1)
-				fileName = (this.getAttribute('data-multiple-caption') || '').replace('{count}', this.files.length);
-			else
-				fileName = e.target.value.split('\\').pop();
-
-			if (fileName)
-				label.querySelector('.filename').innerHTML = fileName;
-			else
-				label.innerHTML = labelVal;
-		});
-	});
-</script>

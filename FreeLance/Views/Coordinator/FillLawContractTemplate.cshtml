@@ -1,74 +1,74 @@
-﻿@model FreeLance.Controllers.CoordinatorController.FillLawContractTemplateVR
-@{
-    ViewBag.Title = "Заполнить шаблон ГПХ";
-}
-
-<h2>@ViewBag.Title</h2>
-
-@using (Html.BeginForm("FillLawContractTemplate", "Coordinator", FormMethod.Post, new { enctype = "multipart/form-data" })) {
-	@Html.AntiForgeryToken()
-	<div class="form-horizontal">
-		<div class="form-group">
-			@Html.Label("Юридическое лицо", htmlAttributes: new { @class = "control-label col-md-2" })
-			<div class="col-md-10">
-				@Html.DropDownList("lawFaceId", 
-					new SelectList(Model.LawFaces, "Id", "Name"),
-					new { @onchange = "onDropdownChange();", @id = "ddlFillLawContractTemplate" }
-				)
-			</div>
-		</div>
-		<div class="form-group">
-			@Html.Label("Шаблон ГПХ", htmlAttributes: new { @class = "control-label col-md-2" })
-			<div class="col-md-10">
-				<div id="law-face-templates">
-					@if (Model.LawFaces.Any()) {
-						@Html.DropDownList("lawContractTemplateId",
-							 new SelectList(Model.LawFaces.First().Templates, "Id", "Name"),
-							 new { htmlAttributes = new { @class = "form-control" } }
-						)
-					}
-				</div>
-			</div>
-		</div>
-		<div class="form-group">
-			@Html.Label("Исполнитель", htmlAttributes: new { @class = "control-label col-md-2" })
-			<div class="col-md-10">
-				<div id="law-face-templates">
-					@Html.DropDownList("employerId",
-						new SelectList(Model.Freelancers, "Id", "FIO"),
-						new { htmlAttributes = new { @class = "form-control" } }
-					)
-				</div>
-			</div>
-		</div>
-		<div class="form-group">
-			<div class="col-md-offset-2 col-md-10">
-				<input type="submit" value="Скачать заполненный шаблон" class="btn btn-success" />
-			</div>
-		</div>
-		@foreach (var lawFaceVR in Model.LawFaces) {
-		string visibility = lawFaceVR.Id == Model.LawFaces.First().Id ? "visible" : "hidden";
-		<div tabIndex="@lawFaceVR.Id" class="law-face-templates-ddl" style="visibility:hidden">
-			@Html.DropDownList("lawContractTemplateId",
-				new SelectList(lawFaceVR.Templates, "Id", "Name"),
-				new { htmlAttributes = new { @class = "form-control" } }
-			)
-		</div>
-		}
-	</div>
-	<script type="text/javascript">
-
-		function onDropdownChange() {
-			var e = document.getElementById("ddlFillLawContractTemplate");
-			var index = e.options[e.selectedIndex].value;
-			var x = document.getElementsByClassName("law-face-templates-ddl");
-			for (var i = 0; i < x.length; i++) {
-				if (index == x[i].tabIndex.toString()) {
-					document.getElementById("law-face-templates").innerHTML = x[i].innerHTML;
-				}
-			}
-		}
-
-	</script>
-}
+﻿@*@model FreeLance.Controllers.CoordinatorController.FillLawContractTemplateVR*@
+@*@{*@
+@*    ViewBag.Title = "Заполнить шаблон ГПХ";*@
+@*}*@
+@**@
+@*<h2>@ViewBag.Title</h2>*@
+@**@
+@*@using (Html.BeginForm("FillLawContractTemplate", "Coordinator", FormMethod.Post, new { enctype = "multipart/form-data" })) {*@
+@*	@Html.AntiForgeryToken()*@
+@*	<div class="form-horizontal">*@
+@*		<div class="form-group">*@
+@*			@Html.Label("Юридическое лицо", htmlAttributes: new { @class = "control-label col-md-2" })*@
+@*			<div class="col-md-10">*@
+@*				@Html.DropDownList("lawFaceId", *@
+@*					new SelectList(Model.LawFaces, "Id", "Name"),*@
+@*					new { @onchange = "onDropdownChange();", @id = "ddlFillLawContractTemplate" }*@
+@*				)*@
+@*			</div>*@
+@*		</div>*@
+@*		<div class="form-group">*@
+@*			@Html.Label("Шаблон ГПХ", htmlAttributes: new { @class = "control-label col-md-2" })*@
+@*			<div class="col-md-10">*@
+@*				<div id="law-face-templates">*@
+@*					@if (Model.LawFaces.Any()) {*@
+@*						@Html.DropDownList("lawContractTemplateId",*@
+@*							 new SelectList(Model.LawFaces.First().Templates, "Id", "Name"),*@
+@*							 new { htmlAttributes = new { @class = "form-control" } }*@
+@*						)*@
+@*					}*@
+@*				</div>*@
+@*			</div>*@
+@*		</div>*@
+@*		<div class="form-group">*@
+@*			@Html.Label("Исполнитель", htmlAttributes: new { @class = "control-label col-md-2" })*@
+@*			<div class="col-md-10">*@
+@*				<div id="law-face-templates">*@
+@*					@Html.DropDownList("employerId",*@
+@*						new SelectList(Model.Freelancers, "Id", "FIO"),*@
+@*						new { htmlAttributes = new { @class = "form-control" } }*@
+@*					)*@
+@*				</div>*@
+@*			</div>*@
+@*		</div>*@
+@*		<div class="form-group">*@
+@*			<div class="col-md-offset-2 col-md-10">*@
+@*				<input type="submit" value="Скачать заполненный шаблон" class="btn btn-success" />*@
+@*			</div>*@
+@*		</div>*@
+@*		@foreach (var lawFaceVR in Model.LawFaces) {*@
+@*		string visibility = lawFaceVR.Id == Model.LawFaces.First().Id ? "visible" : "hidden";*@
+@*		<div tabIndex="@lawFaceVR.Id" class="law-face-templates-ddl" style="visibility:hidden">*@
+@*			@Html.DropDownList("lawContractTemplateId",*@
+@*				new SelectList(lawFaceVR.Templates, "Id", "Name"),*@
+@*				new { htmlAttributes = new { @class = "form-control" } }*@
+@*			)*@
+@*		</div>*@
+@*		}*@
+@*	</div>*@
+@*	<script type="text/javascript">*@
+@**@
+@*		function onDropdownChange() {*@
+@*			var e = document.getElementById("ddlFillLawContractTemplate");*@
+@*			var index = e.options[e.selectedIndex].value;*@
+@*			var x = document.getElementsByClassName("law-face-templates-ddl");*@
+@*			for (var i = 0; i < x.length; i++) {*@
+@*				if (index == x[i].tabIndex.toString()) {*@
+@*					document.getElementById("law-face-templates").innerHTML = x[i].innerHTML;*@
+@*				}*@
+@*			}*@
+@*		}*@
+@**@
+@*	</script>*@
+@*}*@
 

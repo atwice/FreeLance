@@ -1,8 +1,9 @@
 ﻿@using System.Web.UI.HtmlControls
+@using FreeLance.Models
 @model FreeLance.Controllers.CoordinatorController.HomeViewModel
 @{
     ViewBag.Title = "Личный кабинет";
-	ViewBag.MenuPick = "Home";
+    ViewBag.MenuPick = "Home";
 }
 <!DOCTYPE html>
 <html>
@@ -91,70 +92,16 @@ else
     </div>
 </div>
 <hr/>
-@*<div class="col-md-10">*@
-@*    <h2>@ViewBag.Title</h2>*@
-@*    <h3>Анкеты на подтверждение</h3>*@
-@*    <div class="list-group">*@
-@*        @if (Model.IncognitosSmallList.Count == 0)*@
-@*        {*@
-@*            <h5>Все заявки подтверждены. Отличная работа!</h5>*@
-@*        }*@
-@*        else*@
-@*        {*@
-@*            foreach (var incognito in Model.IncognitosSmallList)*@
-@*            {*@
-@*                <div class="list-group-item">*@
-@*                    @using (Html.BeginForm("IncognitoToFreelancer", "Coordinator", new {usernameID = incognito.Id, redirect = "Home"}))*@
-@*                    {*@
-@*                        <input type="submit" value="Допустить в систему" class="pull-right btn btn-success"/>*@
-@*                    }*@
-@**@
-@*                    <h4 class="list-group-item-heading">@incognito.FIO</h4>*@
-@*                    <p class="list-group-item-text" style="color: lightgray"><i>@incognito.Email</i>*@
-@*                    </p>*@
-@*                    <p class="list-group-item-text" style="color: lightgray"><i>@incognito.PhoneNumber</i>*@
-@*                    </p>*@
-@*                </div>*@
-@*            }*@
-@*            if (ViewBag.ManyIncognitos)*@
-@*            {*@
-@*                <div class="list-group-item">*@
-@*                    <h4 class="list-group-item-heading" align="center">...</h4>*@
-@*                </div>*@
-@*            }*@
-@*        }*@
-@*    </div>*@
-@**@
-@*    <h3>Документы на подтверждение</h3>*@
-@*    <div class="list-group">*@
-@*        @if (Model.WithoutDocumentsSmallList.Count == 0)*@
-@*        {*@
-@*            <h5>У всех фрилансеров подтверждены документы. Отличная работа!</h5>*@
-@*        }*@
-@*        else*@
-@*        {*@
-@*            foreach (var withoutDoc in Model.WithoutDocumentsSmallList)*@
-@*            {*@
-@*                <div class="list-group-item">*@
-@*                    @using (Html.BeginForm("ViewFreelancerDocuments", "Coordinator", new {userId = withoutDoc.Id}))*@
-@*                    {*@
-@*                        <input type="submit" value="Проверить документы" class="pull-right btn btn-success"/>*@
-@*                    }*@
-@*                    <h4 class="list-group-item-heading">@withoutDoc.FIO</h4>*@
-@*                    <p class="list-group-item-text" style="color: lightgray"><i>@withoutDoc.Email</i>*@
-@*                    </p>*@
-@*                    <p class="list-group-item-text" style="color: lightgray"><i>@withoutDoc.PhoneNumber</i>*@
-@*                    </p>*@
-@*                </div>*@
-@*            }*@
-@*            if (ViewBag.ManyWithoutDocuments)*@
-@*            {*@
-@*                <div class="list-group-item">*@
-@*                    <h4 class="list-group-item-heading" align="center">...</h4>*@
-@*                </div>*@
-@*            }*@
-@*        }*@
-@*    </div>*@
-@*</div>*@
-@*</body>*@
-@*</html>*@
+    <script type="text/javascript">
+    function onDropdownChangeContractLawFace(contractId) {
+        var dropDownList = document.getElementById("dropDownListContract" + contractId);
+        var lawFaceId = +dropDownList.options[dropDownList.selectedIndex].value;
+        if (lawFaceId == -1)
+            return;
+        $.ajax({
+            url: '@Url.Action("ChangeLawFaceInContract", "Coordinator")',
+            type: 'POST',
+            data: { "contractId": contractId, "lawFaceId": lawFaceId }
+        });
+    }
+    </script>

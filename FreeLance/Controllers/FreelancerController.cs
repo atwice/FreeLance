@@ -438,7 +438,7 @@ namespace FreeLance.Controllers
 				FreelancerEmail = freelancer.Email,
 				FreelancerPhone = "+7(916)0001122", // TODO
 				FreelancerName = freelancer.FIO,
-				PhotoPath = freelancer.PhotoPath, //TODO
+				PhotoPath = Utils.GetPhotoUrl(freelancer.PhotoPath),
 				FreelancerRate = getFreelancerRate(contracts),
 				FreelancerId = freelancer.Id,
 				ClosedContracts = new List<ContractInfoForEmployer>(),
@@ -488,7 +488,7 @@ namespace FreeLance.Controllers
 				General = documents.General,
 				Passport = documents.Passport,
 				Bank = documents.Bank,
-				PhotoPath = freelancer.PhotoPath, //TODO
+				PhotoPath = Utils.GetPhotoUrl(freelancer.PhotoPath),
 				FreelancerRate = countRating(id),
 				FreelancerId = id,
 				isApproved = freelancer.IsApprovedByCoordinator == true ? true : false,
@@ -503,7 +503,7 @@ namespace FreeLance.Controllers
 						.Select(
 							c => new FreelancerLawContractViewModel
 							{
-								LawFace = c.LawContractTemplate.LawFace.Name,
+								LawFace = c.LawFace.Name,
 								LawFacePath = c.Path,
 								StartingDate = c.EndDate,
 								EndingDate = c.EndDate
@@ -977,8 +977,10 @@ namespace FreeLance.Controllers
 		{
 			List<ProblemModels> problems = db.ProblemModels
 				.Where(p => (p.Status == ProblemStatus.InProgress || p.Status == ProblemStatus.Opened) 
-									&& p.Employer.IsApprovedByCoordinator == true
+									//&& p.Employer.IsApprovedByCoordinator == true
 									&& !p.IsHidden)
+									  //  IsApprovedByCoordinator - про пакет документов
+									  // биржу должны видеть все, кроме incognito
 				.ToList();
 
 			OpenProblemsInfo model = new OpenProblemsInfo
@@ -1018,7 +1020,7 @@ namespace FreeLance.Controllers
 			return Redirect("index");
 		}
 
-		[Authorize(Roles = "Freelancer")]
+		[Authorize(Roles = "Freelancer,Incognito")]
 		public ActionResult Profile()
 		{
 			String id = User.Identity.GetUserId();
@@ -1028,7 +1030,7 @@ namespace FreeLance.Controllers
 			ProfileView model = new ProfileView
 			{
 				FreelancerEmail = freelancer.Email,
-				FreelancerPhoto = freelancer.PhotoPath,
+				FreelancerPhoto = Utils.GetPhotoUrl(freelancer.PhotoPath),
 				OpenContractsCount = db.ContractModels.Where(
 					c => c.Freelancer.Id == id && !c.IsHidden && (c.Status == ContractStatus.Done
 					|| c.Status == ContractStatus.InProgress || c.Status == ContractStatus.ClosedNotPaid
@@ -1194,10 +1196,10 @@ namespace FreeLance.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult Settings(ApplicationUser.EmailNotificationPolicyModel policy)
+		public ActionResult Settings(ProfileView model)
 		{
 			ApplicationUser user = db.Users.Find(User.Identity.GetUserId());
-			user.EmailNotificationPolicy = policy;
+			user.EmailNotificationPolicy = model.emailNotifications;
 			db.SaveChanges();
 			return RedirectToAction("Profile");
 		}

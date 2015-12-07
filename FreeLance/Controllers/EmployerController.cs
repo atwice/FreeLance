@@ -297,12 +297,13 @@ namespace FreeLance.Controllers
 
 		public class DetailsForCoordinatorView
 		{
-			public String Name { get; set; }
-			public String Email { get; set; }
-			public String Phone { get; set; }
-			public String PhotoPath { get; set; }
-			public String Id { get; set; }
-			public bool isApproved { get; set; }
+//			public String Name { get; set; }
+//			public String Email { get; set; }
+//			public String Phone { get; set; }
+//			public String PhotoPath { get; set; }
+//			public String Id { get; set; }
+//			public bool isApproved { get; set; }
+            public ApplicationUser Employer { get; set; }
 
 			public List<ProblemInProgressViewModel> ProblemsInProgress { get; set; }
 			public List<ProblemOpenViewModel> ProblemsOpen { get; set; }
@@ -328,12 +329,13 @@ namespace FreeLance.Controllers
 
 			DetailsForCoordinatorView model = new DetailsForCoordinatorView
 			{
-				Email = employer.Email,
-				Phone = "+7(916)0001122", // TODO
-				Name = employer.FIO,
-				isApproved = employer.IsApprovedByCoordinator == true ? true : false,
-				PhotoPath = employer.PhotoPath, 
-				Id = id
+//				Email = employer.Email,
+//				Phone = "+7(916)0001122", // TODO
+//				Name = employer.FIO,
+//				isApproved = employer.IsApprovedByCoordinator == true ? true : false,
+//				PhotoPath = employer.PhotoPath, 
+//				Id = id
+                Employer = employer
                 
 			};
 
@@ -345,7 +347,7 @@ namespace FreeLance.Controllers
 			}
 
 			model.ProblemsOpen = getOpenProblems( id );
-
+		    ViewBag.LawFaceChooseView = new LawModelsManager.LawFaceChooseView();
 			return model;
 		}
 
@@ -359,7 +361,7 @@ namespace FreeLance.Controllers
 				Email = employer.Email,
 				Phone = "+7(916)0001122", // TODO
 				Name = employer.FIO,
-				PhotoPath = employer.PhotoPath, 
+				PhotoPath = Utils.GetPhotoUrl(employer.PhotoPath), 
 				Id = employer.Id
 			};
 
@@ -591,7 +593,7 @@ namespace FreeLance.Controllers
 			ProfileView model = new ProfileView
 			{
 				EmployerEmail = employer.Email,
-                EmployerPhoto = employer.PhotoPath,
+                EmployerPhoto = Utils.GetPhotoUrl(employer.PhotoPath),
 				OpenContractsCount = db.ContractModels.Where(
 					c => c.Problem.Employer.Id == id && !c.IsHidden && (c.Status == ContractStatus.Done 
 					|| c.Status == ContractStatus.InProgress || c.Status == ContractStatus.ClosedNotPaid
@@ -618,10 +620,10 @@ namespace FreeLance.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult Settings(ApplicationUser.EmailNotificationPolicyModel policy)
+		public ActionResult Settings(ProfileView model)
 		{
 			ApplicationUser user = db.Users.Find(User.Identity.GetUserId());
-			user.EmailNotificationPolicy = policy;
+			user.EmailNotificationPolicy = model.emailNotifications;
 			db.SaveChanges();
 			return View(user.EmailNotificationPolicy);
 		}

@@ -6,6 +6,7 @@ namespace FreeLance.Code
 
 	public interface EmailBuilder
 	{
+		bool SendingCondition();
 		Email PrepareEmail();
 	}
 
@@ -26,6 +27,18 @@ namespace FreeLance.Code
 			type = _type;
 			name = _name;
 			link = _link;
+		}
+
+		public bool SendingCondition()
+		{
+			if(userTo.EmailNotificationPolicy.IsCommentsEnabled)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
 		}
 
 		public Email PrepareEmail()
@@ -58,6 +71,17 @@ namespace FreeLance.Code
 		private string name;
 		private string link;
 
+		public bool SendingCondition()
+		{
+			if (userTo.EmailNotificationPolicy.IsContractStatusEnabled)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
 
 		/// <param name="name">Name of a problem or a contract.</param>
 		/// <param name="userId">Define addressee.</param>
@@ -75,7 +99,7 @@ namespace FreeLance.Code
 		{
 			dynamic email = new Email("OnStatusChange");
 			email.To = userTo.Email;
-			email.Name = name;
+            email.Name = name;
 			email.Link = link;
 			email.CurrentStatus = currentStatus;
 			email.PreviousStatus = previousStatus;
@@ -99,6 +123,18 @@ namespace FreeLance.Code
 			userTo = db.Users.Find(userId);
 			type = _type;
 			link = _link;
+		}
+
+		public bool SendingCondition()
+		{
+			if (userTo.EmailNotificationPolicy.IsNewApplicantsEnabled)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
 		}
 
 		public Email PrepareEmail()

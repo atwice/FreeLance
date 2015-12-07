@@ -110,7 +110,6 @@
 						<div class="container-name-and-email">
 							@if (User.IsInRole("Employer"))
 							{
-								
 								<a href="/Freelancer/Details/@Model.FreelancerId">
 									<h3 class="item-name">@Model.FreelancerName</h3>
 								</a>
@@ -120,7 +119,6 @@
 							}
 							else
 							{
-								
 								<a href="/Employer/Details/@Model.EmployerId">
 									<h3 class="item-name">@Model.EmployerName</h3>
 								</a>
@@ -129,7 +127,15 @@
 								</div>
 							}
 						</div>
-						<img src=@Model.PhotoPath class="item-avatar">                                            
+						<img src=@Model.PhotoPath class="item-avatar">  
+						@if (User.IsInRole("Employer"))
+						{
+							<img src=@Model.FreelancerPhotoPath class="item-avatar">
+						}
+						else
+						{
+							<img src=@Model.EmployerPhotoPath class="item-avatar">
+						}
 					</div>
                     @if (User.IsInRole("Coordinator"))
                     {
@@ -215,6 +221,9 @@
 											<input type="hidden" id="hint" name="rate" value="0" />
 											<input name="id" type="hidden" value="@Model.ContractId" />
 											<input name="newStatus" type="hidden" value="@Model.finishButton.Status" />
+											<input name="freelancerId" type="hidden" value="@Model.FreelancerId" />
+											<input name="employerId" type="hidden" value="@Model.EmployerId" />
+											<input name="contractName" type="hidden" value="@Model.ProblemName" />
 											<div>
 												<textarea name="comment" class="form-comment" placeholder="Почему именно такая оценка?" required></textarea>
 											</div>
@@ -230,6 +239,9 @@
 								<input name="id" type="hidden" value="@Model.ContractId" />
 								<input name="status" type="hidden" value="@button.Status" />
 								<input name="redirect" type="hidden" value="@button.Redirect" />
+								<input name="freelancerId" type="hidden" value="@Model.FreelancerId" />
+								<input name="employerId" type="hidden" value="@Model.EmployerId" />
+								<input name="contractName" type="hidden" value="@Model.ProblemName" />
 								<input type="submit" class="btn @button.Classes btn-status" value="@button.Text" />
 							}
 						}
