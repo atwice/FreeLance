@@ -531,6 +531,20 @@ namespace FreeLance.Controllers
 			db.SaveChanges();
 			return RedirectToAction(nextAction);
 		}
+
+		[HttpGet]
+		public ActionResult UnverifiedContracts()
+		{
+			ViewBag.LawFaceChooseView = new LawModelsManager.LawFaceChooseView();
+			return View(db.ContractModels.Where(x => x.IsApprovedByCoordinator == false).ToList());
+		}
+
+		[HttpGet]
+		public ActionResult UnpaidContracts()
+		{
+			ViewBag.LawFaceChooseView = new LawModelsManager.LawFaceChooseView();
+			return View(db.ContractModels.Where(x => x.IsApprovedByCoordinator == false).ToList());
+		}
 	}
 }
 

@@ -136,19 +136,19 @@
 							<img src=@Model.EmployerPhotoPath class="item-avatar">
 						}
 					</div>
-                    @if (User.IsInRole("Coordinator"))
-                    {
-                        <div>
-                            <a href="@Url.Action("ChangeContractVisibility", "Coordinator", new {contractId = Model.ContractId})">
-                                @if (Model.IsHidden == true)
-                                {
-                                    <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>}
-                                else
-                                {
-                                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>}
-                            </a>
-                        </div>
-                    }
+					@if (User.IsInRole("Coordinator"))
+					{
+						<div>
+							<a href="@Url.Action("ChangeContractVisibility", "Coordinator", new {contractId = Model.ContractId})">
+								@if (Model.IsHidden == true)
+								{
+									<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>}
+								else
+								{
+									<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>}
+							</a>
+						</div>
+					}
 				</div>
 			</div>
 			<div class="panel-body container-fluid">
