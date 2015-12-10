@@ -543,7 +543,19 @@ namespace FreeLance.Controllers
 		public ActionResult UnpaidContracts()
 		{
 			ViewBag.LawFaceChooseView = new LawModelsManager.LawFaceChooseView();
-			return View(db.ContractModels.Where(x => x.IsApprovedByCoordinator == false).ToList());
+			return View(db.ContractModels.Where(x => x.Status == ContractStatus.ClosedNotPaid).ToList());
+		}
+
+		[HttpGet]
+		public ActionResult UnverifiedDocuments()
+		{
+			return View(db.DocumentPackageModels.Where(x => x.IsApproved == null).ToList());
+		}
+
+		[HttpGet]
+		public ActionResult UnverifiedFeedback()
+		{
+			return View(db.ContractModels.Where(x => x.Comment != null).ToList());
 		}
 	}
 }

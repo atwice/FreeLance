@@ -14,7 +14,7 @@
 <body>
 <div class="row">
     <div class="col-md-6">
-        <h2>Новые контракты <span class="badge">@Model.ContractsList.Count</span></h2> 
+        <a href="@Url.Action("UnverifiedContracts", "Coordinator")"><h2>Новые контракты  <span class="badge">@Model.ContractsList.Count</span></h2> </a>
         @if (Model.ContractsList.Count == 0)
         {
             <p>Вы в курсе всех новых контрактов. </p>
@@ -27,18 +27,17 @@
                  Html.RenderPartial("~/Views/Contract/SmallView.cshtml", contract);
              }
         }
-        <h2>Ожидают выплаты <span class="badge">@Model.ContractsToPay.Count</span></h2>
-@if (Model.ContractsToPay.Count == 0)
-{
-    <p> Нет контрактов, ожидающих выплаты.  </p>
-}
-else
-{
-    foreach (var contract in Model.ContractsToPay.GetRange(0, 1))
-     {
-         Html.RenderPartial("~/Views/Contract/SmallView.cshtml", contract);
-     }
-}
+        <a href="@Url.Action("UnpaidContracts", "Coordinator")"> <h2>Ожидают выплаты <span class="badge">@Model.ContractsToPay.Count</span></h2> </a>
+        @if (Model.ContractsToPay.Count == 0)
+        {
+            <p> Нет контрактов, ожидающих выплаты.  </p>}
+        else
+        {
+            foreach (var contract in Model.ContractsToPay.GetRange(0, 1))
+            {
+                Html.RenderPartial("~/Views/Contract/SmallView.cshtml", contract);
+            }
+        }
     </div>
     <div class="col-md-6">
         <h2>Новые работодатели <span class="badge">@Model.NewEmployers.Count</span> </h2>
@@ -54,22 +53,21 @@ else
             }
         }
         <h2>Новые пользователи <span class="badge">@Model.NewFreelancers.Count</span> </h2>
-@if (Model.NewFreelancers.Count == 0)
-{
-    <p>Все новые фрилансеры подтверждены. Замечательно! </p>
-}
-else
-{
-    foreach (var freelancer in Model.NewFreelancers.GetRange(0, 1))
-     {
-         Html.RenderPartial("~/Views/Employer/SmallViewCoordinatorHome.cshtml", freelancer);
-     }
-}
-        <h2>Документы на проверку <span class="badge">@Model.DocumetsUnapproved.Count</span></h2>
+        @if (Model.NewFreelancers.Count == 0)
+        {
+            <p>Все новые фрилансеры подтверждены. Замечательно! </p>
+        }
+        else
+        {
+            foreach (var freelancer in Model.NewFreelancers.GetRange(0, 1))
+             {
+                 Html.RenderPartial("~/Views/Employer/SmallViewCoordinatorHome.cshtml", freelancer);
+             }
+        }
+        <a href="@Url.Action("UnverifiedDocuments", "Coordinator")"><h2>Документы на проверку <span class="badge">@Model.DocumetsUnapproved.Count</span></h2></a>
         @if (Model.DocumetsUnapproved.Count == 0)
         {
-            <p>Все документы фрилансеров подтверждены. Отличная работа!</p>
-        }
+            <p>Все документы фрилансеров подтверждены. Отличная работа!</p>}
         else
         {
             foreach (var doc in Model.DocumetsUnapproved.GetRange(0, 1))
@@ -77,11 +75,10 @@ else
                 Html.RenderPartial("~/Views/Freelancer/DocumentSmallView.cshtml", doc);
             }
         }
-        <h2>Новые отзывы <span class="badge">@Model.ContractWithComments.Count</span></h2>
+        <a href="@Url.Action("UnverifiedFeedback", "Coordinator")"><h2>Новые отзывы <span class="badge">@Model.ContractWithComments.Count</span></h2></a>
         @if (Model.ContractWithComments.Count == 0)
         {
-            <p>Все отзывы прочитаны.</p>
-        }
+            <p>Все отзывы прочитаны.</p>}
         else
         {
             foreach (var contract in Model.ContractWithComments.GetRange(0, 1))
@@ -89,7 +86,7 @@ else
                 Html.RenderPartial("~/Views/Comment/SmallViewCoordinator.cshtml", contract);
             }
         }
-    </div>
+</div>
 </div>
 <hr/>
     <script type="text/javascript">
