@@ -1,0 +1,96 @@
+﻿@model FreeLance.Controllers.CoordinatorController.ProfileView
+@{
+	ViewBag.Title = "Profile";
+}
+
+@section css {
+	<style>
+		.account-info-container {
+			display: flex;
+			flex-direction: row;
+			justify-content: space-around;
+		}
+
+		.photo-container {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
+
+		.another-info-container {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
+
+		.image-item {
+			border: 1px solid #dddddd;
+			border-radius: 2px;
+			padding: 2px;
+			height: 100px;
+			width: 100px;
+		}
+
+		.form-container {
+			display: flex;
+			flex-direction: column;
+		}
+	</style>
+}
+
+<div class="row">
+	<div class="col-md-12">
+		<h2>Профиль</h2>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-5 ">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h2 class="panel-title">Учетная запись</h2>
+			</div>
+			<div class="panel-body clearfix">
+				<div class="account-info-container">
+					<div class="photo-container">
+						<img class="image-item" src="@Model.Photo" alt="User photo">
+						@using (Html.BeginForm("UploadPhoto", "Freelancer", new { redirectController = "Coordinator" }, FormMethod.Post,
+							new { enctype = "multipart/form-data", runat = "server", @class = "form-container"}))
+						{
+							<input class="inputfile" type="file" accept=".jpg,.png" name="file" id="file" data-multiple-caption="{count} files selected">
+							<label for="file">
+								<span class="filename">Выберите файл…</span>
+							</label>
+							<input type="submit" value="Загрузить фото" class="btn btn-primary" />
+
+						}
+					</div>
+					<div class="another-info-container">
+						<p>Email: @Model.Email</p>
+						<p>
+							<a href="/Manage/ChangePassword" class="btn btn-info">Сменить пароль</a>
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-5 ">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h2 class="panel-title">Уведомления</h2>
+			</div>
+			<div class="panel-body">
+				@using (Html.BeginForm("Settings", "Freelancer", new { redirectController = "Coordinator" }, FormMethod.Post))
+				{
+					<div class="checkbox">
+						@Html.CheckBoxFor(m => m.emailNotifications.IsNewApplicantsEnabled)
+						@Html.Label("Получать уведомления о новых заявках")
+					</div>
+					<input type="submit" value="Сохранить" class="btn btn-success" />
+				}
+			</div>
+		</div>
+
+	</div>
+</div>
+

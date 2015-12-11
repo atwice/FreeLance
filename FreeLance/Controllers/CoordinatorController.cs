@@ -557,6 +557,27 @@ namespace FreeLance.Controllers
 		{
 			return View(db.ContractModels.Where(x => x.Comment != null).ToList());
 		}
+
+		public class ProfileView
+		{
+			public string Email { get; set; }
+			public string Photo { get; set; }
+			public ApplicationUser.EmailNotificationPolicyModel emailNotifications { get; set; }
+		}
+
+		public ActionResult Profile()
+		{
+			String id = User.Identity.GetUserId();
+			ApplicationUser coordinator = db.Users.Find(id);
+
+			ProfileView model = new ProfileView
+			{
+				Email = coordinator.Email,
+				Photo = Utils.GetPhotoUrl(coordinator.PhotoPath),
+				emailNotifications = coordinator.EmailNotificationPolicy
+			};
+			return View(model);
+		}
 	}
 }
 
