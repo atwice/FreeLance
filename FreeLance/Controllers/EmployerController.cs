@@ -6,20 +6,8 @@ using System.Net;
 using System.Web.Mvc;
 using FreeLance.Models;
 using Microsoft.AspNet.Identity;
-using FreeLance.Models;
-using System;
-using System.Collections.Generic;
-using System.Data.Entity.Migrations;
 using System.IO;
-using System.Linq;
-using System.Net;
-using System.Web;
-using System.Web.DynamicData;
-using System.Web.Mvc;
-using Antlr.Runtime.Misc;
 using FreeLance.Code;
-using Microsoft.AspNet.Identity;
-using Novacode;
 
 namespace FreeLance.Controllers
 {
@@ -303,12 +291,6 @@ namespace FreeLance.Controllers
 
 		public class DetailsForCoordinatorView
 		{
-			//			public String Name { get; set; }
-			//			public String Email { get; set; }
-			//			public String Phone { get; set; }
-			//			public String PhotoPath { get; set; }
-			//			public String Id { get; set; }
-			//			public bool isApproved { get; set; }
 			public ApplicationUser Employer { get; set; }
 
 			public List<ProblemInProgressViewModel> ProblemsInProgress { get; set; }
@@ -335,14 +317,7 @@ namespace FreeLance.Controllers
 
 			DetailsForCoordinatorView model = new DetailsForCoordinatorView
 			{
-				//				Email = employer.Email,
-				//				Phone = "+7(916)0001122", // TODO
-				//				Name = employer.FIO,
-				//				isApproved = employer.IsApprovedByCoordinator == true ? true : false,
-				//				PhotoPath = employer.PhotoPath, 
-				//				Id = id
 				Employer = employer
-
 			};
 
 			model.ProblemsInProgress = getProblemsInProgress(id);
@@ -365,7 +340,7 @@ namespace FreeLance.Controllers
 			DetailsForFreelancerView model = new DetailsForFreelancerView
 			{
 				Email = employer.Email,
-				Phone = "+7(916)0001122", // TODO
+				Phone = employer.PhoneNumber,
 				Name = employer.FIO,
 				PhotoPath = Utils.GetPhotoUrl(employer.PhotoPath),
 				Id = employer.Id
