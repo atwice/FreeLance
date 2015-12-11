@@ -376,6 +376,7 @@
     <Content Include="Views\Coordinator\UnverifiedContracts.cshtml" />
     <Content Include="Views\Coordinator\UnverifiedDocuments.cshtml" />
     <Content Include="Views\Coordinator\UnverifiedFeedback.cshtml" />
+    <Content Include="Views\Coordinator\Profile.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

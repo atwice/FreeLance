@@ -1208,16 +1208,16 @@ namespace FreeLance.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult Settings(ProfileView model)
+		public ActionResult Settings(ProfileView model, string redirectController= "Freelancer")
 		{
 			ApplicationUser user = db.Users.Find(User.Identity.GetUserId());
 			user.EmailNotificationPolicy = model.emailNotifications;
 			db.SaveChanges();
-			return RedirectToAction("Profile");
+			return RedirectToAction("Profile", redirectController);
 		}
 
 		[HttpPost]
-		public ActionResult UploadPhoto()
+		public ActionResult UploadPhoto(string redirectController="Freelancer")
 		{
 			ApplicationUser user = db.Users.Find(User.Identity.GetUserId());
 			if (Request.Files.Count > 0)
@@ -1229,7 +1229,7 @@ namespace FreeLance.Controllers
 					db.SaveChanges();
 				}
 			}
-			return RedirectToAction("Profile");
+			return RedirectToAction("Profile", redirectController);
 		}
 
 	}
