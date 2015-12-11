@@ -68,13 +68,13 @@
         @if (Model.DocumetsUnapproved.Count == 0)
         {
             <p>Все документы фрилансеров подтверждены. Отличная работа!</p>}
-        else
-        {
-            foreach (var doc in Model.DocumetsUnapproved.GetRange(0, 1))
-            {
-                Html.RenderPartial("~/Views/Freelancer/DocumentSmallView.cshtml", doc);
-            }
-        }
+		else
+		{
+			foreach (var doc in Model.DocumetsUnapproved.GetRange(0, 1))
+			{
+				Html.RenderPartial("~/Views/Freelancer/DocumentSmallView.cshtml", doc);
+			}
+		}
         <a href="@Url.Action("UnverifiedFeedback", "Coordinator")"><h2>Новые отзывы <span class="badge">@Model.ContractWithComments.Count</span></h2></a>
         @if (Model.ContractWithComments.Count == 0)
         {
