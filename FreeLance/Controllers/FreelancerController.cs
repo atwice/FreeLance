@@ -139,7 +139,7 @@ namespace FreeLance.Controllers
 				Comment = contract.Comment,
 				WorkMessage = EmployerController.getStatusMessage(contract.Status),
 				ProblemId = contract.Problem.ProblemId,
-				DeadlineDate = contract.DeadlineDate.ToShortDateString(), // TODO
+				DeadlineDate = contract.DeadlineDate.ToShortDateString(),
 				CreationDate = contract.CreationDate.ToShortDateString(),
 				EndingDate = contract.EndingDate.ToShortDateString(),
 				Cost = contract.Cost,
@@ -440,7 +440,7 @@ namespace FreeLance.Controllers
 			{
 				info = _info,
 				FreelancerEmail = freelancer.Email,
-				FreelancerPhone = "+7(916)0001122", // TODO
+				FreelancerPhone = freelancer.DocumentPackage == null ? null : freelancer.DocumentPackage.General.Phone,
 				FreelancerName = freelancer.FIO,
 				PhotoPath = Utils.GetPhotoUrl(freelancer.PhotoPath),
 				FreelancerRate = getFreelancerRate(contracts),
