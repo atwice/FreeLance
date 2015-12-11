@@ -226,6 +226,8 @@ namespace FreeLance.Controllers
 			public GeneralInfo General { get; set; }
 			public PassportInfo Passport { get; set; }
 			public BankInfo Bank { get; set; }
+			public int DocumentsId { get; set; }
+			public bool DocumentsIsApproved { get; set; }
 
 			public decimal FreelancerRate { get; set; }
 			public string PhotoPath { get; set; }
@@ -233,6 +235,8 @@ namespace FreeLance.Controllers
 			public string info;
 			public string lastSort;
 			public bool isApproved { get; set; }
+			public string PhotoFirstPage { get; set; }
+			public string PhotoAdress { get; set; }
 
 			public DetailsProblemsView ProblemsView;
 			public DetailsProfileView ProfileView;
@@ -492,6 +496,10 @@ namespace FreeLance.Controllers
 				FreelancerRate = countRating(id),
 				FreelancerId = id,
 				isApproved = freelancer.IsApprovedByCoordinator == true ? true : false,
+				PhotoAdress = documents.Photos.PassportRegistration,
+				PhotoFirstPage = documents.Photos.PassportFace,
+				DocumentsId = documents.Id,
+				DocumentsIsApproved = documents.IsApproved == null ? false : (bool) documents.IsApproved,
 
 				ProfileView = new DetailsProfileView
 				{
@@ -1049,8 +1057,8 @@ namespace FreeLance.Controllers
 				Passport = documents.Passport,
 				GeneralInfo = documents.General,
 				Bank = documents.Bank,
-				PhotoAdress = "", // TODO
-				PhotoFirstPage = "", // TODO
+				PhotoAdress = documents.Photos.PassportRegistration,
+				PhotoFirstPage = documents.Photos.PassportFace,
 				Rate = countRating(id)
 			};
 			return View(model);
@@ -1164,7 +1172,7 @@ namespace FreeLance.Controllers
 			db.SaveChanges();
 		}
 
-		private string saveDocumentOnDisc(HttpPostedFileBase file, string dir, string location = "/App_Data/")
+		private string saveDocumentOnDisc(HttpPostedFileBase file, string dir, string location = "/Files/")
 		{
 			var ext = Path.GetExtension(file.FileName);
 			var fileName = User.Identity.GetUserId() + "_" + DateTime.Now.Ticks.ToString() + ext;
