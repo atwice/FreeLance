@@ -82,8 +82,8 @@ function Chat( $selector, config ) {
 		var buttonText = hide ? 'Show' : 'Hide';
 		self.$selector.find("button[val='" + messageId + "']").text(buttonText);
 		if (!show) {
-			var vis = hide ? 'hidden' : 'visible';
-			$selector.find(".chat-message-container[val='" + messageId + "']").css('visibility', vis);
+			var dis = hide ? 'none' : 'visible';
+			$selector.find(".chat-message-container[val='" + messageId + "']").css("display", dis);
 		}
 	};
 
