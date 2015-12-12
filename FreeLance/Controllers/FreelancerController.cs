@@ -223,6 +223,9 @@ namespace FreeLance.Controllers
 
 		public class DetailsForCoordinatorView
 		{
+			public string FIO { get; set; }
+			public string Email { get; set; }
+			public string Phone { get; set; }
 			public GeneralInfo General { get; set; }
 			public PassportInfo Passport { get; set; }
 			public BankInfo Bank { get; set; }
@@ -489,6 +492,9 @@ namespace FreeLance.Controllers
 			DetailsForCoordinatorView model = new DetailsForCoordinatorView
 			{
 				info = _info,
+				FIO = freelancer.FIO,
+				Email = freelancer.Email,
+				Phone = freelancer.PhoneNumber,
 				General = documents.General,
 				Passport = documents.Passport,
 				Bank = documents.Bank,

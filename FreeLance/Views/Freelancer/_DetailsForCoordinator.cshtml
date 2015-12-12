@@ -38,12 +38,12 @@
         <img src="@imgSrc" class="img-thumbnail" style="margin-top: 20px;" height="200" width="200">
     </div>
     <div class="col-md-10">
-        <h2><strong>@Model.General.Surname @Model.General.Name</strong></h2>
-        @if (Model.General.Phone != null)
+        <h2><strong>@Model.FIO</strong></h2>
+        @if (Model.Phone != null)
         {
-            <p>@Model.General.Phone</p>
+            <p>@Model.Phone</p>
         }
-        <p>@Model.General.Email</p>
+        <p>@Model.Email</p>
 
         <div class="stars" data-score=@Model.FreelancerRate.ToString().Replace(",", ".")></div>
         <div class="row">
