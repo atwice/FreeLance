@@ -199,30 +199,48 @@
 				<div class="row">
 					<div class="col-xs-6">
                         <hr />
-                        @if (Model.TaskAttachmentModels.Count() == 0)
+                        @if (User.IsInRole("Employer"))
                         {
-                            <a href="#">Уточнения к задаче</a>
+                            using (Html.BeginForm("UploadContractAttach", "Contract", new { id = Model.ContractId }, FormMethod.Post,
+							    new { enctype = "multipart/form-data", runat = "server", @class = "form-container"}))
+						    {
+							    <input class="inputfile" type="file" name="file" id="file" data-multiple-caption="{count} files selected">
+							    <label for="file">
+								    <span class="glyphicon glyphicon-plus"></span>
+							    </label>
+							    <input type="submit" value="Загрузить уточнения к контракту" class="btn btn-default" />
+						    }
+
                         }
-                        else
+                        @if (Model.TaskAttachmentModels.Count() != 0)
                         {
                             foreach (var taskAttachment in Model.TaskAttachmentModels)
                             {
-                                <a href="@taskAttachment.AttachmentPath">taskAttachment.Name</a>
+                                <div><a href="@taskAttachment.AttachmentPath">@taskAttachment.Name</a></div>
                             }
-                        }
+                        }                       
 						
 					</div>
                     <div class="col-xs-6 text-right">
                         <hr />
-                        @if (Model.ResultAttachmentModels.Count() == 0)
+                        @if (User.IsInRole("Freelancer"))
                         {
-                            <a href="#">Результаты</a>
+                            using (Html.BeginForm("UploadContractAttach", "Contract", new { id = Model.ContractId }, FormMethod.Post,
+							    new { enctype = "multipart/form-data", runat = "server", @class = "form-container"}))
+						    {
+							    <input class="inputfile" type="file" name="file" id="file" data-multiple-caption="{count} files selected">
+							    <label for="file">
+								    <span class="glyphicon glyphicon-plus"></span>
+							    </label>
+							    <input type="submit" value="Загрузить результаты работы" class="btn btn-default" />
+						    }
+
                         }
-                        else
-                        {
+                        @if (Model.ResultAttachmentModels.Count() != 0)
+                        {                            
                             foreach (var resultAttachment in Model.ResultAttachmentModels)
                             {
-                                <a href="@resultAttachment.AttachmentPath">resultAttachment.Name</a>
+                                <a href="@resultAttachment.AttachmentPath">@resultAttachment.Name</a>
                             }
                         }
                     </div>

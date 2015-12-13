@@ -8,6 +8,8 @@ using FreeLance.Code;
 using System.Web.Mvc;
 using FreeLance.Models;
 using Microsoft.AspNet.Identity;
+using System.IO;
+using System.Web;
 
 namespace FreeLance.Controllers
 {
@@ -102,7 +104,11 @@ namespace FreeLance.Controllers
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
 
-			ContractModels contract = db.ContractModels.Include(c => c.Problem).Single(c => c.ContractId == id);
+			ContractModels contract = db.ContractModels
+										.Include(c => c.Problem)
+										.Include(c => c.TaskAttachmentModels)
+										.Include(c => c.ResultAttachmentModels)
+										.Single(c => c.ContractId == id);
 			// only coordinator can view hidden contracts
 			if (contract == null || (contract.IsHidden && !User.IsInRole("Coordinator")))
 			{
@@ -380,6 +386,51 @@ namespace FreeLance.Controllers
 				db.Dispose();
 			}
 			base.Dispose(disposing);
+		}
+		
+		private string saveDocumentOnDisc(HttpPostedFileBase file, string dir, string location = "/App_Data/")
+		{
+			var ext = Path.GetExtension(file.FileName);
+			var fileName = User.Identity.GetUserId() + "_" + DateTime.Now.Ticks.ToString() + ext;
+			var path = Path.Combine(Server.MapPath("~" + location + dir + "/"), fileName);
+			file.SaveAs(path);
+			return location + dir + "/" + fileName;
+		}
+
+		[HttpPost]
+		[Authorize(Roles = "Employer,Freelancer")]
+		public ActionResult UploadContractAttach(int id)
+		{
+			ApplicationUser user = db.Users.Find(User.Identity.GetUserId());
+			ContractModels contract = db.ContractModels.Find(id);
+			if (Request.Files.Count > 0)
+			{
+				var file = Request.Files[0];
+				if (file != null && file.ContentLength > 0)
+				{
+					if (User.IsInRole("Employer"))
+					{
+						TaskAttachmentModel attach = new TaskAttachmentModel();
+						attach.Name = file.FileName;
+						attach.Contract = contract;
+						attach.AttachmentPath = saveDocumentOnDisc(file, "attachmentsForContracts", "/Files/");
+						db.TaskAttachments.Add(attach);
+						contract.TaskAttachmentModels.Add(attach);
+					}
+					if (User.IsInRole("Freelancer"))
+					{
+						ResultAttachmentModel attach = new ResultAttachmentModel();
+						attach.Name = file.FileName;
+						attach.Contract = contract;
+						attach.AttachmentPath = saveDocumentOnDisc(file, "attachmentsForContracts", "/Files/");
+						db.ResultAttachments.Add(attach);
+						contract.ResultAttachmentModels.Add(attach);
+					}
+
+					db.SaveChanges();
+				}
+			}
+			return Redirect("/Contract/Details/" + id.ToString());
 		}
 	}
 }

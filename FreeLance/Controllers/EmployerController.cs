@@ -620,7 +620,6 @@ namespace FreeLance.Controllers
 			return location + dir + "/" + fileName;
 		}
 
-
 		[HttpPost]
 		public ActionResult UploadPhoto()
 		{

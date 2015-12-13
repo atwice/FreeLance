@@ -386,6 +386,7 @@
     <Folder Include="Files\photo\" />
     <Folder Include="Views\StaticContent\" />
     <Folder Include="Views\Subscription\" />
+    <Folder Include="Views\Utils\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
