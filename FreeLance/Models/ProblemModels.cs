@@ -14,6 +14,8 @@ namespace FreeLance.Models
 
 	public class ProblemModels
 	{
+		public virtual LawFace LawFace { get; set; }
+
 		[Key]
 		public int ProblemId { get; set; }
 		[DataType(DataType.Date)]

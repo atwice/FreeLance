@@ -377,6 +377,8 @@
     <Content Include="Views\Coordinator\UnverifiedDocuments.cshtml" />
     <Content Include="Views\Coordinator\UnverifiedFeedback.cshtml" />
     <Content Include="Views\Coordinator\Profile.cshtml" />
+    <Content Include="Views\LawFace\_LawFaceChangeProblem.cshtml" />
+    <Content Include="Views\Problem\_ActiveEmployerProblemForCoordinator.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

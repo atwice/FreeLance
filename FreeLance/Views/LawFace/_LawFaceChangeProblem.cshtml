@@ -1,0 +1,8 @@
+﻿@model FreeLance.Controllers.EmployerController.PloblemViewModel
+@{ var i = Model.LawFace == null ? -1 : Model.LawFace.Id; }
+@Html.DropDownList("ProblemLawFace", new SelectList(ViewBag.LawFaceChooseView.LawFaces, "Id", "Name", @i),
+                        new
+                        {
+                            @onchange = "onDropdownChangeProblemLawFace(" + @Model.Id + ");",
+                            @id = "dropDownListProblem" + @Model.Id
+                        }); 

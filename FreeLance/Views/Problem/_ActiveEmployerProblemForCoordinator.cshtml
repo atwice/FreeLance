@@ -1,0 +1,31 @@
+﻿@model FreeLance.Controllers.EmployerController.ProblemInProgressViewModel
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <b>@Model.Name<span></span></b>
+    </div>
+    <div class="panel-body">
+        <p>
+            <i>До</i>
+            @Model.EndingDate.ToShortDateString()
+            <span class="pull-right"><b>@Model.Cost</b><span class="flaticon-ruble"></span> </span>
+        </p>
+        <p>
+            <b>Исполнители:</b>
+            @foreach (var contract in @Model.Contracts)
+            {
+                <a class="text-info-in-panel" href="/Freelancer/Details/@contract.freelancerId">@contract.FIO</a>
+                                        <a class="text-info-in-panel" href="/Contract/Details/@contract.id">контракт</a>
+}
+        </p>
+        <p>
+            <b>Юр лицо:</b>
+            @{ Html.RenderPartial("~/Views/LawFace/_LawFaceChangeProblem.cshtml", @Model); }
+        </p>
+        <p><b>Создан:</b><span class="text-info-in-panel">@Model.CreationDate.ToShortDateString()</span></p>
+        <div>
+            <i class="flaticon-comments16"></i> <span class="badge">@Model.NewMsgCount</span>
+            <a href="/Problem/Details/@Model.Id" class="btn btn-info pull-right" role="button">К задаче</a>
+        </div>
+    </div>
+</div>

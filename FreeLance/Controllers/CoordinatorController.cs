@@ -509,6 +509,16 @@ namespace FreeLance.Controllers
 		}
 
 		[HttpPost]
+		public void ChangeLawFaceInProblem(int problemId, int lawFaceId)
+		{
+			FreeLance.Models.ProblemModels problem =
+				db.ProblemModels.Include(c => c.LawFace).Single(c => c.ProblemId == problemId);
+			LawFace lawFace = db.LawFaces.Single(l => l.Id == lawFaceId);
+			problem.LawFace = lawFace;
+			db.SaveChanges();
+		}
+
+		[HttpPost]
 		public void ChangeLawFaceEmployer(string employerId, int lawFaceId)
 		{
 			ApplicationUser employer = getApplicationUsersInRole("Employer").Single(x => x.Id == employerId);

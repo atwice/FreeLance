@@ -22,30 +22,28 @@ namespace FreeLance.Controllers
 			public List<ProblemOpenViewModel> ProblemsOpen { get; set; }
 		}
 
-		public class ProblemOpenViewModel
+		public abstract class PloblemViewModel
 		{
 			public String Name { get; set; }
-			public String ShortDescription { get; set; }
-			public decimal Cost { get; set; }
+			public int Id { get; set; }
 			public DateTime EndingDate { get; set; }
 			public DateTime CreationDate { get; set; }
-			public int SubscribersCount { get; set; }
-			public int Id { get; set; }
-			public int NewMsgCount { get; set; }
+			public decimal Cost { get; set; }
 			public String StatusIcon { get; set; }
+			public int NewMsgCount { get; set; }
+			public LawFace LawFace { get; set; }
+		}
+
+		public class ProblemOpenViewModel : PloblemViewModel
+		{			
+			public String ShortDescription { get; set; }
+			public int SubscribersCount { get; set; }
 			public int AmountOfWorkers { get; set; } // число рабочих мест
 			public int FreelancersCount { get; set;  } // число исполнителей
 		}
 
-		public class ProblemInProgressViewModel
+		public class ProblemInProgressViewModel : PloblemViewModel
 		{
-			public String Name { get; set; }
-			public int Id { get; set; }
-			public DateTime EndingDate { get; set; }
-			public DateTime CreationDate { get; set; }
-			public decimal Cost { get; set; }
-			public String StatusIcon { get; set; }
-			public int NewMsgCount { get; set; }
 			public List<ContractInProgressViewModel> Contracts { get; set; }
 		}
 
@@ -63,6 +61,8 @@ namespace FreeLance.Controllers
 			public String StatusIcon { get; set; }
 		}
 
+
+		// for /Problem/Details/5
 		public class ProblemView
 		{
 			public List<SubscriptionModels> Subscriptions { get; set; }
@@ -181,6 +181,7 @@ namespace FreeLance.Controllers
 						CreationDate = p.CreationDate,
 						NewMsgCount = 0,
 						Cost = p.Cost,
+						LawFace = p.LawFace,
 						Id = p.ProblemId
 					}
 				)
@@ -211,6 +212,7 @@ namespace FreeLance.Controllers
 						CreationDate = p.CreationDate,
 						EndingDate = p.DeadlineDate,
 						AmountOfWorkers = p.AmountOfWorkes,
+						LawFace = p.LawFace,
 						FreelancersCount = p.Contracts.Where(c => c.Status == ContractStatus.InProgress || c.Status == ContractStatus.Opened
 											|| c.Status == ContractStatus.Done || c.Status == ContractStatus.ClosedNotPaid).Count(),
                         NewMsgCount = 0
