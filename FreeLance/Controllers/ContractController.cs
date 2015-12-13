@@ -78,8 +78,7 @@ namespace FreeLance.Controllers
 				ProblemName = c.Problem.Name,
 				IsHidden = c.IsHidden,
 				CreatingDate = c.CreationDate.ToShortDateString(),
-				EndingDate = c.EndingDate.ToShortDateString(),
-				DeadlineDate = DateTime.Now.AddDays(100).ToShortDateString(), //TODO
+				DeadlineDate = c.EndingDate.ToShortDateString(),
 				Cost = c.Cost,
 				ProblemId = c.Problem.ProblemId,
 				Status = c.Status,
@@ -119,7 +118,7 @@ namespace FreeLance.Controllers
 			{
 				showMore = false;
 			}
-			
+
 			DetailsView view = getContractDetails(contract);
 
 			view.showMore = (bool)showMore;
@@ -260,7 +259,7 @@ namespace FreeLance.Controllers
 
 		[HttpPost]
 		[Authorize(Roles = "Employer, Freelancer")]
-		public ActionResult ChangeStatus(int id, ContractStatus status, string redirect, 
+		public ActionResult ChangeStatus(int id, ContractStatus status, string redirect,
 			string freelancerId, string employerId, string contractName)
 		{
 			ContractModels contract = db.ContractModels.Include(c => c.Problem).Single(c => c.ContractId == id);
@@ -272,9 +271,9 @@ namespace FreeLance.Controllers
 			}
 			ContractStatus previousStatus = contract.Status;
 			contract.Status = status;
-            //  Failed, СancelledByFreelancer, СancelledByEmployer, ClosedNotPaid
-            if (status == ContractStatus.ClosedNotPaid || status == ContractStatus.СancelledByEmployer
-                || status == ContractStatus.СancelledByFreelancer || status == ContractStatus.Failed)
+			//  Failed, СancelledByFreelancer, СancelledByEmployer, ClosedNotPaid
+			if (status == ContractStatus.ClosedNotPaid || status == ContractStatus.СancelledByEmployer
+				|| status == ContractStatus.СancelledByFreelancer || status == ContractStatus.Failed)
 			{
 				contract.EndingDate = DateTime.Now;
 			}
@@ -288,7 +287,7 @@ namespace FreeLance.Controllers
 
 		[HttpPost]
 		[Authorize(Roles = "Employer, Freelancer")]
-		public ActionResult Close(int id, string comment, int rate, ContractStatus newStatus, 
+		public ActionResult Close(int id, string comment, int rate, ContractStatus newStatus,
 			string freelancerId, string employerId, string contractName)
 		{
 			ContractModels contract = db.ContractModels.Include(c => c.Problem).Single(c => c.ContractId == id);

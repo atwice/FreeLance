@@ -6,20 +6,8 @@ using System.Net;
 using System.Web.Mvc;
 using FreeLance.Models;
 using Microsoft.AspNet.Identity;
-using FreeLance.Models;
-using System;
-using System.Collections.Generic;
-using System.Data.Entity.Migrations;
 using System.IO;
-using System.Linq;
-using System.Net;
-using System.Web;
-using System.Web.DynamicData;
-using System.Web.Mvc;
-using Antlr.Runtime.Misc;
 using FreeLance.Code;
-using Microsoft.AspNet.Identity;
-using Novacode;
 
 namespace FreeLance.Controllers
 {
@@ -34,30 +22,28 @@ namespace FreeLance.Controllers
 			public List<ProblemOpenViewModel> ProblemsOpen { get; set; }
 		}
 
-		public class ProblemOpenViewModel
+		public abstract class PloblemViewModel
 		{
 			public String Name { get; set; }
-			public String ShortDescription { get; set; }
-			public decimal Cost { get; set; }
+			public int Id { get; set; }
 			public DateTime EndingDate { get; set; }
 			public DateTime CreationDate { get; set; }
-			public int SubscribersCount { get; set; }
-			public int Id { get; set; }
-			public int NewMsgCount { get; set; }
+			public decimal Cost { get; set; }
 			public String StatusIcon { get; set; }
+			public int NewMsgCount { get; set; }
+			public LawFace LawFace { get; set; }
+		}
+
+		public class ProblemOpenViewModel : PloblemViewModel
+		{			
+			public String ShortDescription { get; set; }
+			public int SubscribersCount { get; set; }
 			public int AmountOfWorkers { get; set; } // число рабочих мест
 			public int FreelancersCount { get; set;  } // число исполнителей
 		}
 
-		public class ProblemInProgressViewModel
+		public class ProblemInProgressViewModel : PloblemViewModel
 		{
-			public String Name { get; set; }
-			public int Id { get; set; }
-			public DateTime EndingDate { get; set; }
-			public DateTime CreationDate { get; set; }
-			public decimal Cost { get; set; }
-			public String StatusIcon { get; set; }
-			public int NewMsgCount { get; set; }
 			public List<ContractInProgressViewModel> Contracts { get; set; }
 		}
 
@@ -75,6 +61,8 @@ namespace FreeLance.Controllers
 			public String StatusIcon { get; set; }
 		}
 
+
+		// for /Problem/Details/5
 		public class ProblemView
 		{
 			public List<SubscriptionModels> Subscriptions { get; set; }
@@ -193,6 +181,7 @@ namespace FreeLance.Controllers
 						CreationDate = p.CreationDate,
 						NewMsgCount = 0,
 						Cost = p.Cost,
+						LawFace = p.LawFace,
 						Id = p.ProblemId
 					}
 				)
@@ -223,6 +212,7 @@ namespace FreeLance.Controllers
 						CreationDate = p.CreationDate,
 						EndingDate = p.DeadlineDate,
 						AmountOfWorkers = p.AmountOfWorkes,
+						LawFace = p.LawFace,
 						FreelancersCount = p.Contracts.Where(c => c.Status == ContractStatus.InProgress || c.Status == ContractStatus.Opened
 											|| c.Status == ContractStatus.Done || c.Status == ContractStatus.ClosedNotPaid).Count(),
                         NewMsgCount = 0
@@ -303,12 +293,6 @@ namespace FreeLance.Controllers
 
 		public class DetailsForCoordinatorView
 		{
-			//			public String Name { get; set; }
-			//			public String Email { get; set; }
-			//			public String Phone { get; set; }
-			//			public String PhotoPath { get; set; }
-			//			public String Id { get; set; }
-			//			public bool isApproved { get; set; }
 			public ApplicationUser Employer { get; set; }
 
 			public List<ProblemInProgressViewModel> ProblemsInProgress { get; set; }
@@ -335,14 +319,7 @@ namespace FreeLance.Controllers
 
 			DetailsForCoordinatorView model = new DetailsForCoordinatorView
 			{
-				//				Email = employer.Email,
-				//				Phone = "+7(916)0001122", // TODO
-				//				Name = employer.FIO,
-				//				isApproved = employer.IsApprovedByCoordinator == true ? true : false,
-				//				PhotoPath = employer.PhotoPath, 
-				//				Id = id
 				Employer = employer
-
 			};
 
 			model.ProblemsInProgress = getProblemsInProgress(id);
@@ -365,7 +342,7 @@ namespace FreeLance.Controllers
 			DetailsForFreelancerView model = new DetailsForFreelancerView
 			{
 				Email = employer.Email,
-				Phone = "+7(916)0001122", // TODO
+				Phone = employer.PhoneNumber,
 				Name = employer.FIO,
 				PhotoPath = Utils.GetPhotoUrl(employer.PhotoPath),
 				Id = employer.Id

@@ -509,6 +509,16 @@ namespace FreeLance.Controllers
 		}
 
 		[HttpPost]
+		public void ChangeLawFaceInProblem(int problemId, int lawFaceId)
+		{
+			FreeLance.Models.ProblemModels problem =
+				db.ProblemModels.Include(c => c.LawFace).Single(c => c.ProblemId == problemId);
+			LawFace lawFace = db.LawFaces.Single(l => l.Id == lawFaceId);
+			problem.LawFace = lawFace;
+			db.SaveChanges();
+		}
+
+		[HttpPost]
 		public void ChangeLawFaceEmployer(string employerId, int lawFaceId)
 		{
 			ApplicationUser employer = getApplicationUsersInRole("Employer").Single(x => x.Id == employerId);
@@ -530,6 +540,53 @@ namespace FreeLance.Controllers
 			}
 			db.SaveChanges();
 			return RedirectToAction(nextAction);
+		}
+
+		[HttpGet]
+		public ActionResult UnverifiedContracts()
+		{
+			ViewBag.LawFaceChooseView = new LawModelsManager.LawFaceChooseView();
+			return View(db.ContractModels.Where(x => x.IsApprovedByCoordinator == false).ToList());
+		}
+
+		[HttpGet]
+		public ActionResult UnpaidContracts()
+		{
+			ViewBag.LawFaceChooseView = new LawModelsManager.LawFaceChooseView();
+			return View(db.ContractModels.Where(x => x.Status == ContractStatus.ClosedNotPaid).ToList());
+		}
+
+		[HttpGet]
+		public ActionResult UnverifiedDocuments()
+		{
+			return View(db.DocumentPackageModels.Where(x => x.IsApproved == null).ToList());
+		}
+
+		[HttpGet]
+		public ActionResult UnverifiedFeedback()
+		{
+			return View(db.ContractModels.Where(x => x.Comment != null).ToList());
+		}
+
+		public class ProfileView
+		{
+			public string Email { get; set; }
+			public string Photo { get; set; }
+			public ApplicationUser.EmailNotificationPolicyModel emailNotifications { get; set; }
+		}
+
+		public ActionResult Profile()
+		{
+			String id = User.Identity.GetUserId();
+			ApplicationUser coordinator = db.Users.Find(id);
+
+			ProfileView model = new ProfileView
+			{
+				Email = coordinator.Email,
+				Photo = Utils.GetPhotoUrl(coordinator.PhotoPath),
+				emailNotifications = coordinator.EmailNotificationPolicy
+			};
+			return View(model);
 		}
 	}
 }
