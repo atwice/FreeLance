@@ -331,7 +331,7 @@
     <Content Include="Views\Coordinator\ViewFreelancerDocuments.cshtml" />
     <Content Include="Views\Coordinator\AddLawContractTemplate.cshtml" />
     <Content Include="Views\Coordinator\FillLawContractTemplate.cshtml" />
-    <Content Include="Views\Coordinator\LawFace.cshtml" />
+    <Content Include="Views\Coordinator\AddLawFace.cshtml" />
     <Content Include="Views\Freelancer\Documents.cshtml" />
     <Content Include="Views\Notification\_ErrorNotification.cshtml" />
     <Content Include="Views\Notification\GetPageNotifications.cshtml" />
@@ -379,6 +379,7 @@
     <Content Include="Views\Coordinator\Profile.cshtml" />
     <Content Include="Views\LawFace\_LawFaceChangeProblem.cshtml" />
     <Content Include="Views\Problem\_ActiveEmployerProblemForCoordinator.cshtml" />
+    <Content Include="Views\Coordinator\LawFace.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -35,25 +35,7 @@ namespace FreeLance.Code
                 LawFaces.Add(noLawFace);
             }
         }
-
-
-
-        //	    public class LawContractTemplateView
-        //	    {
-        //	        public LawFace LawFace;
-        //	        public string LawFaceId { get; set; }
-        //            [Required]
-        //            public HttpPostedFileBase File { get; set; }
-        //            [Required]
-        //            public string Name { get; set; }
-        //	    }
-
-        //		public ActionResult LawFaces()
-        //		{
-        //			var model = new LawFacesViewModel();
-        //		    model.LawFaces = db.LawFaces.ToList();
-        //			return View(model);
-        //		}
+		       
         //
         //	    [HttpGet]
         //	    public ActionResult AddLawContractTemplate(int lawFaceId)
@@ -193,20 +175,7 @@ namespace FreeLance.Code
         //            return File(filedata, contentType);
         //        }
 
-        //        [HttpGet]
-        //	    public ActionResult LawFace()
-        //	    {
-        //            LawFace model = new LawFace();
-        //	        return View(model);
-        //	    }
-        //
-        //        [HttpPost]
-        //	    public ActionResult LawFace(LawFace lawFace)
-        //        {
-        //            db.LawFaces.Add(lawFace);
-        //            db.SaveChanges();
-        //            return RedirectToAction("LawFaces");
-        //        }
+
 
         //        [Authorize(Roles="Coordinator")]
         //	    public ActionResult ToggleActiveLawContractTemplate(int templateId)

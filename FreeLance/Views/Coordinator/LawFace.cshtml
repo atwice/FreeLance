@@ -1,36 +1,35 @@
 ﻿@model FreeLance.Models.LawFace
-
 @{
-    ViewBag.Title = "Юрлица";
-    ViewBag.MenuPick = "LawFaces";
+    ViewBag.Title = "Юрлицо";
 }
 
-<h2>Создание нового Юрлица</h2>
-@using (Html.BeginForm("LawFace", "Coordinator"))
-{
-    @Html.AntiForgeryToken()
-    <div class="form-horizontal">
-        <hr/>
-        @Html.ValidationSummary(true, "", new {@class = "text-danger"})
-        <div class="form-group">
-            @Html.LabelFor(model => model.Name, "Название", htmlAttributes: new {@class = "control-label col-md-2"})
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Name, new {htmlAttributes = new {@class = "form-control"}})
-                @Html.ValidationMessageFor(model => model.Name, "", new {@class = "text-danger"})
-            </div>
-        </div>
+<h2>LawFace</h2>
 
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Создать" class="btn btn-success"/>
-                <a href="@Url.Action("LawFaces", "Coordinator")">
-                    <input type="button" value="Отмена" class="btn btn-danger"/>
-                </a>
-            </div>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4>@Model.Name</h4>
+        <div class="pull-right">
+            @Html.ActionLink("Добавить Шаблон ГПХ", "AddLawContractTemplate", new { lawFaceId = @Model.Id }, new { @class = "btn btn-success", style = "color:white; display:inline-block" })
         </div>
     </div>
-    @Html.ActionLink("К списку юрлиц", "LawFaces", "Coordinator")
-}
-@section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
-}
+    <div class="panel-body">
+        <ul class="list-group">
+            @foreach (var template in @Model.LawContractTemplates)
+            {
+                <li class="list-group-item">
+                    <h5>@template.Name </h5>
+                    <div><a href="@template.Path">@template.Name</a></div>
+                    @Html.ActionLink("Посмотреть шаблон", "ViewFile", new { path = template.Path }, new { @class = "btn btn-primary" })
+                    @if (template.IsActive)
+                    {
+                        @Html.ActionLink("Не использовать", "ToggleActiveLawContractTemplate", new { templateId = @template.Id }, new { @class = "btn btn-danger" })
+                    }
+                    else
+                    {
+                        @Html.ActionLink("Использовать", "ToggleActiveLawContractTemplate", new { templateId = @template.Id }, new { @class = "btn btn-success" })
+                    }
+                </li>
+            }
+        </ul>
+    </div>
+</div>

@@ -588,6 +588,50 @@ namespace FreeLance.Controllers
 			};
 			return View(model);
 		}
+
+		//public class LawContractTemplateView
+		//{
+		//	public LawFace LawFace;
+		//	public string LawFaceId { get; set; }
+		//	[Required]
+		//	public HttpPostedFileBase File { get; set; }
+		//	[Required]
+		//	public string Name { get; set; }
+		//}
+
+		public class LawFaceView
+		{
+		    public LawFace LawFace { get; set; }
+            public List<LawContractTemplate> LawContractTemplates { get; set; }
+        }
+
+		public class LawFacesViewModel
+		{
+			public List<LawFace> LawFaces { get; set; }
+		}
+
+		public ActionResult LawFaces()
+		{
+			var model = new LawFacesViewModel();
+			model.LawFaces = db.LawFaces.ToList();
+			return View(model);
+		}
+
+		[HttpGet]
+		public ActionResult AddLawFace()
+		{
+			LawFace model = new LawFace();
+			return View(model);
+		}
+
+		[HttpPost]
+		public ActionResult AddLawFace(LawFace lawFace)
+		{
+			db.LawFaces.Add(lawFace);
+			db.SaveChanges();
+			return RedirectToAction("LawFaces");
+		}
+
 	}
 }
 

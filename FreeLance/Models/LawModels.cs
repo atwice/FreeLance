@@ -17,7 +17,9 @@ namespace FreeLance.Models
 
         [Required]
         public string Name { get; set; }
-    }
+
+		public bool IsActive { get; set; } = false;
+	}
 
     public class LawFace
     {

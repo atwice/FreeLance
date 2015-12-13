@@ -88,11 +88,11 @@
 
 					using (Html.BeginForm("ApproveDocuments", "Coordinator", new { docId = Model.DocumentsId, value = true }, FormMethod.Post, new { @class = "form-doc" }))
                     {
-						<input type="submit" value="Одобрить" class="btn btn-success" style="max-width:inherit; width: 100%"/>
+						<input type="submit" value="Одобрить" class="btn btn-info" style="max-width:inherit; width: 100%"/>
 					}
 					using (Html.BeginForm("ApproveDocuments", "Coordinator", new { docId = Model.DocumentsId, value = false}, FormMethod.Post, new { @class = "form-doc" }))
 					{
-						<input type="submit" value="Отклонить" class="btn btn-danger" style="max-width:inherit; width: 100%"/>
+						<input type="submit" value="Отклонить" class="btn btn-default" style="max-width:inherit; width: 100%"/>
 					}
 
 				}
