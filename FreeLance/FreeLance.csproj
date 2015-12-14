@@ -331,7 +331,7 @@
     <Content Include="Views\Coordinator\ViewFreelancerDocuments.cshtml" />
     <Content Include="Views\Coordinator\AddLawContractTemplate.cshtml" />
     <Content Include="Views\Coordinator\FillLawContractTemplate.cshtml" />
-    <Content Include="Views\Coordinator\LawFace.cshtml" />
+    <Content Include="Views\Coordinator\AddLawFace.cshtml" />
     <Content Include="Views\Freelancer\Documents.cshtml" />
     <Content Include="Views\Notification\_ErrorNotification.cshtml" />
     <Content Include="Views\Notification\GetPageNotifications.cshtml" />
@@ -374,6 +374,14 @@
     <Content Include="Views\LawFace\_LawFaceChangeEmployer.cshtml" />
     <Content Include="Views\Coordinator\ApproveContractDetailsDialog.cshtml" />
     <Content Include="Views\LawFace\_ChooseLawContractTempate.cshtml" />
+    <Content Include="Views\Coordinator\UnpaidContracts.cshtml" />
+    <Content Include="Views\Coordinator\UnverifiedContracts.cshtml" />
+    <Content Include="Views\Coordinator\UnverifiedDocuments.cshtml" />
+    <Content Include="Views\Coordinator\UnverifiedFeedback.cshtml" />
+    <Content Include="Views\Coordinator\Profile.cshtml" />
+    <Content Include="Views\LawFace\_LawFaceChangeProblem.cshtml" />
+    <Content Include="Views\Problem\_ActiveEmployerProblemForCoordinator.cshtml" />
+    <Content Include="Views\Coordinator\LawFace.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -381,6 +389,7 @@
     <Folder Include="Files\photo\" />
     <Folder Include="Views\StaticContent\" />
     <Folder Include="Views\Subscription\" />
+    <Folder Include="Views\Utils\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

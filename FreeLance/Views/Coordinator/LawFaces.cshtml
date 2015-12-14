@@ -1,67 +1,30 @@
-﻿@*@model FreeLance.Controllers.CoordinatorController.LawFacesViewModel*@
-@*@{*@
-@*    ViewBag.Title = "Юрлица";*@
-@*    ViewBag.MenuPick = "LawFaces";*@
-@*}*@
-@**@
-@*<h2>*@
-@*    Список юрлиц*@
-@*    <div class="pull-right">*@
-@**@
-@*        @Html.ActionLink("Добавить Юрлицо", "LawFace", "Coordinator", new {}, new {@class = "btn btn-success", style = "color:white;"})*@
-@*    </div>*@
-@*</h2>*@
-@**@
-@**@
-@* *@
-@**@
-@**@
-@**@
-@*        @foreach (var lawFaceView in Model.LawFaceViews)*@
-@*        {*@
-@*            <div class="panel panel-default">*@
-@*                <div class="panel-heading"><h4>@lawFaceView.LawFace.Name*@
-@*                        <div class="pull-right">*@
-@*                            @Html.ActionLink("Добавить Шаблон ГПХ", "AddLawContractTemplate", new { lawFaceId = lawFaceView.LawFace.Id }, new { @class = "btn btn-success", style = "color:white; display:inline-block" })*@
-@*                        </div>*@
-@*                    </h4>*@
-@*                </div>*@
-@*                <div class="panel-body">*@
-@*                    <ul class="list-group">*@
-@*                        @foreach (var template in lawFaceView.LawContractTemplates)*@
-@*                        {*@
-@**@
-@*                            <li class="list-group-item">*@
-@*                                <h5>@template.Name </h5>*@
-@*                                *@
-@**@
-@*                                @Html.ActionLink("Посмотреть шаблон", "ViewFile", new { path = template.Path }, new {@class = "btn btn-primary"})*@
-@*                                @if (template.Active)*@
-@*                                {*@
-@*                                    @Html.ActionLink("Не использовать", "ToggleActiveLawContractTemplate", new {templateId = @template.Id}, new {@class = "btn btn-danger"})*@
-@*                                    ;*@
-@**@
-@*                                }*@
-@*                                else*@
-@*                                {*@
-@*                                    @Html.ActionLink("Использовать", "ToggleActiveLawContractTemplate", new {templateId = @template.Id}, new {@class = "btn btn-success"})*@
-@*                                    ;*@
-@*                                }*@
-@**@
-@*                            </li>*@
-@**@
-@*                        }*@
-@**@
-@*                        *@
-@*                            *@
-@*                      *@
-@**@
-@*                    </ul>*@
-@**@
-@*                </div>*@
-@*           *@
-@*                </div>*@
-@*    }*@
+﻿@model FreeLance.Controllers.CoordinatorController.LawFacesViewModel
+@{
+    ViewBag.Title = "Юрлица";
+    ViewBag.MenuPick = "LawFaces";
+}
+
+
+<div class="col-md-10">
+    <h2>Список юрлиц</h2>
+    <p>
+        <a href="@Url.Action("AddLawFace", "Coordinator")"
+           class="btn btn-primary"
+           style="margin-top: 5px;">
+            <span class="glyphicon glyphicon-plus"></span>
+            Новое Юрлицо
+        </a>
+    </p>
+
+    @foreach (var lawFaceView in Model.LawFaces)
+    {
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4><a href="/Coordinator/LawFace/@lawFaceView.Id">@lawFaceView.Name</a></h4>
+            </div>
+        </div>
+    }
+</div>
 
 
 

@@ -56,7 +56,7 @@ else
                     using (Html.BeginForm("ApproveUserByCoordinator", "Coordinator", new { userId = Model.Employer.Id, value = true },
                     FormMethod.Post, new { style = "display:inline-block; margin: 5px;" }))
                     {
-                        <input type="submit" value="Допустить в систему" class="btn btn-info" />
+                        <input type="submit" value="Допустить в систему" class="btn btn-primary" />
                     }
                 }
 
@@ -74,7 +74,7 @@ else
             <h3><strong>Профиль:</strong></h3>
             <p>
                 <i><b>Юр лицо:</b></i>
-                @{Html.RenderPartial("~/Views/LawFace/_LawFaceChangeEmployer.cshtml", Model.Employer); }
+                @{ Html.RenderPartial("~/Views/LawFace/_LawFaceChangeEmployer.cshtml", Model.Employer); }
             </p>
             <a href="/Manage/ChangePassword" class="btn btn-default" style="margin-top: 5px; width: 100%">Сбросить пароль</a>
         </div>
@@ -92,36 +92,8 @@ else
                 {
                     foreach (var problem in Model.ProblemsInProgress)
                     {
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <b>@problem.Name<span></span></b>
-                            </div>
-                            <div class="panel-body">
-                                <p>
-                                    <i>До</i>
-                                    @problem.EndingDate.ToShortDateString()
-                                    <span class="pull-right"><b>@problem.Cost</b><span class="flaticon-ruble"></span> </span>
-                                </p>
-                                <p>
-                                    <b>Исполнители:</b>
-                                    @foreach (var contract in problem.Contracts)
-                                    {
-                                        <a class="text-info-in-panel" href="/Freelancer/Details/@contract.freelancerId">@contract.FIO</a>
-                                        <a class="text-info-in-panel" href="/Contract/Details/@contract.id">контракт</a>
-    }
-                                </p>
-                                <p>
-                                    <b>Юрлицо:</b><a class="text-info-in-panel" href="#">Аби Продакшн</a>
-                                    <a>(сменить)</a>
-                                </p>
-                                <p><b>Создан:</b><span class="text-info-in-panel">@problem.CreationDate.ToShortDateString()</span></p>
-                                <div>
-                                    <i class="flaticon-comments16"></i> <span class="badge">@problem.NewMsgCount</span>
-                                    <a href="/Problem/Details/@problem.Id" class="btn btn-info pull-right" role="button">К задаче</a>
-                                </div>
-                            </div>
-                        </div>
-    }
+                        { Html.RenderPartial("~/Views/Problem/_ActiveEmployerProblemForCoordinator.cshtml", problem); }
+                    }
                 }
             </div>
             <div class="col-md-6">
@@ -153,13 +125,13 @@ else
                             </p>
                                 <p><i> @Truncate(problem.ShortDescription, 200)</i></p>
                                 <p>
-                                    <b>Юрлицо:</b><a class="text-info-in-panel" href="#">Аби Продакшн</a>
-                                    <a>(сменить)</a>
+                                    <b>Юр лицо:</b>
+                                    @{Html.RenderPartial("~/Views/LawFace/_LawFaceChangeProblem.cshtml", problem); }
                                 </p>
                                 <p><b>Создан:</b><span class="text-info-in-panel">@problem.CreationDate.ToShortDateString()</span></p>
                                 <div>
                                     <i class="flaticon-comments16"></i> <span class="badge">@problem.NewMsgCount</span>
-                                    <a href="/Problem/Details/@problem.Id" class="btn btn-info pull-right" role="button">К задаче</a>
+                                    <a href="/Problem/Details/@problem.Id" class="btn btn-primary pull-right" role="button">К задаче</a>
                                 </div>
                             </div>
                         </div>
@@ -173,22 +145,22 @@ else
                 <h2>Архив контрактов:</h2>
                 <p>
                     <a href=@Url.Action("Archive", "Employer",
-                    new { sortOrder = ViewBag.sortCost }) class="btn btn-info">
+                    new { sortOrder = ViewBag.sortCost }) class="btn btn-primary">
                         <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
                         По стоимости
                     </a>
                     <a href=@Url.Action("Archive", "Employer",
-                    new { sortOrder = ViewBag.sortName }) class="btn btn-info">
+                    new { sortOrder = ViewBag.sortName }) class="btn btn-primary">
                         <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
                         По имени
                     </a>
                     <a href=@Url.Action("Archive", "Employer",
-                    new { sortOrder = ViewBag.sortCreationDate }) class="btn btn-info">
+                    new { sortOrder = ViewBag.sortCreationDate }) class="btn btn-primary">
                         <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
                         По дате создания
                     </a>
                     <a href=@Url.Action("Archive", "Employer",
-                    new { sortOrder = ViewBag.sortEndingDate }) class="btn btn-info">
+                    new { sortOrder = ViewBag.sortEndingDate }) class="btn btn-primary">
                         <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
                         По дате сдачи
                     </a>
@@ -224,7 +196,7 @@ else
                                 </tr>
                             </table>
                             <div class="panel-body">
-                                <a href="/Contract/Details/@contract.ContractId" class="btn btn-info pull-right" role="button">Подробнее</a>
+                                <a href="/Contract/Details/@contract.ContractId" class="btn btn-primary pull-right" role="button">Подробнее</a>
                             </div>
                         </div>
                     }
@@ -256,6 +228,17 @@ else
             url: '@Url.Action("ChangeLawFaceUser", "Coordinator")',
             type: 'POST',
             data: { "userId": employerId, "lawFaceId": lawFaceId }
+        });
+    }
+    function onDropdownChangeProblemLawFace(problemId) {
+        var dropDownList = document.getElementById("dropDownListProblem" + problemId);
+        var lawFaceId = dropDownList.options[dropDownList.selectedIndex].value;
+        if (lawFaceId == -1)
+            return;
+        $.ajax({
+            url: '@Url.Action("ChangeLawFaceInProblem", "Coordinator")',
+            type: 'POST',
+            data: { "problemId": problemId, "lawFaceId": lawFaceId }
         });
     }
 </script>

@@ -76,6 +76,7 @@ namespace FreeLance.Controllers
 		}
 
 		public ActionResult ProblemChat(int problemId) {
+			db = ApplicationDbContext.Create();
 			ApplicationUser user = db.Users.Find(User.Identity.GetUserId());
 			try {
 				return PartialView("CreateChat", new ChatVR
@@ -91,6 +92,7 @@ namespace FreeLance.Controllers
 		}
 
 		public ActionResult ContractChat(int contractId) {
+			db = ApplicationDbContext.Create();
 			ApplicationUser user = db.Users.Find(User.Identity.GetUserId());
             try {
 				return PartialView("CreateChat", new ChatVR {
@@ -254,6 +256,7 @@ namespace FreeLance.Controllers
 		[NonAction]
 		public static ChatResponse GetChatMessages(int chatId, string userId) {
 			try {
+				db = ApplicationDbContext.Create();
 				ApplicationUser user = db.Users.Find(userId);
 				bool showHidden = checkUserIsInRole(user, "Coordinator");
 				updateLastVisitDate(chatId, user);

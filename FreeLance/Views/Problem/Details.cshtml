@@ -236,13 +236,13 @@
 				@if (Model.showMore)
 				{
 					<p>@Html.Raw(Model.ProblemFullDescription)</p>
-					<a href="/Problem/Details/@Model.ProblemId?showMore=false" class="btn btn-info" role="button" >
+					<a href="/Problem/Details/@Model.ProblemId?showMore=false" class="btn btn-primary" role="button" >
 						Скрыть полное описание
 					</a>
 				}
 				else
 				{
-					<a href="/Problem/Details/@Model.ProblemId?showMore=true" class="btn btn-info" role="button">
+					<a href="/Problem/Details/@Model.ProblemId?showMore=true" class="btn btn-primary" role="button">
 						Показать полное описание
 					</a>
 				}

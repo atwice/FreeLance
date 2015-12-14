@@ -26,11 +26,11 @@ namespace FreeLance.Models
 		public virtual ContractModels Contract { get; set; }
 	};
 
-	public class ResultAttachment : Attachment 
+	public class ResultAttachmentModel : Attachment 
 	{
 	};
 
-	public class TaskAttachment : Attachment
+	public class TaskAttachmentModel : Attachment
 	{
 	};
 
@@ -60,14 +60,19 @@ namespace FreeLance.Models
 
 		[Required]
 		public ContractStatus Status { get; set; }
+
 		[Range(0, 1000000)]
 		[DataType(DataType.Currency)]
 		public decimal Cost { get; set; }
+
 		public decimal Rate { get; set; }
 		public string Comment { get; set; }
         public virtual LawFace LawFace { get; set; }
         public bool IsApprovedByCoordinator { get; set; }
         public bool IsPayed { get; set; }
 		public bool IsHidden { get; set; } = false; // If coordinator hides 
+
+		public List<TaskAttachmentModel> TaskAttachmentModels { get; set; } = new List<TaskAttachmentModel>();
+		public List<ResultAttachmentModel> ResultAttachmentModels { get; set; } = new List<ResultAttachmentModel>();
 	}
 }

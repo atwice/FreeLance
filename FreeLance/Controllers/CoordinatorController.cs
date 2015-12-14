@@ -527,6 +527,17 @@ namespace FreeLance.Controllers
 		[HttpPost]
 		public void ChangeLawFaceUser(string userId, int lawFaceId)
 		{
+		
+			FreeLance.Models.ProblemModels problem =
+				db.ProblemModels.Include(c => c.LawFace).Single(c => c.ProblemId == problemId);
+			LawFace lawFace = db.LawFaces.Single(l => l.Id == lawFaceId);
+			problem.LawFace = lawFace;
+			db.SaveChanges();
+		}
+
+		[HttpPost]
+		public void ChangeLawFaceUser(string userId, int lawFaceId)
+		{
 		    ApplicationUser user = db.Users.FirstOrDefault(x => x.Id == userId);
 			LawFace lawFace = db.LawFaces.Single(l => l.Id == lawFaceId);
 			user.LawFace = lawFace;
@@ -573,6 +584,7 @@ namespace FreeLance.Controllers
 		{
 			return View(db.ContractModels.Where(x => x.Comment != null).ToList());
 		}
+
 
 
 	   public class ContractApproveDialog
@@ -711,6 +723,143 @@ namespace FreeLance.Controllers
                         };
                         Response.AppendHeader("Content-Disposition", cd.ToString());
                         return File(filedata, contentType);
+		public class ProfileView
+		{
+			public string Email { get; set; }
+			public string Photo { get; set; }
+			public ApplicationUser.EmailNotificationPolicyModel emailNotifications { get; set; }
+		}
+
+		public ActionResult Profile()
+		{
+			String id = User.Identity.GetUserId();
+			ApplicationUser coordinator = db.Users.Find(id);
+
+			ProfileView model = new ProfileView
+			{
+				Email = coordinator.Email,
+				Photo = Utils.GetPhotoUrl(coordinator.PhotoPath),
+				emailNotifications = coordinator.EmailNotificationPolicy
+			};
+			return View(model);
+		}
+
+		public class LawFacesViewModel
+		{
+			public List<LawFace> LawFaces { get; set; }
+		}
+
+		public ActionResult LawFaces()
+		{
+			var model = new LawFacesViewModel();
+			model.LawFaces = db.LawFaces.ToList();
+			return View(model);
+		}
+
+		[HttpGet]
+		public ActionResult AddLawFace()
+		{
+			LawFace model = new LawFace();
+			return View(model);
+		}
+
+		[HttpPost]
+		public ActionResult AddLawFace(LawFace lawFace)
+		{
+			db.LawFaces.Add(lawFace);
+			db.SaveChanges();
+			return RedirectToAction("LawFaces");
+		}
+
+		[HttpGet]
+		public ActionResult LawFace(int id)
+		{
+			LawFace model = db.LawFaces.Find(id);
+			if (model == null)
+			{
+				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+			}
+			return View(model);
+		}
+
+		public ActionResult ViewFile(string path)
+		{
+			byte[] filedata = System.IO.File.ReadAllBytes(path);
+			string contentType = MimeMapping.GetMimeMapping(path);
+			var cd = new System.Net.Mime.ContentDisposition
+			{
+				FileName = path,
+				Inline = true,
+			};
+			Response.AppendHeader("Content-Disposition", cd.ToString());
+			return File(filedata, contentType);
+		}
+		
+		[Authorize(Roles = "Coordinator")]
+		public ActionResult ToggleActiveLawContractTemplate(int templateId, int lawFaceId)
+		{
+			LawContractTemplate template = db.LawContractTemplates.Find(templateId);
+			if (template == null)
+				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+			foreach (var activeTemplate in db.LawFaces.Find(lawFaceId).LawContractTemplates.Where(t => t.IsActive == true))
+			{
+				activeTemplate.IsActive = false;
+			}
+			template.IsActive = !template.IsActive;
+			db.SaveChanges();
+			return RedirectToAction("LawFace", new { id = lawFaceId });
+		}
+
+		public class LawContractTemplateView
+		{
+			public LawFace LawFace;
+			public string LawFaceId { get; set; }
+			[Required]
+			public HttpPostedFileBase File { get; set; }
+			[Required]
+			public string Name { get; set; }
+		}
+
+		[HttpGet]
+		public ActionResult AddLawContractTemplate(int lawFaceId)
+		{
+			LawContractTemplateView model = new LawContractTemplateView();
+			model.LawFace = db.LawFaces.Where(x => x.Id == lawFaceId).ToList()[0];
+			return View(model);
+		}
+
+		[HttpPost]
+		public ActionResult AddLawContractTemplate([Bind(Prefix = "LawContractTemplateView")]LawContractTemplateView lawContractTemplateView)
+		{
+			if (lawContractTemplateView.File == null || lawContractTemplateView.Name == null || lawContractTemplateView.LawFaceId == null)
+			{
+				return RedirectToAction("AddLawContractTemplate", new { lawFaceId = lawContractTemplateView.LawFaceId });
+			}
+			int lawFaceId = Int32.Parse(lawContractTemplateView.LawFaceId);
+			lawContractTemplateView.LawFace =
+				db.LawFaces.Where(x => x.Id == lawFaceId).ToList()[0];
+			LawContractTemplate lawContractTemplate = new LawContractTemplate
+			{
+				Name = lawContractTemplateView.Name,
+				Path = saveLawContractTemplate(lawContractTemplateView)
+			};
+
+			db.LawContractTemplates.Add(lawContractTemplate);
+			lawContractTemplateView.LawFace.LawContractTemplates.Add(lawContractTemplate);
+			db.SaveChanges();
+			return RedirectToAction("LawFaces");
+		}
+
+		private string saveLawContractTemplate(LawContractTemplateView lawContractTemplateView)
+		{
+			string path = null;
+			var fileName = lawContractTemplateView.LawFace.Name + "_" + lawContractTemplateView.Name + ".docx";
+			path = AppDomain.CurrentDomain.BaseDirectory + "App_Data\\LawContractTemplates\\" + fileName;
+			Response.Write(path.ToString());
+			lawContractTemplateView.File.SaveAs(path);
+			return path;
+		}
+
         }
 
 

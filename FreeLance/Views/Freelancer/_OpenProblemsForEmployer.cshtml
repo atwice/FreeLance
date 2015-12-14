@@ -48,17 +48,17 @@ else
 		<h2>Задачи:</h2>
 		<p>
 			<a href=@Url.Action("OpenProblems", "Freelancer",
-				new { sortOrder = "cost", lastSort = Model.lastSort }) class="btn btn-info">
+				new { sortOrder = "cost", lastSort = Model.lastSort }) class="btn btn-primary">
 				<span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
 				По стоимости
 			</a>
 			<a href=@Url.Action("OpenProblems", "Freelancer",
-				new { sortOrder = "creationDate", lastSort = Model.lastSort }) class="btn btn-info">
+				new { sortOrder = "creationDate", lastSort = Model.lastSort }) class="btn btn-primary">
 				<span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
 				По дате создания
 			</a>
 			<a href=@Url.Action("OpenProblems", "Freelancer",
-				new { sortOrder = "deadlineDate", lastSort = Model.lastSort }) class="btn btn-info">
+				new { sortOrder = "deadlineDate", lastSort = Model.lastSort }) class="btn btn-primary">
 				<span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
 				По дате сдачи
 			</a>
@@ -95,7 +95,7 @@ else
 								Срок: @problem.DeadlineDate.ToString("dd/MM/yyyy")
 							</div>
 							<div class="col-md-3 btn-details">
-								<a href="/Problem/Details/@problem.ProblemId" class="btn btn-info pull-right" role="button">Подробнее</a>
+								<a href="/Problem/Details/@problem.ProblemId" class="btn btn-primary pull-right" role="button">Подробнее</a>
 							</div>
 						</div>
 					</div>

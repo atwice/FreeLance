@@ -185,22 +185,65 @@
 				@if (Model.showMore)
 				{
 					<p>@Model.Details</p>
-					<a href="/Contract/Details/@Model.ContractId?showMore=false" class="btn btn-info" role="button">
+					<a href="/Contract/Details/@Model.ContractId?showMore=false" class="btn btn-default" role="button">
 						Скрыть полное описание
 					</a>
 				}
 				else
 				{
-					<a href="/Contract/Details/@Model.ContractId?showMore=true" class="btn btn-info" role="button">
+					<a href="/Contract/Details/@Model.ContractId?showMore=true" class="btn btn-default" role="button">
 						Показать полное описание
 					</a>
 				}
 
 				<div class="row">
-					<div class="col-xs-12">
-						<hr />
-						<a href="#">Приложение 1</a>
+					<div class="col-xs-6">
+                        <hr />
+                        @if (User.IsInRole("Employer"))
+                        {
+                            using (Html.BeginForm("UploadContractAttach", "Contract", new { id = Model.ContractId }, FormMethod.Post,
+							    new { enctype = "multipart/form-data", runat = "server", @class = "form-container"}))
+						    {
+							    <input class="inputfile" type="file" name="file" id="file" data-multiple-caption="{count} files selected">
+							    <label for="file">
+								    <span class="glyphicon glyphicon-plus"></span>
+							    </label>
+							    <input type="submit" value="Загрузить уточнения к контракту" class="btn btn-default" />
+						    }
+
+                        }
+                        @if (Model.TaskAttachmentModels.Count() != 0)
+                        {
+                            foreach (var taskAttachment in Model.TaskAttachmentModels)
+                            {
+                                <div><a href="@taskAttachment.AttachmentPath">@taskAttachment.Name</a></div>
+                            }
+                        }                       
+						
 					</div>
+                    <div class="col-xs-6 text-right">
+                        <hr />
+                        @if (User.IsInRole("Freelancer"))
+                        {
+                            using (Html.BeginForm("UploadContractAttach", "Contract", new { id = Model.ContractId }, FormMethod.Post,
+							    new { enctype = "multipart/form-data", runat = "server", @class = "form-container"}))
+						    {
+							    <input class="inputfile" type="file" name="file" id="file" data-multiple-caption="{count} files selected">
+							    <label for="file">
+								    <span class="glyphicon glyphicon-plus"></span>
+							    </label>
+							    <input type="submit" value="Загрузить результаты работы" class="btn btn-default" />
+						    }
+
+                        }
+                        @if (Model.ResultAttachmentModels.Count() != 0)
+                        {                            
+                            foreach (var resultAttachment in Model.ResultAttachmentModels)
+                            {
+                                <a href="@resultAttachment.AttachmentPath">@resultAttachment.Name</a>
+                            }
+                        }
+                    </div>
 				</div>
 			</div>
 			<div class="panel-footer clearfix">

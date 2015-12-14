@@ -1,4 +1,4 @@
-﻿@model FreeLance.Controllers.EmployerController.ProfileView
+﻿@model FreeLance.Controllers.CoordinatorController.ProfileView
 @{
 	ViewBag.Title = "Profile";
 }
@@ -38,50 +38,23 @@
 	</style>
 }
 
-
-
 <div class="row">
 	<div class="col-md-12">
 		<h2>Профиль</h2>
 	</div>
 </div>
 <div class="row">
-	<div class="col-md-5">
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<h2 class="panel-title">Моя статистика</h2>
-			</div>
-			<table class="table" align="center">
-				<tr>
-					<td>Открытых задач</td>
-					<td>@Model.OpenProblemsCount</td>
-				</tr>
-				<tr>
-					<td>Закрытых задач</td>
-					<td>@Model.ClosedProblemsCount</td>
-				</tr>
-				<tr>
-					<td>Контрактов в процессе</td>
-					<td>@Model.OpenContractsCount</td>
-				</tr>
-				<tr>
-					<td>Контрактов выполнено</td>
-					<td>@Model.ClosedContractsCount</td>
-				</tr>
-			</table>
-		</div>
-
-	</div>
 	<div class="col-md-5 ">
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<h2 class="panel-title">Учетная запись</h2>
 			</div>
-			<div class="panel-body">
+			<div class="panel-body clearfix">
 				<div class="account-info-container">
 					<div class="photo-container">
-						<img class="image-item" src="@Model.EmployerPhoto" alt="User photo">
-						@using (Html.BeginForm("UploadPhoto", "Employer", FormMethod.Post, new { enctype = "multipart/form-data", runat = "server", @class = "form-container" }))
+						<img class="image-item" src="@Model.Photo" alt="User photo">
+						@using (Html.BeginForm("UploadPhoto", "Freelancer", new { redirectController = "Coordinator" }, FormMethod.Post,
+							new { enctype = "multipart/form-data", runat = "server", @class = "form-container"}))
 						{
 							<input class="inputfile" type="file" accept=".jpg,.png" name="file" id="file" data-multiple-caption="{count} files selected">
 							<label for="file">
@@ -92,7 +65,7 @@
 						}
 					</div>
 					<div class="another-info-container">
-						<p>Email: @Model.EmployerEmail</p>
+						<p>Email: @Model.Email</p>
 						<p>
 							<a href="/Manage/ChangePassword" class="btn btn-primary">Сменить пароль</a>
 						</p>
@@ -100,26 +73,24 @@
 				</div>
 			</div>
 		</div>
-
+	</div>
+	<div class="col-md-5 ">
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<h2 class="panel-title">Уведомления</h2>
 			</div>
 			<div class="panel-body">
-				@using (Html.BeginForm("Settings", "Employer", FormMethod.Post))
-			{
+				@using (Html.BeginForm("Settings", "Freelancer", new { redirectController = "Coordinator" }, FormMethod.Post))
+				{
 					<div class="checkbox">
-						@Html.CheckBoxFor(m => m.emailNotifications.IsCommentsEnabled)
-						@Html.Label("Получать уведомления о новых комментариях")
-					</div>
-					<div class="checkbox">
-						@Html.CheckBoxFor(m => m.emailNotifications.IsContractStatusEnabled)
-						@Html.Label("Получать уведомления об изменениях контракта")
+						@Html.CheckBoxFor(m => m.emailNotifications.IsNewApplicantsEnabled)
+						@Html.Label("Получать уведомления о новых заявках")
 					</div>
 					<input type="submit" value="Сохранить" class="btn btn-success" />
-			}
+				}
 			</div>
 		</div>
-		
+
 	</div>
 </div>
+

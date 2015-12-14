@@ -139,7 +139,7 @@ namespace FreeLance.Controllers
 				Comment = contract.Comment,
 				WorkMessage = EmployerController.getStatusMessage(contract.Status),
 				ProblemId = contract.Problem.ProblemId,
-				DeadlineDate = contract.DeadlineDate.ToShortDateString(), // TODO
+				DeadlineDate = contract.DeadlineDate.ToShortDateString(),
 				CreationDate = contract.CreationDate.ToShortDateString(),
 				EndingDate = contract.EndingDate.ToShortDateString(),
 				Cost = contract.Cost,
@@ -223,9 +223,14 @@ namespace FreeLance.Controllers
 
 		public class DetailsForCoordinatorView
 		{
+			public string FIO { get; set; }
+			public string Email { get; set; }
+			public string Phone { get; set; }
 			public GeneralInfo General { get; set; }
 			public PassportInfo Passport { get; set; }
 			public BankInfo Bank { get; set; }
+			public int DocumentsId { get; set; }
+			public bool DocumentsIsApproved { get; set; }
 
 			public decimal FreelancerRate { get; set; }
 			public string PhotoPath { get; set; }
@@ -233,6 +238,8 @@ namespace FreeLance.Controllers
 			public string info;
 			public string lastSort;
 			public bool isApproved { get; set; }
+			public string PhotoFirstPage { get; set; }
+			public string PhotoAdress { get; set; }
 
 			public DetailsProblemsView ProblemsView;
 			public DetailsProfileView ProfileView;
@@ -436,7 +443,7 @@ namespace FreeLance.Controllers
 			{
 				info = _info,
 				FreelancerEmail = freelancer.Email,
-				FreelancerPhone = "+7(916)0001122", // TODO
+				FreelancerPhone = freelancer.DocumentPackage == null ? null : freelancer.DocumentPackage.General.Phone,
 				FreelancerName = freelancer.FIO,
 				PhotoPath = Utils.GetPhotoUrl(freelancer.PhotoPath),
 				FreelancerRate = getFreelancerRate(contracts),
@@ -485,6 +492,9 @@ namespace FreeLance.Controllers
 			DetailsForCoordinatorView model = new DetailsForCoordinatorView
 			{
 				info = _info,
+				FIO = freelancer.FIO,
+				Email = freelancer.Email,
+				Phone = freelancer.PhoneNumber,
 				General = documents.General,
 				Passport = documents.Passport,
 				Bank = documents.Bank,
@@ -492,6 +502,10 @@ namespace FreeLance.Controllers
 				FreelancerRate = countRating(id),
 				FreelancerId = id,
 				isApproved = freelancer.IsApprovedByCoordinator == true ? true : false,
+				PhotoAdress = documents.Photos.PassportRegistration,
+				PhotoFirstPage = documents.Photos.PassportFace,
+				DocumentsId = documents.Id,
+				DocumentsIsApproved = documents.IsApproved == null ? false : (bool) documents.IsApproved,
 
 				ProfileView = new DetailsProfileView
 				{
@@ -1049,8 +1063,8 @@ namespace FreeLance.Controllers
 				Passport = documents.Passport,
 				GeneralInfo = documents.General,
 				Bank = documents.Bank,
-				PhotoAdress = "", // TODO
-				PhotoFirstPage = "", // TODO
+				PhotoAdress = documents.Photos.PassportRegistration,
+				PhotoFirstPage = documents.Photos.PassportFace,
 				Rate = countRating(id)
 			};
 			return View(model);
@@ -1164,7 +1178,7 @@ namespace FreeLance.Controllers
 			db.SaveChanges();
 		}
 
-		private string saveDocumentOnDisc(HttpPostedFileBase file, string dir, string location = "/App_Data/")
+		private string saveDocumentOnDisc(HttpPostedFileBase file, string dir, string location = "/Files/")
 		{
 			var ext = Path.GetExtension(file.FileName);
 			var fileName = User.Identity.GetUserId() + "_" + DateTime.Now.Ticks.ToString() + ext;
@@ -1200,16 +1214,16 @@ namespace FreeLance.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult Settings(ProfileView model)
+		public ActionResult Settings(ProfileView model, string redirectController= "Freelancer")
 		{
 			ApplicationUser user = db.Users.Find(User.Identity.GetUserId());
 			user.EmailNotificationPolicy = model.emailNotifications;
 			db.SaveChanges();
-			return RedirectToAction("Profile");
+			return RedirectToAction("Profile", redirectController);
 		}
 
 		[HttpPost]
-		public ActionResult UploadPhoto()
+		public ActionResult UploadPhoto(string redirectController="Freelancer")
 		{
 			ApplicationUser user = db.Users.Find(User.Identity.GetUserId());
 			if (Request.Files.Count > 0)
@@ -1221,7 +1235,7 @@ namespace FreeLance.Controllers
 					db.SaveChanges();
 				}
 			}
-			return RedirectToAction("Profile");
+			return RedirectToAction("Profile", redirectController);
 		}
 
 	}

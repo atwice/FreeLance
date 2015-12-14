@@ -1,8 +1,29 @@
 ﻿@model FreeLance.Controllers.FreelancerController.DetailsForCoordinatorView
 
+
+<style scoped>
+	.buttons-container {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-around;
+	}
+
+	.btn-passport {
+		margin-top: 5px;
+		width: 100%;
+	}
+
+	.form-doc {
+		padding: 5px;
+		width: 100%;
+	}
+</style>
+
+
 <div class="row">
     <div class="col-sm-9">
         <div class="col-xs-6">
+			
             <a href="#" class="btn btn-default" style="margin-top: 5px; width: 100%">Сменить документы</a>
             <a href="#" class="btn btn-default" style="margin-top: 5px; width: 100%">Сменить фото</a>
             <a href="/Manage/ChangePassword" class="btn btn-default" style="margin-top: 5px; width: 100%">Задать пароль</a>
@@ -44,34 +65,50 @@
             <p>
                 <i><b>Расчетный счет:</b></i> <span>@Model.Bank.PC</span>
             </p>
+			@if (@Model.PhotoFirstPage == null)
+			{
+				<a href="@Model.PhotoFirstPage" class="btn btn-default btn-passport disabled">Фото первой страницы</a>
+			}
+			else
+			{
+				<a href="@Model.PhotoFirstPage" class="btn btn-default btn-passport">Фото первой страницы</a>
+			}
+            @if (@Model.PhotoAdress == null)
+			{
+				<a href="@Model.PhotoAdress" class="btn btn-default btn-passport disabled">Фото прописки</a>
+			}
+			else
+			{
+				<a href="@Model.PhotoAdress" class="btn btn-default btn-passport">Фото прописки</a>
+			}
+			
+            <div class="buttons-container">
+				@if (!Model.DocumentsIsApproved)
+				{
 
-            <a href="~/Files/profile_pic.jpg" 
-                class="btn btn-default" 
-                role="button"
-                style="margin-top: 5px; width: 100%">Фото первой страницы</a>
+					using (Html.BeginForm("ApproveDocuments", "Coordinator", new { docId = Model.DocumentsId, value = true }, FormMethod.Post, new { @class = "form-doc" }))
+                    {
+						<input type="submit" value="Одобрить" class="btn btn-primary" style="max-width:inherit; width: 100%"/>
+					}
+					using (Html.BeginForm("ApproveDocuments", "Coordinator", new { docId = Model.DocumentsId, value = false}, FormMethod.Post, new { @class = "form-doc" }))
+					{
+						<input type="submit" value="Отклонить" class="btn btn-default" style="max-width:inherit; width: 100%"/>
+					}
 
-            <a href="~/Files/profile_pic.jpg" 
-                class="btn btn-default" 
-                role="button"
-                style="margin-top: 5px; width: 100%">Фото прописки</a>
-
-                <a class="disabled btn btn-info pull-right" 
-                   style="margin-top: 5px;">
-                    <span class="glyphicon glyphicon-ok"></span>
-                    Документы подтверждены
-                </a>
-
-                <a href="@Url.Action("ApproveFreelancer", "Coordinator", new {freelancerId = Model.ProfileView.freelancer.Id})"
-                    class="btn btn-default pull-right"
-                    style="margin-top: 5px;">
-                    Отозвать подтверждение
-                </a>
-
+				}
+				else
+				{
+					using (Html.BeginForm("ApproveDocuments", "Coordinator", new { docId = Model.DocumentsId, value = false}, FormMethod.Post, new { @class = "form-doc" }))
+					{
+						<input type="submit" value="Отменить подтверждение" class="btn btn-danger" style="max-width:inherit; width: 100%"/>
+					}
+				}
+			</div>
         </div>
 
         <div class="col-xs-6">
             <a href="@Url.Action("UploadSignedLawContract", "Coordinator")"
-               class="btn btn-info pull-right"
+               class="btn btn-primary pull-right"
                style="margin-top: 5px;">
                 <span class="glyphicon glyphicon-ok"></span>
                 Загрузить ГПХ
@@ -102,7 +139,7 @@
                             
                             <a href="#" class="btn btn-default pull-left" role="button">Аннулировать</a>
                             <a href="@Url.Action("DownloadSignedLawContract", "Coordinator", new { LawContractPath = lawcontract.LawFacePath })" 
-                                class="btn btn-info pull-right">
+                                class="btn btn-primary pull-right">
                                 Скачать
                             </a>
                         </div>
