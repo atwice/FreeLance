@@ -215,7 +215,7 @@ namespace FreeLance.Controllers
 						LawFace = p.LawFace,
 						FreelancersCount = p.Contracts.Where(c => c.Status == ContractStatus.InProgress || c.Status == ContractStatus.Opened
 											|| c.Status == ContractStatus.Done || c.Status == ContractStatus.ClosedNotPaid).Count(),
-                        NewMsgCount = 0
+						NewMsgCount = 0
 					}
 				)
 				.ToList();

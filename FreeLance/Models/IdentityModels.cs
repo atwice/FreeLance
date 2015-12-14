@@ -9,23 +9,23 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FreeLance.Models
 {
-    // You can add profile data for the user by adding more properties to your ApplicationUser class, please visit http://go.microsoft.com/fwlink/?LinkID=317594 to learn more.
-    public class ApplicationUser : IdentityUser
-    {
-        public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
-        {
-            // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType
-            var userIdentity = await manager.CreateIdentityAsync(this, DefaultAuthenticationTypes.ApplicationCookie);
-            // Add custom user claims here
-            return userIdentity;
-        }
+	// You can add profile data for the user by adding more properties to your ApplicationUser class, please visit http://go.microsoft.com/fwlink/?LinkID=317594 to learn more.
+	public class ApplicationUser : IdentityUser
+	{
+		public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
+		{
+			// Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType
+			var userIdentity = await manager.CreateIdentityAsync(this, DefaultAuthenticationTypes.ApplicationCookie);
+			// Add custom user claims here
+			return userIdentity;
+		}
 
 		public bool? IsApprovedByCoordinator { get; set; }
 		public string FIO { get; set; }
 		public virtual DocumentPackageModels DocumentPackage { get; set; }
 		public EmailNotificationPolicyModel EmailNotificationPolicy { get; set; }
-        public string PhotoPath { get; set; }
-        public virtual LawFace LawFace { get; set; }
+		public string PhotoPath { get; set; }
+		public virtual LawFace LawFace { get; set; }
 
 		public class EmailNotificationPolicyModel
 		{
@@ -37,15 +37,15 @@ namespace FreeLance.Models
 	}
 
 	public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
-    {
-        public ApplicationDbContext()
-            : base("DefaultConnection", throwIfV1Schema: false)
-        {
-        }
+	{
+		public ApplicationDbContext()
+			: base("DefaultConnection", throwIfV1Schema: false)
+		{
+		}
 
-        public static ApplicationDbContext Create() => new ApplicationDbContext();
+		public static ApplicationDbContext Create() => new ApplicationDbContext();
 
-	    protected override void OnModelCreating(DbModelBuilder modelBuilder)
+		protected override void OnModelCreating(DbModelBuilder modelBuilder)
 		{
 			modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>();
 			base.OnModelCreating(modelBuilder);
@@ -55,9 +55,9 @@ namespace FreeLance.Models
 		public System.Data.Entity.DbSet<FreeLance.Models.ContractModels> ContractModels { get; set; }
 		public System.Data.Entity.DbSet<FreeLance.Models.SubscriptionModels> SubscriptionModels { get; set; }
 		public System.Data.Entity.DbSet<FreeLance.Models.DocumentPackageModels> DocumentPackageModels { get; set; }
-        public System.Data.Entity.DbSet<FreeLance.Models.LawFace> LawFaces { get; set; }
-        public System.Data.Entity.DbSet<FreeLance.Models.LawContractTemplate> LawContractTemplates { get; set; }
-        public System.Data.Entity.DbSet<FreeLance.Models.LawContract> LawContracts { get; set; }
+		public System.Data.Entity.DbSet<FreeLance.Models.LawFace> LawFaces { get; set; }
+		public System.Data.Entity.DbSet<FreeLance.Models.LawContractTemplate> LawContractTemplates { get; set; }
+		public System.Data.Entity.DbSet<FreeLance.Models.LawContract> LawContracts { get; set; }
 		public System.Data.Entity.DbSet<FreeLance.Models.TaskAttachmentModel> TaskAttachments { get; set; }
 		public System.Data.Entity.DbSet<FreeLance.Models.ResultAttachmentModel> ResultAttachments { get; set; }
 		public System.Data.Entity.DbSet<FreeLance.Models.Chat> Chats { get; set; }

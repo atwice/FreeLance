@@ -82,7 +82,7 @@
 				<ul class="nav navbar-nav">
 					<li>@Html.ActionLink("Home", "Index", "Home")</li>
 				</ul>
-				@Html.Partial("_LoginPartial")
+				<!-- Html.Partial("_LoginPartial")-->
 			</div>
 		</div>
 	</div>
@@ -143,19 +143,19 @@
 			</div>
 			<div class="col-md-10">
 				<!--
-				@if (ViewBag.ErrorMessage != null)
+				if (ViewBag.ErrorMessage != null)
 				{
 				<div id="message">
 					<div style="padding: 5px;">
 						<div id="inner-message" class="alert alert-error">
 							<button type="button" class="close" data-dismiss="alert">&times;</button>
-							<h4><font color="red">@ViewBag.ErrorMessage</font></h4>
+							<h4><font color="red">ViewBag.ErrorMessage</font></h4>
 						</div>
 					</div>
 				</div>
 				}
-				-->
-				@Html.Action("GetViewBagNotifications", "Notification", new { ViewBag = ViewBag })
+				
+				Html.Action("GetViewBagNotifications", "Notification", new { ViewBag = ViewBag })-->
 				<div id="notifications"></div>
 				<div id="layout-body">
 					@RenderBody()
