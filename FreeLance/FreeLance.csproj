@@ -310,18 +310,14 @@
     <Content Include="Views\Problem\Delete.cshtml" />
     <Content Include="Views\Problem\Details.cshtml" />
     <Content Include="Views\Problem\Edit.cshtml" />
-    <Content Include="Views\Problem\Index.cshtml" />
     <Content Include="Views\Contract\Create.cshtml" />
     <Content Include="Views\Contract\Delete.cshtml" />
     <Content Include="Views\Contract\Details.cshtml" />
     <Content Include="Views\Contract\Edit.cshtml" />
-    <Content Include="Views\Contract\Index.cshtml" />
     <Content Include="Views\Employer\Home.cshtml" />
     <Content Include="Views\Freelancer\OpenProblems.cshtml" />
     <Content Include="Views\Freelancer\Home.cshtml" />
     <Content Include="Views\Freelancer\Archive.cshtml" />
-    <Content Include="Views\Freelancer\Contract.cshtml" />
-    <Content Include="Views\Employer\Problem.cshtml" />
     <Content Include="Views\Freelancer\Profile.cshtml" />
     <Content Include="Views\Coordinator\Home.cshtml" />
     <Content Include="Views\Coordinator\Employers.cshtml" />
@@ -342,7 +338,6 @@
     <Content Include="Views\Emails\_Header.cshtml" />
     <Content Include="Views\Emails\OnStatusChange.cshtml" />
     <Content Include="Views\Emails\OnNewApplication.cshtml" />
-    <Content Include="Views\Freelancer\Settings.cshtml" />
     <Content Include="Views\Coordinator\Settings.cshtml" />
     <Content Include="Views\Emails\Example.cshtml" />
     <Content Include="Views\Chat\CreateChat.cshtml" />

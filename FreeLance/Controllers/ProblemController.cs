@@ -173,13 +173,6 @@ namespace FreeLance.Controllers
 			return View(view);
 		}
 
-		// GET: Problem
-		[Authorize(Roles = "Employer")]
-		public ActionResult Index()
-		{
-			return View(db.ProblemModels.Where(p => !p.IsHidden).ToList());
-		}
-
 
 		[Authorize(Roles = "Employer")]
 		public ActionResult Create()
