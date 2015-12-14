@@ -525,8 +525,8 @@ namespace FreeLance.Controllers
 		}
 
 		[HttpPost]
-		public void ChangeLawFaceUser(string userId, int lawFaceId)
-		{
+        public void ChangeLawFaceInProblem(int problemId, int lawFaceId)
+        {
 		
 			FreeLance.Models.ProblemModels problem =
 				db.ProblemModels.Include(c => c.LawFace).Single(c => c.ProblemId == problemId);
@@ -712,18 +712,7 @@ namespace FreeLance.Controllers
         }
 
 
-        public FileResult ViewFile(string path)
-        {
-                        byte[] filedata = System.IO.File.ReadAllBytes(path);
-                        string contentType = MimeMapping.GetMimeMapping(path);
-                        var cd = new System.Net.Mime.ContentDisposition
-                        {
-                            FileName = path,
-                            Inline = true,
-                        };
-                        Response.AppendHeader("Content-Disposition", cd.ToString());
-                        return File(filedata, contentType);
-		public class ProfileView
+	    public class ProfileView
 		{
 			public string Email { get; set; }
 			public string Photo { get; set; }
@@ -865,5 +854,5 @@ namespace FreeLance.Controllers
 
 
     }
-}
+
 
