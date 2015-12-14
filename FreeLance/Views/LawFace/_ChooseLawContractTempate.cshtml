@@ -1,0 +1,69 @@
+﻿@using System.Runtime.InteropServices.ComTypes
+@model FreeLance.Models.ContractModels
+
+
+
+<div class="btn-group">
+    @{ var freelancerId = "\"" + Model.Freelancer.Id + "\""; }
+    @using (Html.BeginForm("FillLawContractTemplateAndDownload", "Coordinator",  new {lawFaceId = @Model.LawFace.Id, userId =  @Model.Freelancer.Id }, FormMethod.Post,
+       new { style = "display:inline-block;" }))
+    {
+        <input type="submit" value="Заполнить шаблон ГПХ" class="btn btn-info"/>
+    }
+    <button type="button" class="btn btn-info dropdown-toggle pull-right" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <span class="caret"></span>
+        <span class="sr-only"></span>
+    </button>
+    @{ var lawFaceTemplates = "LawFaceTemplates" + Model.LawFace.Id; }
+    <ul class="dropdown-menu" id="@lawFaceTemplates">
+        @foreach (var template in Model.LawFace.LawContractTemplates)
+        {
+            var templateId = "LawContractTemplate" + template.Id;
+            if (template.Id == Model.LawFace.ActiveLawContractTemplate.Id)
+            {
+                <li class="active" id="@templateId" onclick="makeActiveLawContractTemplate(@template.Id, @Model.LawFace.Id)"><a>@template.Name</a></li>
+            }
+            else
+            {
+                <li id="@templateId" onclick="makeActiveLawContractTemplate(@template.Id, @Model.LawFace.Id)"><a>@template.Name</a></li>
+            }
+        }
+
+    </ul>
+</div>
+
+<script>
+    function makeActiveLawContractTemplate(templateId, lawFaceTemplatesId) {
+        $("#LawFaceTemplates" + lawFaceTemplatesId + " li").removeClass("active");
+        $("#LawContractTemplate" + templateId).addClass("active");
+        $.ajax({
+            url: '@Url.Action("SetActiveLawContractTemplate", "Coordinator")',
+            type: 'POST',
+            data: { "lawFaceId": lawFaceTemplatesId, "lawFaceTemplateId": templateId},
+            dataType: "html",
+            success: function (result) {
+            }
+        });
+    }
+
+    function getActiveLawContractTemplate(lawFaceTemplatesId) {
+        return +$("#LawFaceTemplates" + lawFaceTemplatesId + " .active").attr("id").split("LawContractTemplate")[1];
+    }
+
+    function fillLawContractTemplate(lawFaceId, userId) {
+        var lawFaceTemplateId = $("#LawFaceTemplates" + lawFaceTemplatesId + " li .active").attr("id");
+        $.ajax({
+            url: '@Url.Action("CheckContractIsApprovable", "Coordinator")',
+            type: 'POST',
+            data: { "lawFaceId": lawFaceId, "lawFaceTemplateId" : lawFaceTemplateId, "userId": userId },
+           dataType: "html",
+            success: function(result) {
+                if (result != "OK") {
+                    $("#modalContent" + contractId).html(result);
+                    $("#modalDialog" + contractId).modal();
+                } 
+            }
+        });
+
+    }
+</script>

@@ -327,9 +327,12 @@ namespace FreeLance.Controllers
 			{
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
-			user.IsApprovedByCoordinator = value;
-			db.SaveChanges();
-			return Redirect("/Coordinator/Home");
+		    if (user.LawFace != null)
+		    {
+		        user.IsApprovedByCoordinator = value;
+		        db.SaveChanges();
+		    }
+		    return Redirect("/Coordinator/Home");
 		}
 
 		[HttpPost]
@@ -447,17 +450,30 @@ namespace FreeLance.Controllers
 		}
 
 		// Координатор загружает подписанный ГПХ
-		public ActionResult UploadSignedLawContract()
+		public ActionResult UploadSignedLawContract(string userId="", string lawFaceId="")
 		{
 			var model = new UploadSignedLawContractModel();
 			model.LawContractTemplates = db.LawContractTemplates.ToList();
 			model.Freelancers = getApplicationUsersInRole("Freelancer").OrderBy(f => f.FIO).ToList();
 			model.LawFaces = db.LawFaces.ToList();
-			model.PostModel = new UploadPostModel();
-			return View(model);
+		    if ((userId == "") || (lawFaceId == ""))
+		    {
+		        model.PostModel = new UploadPostModel();
+		    }
+		    else
+		    {
+                model.PostModel = new UploadPostModel()
+                {
+                    UserId = userId,
+                    LawFaceId = lawFaceId,
+                };
+
+            }
+		    return View(model);
 		}
 
-		[HttpPost]
+
+        [HttpPost]
 		public ActionResult UploadSignedLawContract([Bind(Prefix = "UploadPostModel")] UploadPostModel model)
 		{
 			if (ModelState.IsValid)
@@ -509,11 +525,11 @@ namespace FreeLance.Controllers
 		}
 
 		[HttpPost]
-		public void ChangeLawFaceEmployer(string employerId, int lawFaceId)
+		public void ChangeLawFaceUser(string userId, int lawFaceId)
 		{
-			ApplicationUser employer = getApplicationUsersInRole("Employer").Single(x => x.Id == employerId);
+		    ApplicationUser user = db.Users.FirstOrDefault(x => x.Id == userId);
 			LawFace lawFace = db.LawFaces.Single(l => l.Id == lawFaceId);
-			employer.LawFace = lawFace;
+			user.LawFace = lawFace;
 			db.SaveChanges();
 		}
 
@@ -557,6 +573,148 @@ namespace FreeLance.Controllers
 		{
 			return View(db.ContractModels.Where(x => x.Comment != null).ToList());
 		}
-	}
+
+
+	   public class ContractApproveDialog
+	    {
+	        public virtual LawFace LawFace { set; get; }
+            public virtual ApplicationUser Freelancer { set; get; }
+            public bool HadContract { set; get; }
+            public DateTime DateExpire { set; get; }
+            public ContractModels Contract { set; get; }
+	    }
+
+
+	    private List<LawContract> FindLawContracts(LawFace lawFace, ApplicationUser user)
+	    {
+            List<LawContract> result = new List<LawContract>();
+            List < LawContract > lawContracts = db.LawContracts.ToList();
+	        foreach (LawContract lawContract in lawContracts)
+	        {
+	            if ((lawContract.User.Id == user.Id) && (lawContract.LawFace.Id == lawFace.Id))
+	            {
+	                result.Add(lawContract);
+	            }
+	        }
+	        return result;
+	    }
+
+        [HttpPost]
+        //contact is approvable <=> user have contract with law face needed which had not expired
+        public ActionResult CheckContractIsApprovable(int contractId)
+	    {
+            FreeLance.Models.ContractModels contract =
+                db.ContractModels.Include(c => c.LawFace).Include(c => c.Freelancer).Single(c => c.ContractId == contractId);
+            List<FreeLance.Models.LawContract> lawContracts = FindLawContracts(contract.LawFace, contract.Freelancer);
+              
+            if (lawContracts.Count != 0)
+            {
+                DateTime lastLawContractDate = lawContracts[0].EndDate;
+                foreach (LawContract lawContract in lawContracts)
+                {
+                    if (lawContract.EndDate > DateTime.Today)
+                    {
+                        return Content("OK");
+                    }
+                    if (lawContract.EndDate > lastLawContractDate)
+                    {
+                        lastLawContractDate = lawContract.EndDate;
+                    }
+                    
+                }
+                ContractApproveDialog dialogWithDate = new ContractApproveDialog
+                {
+                    LawFace = contract.LawFace,
+                    Freelancer = contract.Freelancer,
+                    HadContract = true,
+                    DateExpire = lastLawContractDate,
+                    Contract = contract,
+                };
+                return PartialView("ApproveContractDetailsDialog", dialogWithDate);
+            }
+            ContractApproveDialog dialog = new ContractApproveDialog
+            {
+                LawFace = contract.LawFace,
+                Freelancer = contract.Freelancer,
+                HadContract = false,
+                Contract = contract,
+            };
+            return PartialView("ApproveContractDetailsDialog", dialog);
+            return Content("OK");
+	    }
+
+	    public class ActiveLawContractTemplate
+	    {
+	        public Dictionary<int, int> LawFaceTemplate { get; set; }
+
+	        public ActiveLawContractTemplate()
+	        {
+	            LawFaceTemplate = new Dictionary<int, int>();
+	        }
+	    }
+
+
+	    public void SetActiveLawContractTemplate(int lawFaceId, int lawFaceTemplateId)
+	    {
+	        ActiveLawContractTemplate active = (ActiveLawContractTemplate) Session["ActiveTemplate"];
+	        if (active == null)
+	        {
+	            active = new ActiveLawContractTemplate();
+	            Session["ActiveTemplate"] = active;
+	        }
+	        active.LawFaceTemplate[lawFaceId] = lawFaceTemplateId;
+	    }
+
+        //If user selected Item, when return it, else return the default
+        private LawContractTemplate GetLawContractTemplate(int lawFaceId)
+	    {
+            ActiveLawContractTemplate active = (ActiveLawContractTemplate)Session["ActiveTemplate"];
+	        if (active != null && active.LawFaceTemplate.ContainsKey(lawFaceId))
+	        {
+	            int lawContractTemplateId = active.LawFaceTemplate[lawFaceId];
+	            return db.LawContractTemplates.FirstOrDefault(c => c.Id == lawContractTemplateId);
+	        }      
+	        else
+	        {
+	            LawFace lawFace =
+	                db.LawFaces.Include(c => c.ActiveLawContractTemplate).FirstOrDefault(c => c.Id == lawFaceId);
+	            return lawFace.ActiveLawContractTemplate;
+	        }
+	        
+        }
+
+
+        [HttpPost]
+        public ActionResult FillLawContractTemplateAndDownload(int lawFaceId,  string userId)
+        {
+        	ApplicationUser freelancer = db.Users.Find(userId);
+            LawContractTemplate lawContractTemplate = GetLawContractTemplate(lawFaceId);
+        	var freelancerRole = db.Roles.Where(role => role.Name == "Freelancer").ToArray()[0];
+        	if (freelancer == null || lawContractTemplate == null || freelancer.Roles.Any(x => x.RoleId != freelancerRole.Id))
+        	{
+        	    return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
+        	}
+        
+        	string pathToContract = Code.DocumentManager.fillContractTemplate(freelancer, lawContractTemplate);
+        	return ViewFile(pathToContract);
+        }
+
+
+        public FileResult ViewFile(string path)
+        {
+                        byte[] filedata = System.IO.File.ReadAllBytes(path);
+                        string contentType = MimeMapping.GetMimeMapping(path);
+                        var cd = new System.Net.Mime.ContentDisposition
+                        {
+                            FileName = path,
+                            Inline = true,
+                        };
+                        Response.AppendHeader("Content-Disposition", cd.ToString());
+                        return File(filedata, contentType);
+        }
+
+
+
+    }
 }
 

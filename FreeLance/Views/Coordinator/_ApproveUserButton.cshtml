@@ -1,10 +1,18 @@
 ﻿@using FreeLance.Controllers
 @model FreeLance.Models.ContractModels
     
-@using (Html.BeginForm("ApproveInContractByCoordinator", "Coordinator", 
-    new { contractId = Model.ContractId, approvable=CoordinatorController.Approvable.Contract }, 
-    FormMethod.Post, new { style = "display:inline-block;" }))
-{
-    <input type="submit" value="Подтвердить контракт" class="btn btn-info" />
+<button class="btn btn-info" onclick="checkContractIsApprovable(@Model.ContractId)">Подтвердить контракт</button>
+
+@{
+    var dialogName = "modalDialog" + Model.ContractId;
+    var contentName = "modalContent" + Model.ContractId;
 }
+<div class="modal fade" id="@dialogName" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" id="@contentName">
+        </div>
+    </div>
+</div>
+
+
 

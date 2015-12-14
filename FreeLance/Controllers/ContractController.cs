@@ -244,6 +244,7 @@ namespace FreeLance.Controllers
 			contract.Freelancer = freelancer;
 			contract.CreationDate = DateTime.Now;
 			contract.EndingDate = DateTime.Now;
+		    contract.LawFace = problem.Employer.LawFace;
 
 
 			db.ContractModels.Add(contract);

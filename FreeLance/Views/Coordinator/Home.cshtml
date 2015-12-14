@@ -1,4 +1,5 @@
 ﻿@using System.Web.UI.HtmlControls
+@using FreeLance.Controllers
 @using FreeLance.Models
 @model FreeLance.Controllers.CoordinatorController.HomeViewModel
 @{
@@ -89,7 +90,8 @@
 </div>
 </div>
 <hr/>
-    <script type="text/javascript">
+<script type="text/javascript">
+
     function onDropdownChangeContractLawFace(contractId) {
         var dropDownList = document.getElementById("dropDownListContract" + contractId);
         var lawFaceId = +dropDownList.options[dropDownList.selectedIndex].value;
@@ -101,4 +103,66 @@
             data: { "contractId": contractId, "lawFaceId": lawFaceId }
         });
     }
-    </script>
+
+
+    function approveContract(contractId) {
+        $.ajax({
+            url: '@Url.Action("ApproveInContractByCoordinator", "Coordinator")',
+            type: 'POST',
+            data: { "contractId": contractId, "approvable" : "@CoordinatorController.Approvable.Contract" },
+            dataType: "html",
+            success: function (result) {
+                window.location.href = "";
+            }
+        });
+    }
+
+
+    function checkContractIsApprovable(contractId) {
+        var dropDownList = document.getElementById("dropDownListContract" + contractId);
+        var lawFaceId = +dropDownList.options[dropDownList.selectedIndex].value;
+        if (lawFaceId == -1) {
+            alert("Не выбрано юрлица!");
+            return;
+        };
+        $.ajax({
+            url: '@Url.Action("CheckContractIsApprovable", "Coordinator")',
+            type: 'POST',
+            data: { "contractId": contractId },
+            dataType: "html",
+            success: function (result) {
+                if (result != "OK") {
+                    $("#modalContent" + contractId).html(result);
+                    $("#modalDialog" + contractId).modal();
+                } else {
+                    approveContract(contractId);
+                }
+            }
+        });
+        return false;
+    }
+
+    function checkEmployerLawFace(employerId) {
+        var dropDownList = document.getElementById("dropDownListEmployer" + employerId);
+        var lawFaceId = dropDownList.options[dropDownList.selectedIndex].value;
+        if (+lawFaceId == -1) {
+            alert("Не выбрано юрлица!");
+            return false;
+        }
+        else {
+            return true;
+}
+    }
+
+    function onDropdownChangeEmployerLawFace(employerId) {
+        var dropDownList = document.getElementById("dropDownListEmployer" + employerId);
+        var lawFaceId = dropDownList.options[dropDownList.selectedIndex].value;
+        if (+lawFaceId == -1)
+            return;
+        $.ajax({
+            url: '@Url.Action("ChangeLawFaceUser", "Coordinator")',
+            type: 'POST',
+            data: { "userId": employerId, "lawFaceId": lawFaceId }
+        });
+    }
+</script>

@@ -372,6 +372,8 @@
     <Content Include="Scripts\tinymce.init.js" />
     <Content Include="Views\LawFace\_LawFaceChangeContract.cshtml" />
     <Content Include="Views\LawFace\_LawFaceChangeEmployer.cshtml" />
+    <Content Include="Views\Coordinator\ApproveContractDetailsDialog.cshtml" />
+    <Content Include="Views\LawFace\_ChooseLawContractTempate.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

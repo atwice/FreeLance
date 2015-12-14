@@ -3,7 +3,10 @@
 <div class="panel panel-default">
     <div class="panel-heading"><b>@Model.FIO</b> <span class="pull-right"> @Model.Email</span></div>
     <div class="panel-body">
-
+        <p>
+            <i><b>Юр лицо:</b></i>
+            @{Html.RenderPartial("~/Views/LawFace/_LawFaceChangeEmployer.cshtml", Model); }
+        </p>
 
     </div>
     <div class="panel-footer"> 
@@ -14,13 +17,16 @@
         {
             <input type="submit" value="Заблокировать" class="btn btn-danger" />
         }
+        @{
+            var userId = "\"" + Model.Id + "\"";
+        }
 
         <a class="pull-right">
             @using (Html.BeginForm("ApproveUserByCoordinator", "Coordinator", new { userId = Model.Id, value = true }, 
                 FormMethod.Post, new { style = "display:inline-block;" }))
                     
             {
-                <input type="submit" value="Допустить в систему" class="btn btn-success" />
+                <input type="submit" value="Допустить в систему" class="btn btn-success" onclick="checkEmployerLawFace(@userId)" />
             }
         </a>
         

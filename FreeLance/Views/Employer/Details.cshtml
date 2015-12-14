@@ -253,9 +253,9 @@ else
         if (+lawFaceId == -1)
             return;
         $.ajax({
-            url: '@Url.Action("ChangeLawFaceEmployer", "Coordinator")',
+            url: '@Url.Action("ChangeLawFaceUser", "Coordinator")',
             type: 'POST',
-            data: { "employerId": employerId, "lawFaceId": lawFaceId }
+            data: { "userId": employerId, "lawFaceId": lawFaceId }
         });
     }
 </script>

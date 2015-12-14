@@ -1,0 +1,41 @@
+﻿@model FreeLance.Controllers.CoordinatorController.ContractApproveDialog
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h2 class="modal-title" id="myModalLabel">Это невозможно</h2>
+</div>
+<div class="modal-body">
+    <p>
+        Между фрилансером @Model.Freelancer.FIO и юрлицом @Model.LawFace.Name
+        @if (Model.HadContract)
+        {
+            <span>ГПХ истек @Model.DateExpire .</span>
+        }
+        else
+        {
+            <span>ГПХ никогда еще не был заключен. </span>
+        }
+    </p>
+
+    <b> Но это можно исправить! </b><br/>
+    <ul>
+        <li> Если у вас на руках есть подписанный ГПХ с этим фрилансером, вы можете загрузить его в систему.</li>
+
+        <li> Если же его нет, можно скачать нужный шаблон и загрузить его позже.</li>
+       
+    </ul>
+  
+</div>
+
+<div class="modal-footer">
+    @{ Html.RenderPartial("~/Views/LawFace/_ChooseLawContractTempate.cshtml", Model.Contract); }
+
+
+    @using (Html.BeginForm("UploadSignedLawContract", "Coordinator", 
+        new { userId = Model.Freelancer.Id, contractId=Model.LawFace.Id }, 
+        FormMethod.Get, new { style = "display:inline-block;" }))
+    {
+        <input type="submit" value="Загрузить подписанный ГПХ" class="btn btn-primary" />
+    }
+
+</div>
