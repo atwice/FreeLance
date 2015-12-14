@@ -19,6 +19,8 @@ namespace FreeLance.Models
         public string Name { get; set; }
 
 		public bool IsActive { get; set; } = false;
+
+		//public virtual LawFace LawFace { get; set; }
 	}
 
     public class LawFace

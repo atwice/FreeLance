@@ -31,10 +31,10 @@
 					</tr>
 				</table>
 				<div class="panel-body">
-					<a href="/Problem/Details/@contract.ProblemId" class="btn btn-info pull-right to-problem-btn" role="button">К задаче</a>
+					<a href="/Problem/Details/@contract.ProblemId" class="btn btn-primary pull-right to-problem-btn" role="button">К задаче</a>
 					@if (User.Identity.GetUserId() == contract.EmployerId)
 					{
-						<a href="/Contract/Details/@contract.ContractId" class="btn btn-info pull-right" role="button">К контракту</a>
+						<a href="/Contract/Details/@contract.ContractId" class="btn btn-primary pull-right" role="button">К контракту</a>
 					}
 				</div>
 

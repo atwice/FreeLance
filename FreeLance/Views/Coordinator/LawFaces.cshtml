@@ -9,7 +9,7 @@
     <h2>Список юрлиц</h2>
     <p>
         <a href="@Url.Action("AddLawFace", "Coordinator")"
-           class="btn btn-info"
+           class="btn btn-primary"
            style="margin-top: 5px;">
             <span class="glyphicon glyphicon-plus"></span>
             Новое Юрлицо
@@ -20,7 +20,7 @@
     {
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h4><a href="/LawFace/@lawFaceView.Id">@lawFaceView.Name</a></h4>
+                <h4><a href="/Coordinator/LawFace/@lawFaceView.Id">@lawFaceView.Name</a></h4>
             </div>
         </div>
     }

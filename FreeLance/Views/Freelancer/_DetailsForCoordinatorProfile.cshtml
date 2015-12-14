@@ -88,7 +88,7 @@
 
 					using (Html.BeginForm("ApproveDocuments", "Coordinator", new { docId = Model.DocumentsId, value = true }, FormMethod.Post, new { @class = "form-doc" }))
                     {
-						<input type="submit" value="Одобрить" class="btn btn-info" style="max-width:inherit; width: 100%"/>
+						<input type="submit" value="Одобрить" class="btn btn-primary" style="max-width:inherit; width: 100%"/>
 					}
 					using (Html.BeginForm("ApproveDocuments", "Coordinator", new { docId = Model.DocumentsId, value = false}, FormMethod.Post, new { @class = "form-doc" }))
 					{
@@ -108,7 +108,7 @@
 
         <div class="col-xs-6">
             <a href="@Url.Action("UploadSignedLawContract", "Coordinator")"
-               class="btn btn-info pull-right"
+               class="btn btn-primary pull-right"
                style="margin-top: 5px;">
                 <span class="glyphicon glyphicon-ok"></span>
                 Загрузить ГПХ
@@ -139,7 +139,7 @@
                             
                             <a href="#" class="btn btn-default pull-left" role="button">Аннулировать</a>
                             <a href="@Url.Action("DownloadSignedLawContract", "Coordinator", new { LawContractPath = lawcontract.LawFacePath })" 
-                                class="btn btn-info pull-right">
+                                class="btn btn-primary pull-right">
                                 Скачать
                             </a>
                         </div>

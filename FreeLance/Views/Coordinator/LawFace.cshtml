@@ -3,33 +3,37 @@
     ViewBag.Title = "Юрлицо";
 }
 
-<h2>LawFace</h2>
-
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h4>@Model.Name</h4>
-        <div class="pull-right">
-            @Html.ActionLink("Добавить Шаблон ГПХ", "AddLawContractTemplate", new { lawFaceId = @Model.Id }, new { @class = "btn btn-success", style = "color:white; display:inline-block" })
+<div class="col-md-10">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h1>@Model.Name</h1>        
         </div>
-    </div>
-    <div class="panel-body">
-        <ul class="list-group">
-            @foreach (var template in @Model.LawContractTemplates)
-            {
-                <li class="list-group-item">
-                    <h5>@template.Name </h5>
-                    <div><a href="@template.Path">@template.Name</a></div>
-                    @Html.ActionLink("Посмотреть шаблон", "ViewFile", new { path = template.Path }, new { @class = "btn btn-primary" })
-                    @if (template.IsActive)
-                    {
-                        @Html.ActionLink("Не использовать", "ToggleActiveLawContractTemplate", new { templateId = @template.Id }, new { @class = "btn btn-danger" })
-                    }
-                    else
-                    {
-                        @Html.ActionLink("Использовать", "ToggleActiveLawContractTemplate", new { templateId = @template.Id }, new { @class = "btn btn-success" })
-                    }
-                </li>
-            }
-        </ul>
+        <div class="panel-body">            
+            <p>
+                <h2>Шаблоны ГПХ:</h2>
+                <a href="@Url.Action("AddLawContractTemplate", "Coordinator", new { lawFaceId = @Model.Id })"
+                   class="btn btn-default"
+                   style="margin-top: 5px;">
+                    <span class="glyphicon glyphicon-plus"></span>
+                    Добавить Шаблон ГПХ
+                </a>
+            </p>
+            <ul class="list-group">            
+                @foreach (var template in @Model.LawContractTemplates)
+                {
+                    <div class="row" style="margin-left: 5px; margin-right: 5px;">
+                        <font size="5">@template.Name</font>
+                        @Html.ActionLink("Скачать", "ViewFile", new { path = template.Path },
+                                    new { @class = "btn btn-default pull-right", @style = "display: inline-block" })
+                        @if (!template.IsActive)
+                        {
+                            @Html.ActionLink("Сделать активным", "ToggleActiveLawContractTemplate", new { templateId = @template.Id, lawFaceId = Model.Id }, 
+                                    new { @class = "btn btn-primary pull-right", @style = "display: inline-block;margin-right: 5px;" })
+                        }                        
+                            
+                    </div><hr />
+                }
+            </ul>
+        </div>
     </div>
 </div>

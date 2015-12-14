@@ -56,7 +56,7 @@ else
                     using (Html.BeginForm("ApproveUserByCoordinator", "Coordinator", new { userId = Model.Employer.Id, value = true },
                     FormMethod.Post, new { style = "display:inline-block; margin: 5px;" }))
                     {
-                        <input type="submit" value="Допустить в систему" class="btn btn-info" />
+                        <input type="submit" value="Допустить в систему" class="btn btn-primary" />
                     }
                 }
 
@@ -131,7 +131,7 @@ else
                                 <p><b>Создан:</b><span class="text-info-in-panel">@problem.CreationDate.ToShortDateString()</span></p>
                                 <div>
                                     <i class="flaticon-comments16"></i> <span class="badge">@problem.NewMsgCount</span>
-                                    <a href="/Problem/Details/@problem.Id" class="btn btn-info pull-right" role="button">К задаче</a>
+                                    <a href="/Problem/Details/@problem.Id" class="btn btn-primary pull-right" role="button">К задаче</a>
                                 </div>
                             </div>
                         </div>
@@ -145,22 +145,22 @@ else
                 <h2>Архив контрактов:</h2>
                 <p>
                     <a href=@Url.Action("Archive", "Employer",
-                    new { sortOrder = ViewBag.sortCost }) class="btn btn-info">
+                    new { sortOrder = ViewBag.sortCost }) class="btn btn-primary">
                         <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
                         По стоимости
                     </a>
                     <a href=@Url.Action("Archive", "Employer",
-                    new { sortOrder = ViewBag.sortName }) class="btn btn-info">
+                    new { sortOrder = ViewBag.sortName }) class="btn btn-primary">
                         <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
                         По имени
                     </a>
                     <a href=@Url.Action("Archive", "Employer",
-                    new { sortOrder = ViewBag.sortCreationDate }) class="btn btn-info">
+                    new { sortOrder = ViewBag.sortCreationDate }) class="btn btn-primary">
                         <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
                         По дате создания
                     </a>
                     <a href=@Url.Action("Archive", "Employer",
-                    new { sortOrder = ViewBag.sortEndingDate }) class="btn btn-info">
+                    new { sortOrder = ViewBag.sortEndingDate }) class="btn btn-primary">
                         <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
                         По дате сдачи
                     </a>
@@ -196,7 +196,7 @@ else
                                 </tr>
                             </table>
                             <div class="panel-body">
-                                <a href="/Contract/Details/@contract.ContractId" class="btn btn-info pull-right" role="button">Подробнее</a>
+                                <a href="/Contract/Details/@contract.ContractId" class="btn btn-primary pull-right" role="button">Подробнее</a>
                             </div>
                         </div>
                     }
