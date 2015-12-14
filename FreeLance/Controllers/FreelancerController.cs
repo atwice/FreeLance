@@ -98,11 +98,6 @@ namespace FreeLance.Controllers
 			public List<ProblemHomeViewModel> Problems;
 		}
 
-		public ActionResult Index()
-		{
-			return RedirectToAction("Home");
-		}
-
 		public class ContractInfoForEmployer
 		{
 			public String ProblemName { get; set; }
@@ -914,28 +909,6 @@ namespace FreeLance.Controllers
 			public bool IsSubscibed { get; set; }
 		}
 
-		[Authorize(Roles = "Admin, Freelancer, Coordinator, WithoutDocuments")]
-		public ActionResult Problem(int? id)
-		{
-			if (id == null)
-			{
-				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-			}
-
-			ProblemModels problemModels = db.ProblemModels.Find(id);
-			if (problemModels == null || (problemModels.IsHidden && !User.IsInRole("Coordinator")))
-			{
-				return HttpNotFound();
-			}
-			string userId = User.Identity.GetUserId();
-			var contracts = User.IsInRole("Coordinator")
-				? db.ContractModels.Where(t => t.Freelancer.Id.Equals(userId)).ToList()
-				: db.ContractModels.Where(t => t.Freelancer.Id.Equals(userId) && !t.IsHidden).ToList();
-			var subscriptions = db.SubscriptionModels.Where(t => t.Freelancer.Id.Equals(userId)).ToList();
-			ViewBag.contractsSize = contracts.LongCount();
-			ViewBag.subscriptionsSize = subscriptions.LongCount();
-			return View();
-		}
 
 		public OpenProblemsInfo sortProblems(OpenProblemsInfo model, String sortOrder, String lastSort)
 		{
@@ -1205,12 +1178,6 @@ namespace FreeLance.Controllers
 				db.SaveChanges();
 			}
 			return documents;
-		}
-
-		public ActionResult Settings()
-		{
-			ApplicationUser user = db.Users.Find(User.Identity.GetUserId());
-			return View(user.EmailNotificationPolicy);
 		}
 
 		[HttpPost]

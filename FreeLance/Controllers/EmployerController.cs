@@ -96,11 +96,6 @@ namespace FreeLance.Controllers
 			public decimal Rate { get; set; }
 		}
 
-		public ActionResult Index()
-		{
-			return RedirectToAction("Home");
-		}
-
 		public static String getStatusIcon(ContractStatus status)
 		{
 			String answer = "";
@@ -475,27 +470,6 @@ namespace FreeLance.Controllers
 			return View(model);
 		}
 
-		// try /Employer/Problem/5 
-		public ActionResult Problem(int? id)
-		{
-			if (id == null)
-			{
-				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-			}
-			ProblemModels problemModels = db.ProblemModels.Find(id);
-
-			if (problemModels == null || problemModels.IsHidden)
-			{
-				return HttpNotFound();
-			}
-
-			var viewModel = new ProblemView
-			{
-				Subscriptions = db.SubscriptionModels.Where(x => x.Problem.ProblemId == id).ToList(),
-				Problem = problemModels
-			};
-			return View(viewModel);
-		}
 
 		[Authorize(Roles = "Employer")]
 		public ActionResult Freelancers(String searchString, String sortOrder)
@@ -594,12 +568,6 @@ namespace FreeLance.Controllers
 				emailNotifications = employer.EmailNotificationPolicy
 			};
 			return View(model);
-		}
-
-		public ActionResult Settings()
-		{
-			ApplicationUser user = db.Users.Find(User.Identity.GetUserId());
-			return View(user.EmailNotificationPolicy);
 		}
 
 		[HttpPost]

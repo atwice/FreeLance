@@ -18,13 +18,6 @@ namespace FreeLance.Controllers
 	{
 		private ApplicationDbContext db = new ApplicationDbContext();
 
-		// GET: Contract
-		[Authorize(Roles = "Admin")]
-		public ActionResult Index()
-		{
-			return View(db.ContractModels.Where(c => !c.IsHidden).ToList());
-		}
-
 		public class DetailsView
 		{
 			public bool showMore { get; set; }
